@@ -6,7 +6,7 @@
 namespace caWavelet
 {
 	caWavelet::caWavelet()
-		: h_0(NULL), g_0(NULL), h_1(NULL), g_1(NULL), c(0), offset(0), t(t)
+		: h_0(NULL), g_0(NULL), h_1(NULL), g_1(NULL), c(0), offset(0), t(caWaveletType::None)
 	{
 
 	}
@@ -61,7 +61,9 @@ namespace caWavelet
 		return t;
 	}
 
-	void caWavelet::init(const double* h_0, const double* g_0, const double* h_1, const double* g_1, size_t c, size_t offset, caWaveletType t)
+	void caWavelet::init(const double* h_0, const double* g_0, 
+		const double* h_1, const double* g_1, 
+		size_t c, size_t offset, caWaveletType t)
 	{
 		this->h_0 = h_0;
 		this->g_0 = g_0;
@@ -73,32 +75,43 @@ namespace caWavelet
 		this->t = t;
 	}
 
-	int caWaveletDecode(const caWavelet* w, double* data, double* output, size_t length, std::vector<int>* dims)
-	{
-		return 0;
-	}
-
-	int caWaveletEncode(const caWavelet* w, double* data, double* output, size_t length, std::vector<int>* dims)
+	int caWaveletEncode(const caWavelet* w, double* data, double* output, 
+		size_t length, std::vector<int>* dims, size_t level)
 	{
 		// init output stream as a zero.
 		memset(output, 0, sizeof(double) * length);
-		size_t half = length >> 1;
-		size_t end = length - 1;
 
-		for (int i = 0, ii = 0; ii < length; i++, ii += 2)
+		size_t offset = 1;
+		for (auto d : *dims)
 		{
-			double h = 0, g = 0;
+			size_t half = d >> 1;
+			size_t end = d - 1;
 
-			for (int j = 0; j < w->c; j++)
+			caDataIterator<double> it(data, offset);
+
+			for (int i = 0, ii = 0; ii < length; i++, ii += 2)
 			{
-				h += w->h_0[j] * data[end & (ii + j)];
-				g += w->g_0[j] * data[end & (ii + j)];
+				double h = 0, g = 0;
+
+				for (int j = 0; j < w->c; j++)
+				{
+					h += w->h_0[j] * data[end & (ii + j)];
+					g += w->g_0[j] * data[end & (ii + j)];
+				}
+
+				output[i] = h;
+				output[i + half] = g;
 			}
 
-			output[i] = h;
-			output[i + half] = g;
+			offset *= d;
 		}
 
+		return 0;
+	}
+
+	int caWaveletDecode(const caWavelet* w, double* data, double* output,
+		size_t length, std::vector<int>* dims)
+	{
 		return 0;
 	}
 }
