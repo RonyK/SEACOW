@@ -5,14 +5,14 @@
 
 #define ROUNDING(x, dig)	( floor((x) * pow(double(10), dig) + 0.5f) / pow(double(10), dig) )
 
-TEST(csWaveletEncode, caWaveletHaarInit)
+TEST(caWaveletEncode, caWaveletHaarInit)
 {
 	caWavelet::caWavelet w("Haar");
 
-	EXPECT_EQ(w.t, caWavelet::caWaveletType::Haar);
+	EXPECT_EQ(w.t_, caWavelet::caWaveletType::Haar);
 
-	EXPECT_EQ(w.c, 2);
-	EXPECT_EQ(w.offset, 1);
+	EXPECT_EQ(w.c_, 2);
+	EXPECT_EQ(w.offset_, 1);
 
 	EXPECT_TRUE(w.h_0 != NULL);
 	EXPECT_EQ(w.h_0[0], 1/sqrt(2));
@@ -31,7 +31,7 @@ TEST(csWaveletEncode, caWaveletHaarInit)
 	EXPECT_EQ(w.g_1[1], -1/sqrt(2));
 }
 
-TEST(csWaveletEncode, caWaveletHaar_1D_Encode)
+TEST(caWaveletEncode, caWaveletHaar_1D_Encode)
 {
 	EXPECT_TRUE(true);
 	caWavelet::caWavelet w("Haar");
@@ -55,7 +55,7 @@ TEST(csWaveletEncode, caWaveletHaar_1D_Encode)
 	free(output);
 }
 
-TEST(csWaveletEncode, caWaveletHaar_2D_Encode)
+TEST(caWaveletEncode, caWaveletHaar_2D_Encode)
 {
 	EXPECT_TRUE(true);
 	caWavelet::caWavelet w("Haar");
