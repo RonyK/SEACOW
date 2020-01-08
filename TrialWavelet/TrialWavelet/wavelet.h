@@ -1,4 +1,8 @@
 #pragma once
+#ifndef _caWavelet_
+#define _caWavelet_
+
+#include <yvals_core.h>
 #include <iostream>
 #include <vector>
 #include <array>
@@ -22,9 +26,9 @@ namespace caWavelet
 		const double* g_1;
 		const double* h_1;
 		
-		caWaveletType t;			// Wavelet Family
-		size_t c;					// Wavelet length
-		size_t offset;
+		caWaveletType t_;			// Wavelet Family
+		size_t c_;					// Wavelet length
+		size_t offset_;
 
 	public:
 		caWavelet();
@@ -40,19 +44,21 @@ namespace caWavelet
 			size_t c, size_t offset, caWaveletType t);
 	};
 
-	template <typename T>
+
+	// TODO :: Replace caDataIterator to caCoorSeq
+	template <typename Ty_>
 	class caDataIterator
 	{
 	public:
-		typedef caDataIterator self_type;
-		typedef T				value_type;
-		typedef T&				reference;
-		typedef T*				pointer;
+		typedef caDataIterator	self_type;
+		typedef Ty_				value_type;
+		typedef Ty_&			reference;
+		typedef Ty_*			pointer;
 		typedef std::ptrdiff_t	difference_type;
 		typedef std::random_access_iterator_tag iterator_category;
 
 	public:
-		caDataIterator(T* x, const size_t offset = 1) : ptr_(x), offset_(offset) {}
+		caDataIterator(Ty_* x, const size_t offset = 1) : ptr_(x), offset_(offset) {}
 		caDataIterator(const caDataIterator& mit) : ptr_(mit.ptr_), offset_(mit.offset_) {}
 
 		bool operator==(const self_type& rhs) const { return ptr_ == rhs.ptr_; }
@@ -73,7 +79,7 @@ namespace caWavelet
 		{
 			if (x < 0)
 			{
-				throw out_of_range("");
+				throw std::out_of_range("");
 			}
 
 			return ptr_[x * offset_];
@@ -82,14 +88,14 @@ namespace caWavelet
 		{
 			if (x < 0)
 			{
-				throw out_of_range("");
+				throw std::out_of_range("");
 			}
 
 			return ptr_[x * offset_];
 		}
 
 	private:
-		T* ptr_;
+		Ty_* ptr_;
 		const size_t offset_;
 	};
 
@@ -99,5 +105,7 @@ namespace caWavelet
 	int caWaveletDecode(const caWavelet* w, double* data, double* output,
 		size_t length, std::vector<int>* dims);
 
+	void getBandSize(const std::vector<int>& dims, std::vector<int>&output, const size_t level);
 }
 
+#endif // _caWavelet_

@@ -1,12 +1,13 @@
 #include <cstring>
 #include <cassert>
+#include <cmath>
 #include "wavelet.h"
 #include "haar.h"
 
 namespace caWavelet
 {
 	caWavelet::caWavelet()
-		: h_0(NULL), g_0(NULL), h_1(NULL), g_1(NULL), c(0), offset(0), t(caWaveletType::None)
+		: h_0(NULL), g_0(NULL), h_1(NULL), g_1(NULL), c_(0), offset_(0), t_(caWaveletType::None)
 	{
 
 	}
@@ -70,9 +71,9 @@ namespace caWavelet
 		this->h_1 = h_1;
 		this->g_1 = g_1;
 		
-		this->c = c;
-		this->offset = offset;
-		this->t = t;
+		this->c_ = c;
+		this->offset_ = offset;
+		this->t_ = t;
 	}
 
 	int caWaveletEncode(const caWavelet* w, double* data, double* output, 
@@ -93,7 +94,7 @@ namespace caWavelet
 			{
 				double h = 0, g = 0;
 
-				for (int j = 0; j < w->c; j++)
+				for (int j = 0; j < w->c_; j++)
 				{
 					h += w->h_0[j] * data[end & (ii + j)];
 					g += w->g_0[j] * data[end & (ii + j)];
@@ -113,5 +114,15 @@ namespace caWavelet
 		size_t length, std::vector<int>* dims)
 	{
 		return 0;
+	}
+
+	template <typename Dty_>
+	void getBandSize(const std::vector<Dty_>& dims, std::vector<Dty_>& output, const size_t level)
+	{
+		double factor = pow(1 / 2, level);
+		for (auto d : dims)
+		{
+			output.push_back(ceil(d * factor));
+		}
 	}
 }
