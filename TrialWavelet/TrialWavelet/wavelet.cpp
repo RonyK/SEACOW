@@ -1,6 +1,7 @@
 #include <cstring>
 #include <cassert>
 #include <cmath>
+#include "iterators.h"
 #include "wavelet.h"
 #include "haar.h"
 
@@ -79,32 +80,66 @@ namespace caWavelet
 	int caWaveletEncode(const caWavelet* w, double* data, double* output, 
 		size_t length, std::vector<int>* dims, size_t level)
 	{
+		// copy input data
+		double* temp = new double[length];
+		memcpy(temp, data, sizeof(double) * length);
 		// init output stream as a zero.
 		memset(output, 0, sizeof(double) * length);
+		std::vector<int> boundary(*dims), sP(dims->size(), 0), eP(*dims);
 
-		size_t offset = 1;
-		for (auto d : *dims)
+		caCoorRangeIterator<int, double> iit(temp, eP.size(), dims->data(), sP.data(), eP.data());
+		caCoorRangeIterator<int, double> oit(output, eP.size(), dims->data(), sP.data(), eP.data());
+
+		size_t seq = 0;
+		size_t numbers = 1;
+		for (int i = 0; i < dims->size(); i++)
 		{
-			size_t half = d >> 1;
-			size_t end = d - 1;
+			numbers *= (eP[i] - sP[i] + 1);
+		}
 
-			caDataIterator<double> it(data, offset);
+		for (int d = eP.size() - 1; d >= 0; d--)
+		{
+			std::cout << "D: " << d << std::endl;
+			size_t half = eP[d] >> 1;
+			size_t rows = numbers / (eP[d] - sP[d] + 1);
 
-			for (int i = 0, ii = 0; ii < length; i++, ii += 2)
+			iit.setBasisDimension(d);
+			iit.moveToStart();
+			oit.setBasisDimension(d);
+			oit.moveToStart();
+
+			for (int r = 0; r < rows; r++)
 			{
-				double h = 0, g = 0;
-
-				for (int j = 0; j < w->c_; j++)
+				for (int i = sP[d]; i < eP[d]; i += 2)
 				{
-					h += w->h_0[j] * data[end & (ii + j)];
-					g += w->g_0[j] * data[end & (ii + j)];
-				}
+					double h = 0, g = 0;
 
-				output[i] = h;
-				output[i + half] = g;
+					for (int j = 0; (j < w->c_) && (i + j < eP[d]); j++)
+					{
+						h += w->h_0[j] * iit[j];
+						g += w->g_0[j] * iit[j];
+					}
+
+					oit[0] = h;
+					oit[half] = g;
+					
+					iit += 2;
+					oit++;
+				}
+				oit += half;
 			}
 
-			offset *= d;
+			memcpy(temp, output, sizeof(double) * length);
+
+			for (int i = 0; i < length; i++)
+			{
+				std::cout << output[i] << ", ";
+
+				if (length % eP[d] == 0)
+				{
+					std::cout << "/" << std::endl;
+				}
+			}
 		}
 
 		return 0;

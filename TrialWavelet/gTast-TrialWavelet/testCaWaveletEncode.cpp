@@ -4,7 +4,6 @@
 #include <vector>
 
 #define ROUNDING(x, dig)	( floor((x) * pow(double(10), dig) + 0.5f) / pow(double(10), dig) )
-
 TEST(caWaveletEncode, caWaveletHaarInit)
 {
 	caWavelet::caWavelet w("Haar");
@@ -33,7 +32,6 @@ TEST(caWaveletEncode, caWaveletHaarInit)
 
 TEST(caWaveletEncode, caWaveletHaar_1D_Encode)
 {
-	EXPECT_TRUE(true);
 	caWavelet::caWavelet w("Haar");
 	double data[] = {1,2,3,4,5,6,7,8};
 	
@@ -62,15 +60,15 @@ TEST(caWaveletEncode, caWaveletHaar_2D_Encode)
 	double data[][4] = {{9,7,6,2}, {5,3,4,4}, {8,2,4,0}, {6,0,2,2} };
 
 	double* output = (double*)malloc(sizeof(data));
-	std::vector<int> dims = { sizeof(data) / sizeof(double) };
+	std::vector<int> dims = { sizeof(data) / sizeof(double) / 4, 4 };
 
 	caWavelet::caWaveletEncode(&w, (double*)data, output, sizeof(data) / sizeof(double), &dims);
 
 	double expectedOutput[] = {
-		12, 8, 4, 0, 8, 4, 2, 0, 2, 2, 4.44, 2, 6, 2, -2.22, 2
+		12, 8, 2, 2,  8, 4, 6, 2,  4, 0, 0, 2,  2, 0, 0, 2
 	};
 
-	for (unsigned int i = 0; i < sizeof(data) / sizeof(double); i++)
+	for (int i = 0; i < sizeof(data) / sizeof(double); i++)
 	{
 		EXPECT_EQ(ROUNDING(output[i], 6), ROUNDING(expectedOutput[i], 6));
 	}

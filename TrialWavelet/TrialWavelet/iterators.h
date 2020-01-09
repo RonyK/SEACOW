@@ -161,10 +161,11 @@ namespace caWavelet
 			{
 				throw std::out_of_range("caCoorIterator::setBasisDimension - too large dim");
 			}
+			
+			this->offset_ = this->getDimOffset(dim);
 			this->basisDim_ = dim;
-			this->offset_ = this->getOffset(dim);
 		}
-		size_t getOffset(_In_range_(0, dSize_ - 1) const unsigned int dim)
+		size_t getDimOffset(_In_range_(0, dSize_ - 1) const unsigned int dim)
 		{
 			if (dim == this->basisDim_)
 			{
@@ -177,39 +178,76 @@ namespace caWavelet
 				offset *= this->boundary_[i];
 			}
 
-			std::cout << "dim : " << dim << ", getOffset: " << offset << std::endl;
+			//std::cout << "dim : " << dim << ", getOffset: " << offset << std::endl;
 			return offset;
 		}
+
+		size_t posToSeq(const size_type pos)
+		{
+			size_type left = pos * this->offset_;
+			size_type seq = 0;
+			size_type offset = 1;
+			for (int d = this->basisDim_; d >= 0; d--)
+			{
+				seq += (left % this->boundary_[d]) * offset;
+				left = left / this->boundary_[d];
+				offset *= this->boundary_[d];
+			}
+
+			for (int d = this->dSize_ - 1; d > this->basisDim_; d--)
+			{
+				seq += (left % this->boundary_[d]) * offset;
+				left = left / this->boundary_[d];
+				offset *= this->boundary_[d];
+			}
+
+			return seq;
+		}
+
+
+		// Infinite loop warning
+		// if all eP_ is 0
 		void next(const unsigned int dim)
 		{
 			if (this->coor_[dim] + 1 < this->eP_[dim])
 			{
 				this->coor_[dim]++;
-				this->ptr_ += this->getOffset(dim);
+				this->ptr_ += this->getDimOffset(dim);
 			} else
 			{
 				if (dim > 0)
 				{
 					if (this->basisDim_ == dim - 1)
 					{
-						throw std::out_of_range("caCoorIterator next error: out range");
+						//throw std::out_of_range("caCoorIterator next error: out range");
+						//this->ptr_++;
+						//this->coor_[dim] += 1;
+						return;
 					}
 					this->next(dim - 1);
 				} else
 				{
 					if (this->basisDim_ == this->dSize_ - 1)
 					{
-						throw std::out_of_range("caCoorIterator next error: out range");
+						// TODO::Throw exception or forward next?
+						//
+						//throw std::out_of_range("caCoorIterator next error: out range");
+						//
+						// or
+						//
+						//this->ptr_++;
+						//this->coor_[dim] += 1;
+						return;
 					}
 					this->next(this->dSize_ - 1);
 				}
-				this->ptr_ -= this->getOffset(dim) * (this->coor_[dim] - this->sP_[dim]);
+				this->ptr_ -= this->getDimOffset(dim) * (this->coor_[dim] - this->sP_[dim]);
 				this->coor_[dim] = this->sP_[dim];
 			}
 		}
 		void prev(const unsigned int dim)
 		{
-			const size_t offset = this->getOffset(dim);
+			const size_t offset = this->getDimOffset(dim);
 
 			if (this->coor_[dim] > this->sP_[dim])
 			{
@@ -221,18 +259,20 @@ namespace caWavelet
 				{
 					if (this->basisDim_ == dim + 1)
 					{
-						throw std::out_of_range("caCoorIterator prev error: out range");
+						//throw std::out_of_range("caCoorIterator prev error: out range");
+						return;
 					}
 					this->prev(dim + 1);
 				} else
 				{
 					if (this->basisDim_ == 0)
 					{
-						throw std::out_of_range("caCoorIterator prev error: out range");
+						//throw std::out_of_range("caCoorIterator prev error: out range");
+						return;
 					}
 					this->prev(0);
 				}
-				this->ptr_ += this->getOffset(dim) * (this->eP_[dim] - 1 - this->coor_[dim]);
+				this->ptr_ += this->getDimOffset(dim) * (this->eP_[dim] - 1 - this->coor_[dim]);
 				this->coor_[dim] = this->eP_[dim] - 1;
 			}
 		}
@@ -255,6 +295,14 @@ namespace caWavelet
 			operator++();
 			return tmp;
 		}
+		self_type& operator+=(const int& rhs)
+		{
+			for (int i = 0; i < rhs; i++)
+			{
+				operator++();
+			}
+			return *this;
+		}
 
 		// backward
 		self_type& operator--()
@@ -268,32 +316,40 @@ namespace caWavelet
 			operator--();
 			return tmp;
 		}
+		self_type& operator-=(const int& rhs)
+		{
+			for (int i = 0; i < rhs; i++)
+			{
+				operator--();
+			}
+			return *this;
+		}
 
 		// random access
-		value_reference operator[](size_type x)
+		value_reference operator[](size_type pos)
 		{
-			if (x < 0 || x >= this->vSize_)
+			if (pos < 0 || pos >= this->vSize_)
 			{
 				throw std::out_of_range("caCoorIterator [] out of range");
 			}
 
-			return ptr_[x];
+			return ptr_[this->posToSeq(pos)];
 		}
-		const caCoorIterator& operator[](size_type x) const
+		const caCoorIterator& operator[](size_type pos) const
 		{
-			if (x < 0 || x >= this->vSize_)
+			if (pos < 0 || pos >= this->vSize_)
 			{
 				throw std::out_of_range("caCoorIterator [] out of range");
 			}
 
-			return ptr_[x];
+			return ptr_[this->posToSeq(pos)];
 		}
 
-	protected:
 		void moveToStart()
 		{
 			this->moveTo(caCoor<Dty_>(this->dSize_, this->sP_));
 		}
+	protected:
 		dim_type moveTo(const caCoor<Dty_>& coor)
 		{
 			if (this->dSize_ != coor.size())
@@ -302,7 +358,7 @@ namespace caWavelet
 			}
 
 			size_type offset = 1;
-			for (unsigned int i = this->dSize_ - 1; i >= 0; i--)
+			for (int i = this->dSize_ - 1; i >= 0; i--)
 			{
 				this->ptr_ += (coor[i] - this->coor_[i]) * offset;
 				this->coor_[i] = coor[i];
@@ -312,7 +368,7 @@ namespace caWavelet
 		size_type calcVsize()
 		{
 			size_type size = this->boundary_[0];
-			for (unsigned int i = 1; i < this->dSize_; i++)
+			for (int i = 1; i < this->dSize_; i++)
 			{
 				size *= this->boundary_[i];
 			}

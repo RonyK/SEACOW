@@ -75,7 +75,7 @@ namespace caWavelet
 		caDataIterator operator--(int) { caDataIterator tmp(*this); operator--(); return tmp; }
 		
 		// random access
-		caDataIterator& operator[](size_t x)
+		reference operator[](size_t x)
 		{
 			if (x < 0)
 			{
@@ -84,7 +84,7 @@ namespace caWavelet
 
 			return ptr_[x * offset_];
 		}
-		const caDataIterator& operator[](size_t x) const
+		const reference operator[](size_t x) const
 		{
 			if (x < 0)
 			{
