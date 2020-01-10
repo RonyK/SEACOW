@@ -96,7 +96,7 @@ TEST(caIterators, caCoorIterator3D_basis_1)
 	double data[] = { 1,2,3,4, 11,12,13,14, 21,22,23,24, 31,32,33,34, 41,42,43,44, 51,52,53,54 };
 	int b[] = { 2,3,4 };
 	caWavelet::caCoorIterator<int, double> it(data, sizeof(b) / sizeof(int), b);
-	it.setBasisDimension(1);
+	it.setBasisDim(1);
 
 	EXPECT_EQ(it[0], 1);
 	EXPECT_EQ(it[1], 11);

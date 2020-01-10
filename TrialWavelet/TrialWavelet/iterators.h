@@ -155,55 +155,16 @@ namespace caWavelet
 			delete[] this->sP_;
 		}
 
-		void setBasisDimension(_In_range_(0, dSize_ - 1) const unsigned int dim)
+		void setBasisDim(_In_range_(0, dSize_ - 1) const unsigned int dim)
 		{
 			if (this->dSize_ <= dim)
 			{
-				throw std::out_of_range("caCoorIterator::setBasisDimension - too large dim");
+				throw std::out_of_range("caCoorIterator::setBasisDim - too large dim");
 			}
 			
 			this->offset_ = this->getDimOffset(dim);
 			this->basisDim_ = dim;
 		}
-		size_t getDimOffset(_In_range_(0, dSize_ - 1) const unsigned int dim)
-		{
-			if (dim == this->basisDim_)
-			{
-				return this->offset_;
-			}
-
-			size_t offset = 1;
-			for (unsigned int i = this->dSize_ - 1; i > dim; i--)
-			{
-				offset *= this->boundary_[i];
-			}
-
-			//std::cout << "dim : " << dim << ", getOffset: " << offset << std::endl;
-			return offset;
-		}
-
-		size_t posToSeq(const size_type pos)
-		{
-			size_type left = pos * this->offset_;
-			size_type seq = 0;
-			size_type offset = 1;
-			for (int d = this->basisDim_; d >= 0; d--)
-			{
-				seq += (left % this->boundary_[d]) * offset;
-				left = left / this->boundary_[d];
-				offset *= this->boundary_[d];
-			}
-
-			for (int d = this->dSize_ - 1; d > this->basisDim_; d--)
-			{
-				seq += (left % this->boundary_[d]) * offset;
-				left = left / this->boundary_[d];
-				offset *= this->boundary_[d];
-			}
-
-			return seq;
-		}
-
 
 		// Infinite loop warning
 		// if all eP_ is 0
@@ -276,6 +237,11 @@ namespace caWavelet
 				this->coor_[dim] = this->eP_[dim] - 1;
 			}
 		}
+		void moveToStart()
+		{
+			this->moveTo(caCoor<Dty_>(this->dSize_, this->sP_));
+		}
+
 		caCoor<Dty_> coor() { return caCoor<Dty_>(*this); }
 
 		bool operator==(const self_type& rhs) const { return ptr_ == rhs.ptr_; }
@@ -326,7 +292,7 @@ namespace caWavelet
 		}
 
 		// random access
-		value_reference operator[](size_type pos)
+		_NODISCARD value_reference operator[](size_type pos)
 		{
 			if (pos < 0 || pos >= this->vSize_)
 			{
@@ -335,7 +301,7 @@ namespace caWavelet
 
 			return ptr_[this->posToSeq(pos)];
 		}
-		const caCoorIterator& operator[](size_type pos) const
+		_NODISCARD const caCoorIterator& operator[](size_type pos) const
 		{
 			if (pos < 0 || pos >= this->vSize_)
 			{
@@ -345,10 +311,6 @@ namespace caWavelet
 			return ptr_[this->posToSeq(pos)];
 		}
 
-		void moveToStart()
-		{
-			this->moveTo(caCoor<Dty_>(this->dSize_, this->sP_));
-		}
 	protected:
 		dim_type moveTo(const caCoor<Dty_>& coor)
 		{
@@ -365,6 +327,7 @@ namespace caWavelet
 				offset *= this->boundary_[i];
 			}
 		}
+
 		size_type calcVsize()
 		{
 			size_type size = this->boundary_[0];
@@ -375,6 +338,45 @@ namespace caWavelet
 
 			this->vSize_ = size;
 			return size;
+		}
+
+		size_t getDimOffset(_In_range_(0, dSize_ - 1) const unsigned int dim)
+		{
+			if (dim == this->basisDim_)
+			{
+				return this->offset_;
+			}
+
+			size_t offset = 1;
+			for (unsigned int i = this->dSize_ - 1; i > dim; i--)
+			{
+				offset *= this->boundary_[i];
+			}
+
+			//std::cout << "dim : " << dim << ", getOffset: " << offset << std::endl;
+			return offset;
+		}
+
+		size_t posToSeq(const size_type pos)
+		{
+			size_type left = pos * this->offset_;
+			size_type seq = 0;
+			size_type offset = 1;
+			for (int d = this->basisDim_; d >= 0; d--)
+			{
+				seq += (left % this->boundary_[d]) * offset;
+				left = left / this->boundary_[d];
+				offset *= this->boundary_[d];
+			}
+
+			for (int d = this->dSize_ - 1; d > this->basisDim_; d--)
+			{
+				seq += (left % this->boundary_[d]) * offset;
+				left = left / this->boundary_[d];
+				offset *= this->boundary_[d];
+			}
+
+			return seq;
 		}
 
 	protected:

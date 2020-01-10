@@ -103,9 +103,9 @@ namespace caWavelet
 			size_t half = eP[d] >> 1;
 			size_t rows = numbers / (eP[d] - sP[d] + 1);
 
-			iit.setBasisDimension(d);
+			iit.setBasisDim(d);
 			iit.moveToStart();
-			oit.setBasisDimension(d);
+			oit.setBasisDim(d);
 			oit.moveToStart();
 
 			for (int r = 0; r < rows; r++)
