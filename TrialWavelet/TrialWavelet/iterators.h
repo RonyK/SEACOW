@@ -8,6 +8,8 @@
 #include <vector>
 #include <list>
 #include <iterator>
+#include "exceptions.h"
+#include "gtest/gtest_prod.h"
 
 namespace caWavelet
 {
@@ -127,12 +129,12 @@ namespace caWavelet
 		caCoorIterator(value_pointer x, const size_type dSize, dim_const_pointer boundary) :
 			caCoor<Dty_>(dSize), ptr_(x), offset_(1)
 		{
-			this->boundary_ = new dim_type[this->dSize_];
-			memcpy(this->boundary_, boundary, this->dSize_ * sizeof(dim_type));
+			this->dims_ = new dim_type[this->dSize_];
+			memcpy(this->dims_, boundary, this->dSize_ * sizeof(dim_type));
 
 			this->basisDim_ = this->dSize_ - 1;
 			this->sP_ = new dim_type[this->dSize_]();
-			this->eP_ = this->boundary_;
+			this->eP_ = this->dims_;
 
 			this->calcVsize();
 		}
@@ -140,18 +142,18 @@ namespace caWavelet
 		caCoorIterator(const self_type& mit) : caCoor<Dty_>(mit), ptr_(mit.ptr_), offset_(mit.offset_), 
 			basisDim_(mit.basisDim_), vSize_(mit.vSize_)
 		{
-			this->boundary_ = new dim_type[mit.dSize_];
-			memcpy(this->boundary_, mit.boundary_, mit.dSize_ * sizeof(dim_type));
+			this->dims_ = new dim_type[mit.dSize_];
+			memcpy(this->dims_, mit.dims_, mit.dSize_ * sizeof(dim_type));
 			
 			this->sP_ = new dim_type[mit.dSize_];
 			memcpy(this->sP_, mit.sP_, mit.dSize_ * sizeof(dim_type));
 
-			this->eP_ = this->boundary_;
+			this->eP_ = this->dims_;
 		}
 
 		~caCoorIterator()
 		{
-			delete[] this->boundary_;
+			delete[] this->dims_;
 			delete[] this->sP_;
 		}
 
@@ -168,7 +170,7 @@ namespace caWavelet
 
 		// Infinite loop warning
 		// if all eP_ is 0
-		void next(const unsigned int dim)
+		virtual void next(const unsigned int dim)
 		{
 			if (this->coor_[dim] + 1 < this->eP_[dim])
 			{
@@ -206,7 +208,8 @@ namespace caWavelet
 				this->coor_[dim] = this->sP_[dim];
 			}
 		}
-		void prev(const unsigned int dim)
+
+		virtual void prev(const unsigned int dim)
 		{
 			const size_t offset = this->getDimOffset(dim);
 
@@ -312,7 +315,7 @@ namespace caWavelet
 		}
 
 	protected:
-		dim_type moveTo(const caCoor<Dty_>& coor)
+		virtual dim_type moveTo(const caCoor<Dty_>& coor)
 		{
 			if (this->dSize_ != coor.size())
 			{
@@ -324,16 +327,16 @@ namespace caWavelet
 			{
 				this->ptr_ += (coor[i] - this->coor_[i]) * offset;
 				this->coor_[i] = coor[i];
-				offset *= this->boundary_[i];
+				offset *= this->dims_[i];
 			}
 		}
 
 		size_type calcVsize()
 		{
-			size_type size = this->boundary_[0];
+			size_type size = this->dims_[0];
 			for (int i = 1; i < this->dSize_; i++)
 			{
-				size *= this->boundary_[i];
+				size *= this->dims_[i];
 			}
 
 			this->vSize_ = size;
@@ -350,43 +353,43 @@ namespace caWavelet
 			size_t offset = 1;
 			for (unsigned int i = this->dSize_ - 1; i > dim; i--)
 			{
-				offset *= this->boundary_[i];
+				offset *= this->dims_[i];
 			}
 
 			//std::cout << "dim : " << dim << ", getOffset: " << offset << std::endl;
 			return offset;
 		}
 
-		size_t posToSeq(const size_type pos)
+		virtual size_t posToSeq(const size_type pos)
 		{
 			size_type left = pos * this->offset_;
 			size_type seq = 0;
 			size_type offset = 1;
 			for (int d = this->basisDim_; d >= 0; d--)
 			{
-				seq += (left % this->boundary_[d]) * offset;
-				left = left / this->boundary_[d];
-				offset *= this->boundary_[d];
+				seq += (left % this->dims_[d]) * offset;
+				left = left / this->dims_[d];
+				offset *= this->dims_[d];
 			}
 
 			for (int d = this->dSize_ - 1; d > this->basisDim_; d--)
 			{
-				seq += (left % this->boundary_[d]) * offset;
-				left = left / this->boundary_[d];
-				offset *= this->boundary_[d];
+				seq += (left % this->dims_[d]) * offset;
+				left = left / this->dims_[d];
+				offset *= this->dims_[d];
 			}
 
 			return seq;
 		}
 
 	protected:
-		Ty_* ptr_;
-		size_type offset_;
-		size_type vSize_;
-		unsigned int basisDim_;
-		dim_pointer boundary_;
-		dim_pointer sP_;
-		dim_pointer eP_;
+		Ty_* ptr_;				// current pointer
+		size_type offset_;		// offset in sequence pointer for current dimension
+		size_type vSize_;		// number of elements
+		unsigned int basisDim_;	// current dimension
+		dim_pointer dims_;		// original array dimension size
+		dim_pointer sP_;		// range start point
+		dim_pointer eP_;		// range end point
 	};
 
 	// TODO:: Do not inherit caCoorSeq
@@ -450,7 +453,7 @@ namespace caWavelet
 		{
 			for (int i = 0; i < this->dSize_; i++)
 			{
-				if (this->boundary_[i] < this->eP_[i])
+				if (this->dims_[i] < this->eP_[i])
 				{
 					return false;
 				}
@@ -458,6 +461,344 @@ namespace caWavelet
 
 			return false;
 		}
+
+	};
+
+	template <typename Dty_, typename Ty_>
+	class caWTIterator : public caCoorIterator<Dty_, Ty_>
+	{
+	public:
+		using self_type = caWTIterator<Dty_, Ty_>;
+		using size_type = size_t;
+		using dim_type = Dty_;
+		using dim_pointer = Dty_*;
+		using dim_const_pointer = const Dty_*;
+		using dim_reference = Dty_&;
+		using dim_const_reference = const Dty_&;
+
+		using value_type = Ty_;
+		using value_pointer = Ty_*;
+		using value_const_pointer = const Ty_*;
+		using value_reference = Ty_&;
+		using value_const_reference = const Ty_&;
+
+	public: 
+		caWTIterator(value_pointer x, const size_type dSize, dim_const_pointer boundary) :
+			caCoorIterator<Dty_, Ty_>(x, dSize, boundary)
+		{
+			this->ptrBegin_ = x;
+			this->curLevel_ = 0;
+			this->maxLevel_ = 0;
+			/* curBandNum_
+			 *      0   1
+			 *   ¦£¦¡¦¨¦¡¦¤
+			 * 0 ¦¢ 0¦¢ 1¦¢
+			 *   ¦§¦¡¦«¦¡¦©
+			 * 1 ¦¢ 2¦¢ 3¦¢
+			 *   ¦¦¦¡¦ª¦¡¦¥
+			 */
+			this->curBandNum_ = 0;
+
+			this->bandDims_ = new dim_type[this->dSize_];
+			memcpy(this->bandDims_, this->dims_, sizeof(dim_type) * this->dSize_);
+
+			this->bandSize_ = new size_type[1];
+			this->bandSize_[0] = 1;
+			for (size_type d = 0; d < this->dSize_; d++)
+			{
+				this->bandSize_[0] *= this->bandDims_[d];
+			}
+
+			this->bsP_ = new Dty_[this->dSize_];
+			this->beP_ = new Dty_[this->dSize_];
+			memset(this->bsP_, 0, sizeof(dim_type) * this->dSize_);
+			memcpy(this->beP_, this->bandDims_, sizeof(dim_type) * this->dSize_);
+		}
+
+		caWTIterator(const self_type& mit) : caCoorIterator<Dty_, Ty_>(mit)
+		{
+			memcpy(this->bandDims_, mit.bandDims_, sizeof(dim_type) * this->dSize_);
+			memcpy(this->bsP_, mit.bsP_, sizeof(dim_type) * this->dSize_);
+			memcpy(this->beP_, mit.beP_, sizeof(dim_type) * this->dSize_);
+			memcpy(this->bandSize_, mit.bandSize_, sizeof(size_type) * (this->maxLevel_ + 1));
+
+			this->maxLevel_ = mit.maxLevel_;
+
+			this->curLevel_ = mit.curLevel_;
+			this->curBandNum_ = mit.curBandNum_;
+
+			this->ptrBegin_ = mit.ptrBegin_;
+		}
+
+		~caWTIterator()
+		{
+			delete[] this->bandDims_;
+			delete[] this->bandSize_;
+			delete[] this->bsP_;
+			delete[] this->beP_;
+		}
+
+	public:
+		virtual void next(const unsigned int dim)
+		{
+			if (this->coor_[dim] + 1 < this->beP_[dim])
+			{
+				this->coor_[dim]++;
+				this->ptr_++;
+			} else
+			{
+				if ((dim > 0 && this->basisDim_ == dim - 1) || (dim == 0 && this->basisDim_ == this->dSize_ - 1))
+				{
+					// If reach to the end of the current band
+					// Then move to next band
+					this->moveToNextBand();
+				} else
+				{
+					if (dim > 0)
+					{
+						this->next(dim - 1);
+					} else
+					{
+						this->next(this->dSize_ - 1);
+					}
+					this->ptr_++;
+					this->coor_[dim] = this->bsP_[dim];
+				}
+			}
+		}
+
+		void setMaxLevel(size_type maxLevel)
+		{
+			this->maxLevel_ = maxLevel;
+
+			this->calcBandDims(maxLevel);
+			this->calcBandSize(maxLevel);
+			this->calcBandBoundary(maxLevel);
+		}
+
+		void setCurLevel(size_type level)
+		{
+			assert(level <= this->maxLevel_);
+
+			this->curLevel_ = level;
+			this->curBandNum_ = 0;
+			this->calcBandBoundary(this->curLevel_, this->curBandNum_);
+		}
+
+		void setCurBand(size_type band)
+		{
+			assert(band != 0 || (band == 0 && this->curLevel_ == this->maxLevel_));
+			assert(band < pow(2, this->dSize_));
+
+			this->curBandNum_ = band;
+			this->calcBandBoundary(this->curLevel_, band);
+		}
+
+	protected:
+		void moveToNextBand()
+		{
+			if (this->curBandNum_ + 1 >= pow(2, this->dSize_))
+			{
+				if (this->curLevel_ < 0)
+				{
+					return;
+				}
+
+				// Except maxLevel, curBandNum starts from 1.
+				this->curBandNum_ = 1;
+				this->curLevel_--;
+			} else
+			{
+				this->curBandNum_++;
+			}
+
+			this->calcBandBoundary();
+			this->moveTo(caCoor<Dty_>(this->dSize_, this->bsP_));
+		}
+
+		void moveToPrevBand()
+		{
+			// Band num 0 only exists in maxLevel.
+			// In other levels, band num starts from 1.
+			if (this->curBandNum_ <= 1)
+			{
+				if (this->curLevel_ >= this->maxLevel_)
+				{
+					this->curBandNum_ = 0;
+					return;
+				}
+
+				this->curBandNum_ = pow(2, this->dSize_) - 1;
+				this->curLevel_++;
+			} else
+			{
+				this->curBandNum_--;
+			}
+
+			this->calcBandBoundary();
+			this->moveTo(caCoor<Dty_>(this->dSize_, this->beP_));
+		}
+
+		void calcBandBoundary(size_type level = -1, size_type bandNum = -1)
+		{
+			if (level == -1) level = this->curLevel_;
+			if (bandNum == -1) bandNum = this->curBandNum_;
+
+			dim_pointer dims = this->getBandDims(this->curLevel_);
+			memset(this->bsP_, 0, sizeof(dim_type) * this->dSize_);
+			memset(this->beP_, 0, sizeof(dim_type) * this->dSize_);
+
+			for (size_type d = this->dSize_ - 1; d + 1 > 0; d--)
+			{
+				if (bandNum & 0x1)
+				{
+					this->bsP_[d] = dims[d];
+					this->beP_[d] = dims[d] << 1;
+				} else
+				{
+					this->beP_[d] = dims[d];
+				}
+			}
+		}
+
+		// Band dimensions
+		void calcBandDims(size_type level)
+		{
+			assert(level <= this->maxLevel_);
+
+			dim_pointer temp = new dim_type[this->dSize_ * (level + 1)];
+			
+			// Band dim for level 0 is half of data dims
+			for (size_type d = 0; d < this->dSize_; d++)
+			{
+				temp[d] = this->dims_[d] >> 1;
+			}
+
+			// Rests are half of previous band dim
+			for (size_type l = 1; l <= level; l++)
+			{
+				for (size_type d = 0; d < this->dSize_; d++)
+				{
+					temp[this->dSize_ * l + d] = (temp[this->dSize_ * (l - 1) + d] >> 1);
+				}
+			}
+
+			// Replace bandDims
+			delete[] this->bandDims_;
+			this->bandDims_ = temp;
+		}
+
+		dim_pointer getBandDims(size_type level)
+		{
+			assert(level <= this->maxLevel_);
+			return this->bandDims_ + (this->dSize_ * level);
+		}
+
+		// Number of element in a band
+		void calcBandSize(size_type level)
+		{
+			assert(level <= this->maxLevel_);
+
+			size_type* temp = new size_type[level + 1];
+			for (size_type l = 0; l <= level; l++)
+			{
+				dim_type* curBandDim = this->getBandDims(l);
+				temp[l] = 1;
+				for (size_type d = 0; d < this->dSize_; d++)
+				{
+					temp[l] *= curBandDim[d];
+				}
+			}
+
+			delete[] this->bandSize_;
+			this->bandSize_ = temp;
+		}
+
+		size_type getBandSize(size_type level)
+		{
+			assert(level <= this->maxLevel_);
+			return this->bandSize_[level];
+		}
+
+		virtual dim_type moveTo(const caCoor<Dty_>& coor)
+		{
+			if (this->dSize_ != coor.size())
+			{
+				throw std::exception("moveTo - different dimension size");
+			}
+
+			// Find which level
+			size_type level;
+			dim_type* levelBoundary;
+			for (level = this->maxLevel_; level > 0; level--)
+			{
+				levelBoundary = this->getBandDims(level - 1);
+				bool flag = true;
+				for (int d = this->dSize_ - 1; d >= 0; d--)
+				{
+					if (coor[d] > levelBoundary[d])
+					{
+						flag = false;
+						break;
+					}
+				}
+
+				if (flag)
+				{
+					break;
+				}
+			}
+
+			// Set current ptr, level, bandnum
+			this->setCurLevel(level);
+			this->ptr_ = this->ptrBegin_;
+			size_type bandNum = 0;
+			size_type offset = 1;
+			dim_type* curBandDim = this->getBandDims(level);
+			for (int d = this->dSize_ - 1; d >= 0; d--)
+			{
+				this->coor_[d] = coor[d];
+				bool flag = size_type(coor[d] / curBandDim[d]);
+
+				size_type innerCoor = coor[d];
+				if (flag)
+				{
+					innerCoor -= curBandDim[d];
+				}
+
+				this->ptr_ += offset * innerCoor;
+
+				offset *= curBandDim[d];
+				bandNum |= flag << d;
+			}
+			this->curBandNum_ = bandNum;
+			this->ptr_ += this->getBandSize(level) * this->curBandNum_;
+		}
+
+		virtual size_t posToSeq(const size_type pos)
+		{
+			size_type seq = 0;
+			
+			// TODO :: Calculate seq
+			throw NotImplemented();
+
+			return seq;
+		}
+
+	protected:
+		dim_pointer bandDims_;
+		dim_pointer bsP_;
+		dim_pointer beP_;
+		size_type* bandSize_;
+		size_type maxLevel_;
+		
+		size_type curLevel_;
+		size_type curBandNum_;
+
+		value_pointer ptrBegin_;
+
+	private:
+		FRIEND_TEST(caIterators, caWTIteratorMoveTo);
 
 	};
 }

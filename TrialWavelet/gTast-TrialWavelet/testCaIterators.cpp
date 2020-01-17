@@ -84,7 +84,7 @@ TEST(caIterators, caCoorIterator3D_basis_default)
 					//EXPECT_THROW(it++, std::out_of_range);
 				} else
 				{
-					it++;
+					++it;
 				}
 			}
 		}
@@ -95,41 +95,41 @@ TEST(caIterators, caCoorIterator3D_basis_1)
 {
 	double data[] = { 1,2,3,4, 11,12,13,14, 21,22,23,24, 31,32,33,34, 41,42,43,44, 51,52,53,54 };
 	int b[] = { 2,3,4 };
-	caWavelet::caCoorIterator<int, double> it(data, sizeof(b) / sizeof(int), b);
-	it.setBasisDim(1);
+caWavelet::caCoorIterator<int, double> it(data, sizeof(b) / sizeof(int), b);
+it.setBasisDim(1);
 
-	EXPECT_EQ(it[0], 1);
-	EXPECT_EQ(it[1], 11);
-	EXPECT_EQ(it[2], 21);
+EXPECT_EQ(it[0], 1);
+EXPECT_EQ(it[1], 11);
+EXPECT_EQ(it[2], 21);
 
-	EXPECT_EQ(it.coor()[0], 0);
-	EXPECT_EQ(it.coor()[1], 0);
-	EXPECT_EQ(it.coor()[2], 0);
-	EXPECT_EQ(*it, 1);
+EXPECT_EQ(it.coor()[0], 0);
+EXPECT_EQ(it.coor()[1], 0);
+EXPECT_EQ(it.coor()[2], 0);
+EXPECT_EQ(*it, 1);
 
-	for (int x = 0; x < b[2]; x++)
+for (int x = 0; x < b[2]; x++)
+{
+	for (int z = 0; z < b[0]; z++)
 	{
-		for (int z = 0; z < b[0]; z++)
+		for (int y = 0; y < b[1]; y++)
 		{
-			for (int y = 0; y < b[1]; y++)
+			std::cout << z << ", " << y << ", " << x << ":" << *it << std::endl;
+
+			EXPECT_EQ(it.coor()[0], z);
+			EXPECT_EQ(it.coor()[1], y);
+			EXPECT_EQ(it.coor()[2], x);
+			EXPECT_EQ(*it, data[z * b[1] * b[2] + y * b[2] + x]);
+
+			if (z == b[0] - 1 && y == b[1] - 1 && x == b[2] - 1)
 			{
-				std::cout << z << ", " << y << ", " << x << ":" << *it << std::endl;
-
-				EXPECT_EQ(it.coor()[0], z);
-				EXPECT_EQ(it.coor()[1], y);
-				EXPECT_EQ(it.coor()[2], x);
-				EXPECT_EQ(*it, data[z * b[1] * b[2] + y * b[2] + x]);
-
-				if (z == b[0] - 1 && y == b[1] - 1 && x == b[2] - 1)
-				{
-					//EXPECT_THROW(it++, std::out_of_range);
-				} else
-				{
-					it++;
-				}
+				//EXPECT_THROW(it++, std::out_of_range);
+			} else
+			{
+				++it;
 			}
 		}
 	}
+}
 }
 
 TEST(caIterators, caCoorRangeIterator1D)
@@ -156,4 +156,33 @@ TEST(caIterators, caCoorRangeIterator1D)
 	EXPECT_EQ(*it, 5);
 
 	//EXPECT_THROW(it++, std::out_of_range);
+}
+
+namespace caWavelet
+{
+	TEST(caIterators, caWTIteratorMoveTo)
+	{
+		double data[64] = { 0 };	// WT data
+		int d[] = { 8, 8 };			// Dimension
+
+		// Data initialization
+		for (int i = 0; i < 64; i++)
+		{
+			data[i] = i;
+		}
+
+		// Create WTIterator
+		caWavelet::caWTIterator<int, double> it(data, sizeof(d) / sizeof(int), d);
+		it.setMaxLevel(1);
+		it.setCurLevel(1);
+		it.setCurBand(0);
+
+		int c[2] = { 3, 3 };
+		caWavelet::caCoor<int> targetCoor(2, c);
+		it.moveTo(targetCoor);
+
+		EXPECT_EQ(it.coor()[0], c[0]);
+		EXPECT_EQ(it.coor()[1], c[1]);
+		EXPECT_EQ(*it, data[15]);
+	}
 }

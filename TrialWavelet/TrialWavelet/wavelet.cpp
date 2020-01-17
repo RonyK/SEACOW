@@ -152,7 +152,7 @@ namespace caWavelet
 	}
 
 	template <typename Dty_>
-	void getBandSize(const std::vector<Dty_>& dims, std::vector<Dty_>& output, const size_t level)
+	void getBandSize(std::vector<Dty_>& output, const std::vector<Dty_>& dims, const size_t level)
 	{
 		double factor = pow(1 / 2, level);
 		for (auto d : dims)
