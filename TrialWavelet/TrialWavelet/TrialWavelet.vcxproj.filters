@@ -24,6 +24,9 @@
     <ClCompile Include="haar.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="spiht.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="iterators.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -33,6 +36,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="haar.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="spiht.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="iterators.h">

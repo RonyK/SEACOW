@@ -145,12 +145,14 @@
     <ClCompile Include="daubechies.cpp" />
     <ClCompile Include="haar.cpp" />
     <ClCompile Include="iterators.cpp" />
+    <ClCompile Include="spiht.cpp" />
     <ClCompile Include="wavelet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="exceptions.h" />
     <ClInclude Include="haar.h" />
     <ClInclude Include="iterators.h" />
+    <ClInclude Include="spiht.h" />
     <ClInclude Include="wavelet.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -18,13 +18,13 @@ namespace caWavelet
 	{
 	public:
 		//using difference_type = ptrdiff_t;
-		using self_type				= caCoor;
-		using size_type				= size_t;
-		using dim_type				= Dty_;
-		using dim_pointer			= Dty_*;
-		using dim_const_pointer		= const Dty_*;
-		using dim_reference			= Dty_&;
-		using dim_const_reference	= const Dty_&;
+		using self_type = caCoor;
+		using size_type = size_t;
+		using dim_type = Dty_;
+		using dim_pointer = Dty_*;
+		using dim_const_pointer = const Dty_*;
+		using dim_reference = Dty_&;
+		using dim_const_reference = const Dty_&;
 
 	public:
 		caCoor(const size_type dSize = 0) : dSize_(dSize)
@@ -50,11 +50,11 @@ namespace caWavelet
 		}
 
 	public:
-		bool operator==(const self_type& rhs) const 
+		bool operator==(const self_type& rhs) const
 		{
 			return this->dSize_ == rhs.dSize_ && (memcmp(this->coor_, rhs.coor_, this->dSize * sizeof(dim_type)) == 0);
 		}
-		bool operator!=(const self_type& rhs) const 
+		bool operator!=(const self_type& rhs) const
 		{
 			return this->dSize_ != rhs.dSize_ || (memcmp(this->coor_, rhs.coor_, this->dSize * sizeof(dim_type)) != 0);
 		}
@@ -111,18 +111,18 @@ namespace caWavelet
 	class caCoorIterator : public caCoor<Dty_>
 	{
 	public:
-		using self_type				= caCoorIterator<Dty_, Ty_>;
-		using size_type				= size_t;
-		using dim_type				= Dty_;
-		using dim_pointer			= Dty_*;
-		using dim_const_pointer		= const Dty_*;
-		using dim_reference			= Dty_&;
-		using dim_const_reference	= const Dty_&;
+		using self_type = caCoorIterator<Dty_, Ty_>;
+		using size_type = size_t;
+		using dim_type = Dty_;
+		using dim_pointer = Dty_*;
+		using dim_const_pointer = const Dty_*;
+		using dim_reference = Dty_&;
+		using dim_const_reference = const Dty_&;
 
-		using value_type			= Ty_;
-		using value_pointer			= Ty_*;
-		using value_const_pointer	= const Ty_*;
-		using value_reference		= Ty_&;
+		using value_type = Ty_;
+		using value_pointer = Ty_*;
+		using value_const_pointer = const Ty_*;
+		using value_reference = Ty_&;
 		using value_const_reference = const Ty_&;
 
 	public:
@@ -139,12 +139,12 @@ namespace caWavelet
 			this->calcVsize();
 		}
 
-		caCoorIterator(const self_type& mit) : caCoor<Dty_>(mit), ptr_(mit.ptr_), offset_(mit.offset_), 
+		caCoorIterator(const self_type& mit) : caCoor<Dty_>(mit), ptr_(mit.ptr_), offset_(mit.offset_),
 			basisDim_(mit.basisDim_), vSize_(mit.vSize_)
 		{
 			this->dims_ = new dim_type[mit.dSize_];
 			memcpy(this->dims_, mit.dims_, mit.dSize_ * sizeof(dim_type));
-			
+
 			this->sP_ = new dim_type[mit.dSize_];
 			memcpy(this->sP_, mit.sP_, mit.dSize_ * sizeof(dim_type));
 
@@ -163,7 +163,7 @@ namespace caWavelet
 			{
 				throw std::out_of_range("caCoorIterator::setBasisDim - too large dim");
 			}
-			
+
 			this->offset_ = this->getDimOffset(dim);
 			this->basisDim_ = dim;
 		}
@@ -240,6 +240,7 @@ namespace caWavelet
 				this->coor_[dim] = this->eP_[dim] - 1;
 			}
 		}
+
 		void moveToStart()
 		{
 			this->moveTo(caCoor<Dty_>(this->dSize_, this->sP_));
@@ -251,7 +252,7 @@ namespace caWavelet
 		bool operator!=(const self_type& rhs) const { return ptr_ != rhs.ptr_; }
 		value_reference operator*() { return *ptr_; }
 		value_pointer operator->() { return ptr_; }
-		
+
 		// forward
 		self_type& operator++()
 		{
@@ -382,7 +383,6 @@ namespace caWavelet
 			return seq;
 		}
 
-	protected:
 		Ty_* ptr_;				// current pointer
 		size_type offset_;		// offset in sequence pointer for current dimension
 		size_type vSize_;		// number of elements
@@ -396,18 +396,18 @@ namespace caWavelet
 	template <typename Dty_, typename Ty_>
 	class caCoorRangeIterator : public caCoorIterator<Dty_, Ty_>
 	{
-		using self_type				= caCoorRangeIterator;
-		using size_type				= size_t;
-		using dim_type				= Dty_;
-		using dim_pointer			= Dty_*;
-		using dim_const_pointer		= const Dty_*;
-		using dim_reference			= Dty_&;
-		using dim_const_reference	= const Dty_&;
+		using self_type = caCoorRangeIterator;
+		using size_type = size_t;
+		using dim_type = Dty_;
+		using dim_pointer = Dty_*;
+		using dim_const_pointer = const Dty_*;
+		using dim_reference = Dty_&;
+		using dim_const_reference = const Dty_&;
 
-		using value_type			= Ty_;
-		using value_pointer			= Ty_*;
-		using value_const_pointer	= const Ty_*;
-		using value_reference		= Ty_&;
+		using value_type = Ty_;
+		using value_pointer = Ty_*;
+		using value_const_pointer = const Ty_*;
+		using value_reference = Ty_&;
 		using value_const_reference = const Ty_&;
 
 	public:
@@ -432,7 +432,7 @@ namespace caWavelet
 		{
 			delete[] this->eP_;
 		}
-		
+
 	protected:
 		// Check if sP_ and eP_ has proper range.
 		bool checkSpEp()
@@ -461,7 +461,6 @@ namespace caWavelet
 
 			return false;
 		}
-
 	};
 
 	template <typename Dty_, typename Ty_>
@@ -588,6 +587,7 @@ namespace caWavelet
 					this->setCurBand(0);
 				} else
 				{
+					// band 0 exists in a maxLevel only.
 					this->setCurBand(1);
 				}
 			}
@@ -615,6 +615,16 @@ namespace caWavelet
 			}
 		}
 
+		_NODISCARD size_type curBand()
+		{
+			return this->curBand_;
+		}
+
+		_NODISCARD size_type curLevel()
+		{
+			return this->curLevel_;
+		}
+
 		bool isInside(const caCoor<Dty_>& coor, dim_type* sP, dim_type* eP)
 		{
 			for (size_type d = 0; d < coor.size(); d++)
@@ -626,6 +636,50 @@ namespace caWavelet
 			}
 
 			return true;
+		}
+
+		// Move to first child of the current coordinate
+		void moveToChild()
+		{
+			assert(this->curLevel_ > 0);
+			assert(this->curBand_ != 0 || (this->curBand_ == 0 && this->curLevel_ == this->maxLevel_));
+			
+			caCoor<Dty_> newCoor(this);
+			// TODO::move to child coordiate.
+			if (this->curBand_ == 0)
+			{
+				for (size_type d = this->dSize_ - 1; d + 1 > 0; d--)
+				{
+					newCoor[d] = ((int)this->coor[d] / 2) * 2;
+					if (this->coor[d] & 0x1)
+					{
+						newCoor[d] += this->bandSize_[d];
+					}
+				}
+			} else
+			{
+				// Other level bands
+				for (size_type d = this->dSize_ - 1; d + 1 > 0; d--)
+				{
+					newCoor[d] = this->coor[d] * 2;
+				}
+			}
+
+			this->moveTo(newCoor);
+		}
+
+		void moveToNextSibling()
+		{
+
+		}
+
+		void moveToChildBand()
+		{
+			assert(this->curBand_ != 0);
+			assert(this->curLevel_ > 0);
+			
+			this->setCurLevel(this->curLevel_ - 1);
+			this->setCurBand(this->curBand_, true);
 		}
 
 	protected:
@@ -767,11 +821,11 @@ namespace caWavelet
 			this->setCurCoor(coor);
 		}
 
+		// TODO::erase posToSeq func (here and parent)
 		virtual size_t posToSeq(const size_type pos)
 		{
 			size_type seq = 0;
 			
-			// TODO :: Calculate seq
 			throw NotImplemented();
 
 			return seq;
@@ -851,6 +905,9 @@ namespace caWavelet
 		FRIEND_TEST(caIterators, caWTIteratorMoveTo);
 		FRIEND_TEST(caIterators, caWTIteratorCalcBandDim);
 	};
+
+	//template <typename Dty_, typename Ty_>
+	//class caWTChildIterator: public: 
 }
 
 #endif // _caIterators_

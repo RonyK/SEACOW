@@ -284,6 +284,7 @@ namespace caWavelet
 
 	TEST(caIterators, caWTIteratorMoveTo)
 	{
+		size_t maxLevel = 1;
 		double data[64] = { 0 };	// WT data
 		int d[] = { 8, 8 };			// Dimension
 
@@ -295,11 +296,12 @@ namespace caWavelet
 
 		// Create WTIterator
 		caWavelet::caWTIterator<int, double> it(data, sizeof(d) / sizeof(int), d);
-		it.setMaxLevel(1);
+		it.setMaxLevel(maxLevel);
 		it.setCurLevel(1);
 		it.setCurBand(0);
 
 		int c[2] = { 3, 3 };
+
 		it.moveTo(caWavelet::caCoor<int>(2, c));
 		EXPECT_EQ(it.coor()[0], c[0]);
 		EXPECT_EQ(it.coor()[1], c[1]);
@@ -325,6 +327,15 @@ namespace caWavelet
 		EXPECT_EQ(it.coor()[0], c[0]);
 		EXPECT_EQ(it.coor()[1], c[1]);
 		EXPECT_EQ(*it, data[58]);
+		EXPECT_EQ(it.curLevel(), 0);
+		EXPECT_EQ(it.curBand(), 3);
+
+		it.moveToStart();
+		EXPECT_EQ(it.coor()[0], 0);
+		EXPECT_EQ(it.coor()[1], 0);
+		EXPECT_EQ(*it, data[0]);
+		EXPECT_EQ(it.curLevel(), maxLevel);
+		EXPECT_EQ(it.curBand(), 0);
 	}
 
 	TEST(caIterators, caWTIterator2D)
