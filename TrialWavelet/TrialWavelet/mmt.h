@@ -69,14 +69,11 @@ namespace caWavelet
 
 			dim_vector chunkNum;
 			this->calcChunkNum(&chunkNum, dims, chunkDims);
-			// chunk num은 level올라갈 때 마다 모든 차원에서 1/2씩 줄어듬
 
 			// Build MMT from a 0 level.
-			// level 0 일때는 data 이용해서 mmt 만들고
 			this->buildLeafMMT(data, length, chunkDims, &chunkNum);
-			for (size_type level = 1; level < maxLevel; level++)
+			for (size_type level = 1; level <= maxLevel; level++)
 			{
-				// 이후부터는 이전 mmt level 이용해서 build 
 				this->buildIntermediateMMT(level, chunkDims, &chunkNum);
 			}
 		}
@@ -85,13 +82,11 @@ namespace caWavelet
 		void buildLeafMMT(value_pointer data, size_const length, dim_vector_pointer chunkDims,
 			dim_vector_pointer chunkNum)
 		{
-			unsigned int tl = this->calcLength(chunkNum);
+			size_type dimSize = this->dims_.size();
 			this->nodes.push_back(new mmtNode[this->calcLength(chunkNum)]);
 
-			caCoorIterator<Dty_, Ty_> it(data, this->dims_.size(), this->dims_.data());
-			caCoorIterator<Dty_, mmtNode> cit(this->nodes[0], chunkNum->size(), chunkNum->data());
-
-			size_type dimSize = this->dims_.size();
+			caCoorIterator<Dty_, Ty_> it(data, dimSize, this->dims_.data());
+			caCoorIterator<Dty_, mmtNode> cit(this->nodes[0], dimSize, chunkNum->data());
 
 			for (size_type i = 0; i < length; i++)
 			{
@@ -99,7 +94,7 @@ namespace caWavelet
 				caCoor<Dty_> cur = it;
 				for (size_type d = 0; d < dimSize; d++)
 				{
-					cur[d] = cur[d] / chunkDims->at(d);
+					cur[d] /= chunkDims->at(d);
 				}
 
 				// get target chunk
@@ -137,11 +132,11 @@ namespace caWavelet
 			assert(level > 0);
 
 			size_type prevLevel = level - 1;
-			size_type dimSize = chunkNum->size();
+			size_type dimSize = this->dims_.size();
 
 			// calc chunk num of prev and current level
-			dim_vector curLevelChunkNum(chunkNum);
-			dim_vector prevLevelChunkNum(dimSize);
+			dim_vector prevLevelChunkNum(*chunkNum);		// Copy chunkNum vector
+			dim_vector curLevelChunkNum(dimSize);			// Init with 0s
 
 			for (size_type d = 0; d < dimSize; d++)
 			{
@@ -149,35 +144,49 @@ namespace caWavelet
 				curLevelChunkNum[d] = prevLevelChunkNum[d] / 2;
 			}
 
+			size_type prevLength = this->calcLength(&prevLevelChunkNum);
+
+			this->nodes.push_back(new mmtNode[prevLength / pow(2, dimSize)]);
+
 			caCoorIterator<Dty_, mmtNode> pcit(this->nodes[prevLevel], dimSize,
 				prevLevelChunkNum.data());
-			caCoorIterator<Dty_, mmtNode> cit(this->nodes[prevLevel], dimSize,
+			caCoorIterator<Dty_, mmtNode> cit(this->nodes[level], dimSize,
 				curLevelChunkNum.data());
 
-			for (size_type i = 0; i < prevLevelChunkNum.size(); i++)
+			for (size_type i = 0; i < prevLength; i++)
 			{
 				// current iterator coordiate -> chunk coordinate
-				caCoor<Dty_> cur = pcit.coor;
+				caCoor<Dty_> cur = pcit;
 				for (size_type d = 0; d < dimSize; d++)
 				{
-					cur[i] /= curLevelChunkNum[i];
+					cur[d] /= 2;
 				}
 
 				// get target chunk
 				cit.moveTo(cur);
-				mmtNode node = *cit;
+				mmtNode* node = &(*cit);
 
-				// compare min max value
-				if (*pcit > node.max)
+				// init min, max value
+				if (node->order == 0x80)
 				{
-					node.max = *pcit;
+					node->max = (*pcit).max;
+					node->min = (*pcit).min;
+					node->order = 0;			// TODO::order
 				}
-				if (*pcit < node.min)
+				else
 				{
-					node.min = *pcit;
+					// compare min max value
+					if ((*pcit).max > node->max)
+					{
+						node->max = (*pcit).max;
+					}
+					if ((*pcit).min < node->min)
+					{
+						node->min = (*pcit).min;
+					}
 				}
 
-				// move to next value
+				// move to next chunk
 				pcit++;
 			}
 		}
@@ -208,7 +217,7 @@ namespace caWavelet
 			for (size_type d = 0; d < dims->size(); d++)
 			{
 				// ceiling
-				size_type chunks = 1 + (dims[d] + -1) / chunkDims[d];
+				size_type chunks = 1 + (dims->at(d) - 1) / chunkDims->at(d);
 
 				if (output->size() <= d)
 				{
@@ -216,7 +225,7 @@ namespace caWavelet
 				}
 				else
 				{
-					output[d] = chunks;
+					output->at(d) = chunks;
 				}
 			}
 		}
