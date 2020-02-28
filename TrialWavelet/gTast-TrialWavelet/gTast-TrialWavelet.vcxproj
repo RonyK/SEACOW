@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="testCaIterators.cpp" />
+    <ClCompile Include="testCaMMT.cpp" />
     <ClCompile Include="testCaWaveletEncode.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
