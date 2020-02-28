@@ -253,6 +253,22 @@ namespace caWavelet
 			}
 		}
 
+		virtual void moveTo(const caCoor<Dty_>& coor)
+		{
+			if (this->dSize_ != coor.size())
+			{
+				throw std::exception("moveTo - different dimension size");
+			}
+
+			size_type offset = 1;
+			for (int i = this->dSize_ - 1; i >= 0; i--)
+			{
+				this->ptr_ += (coor[i] - this->coor_[i]) * offset;
+				this->coor_[i] = coor[i];
+				offset *= this->dims_[i];
+			}
+		}
+
 		void moveToStart()
 		{
 			this->moveTo(caCoor<Dty_>(this->dSize_, this->sP_));
@@ -328,22 +344,6 @@ namespace caWavelet
 		}
 
 	protected:
-		virtual void moveTo(const caCoor<Dty_>& coor)
-		{
-			if (this->dSize_ != coor.size())
-			{
-				throw std::exception("moveTo - different dimension size");
-			}
-
-			size_type offset = 1;
-			for (int i = this->dSize_ - 1; i >= 0; i--)
-			{
-				this->ptr_ += (coor[i] - this->coor_[i]) * offset;
-				this->coor_[i] = coor[i];
-				offset *= this->dims_[i];
-			}
-		}
-
 		size_type calcVsize()
 		{
 			size_type size = this->dims_[0];
@@ -578,6 +578,27 @@ namespace caWavelet
 			}
 		}
 
+		virtual void moveTo(const caCoor<Dty_>& coor)
+		{
+			if (this->dSize_ != coor.size())
+			{
+				throw std::exception("moveTo - different dimension size");
+			}
+
+			// Find which level and band
+			size_type level = this->findLevel(coor);
+			size_type band = this->findBand(coor, level);
+
+			// Set current level, band, ptr.
+			this->setCurLevel(level);
+			this->setCurBand(band);
+			this->ptr_ = this->ptrBegin_;
+			this->ptr_ += this->getBandSize(level) * this->curBand_;
+			this->ptr_ += this->posToSeq(coor);
+
+			this->setCurCoor(coor);
+		}
+
 		void setMaxLevel(size_type maxLevel)
 		{
 			this->maxLevel_ = maxLevel;
@@ -810,27 +831,6 @@ namespace caWavelet
 		{
 			assert(level <= this->maxLevel_);
 			return this->bandSize_[level];
-		}
-
-		virtual void moveTo(const caCoor<Dty_>& coor)
-		{
-			if (this->dSize_ != coor.size())
-			{
-				throw std::exception("moveTo - different dimension size");
-			}
-
-			// Find which level and band
-			size_type level = this->findLevel(coor);
-			size_type band = this->findBand(coor, level);
-
-			// Set current level, band, ptr.
-			this->setCurLevel(level);
-			this->setCurBand(band);
-			this->ptr_ = this->ptrBegin_;
-			this->ptr_ += this->getBandSize(level) * this->curBand_;
-			this->ptr_ += this->posToSeq(coor);
-
-			this->setCurCoor(coor);
 		}
 
 		// TODO::erase posToSeq func (here and parent)
