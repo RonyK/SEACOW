@@ -13,8 +13,10 @@ namespace caWavelet
 		build2DDummy(data, DATA_LENGTH_2D_DUMMY);
 		caMMT<unsigned int, int> mmt;
 		mmt.length = DATA_LENGTH_2D_DUMMY;
-		mmt.dims_ = std::vector<unsigned int>() = {8, 8};
-		std::vector<unsigned int> chunkNum = {4, 4};
+		mmt.dims_ = std::vector<unsigned int>() = { 8, 8 };
+		std::vector<unsigned int> chunkDim = { 2, 2 };
+		std::vector<unsigned int> chunkNum = { 4, 4 };
+		
 
 		std::vector<int> expectedMax = {
 			9, 11, 13, 15,
@@ -29,7 +31,7 @@ namespace caWavelet
 			48, 50, 52, 54
 		};
 
-		mmt.buildLeafMMT(data, DATA_LENGTH_2D_DUMMY, &chunkNum);
+		mmt.buildLeafMMT(data, DATA_LENGTH_2D_DUMMY, &chunkDim, &chunkNum);
 
 		for (size_t i = 0; i < chunkNum[0] * chunkNum[1]; i++)
 		{

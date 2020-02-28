@@ -37,12 +37,28 @@ namespace caWavelet
 			Ty_ max;
 			Ty_ min;
 			unsigned char order;
+
+		public:
+			mmtNode() : order(0x80) {}
 		};
 
 	public:
 		caMMT()
 		{
 
+		}
+
+		~caMMT()
+		{
+			auto it = this->nodes.begin();
+			while (it != this->nodes.end())
+			{
+				if (!(*it))
+				{
+					delete[] (*it);
+				}
+				it++;
+			}
 		}
 
 		void buildMMT(value_pointer data, size_const length,
@@ -57,22 +73,23 @@ namespace caWavelet
 
 			// Build MMT from a 0 level.
 			// level 0 일때는 data 이용해서 mmt 만들고
-			this->buildLeafMMT(data, length, &chunkNum);
+			this->buildLeafMMT(data, length, chunkDims, &chunkNum);
 			for (size_type level = 1; level < maxLevel; level++)
 			{
 				// 이후부터는 이전 mmt level 이용해서 build 
-				this->buildIntermediateMMT(level, &chunkNum);
+				this->buildIntermediateMMT(level, chunkDims, &chunkNum);
 			}
 		}
 
 		// For level 0
-		void buildLeafMMT(value_pointer data, size_const length,
+		void buildLeafMMT(value_pointer data, size_const length, dim_vector_pointer chunkDims,
 			dim_vector_pointer chunkNum)
 		{
-			this->nodes.push_back(std::vector<mmtNode>(this->calcLength(chunkNum)));
+			unsigned int tl = this->calcLength(chunkNum);
+			this->nodes.push_back(new mmtNode[this->calcLength(chunkNum)]);
 
 			caCoorIterator<Dty_, Ty_> it(data, this->dims_.size(), this->dims_.data());
-			caCoorIterator<Dty_, mmtNode> cit(this->nodes[0].data(), chunkNum->size(), chunkNum->data());
+			caCoorIterator<Dty_, mmtNode> cit(this->nodes[0], chunkNum->size(), chunkNum->data());
 
 			size_type dimSize = this->dims_.size();
 
@@ -82,21 +99,31 @@ namespace caWavelet
 				caCoor<Dty_> cur = it;
 				for (size_type d = 0; d < dimSize; d++)
 				{
-					cur[i] = cur[i] / chunkNum->at(i);
+					cur[d] = cur[d] / chunkDims->at(d);
 				}
 
 				// get target chunk
 				cit.moveTo(cur);
-				mmtNode node = *cit;
+				mmtNode* node = &(*cit);
 
-				// compare min max value
-				if (*it > node.max)
+				// init min, max value
+				if (node->order == 0x80)
 				{
-					node.max = *it;
+					node->max = *it;
+					node->min = *it;
+					node->order = 0;
 				}
-				if (*it < node.min)
+				else
 				{
-					node.min = *it;
+					// compare min max value
+					if (*it > node->max)
+					{
+						node->max = *it;
+					}
+					if (*it < node->min)
+					{
+						node->min = *it;
+					}
 				}
 
 				// move to next value
@@ -105,7 +132,7 @@ namespace caWavelet
 		}
 
 		// Except level 0, (1~maxLevel)
-		void buildIntermediateMMT(const size_type level, dim_vector_pointer chunkNum)
+		void buildIntermediateMMT(const size_type level, dim_vector_pointer chunkDims, dim_vector_pointer chunkNum)
 		{
 			assert(level > 0);
 
@@ -122,9 +149,9 @@ namespace caWavelet
 				curLevelChunkNum[d] = prevLevelChunkNum[d] / 2;
 			}
 
-			caCoorIterator<Dty_, mmtNode> pcit(this->nodes[prevLevel].data(), dimSize,
+			caCoorIterator<Dty_, mmtNode> pcit(this->nodes[prevLevel], dimSize,
 				prevLevelChunkNum.data());
-			caCoorIterator<Dty_, mmtNode> cit(this->nodes[prevLevel].data(), dimSize,
+			caCoorIterator<Dty_, mmtNode> cit(this->nodes[prevLevel], dimSize,
 				curLevelChunkNum.data());
 
 			for (size_type i = 0; i < prevLevelChunkNum.size(); i++)
@@ -197,7 +224,7 @@ namespace caWavelet
 	private:
 		size_type length;				// length of data
 		std::vector<Dty_> dims_;		// dimensions
-		std::vector<std::vector<mmtNode>> nodes;	// mmt
+		std::vector<mmtNode*> nodes;	// mmt
 
 	private:
 		FRIEND_TEST(caMMT, buildLeafMMT);
