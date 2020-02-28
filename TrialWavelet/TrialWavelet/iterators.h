@@ -184,10 +184,11 @@ namespace caWavelet
 		// if all eP_ is 0
 		virtual void next(const unsigned int dim)
 		{
+			const Dty_ offset = this->getDimOffset(dim);
 			if (this->coor_[dim] + 1 < this->eP_[dim])
 			{
 				this->coor_[dim]++;
-				this->ptr_ += this->getDimOffset(dim);
+				this->ptr_ += offset;
 			} else
 			{
 				if (dim > 0)
@@ -216,15 +217,14 @@ namespace caWavelet
 					}
 					this->next(this->dSize_ - 1);
 				}
-				this->ptr_ -= this->getDimOffset(dim) * (this->coor_[dim] - this->sP_[dim]);
-				this->coor_[dim] = this->sP_[dim];
+
+				this->moveDimCoor(dim, this->sP_[dim], offset);
 			}
 		}
 
 		virtual void prev(const unsigned int dim)
 		{
-			const size_t offset = this->getDimOffset(dim);
-
+			const Dty_ offset = this->getDimOffset(dim);
 			if (this->coor_[dim] > this->sP_[dim])
 			{
 				this->coor_[dim]--;
@@ -248,24 +248,30 @@ namespace caWavelet
 					}
 					this->prev(0);
 				}
-				this->ptr_ += this->getDimOffset(dim) * (this->eP_[dim] - 1 - this->coor_[dim]);
-				this->coor_[dim] = this->eP_[dim] - 1;
+
+				this->moveDimCoor(dim, this->eP_[dim] - 1, offset);
 			}
 		}
 
 		virtual void moveTo(const caCoor<Dty_>& coor)
 		{
-			if (this->dSize_ != coor.size())
-			{
-				throw std::exception("moveTo - different dimension size");
-			}
+			assert(this->dSize_ == coor.size());
 
 			size_type offset = 1;
-			for (int i = this->dSize_ - 1; i >= 0; i--)
+			for (Dty_ d = this->dSize_ - 1; d != -1; d--)
 			{
-				this->ptr_ += (coor[i] - this->coor_[i]) * offset;
-				this->coor_[i] = coor[i];
-				offset *= this->dims_[i];
+				//if (coor[i] >= this->coor_[i])
+				//{
+				//	this->ptr_ += (coor[i] - this->coor_[i]) * offset;
+				//}
+				//else 
+				//{
+				//	this->ptr_ -= (this->coor_[i] - coor[i]) * offset;
+				//}
+				//this->coor_[i] = coor[i];
+
+				this->moveDimCoor(d, coor[d], offset);
+				offset *= this->dims_[d];
 			}
 		}
 
@@ -354,6 +360,19 @@ namespace caWavelet
 
 			this->vSize_ = size;
 			return size;
+		}
+
+		inline void moveDimCoor(const size_type dim, const Dty_ coor, const Dty_ offset)
+		{
+			if (coor >= this->coor_[dim])
+			{
+				this->ptr_ += (coor - this->coor_[dim]) * offset;
+			}
+			else
+			{
+				this->ptr_ -= (this->coor_[dim] - coor) * offset;
+			}
+			this->coor_[dim] = coor;
 		}
 
 		size_t getDimOffset(_In_range_(0, dSize_ - 1) const unsigned int dim)
