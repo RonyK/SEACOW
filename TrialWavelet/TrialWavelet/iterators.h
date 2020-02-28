@@ -59,6 +59,18 @@ namespace caWavelet
 			return this->dSize_ != rhs.dSize_ || (memcmp(this->coor_, rhs.coor_, this->dSize * sizeof(dim_type)) != 0);
 		}
 
+		self_type& operator++()
+		{
+			this->coor_[this->dSize_ - 1];
+			return *this;
+		}
+		self_type operator++(int)
+		{
+			caCoor<Dty_> tmp(*this);
+			operator++();
+			return tmp;
+		}
+
 		_NODISCARD constexpr size_type size() const noexcept
 		{
 			return this->dSize_;
