@@ -36,6 +36,7 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="testBitstream.cpp" />
     <ClCompile Include="testCaIterators.cpp" />
     <ClCompile Include="testCaMMT.cpp" />
     <ClCompile Include="testCaWaveletEncode.cpp" />
