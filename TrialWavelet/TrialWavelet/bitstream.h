@@ -21,13 +21,18 @@ public:
 
 	}
 
+	// Return total number of bits
 	size_type size()
 	{
-		return this->stream.size() * 8 - (8 - this->pos);
+		if (this->pos)
+		{
+			return (this->stream.size() - 1) * _BlockBits + this->pos;
+		}
+		return this->stream.size() * _BlockBits;
 	}
 
 public:
-	size_type fill(char c, char length = 8)
+	unsigned char fill(unsigned char c, char length = 8)
 	{
 		assert(length <= 8);
 		if (this->pos == 0)
@@ -46,40 +51,47 @@ public:
 		}
 	}
 
-	void toChar(char* output, size_type length)
+	void toChar(unsigned char* output, size_type length)
 	{
 		assert(length > (this->size() + 7) / 8);
 
 		size_type oPos = 0;
+
 		// Front body encoding
-		for (size_type i = 0; i < this->stream.size() - 1; i++)
+		size_type fullBlocks = this->stream.size() - 1;
+		if (this->pos == 0)
+		{
+			fullBlocks += 1;
+		}
+
+		for (size_type block = 0; block < fullBlocks; block++)
 		{
 			for (size_type i = 0; i < _BlockBytes; i++)
 			{
-				output[oPos++] = (this->stream[i] >> (_BlockBytes - i - 1) * 8).to_ulong() & 0xFF;
+				output[oPos++] = (this->stream[block] >> (_BlockBytes - i - 1) * 8).to_ulong() & 0xFF;
 			}
 		}
 		
 		// Tail encoding
 		for (size_type i = 0; i < (this->pos + 7) / 8; i++)
 		{
-			std::bitset<8> b1 = (this->stream[i] >> (_BlockBytes - i - 1) * 8);
-			char a = b1.to_ulong();
-			output[oPos++] = (this->stream[i] >> (_BlockBytes - i - 1) * 8).to_ulong() & 0xFF;
+			//std::bitset<8> b1 = ((*this->lastBlock) >> (_BlockBytes - i - 1) * 8);
+			//char a = b1.to_ulong();
+			output[oPos++] = ((*this->lastBlock) >> (_BlockBytes - i - 1) * 8).to_ulong() & 0xFF;
 		}
 	}
 
 protected:
-	size_type fillBits(char c, char length)
+	unsigned char fillBits(unsigned char c, char length)
 	{
 		char i = length;
-		char last = std::max(length - (8 - (char)(this->pos % 8)), 0);
+		char last = std::max(length - (8 - (unsigned char)(this->pos % 8)), 0);
 
 		for (; i > last; this->pos++)
 		{
 			if ((c >> --i) & 0x1)
 			{
-				lastBlock->set(this->pos);
+				lastBlock->set(_BlockBits - this->pos - 1);
 			}
 		}
 		this->pos %= this->_BlockBits;
@@ -87,9 +99,9 @@ protected:
 		return length - last;
 	}
 
-	size_type fillByte(char c)
+	unsigned char fillByte(unsigned char c)
 	{
-		this->lastBlock &= (c << this->pos);
+		(*this->lastBlock) |= (c << (_BlockBits - this->pos - 8));
 		this->pos = (this->pos + 8) % this->_BlockBits;
 
 		return 8;
@@ -104,21 +116,38 @@ protected:
 template <size_t _BlockBits, size_t _Bits>
 bitstream<_BlockBits>& operator<<(bitstream<_BlockBits>& _Ostr, const std::bitset<_Bits>& _Right)
 {
-	int i = _Bits - 8;
-	char length = 8;
-	if (i < 0)
+	int length = _Bits;
+
+	// Head Bit + Byte Encoding
+	while(length >= 8)
 	{
-		i = 0;
-		length = _Bits;
+		length -= _Ostr.fill((char)(_Right.to_ulong() >> (length - 8)) & 0xFF, 8);
 	}
-	do 
+
+	// Tail Bit Encoding
+	while(length > 0)
 	{
-		i -= _Ostr.fill((char)(_Right.to_ulong() >> i) & 0xFF, length);
-		if (i - 8 < 0)
-		{
-			length = i;
-		}
-	} while (i > 0);
+		length -= _Ostr.fill((char)(_Right.to_ulong()) & 0xFF, length);
+	}
+
+
+	//int i = _Bits - 8;
+	//char length = 8;
+	//if (i < 0)
+	//{
+	//	i = 0;
+	//	length = _Bits;
+	//}
+	//do 
+	//{
+	//	i -= _Ostr.fill((char)(_Right.to_ulong() >> i) & 0xFF, length);
+	//	if (i - 8 < 0)
+	//	{
+	//		length = i;
+	//	}
+	//} while (i > 0);
+
+
 
 	//// Fill head
 	//int i = _Bits;
