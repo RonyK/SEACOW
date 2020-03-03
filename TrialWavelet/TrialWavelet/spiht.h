@@ -46,6 +46,7 @@ namespace caWavelet
 
 			enInit();
 
+			code_reader = 0;
 			for (this->step_ = 0; this->step_ < this->maxStep_; this->step_++)
 			{
 				deProgress(this->step_);
@@ -89,22 +90,15 @@ namespace caWavelet
 
 		void enProgress(size_t step)
 		{
-			std::bitset<BS_SIZE_> output;
-
 			size_t LSP_size = LSP_.size();
 
-			output = enSigPass(step);
-			sig_output.push_back(output);
-
-			output = enRefinePass(step, LSP_size);
-			ref_output.push_back(output);
+			enSigPass(step);
+			enRefinePass(step, LSP_size);
 		}
 
-		std::bitset<BS_SIZE_> enSigPass(size_t k)
+		void enSigPass(size_t k)
 		{
-			std::bitset<BS_SIZE_> output = 0;
 			std::bitset<BS_SIZE_> bit_value;
-			size_t code_len = 0;
 
 			size_t LIP_size = LIP_.size();
 			coorVal LIP_data;
@@ -117,30 +111,18 @@ namespace caWavelet
 
 				if (bit_value[BS_SIZE_ - 2 - k] == 1)
 				{
-					output[0] = 1;
-					output <<= 1;
-					code_len++;
+					CODE_.push_back(1);
 
 					if (LIP_data.value_ >= 0)
-					{
-						output[0] = 0;
-						output <<= 1;
-						code_len++;
-					}
+						CODE_.push_back(0);		// +
 					else
-					{
-						output[0] = 1;
-						output <<= 1;
-						code_len++;
-					}
+						CODE_.push_back(1);		// -
 				
 					LSP_.push_back(LIP_data);
 				}
 				else
 				{
-					output[0] = 0;
-					output <<= 1;
-					code_len++;
+					CODE_.push_back(0);
 
 					LIP_.push_back(LIP_data);
 				}
@@ -177,9 +159,7 @@ namespace caWavelet
 
 					if (one_flag == 1)
 					{
-						output[0] = 1;
-						output <<= 1;
-						code_len++;
+						CODE_.push_back(1);
 
 						child.setCurCoor(LIS_data.coor_);
 						child.moveToChild();
@@ -190,30 +170,18 @@ namespace caWavelet
 
 							if (bit_value[BS_SIZE_ - 2 - k] == 0)
 							{
-								output[0] = 0;
-								output <<= 1;
-								code_len++;
+								CODE_.push_back(0);
 
 								LIP_.push_back(coorVal(child.coor(), *child));
 							}
 							else
 							{
-								output[0] = 1;
-								output <<= 1;
-								code_len++;
+								CODE_.push_back(1);
 
 								if (*child >= 0)
-								{
-									output[0] = 0;
-									output <<= 1;
-									code_len++;
-								}
+									CODE_.push_back(0);		// +
 								else
-								{
-									output[0] = 1;
-									output <<= 1;
-									code_len++;
-								}
+									CODE_.push_back(1);		// -
 
 								LSP_.push_back(coorVal(child.coor(), *child));
 							}
@@ -227,9 +195,7 @@ namespace caWavelet
 					}
 					else
 					{
-						output[0] = 0;
-						output <<= 1;
-						code_len++;
+						CODE_.push_back(0);
 
 						TMP_LIS.push_back(LIS_data);
 					}
@@ -268,9 +234,7 @@ namespace caWavelet
 
 					if (one_flag == 1)
 					{
-						output[0] = 1;
-						output <<= 1;
-						code_len++;
+						CODE_.push_back(1);
 
 						child.setCurCoor(LIS_data.coor_);
 						child.moveToChild();
@@ -285,25 +249,18 @@ namespace caWavelet
 					}
 					else
 					{
-						output[0] = 0;
-						output <<= 1;
-						code_len++;
+						CODE_.push_back(0);
 
 						TMP_LIS.push_back(LIS_data);
 					}
 				}
 			}
 			LIS_ = TMP_LIS;
-
-			CODE_.push_back(code_len);
-			return output;
 		}
 
-		std::bitset<BS_SIZE_> enRefinePass(size_t k, size_t LSP_size)
+		void enRefinePass(size_t k, size_t LSP_size)
 		{
-			std::bitset<BS_SIZE_> output = 0;
 			std::bitset<BS_SIZE_> bit_value;
-			size_t code_len = 0;
 
 			std::list<coorVal> TMP = LSP_;
 			coorVal LSP_data;
@@ -315,44 +272,21 @@ namespace caWavelet
 				bit_value = LSP_data.value_;
 
 				if (bit_value[BS_SIZE_ - 2 - k] == 1)
-				{
-					output[0] = 1;
-					output <<= 1;
-					code_len++;
-				}
+					CODE_.push_back(1);
 				else
-				{
-					output[0] = 0;
-					output <<= 1;
-					code_len++;
-				}
+					CODE_.push_back(0);
 			}
-
-			CODE_.push_back(code_len);
-			return output;
 		}
 
 		void deProgress(size_t step)
 		{
-			std::bitset<BS_SIZE_> code;
-			size_t code_len;
-			
-			code = sig_output.front();
-			sig_output.pop_front();
-			code_len = CODE_.front();
-			CODE_.pop_front();
+			size_t LSP_size = LSP_.size();
 
-			deSigPass(step, code, code_len);
-
-			code = ref_output.front();
-			ref_output.pop_front();
-			code_len = CODE_.front();
-			CODE_.pop_front();
-
-			deRefinePass(step, code, code_len);
+			deSigPass(step);
+			deRefinePass(step, LSP_size);
 		}
 
-		void deSigPass(size_t k, std::bitset<BS_SIZE_> code, size_t code_len)
+		void deSigPass(size_t k)
 		{
 			std::bitset<BS_SIZE_> bit_value;			
 
@@ -364,28 +298,28 @@ namespace caWavelet
 				LIP_data = LIP_.front();
 				LIP_.pop_front();
 
-				if (code[code_len - 1] == 1)
+				if (CODE_[code_reader] == 1)
 				{
-					code_len--;
+					code_reader++;
 
 					it.setCurCoor(LIP_data.coor_);
 					bit_value = *it;
 
 					bit_value[BS_SIZE_ - 2 - k] = 1;
 
-					if (code[code_len - 1] == 0)
+					if (CODE_[code_reader] == 0)
 						bit_value[BS_SIZE_ - 1] = 0;
 					else
 						bit_value[BS_SIZE_ - 1] = 1;
 
-					code_len--;
+					code_reader++;
 
 					*it = (Ty_)(bit_value.to_ulong);
 					LSP_.push_back(LIP_data);
 				}
 				else
 				{
-					code_len--;
+					code_reader++;
 					LIP_.push_back(LIP_data);
 				}
 			}
@@ -398,9 +332,9 @@ namespace caWavelet
 				LIS_data = LIS_.front();
 				LIS_.pop_front();
 
-				if (code[code_len - 1] == 1)
+				if (CODE_[code_reader] == 1)
 				{
-					code_len--;
+					code_reader++;
 
 					if (LIS_data.type_ == cType::typeA_)
 					{
@@ -409,27 +343,27 @@ namespace caWavelet
 
 						for (size_t i = 0; i < pow(2, this->dims_.size()); i++)
 						{
-							if (code[code_len - 1] == 1)
+							if (CODE_[code_reader] == 1)
 							{
-								code_len--;
+								code_reader++;
 
 								bit_value = *child;
 
 								bit_value[BS_SIZE_ - 2 - k] = 1;
 
-								if (code[code_len - 1] == 0)
+								if (CODE_[code_reader] == 0)
 									bit_value[BS_SIZE_ - 1] = 0;
 								else
 									bit_value[BS_SIZE_ - 1] = 1;
 
-								code_len--;
+								code_reader++;
 
 								*child = (Ty_)(bit_value.to_ulong);
 								LSP_.push_back(coorVal(child.coor(), *child));
 							}
 							else
 							{
-								code_len--;
+								code_reader++;
 								LIP_.push_back(coorVal(child.coor(), *child));
 							}
 
@@ -456,29 +390,28 @@ namespace caWavelet
 				}
 				else
 				{
-					code_len--;
+					code_reader++;
 					TMP_LIS.push_back(LIP_data);
 				}
 			}
 			LIS_ = TMP_LIS;
 		}
 
-		void deRefinePass(size_t k, std::bitset<BS_SIZE_> code, size_t code_len)
+		void deRefinePass(size_t k, size_t LSP_size)
 		{
 			std::list<coorVal> TMP = LSP_;
 			std::bitset<BS_SIZE_> bit_value;
 
 			caWTIterator<Dty_, Ty_> it(this->data, this->dims_.size(), this->dims_);
-			size_t code_size = code.size();
 			coorVal LSP_data;
-			for (size_t i = 0; i < code_size; i++)
+			for (size_t i = 0; i < LSP_size; i++)
 			{
 				LSP_data = TMP.front();
 				TMP.pop_front();
 
-				if (code[code_len - 1] == 1)
+				if (CODE_[code_reader] == 1)
 				{
-					code_len--;
+					code_reader++;
 
 					it.setCurCoor(LSP_data.coor_);
 					bit_value = *it;
@@ -545,10 +478,9 @@ namespace caWavelet
 		std::list<coorValTy> LIS_;
 		std::list<coorVal> LIP_;
 		std::list<coorVal> LSP_;
-		std::list<size_t> CODE_;		// length of code
 
-		std::list<std::bitset<BS_SIZE_>> sig_output;
-		std::list<std::bitset<BS_SIZE_>> ref_output;
+		std::vector<bool> CODE_;
+		size_t code_reader;
 	};
 }
 
