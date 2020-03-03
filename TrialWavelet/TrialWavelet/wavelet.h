@@ -50,7 +50,7 @@ namespace caWavelet
 	class caDataIterator
 	{
 	public:
-		using selft_type = caDataIterator;
+		using self_type = caDataIterator;
 
 		using value_type = Ty_;
 		using value_reference = Ty_&;
@@ -67,7 +67,7 @@ namespace caWavelet
 		bool operator==(const self_type& rhs) const { return ptr_ == rhs.ptr_; }
 		bool operator!=(const self_type& rhs) const { return ptr_ != rhs.ptr_; }
 		value_reference operator*() { return *ptr_; }
-		pointer operator->() { return ptr_; }
+		value_pointer operator->() { return ptr_; }
 
 		// forward
 		caDataIterator& operator++() { ptr_ += offset_; return *this; }
