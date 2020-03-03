@@ -149,6 +149,7 @@
     <ClCompile Include="wavelet.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bitstringstream.h" />
     <ClInclude Include="exceptions.h" />
     <ClInclude Include="haar.h" />
     <ClInclude Include="iterators.h" />
