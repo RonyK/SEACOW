@@ -244,14 +244,14 @@ namespace caWavelet
 
 	template<typename Ty_, typename size_type = std::conditional_t<sizeof(Ty_) < 32, unsigned char, unsigned int>, 
 		size_t Bits_ = sizeof(Ty_) * CHAR_BIT>
-	size_type msb(Ty_ value)
+	size_type msb(Ty_ value, size_type order = 1)
 	{
 		if (value == 0)
 			return 0;
 
 		Ty_ mask = 1 << (Bits_ - 1);
 		size_type i = 0;
-		while (!(mask & value) && i++ < Bits_)
+		while (!((mask & value) && --order == 0) && i++ < Bits_)
 		{
 			value <<= 1;
 		}

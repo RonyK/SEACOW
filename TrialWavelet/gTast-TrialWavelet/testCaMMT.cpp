@@ -117,11 +117,17 @@ namespace caWavelet
 		EXPECT_EQ(msb<char>(c4), 3);
 		EXPECT_EQ(msb<char>(c0), 0);
 
+
 		//////////////////////////////
 		// Integer type
-		int i55858578 = 55858578;
+		int i55858578 = 55858578;	// 11 0101 0100 0101 0101 1001 0010
 
 		EXPECT_EQ(msb<int>(i55858578), 26);
+
+
+		//////////////////////////////
+		// Integer type with order option
+		EXPECT_EQ(msb<int>(i55858578, 3), 23);
 	}
 
 	void build2DDummy(int* output, size_t length)
