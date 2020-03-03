@@ -50,10 +50,13 @@ namespace caWavelet
 	class caDataIterator
 	{
 	public:
-		typedef caDataIterator	self_type;
-		typedef Ty_				value_type;
-		typedef Ty_&			reference;
-		typedef Ty_*			pointer;
+		using selft_type = caDataIterator;
+
+		using value_type = Ty_;
+		using value_reference = Ty_&;
+		using value_pointer = Ty_*;
+		using value_const_pointer = const Ty_*;
+		
 		typedef std::ptrdiff_t	difference_type;
 		typedef std::random_access_iterator_tag iterator_category;
 
@@ -63,7 +66,7 @@ namespace caWavelet
 
 		bool operator==(const self_type& rhs) const { return ptr_ == rhs.ptr_; }
 		bool operator!=(const self_type& rhs) const { return ptr_ != rhs.ptr_; }
-		reference operator*() { return *ptr_; }
+		value_reference operator*() { return *ptr_; }
 		pointer operator->() { return ptr_; }
 
 		// forward
@@ -75,7 +78,7 @@ namespace caWavelet
 		caDataIterator operator--(int) { caDataIterator tmp(*this); operator--(); return tmp; }
 		
 		// random access
-		reference operator[](size_t x)
+		value_reference operator[](size_t x)
 		{
 			if (x < 0)
 			{
@@ -84,7 +87,7 @@ namespace caWavelet
 
 			return ptr_[x * offset_];
 		}
-		const reference operator[](size_t x) const
+		const value_reference operator[](size_t x) const
 		{
 			if (x < 0)
 			{
