@@ -21,8 +21,8 @@ public:
 
 	}
 
-	// Return total number of bits
-	size_type size()
+	// Return total number of used bits
+	_NODISCARD size_type size() const noexcept
 	{
 		if (this->pos)
 		{
@@ -31,7 +31,27 @@ public:
 		return this->stream.size() * _BlockBits;
 	}
 
+	// Return total number of bits capacity
+	_NODISCARD size_type capacity() const noexcept
+	{
+		return this->stream.size() * _BlockBits;
+	}
+
 public:
+	/*
+	* Here is an example of a bitstream with 4 bits block.
+	* 
+	*  [pos]
+	*   ∪ -> 
+	* 忙式成式成式成式忖忙式成式成式成式忖
+	* 弛 3弛 2弛 1弛 0弛弛 3弛 2弛 1弛 0弛 bitset<4>
+	* 戍式扛式扛式扛式扣戍式扛式扛式扛式扣
+	* 弛	  [0]	  弛弛		[1]		弛 vector<bitset<4>>
+	* 戌式式式式式式式戎戌式式式式式式式戎
+	* 忙式成式成式成式忖忙式成式成式成式忖
+	* 弛 0弛 1弛 2弛 3弛弛 4弛 5弛 6弛 7弛 global bit order
+	* 戌式扛式扛式扛式戎戌式扛式扛式扛式戎
+	*/
 	unsigned char fill(unsigned char c, char length = 8)
 	{
 		assert(length <= 8);
@@ -57,7 +77,7 @@ public:
 
 		size_type oPos = 0;
 
-		// Front body encoding
+		// Front encoding
 		size_type fullBlocks = this->stream.size() - 1;
 		if (this->pos == 0)
 		{
@@ -75,8 +95,6 @@ public:
 		// Tail encoding
 		for (size_type i = 0; i < (this->pos + 7) / 8; i++)
 		{
-			//std::bitset<8> b1 = ((*this->lastBlock) >> (_BlockBytes - i - 1) * 8);
-			//char a = b1.to_ulong();
 			output[oPos++] = ((*this->lastBlock) >> (_BlockBytes - i - 1) * 8).to_ulong() & 0xFF;
 		}
 	}
@@ -101,7 +119,7 @@ protected:
 
 	unsigned char fillByte(unsigned char c)
 	{
-		(*this->lastBlock) |= (c << (_BlockBits - this->pos - 8));
+		(*this->lastBlock) |= (static_cast<size_type>(c) << (_BlockBits - this->pos - 8));
 		this->pos = (this->pos + 8) % this->_BlockBits;
 
 		return 8;
@@ -129,45 +147,6 @@ bitstream<_BlockBits>& operator<<(bitstream<_BlockBits>& _Ostr, const std::bitse
 	{
 		length -= _Ostr.fill((char)(_Right.to_ulong()) & 0xFF, length);
 	}
-
-
-	//int i = _Bits - 8;
-	//char length = 8;
-	//if (i < 0)
-	//{
-	//	i = 0;
-	//	length = _Bits;
-	//}
-	//do 
-	//{
-	//	i -= _Ostr.fill((char)(_Right.to_ulong() >> i) & 0xFF, length);
-	//	if (i - 8 < 0)
-	//	{
-	//		length = i;
-	//	}
-	//} while (i > 0);
-
-
-
-	//// Fill head
-	//int i = _Bits;
-
-	//if (i > 8)
-	//{
-	//	i -= _Ostr.fillBits((char)((_Right.to_ulong() >> (i - 8)) & 0xFF), 8);
-	//}
-
-	//// Fill mid
-	//for (; i - 8 >= 0; i -= 8)
-	//{
-	//	_Ostr.fillByte((char)(_Right.to_ulong() >> i) & 0xFF);
-	//}
-
-	//// Fill tail
-	//if (i != 0)
-	//{
-	//	_Ostr.fillBits((char)(_Right.to_ulong()) & 0xFF, i);
-	//}
 
 	return _Ostr;
 }

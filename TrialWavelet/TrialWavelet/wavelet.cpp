@@ -94,14 +94,14 @@ namespace caWavelet
 		size_t numbers = 1;
 		for (int i = 0; i < dims->size(); i++)
 		{
-			numbers *= (eP[i] - sP[i] + 1);
+			numbers *= (static_cast<size_t>(eP[i]) - static_cast<size_t>(sP[i]) + 1);
 		}
 
 		for (int d = eP.size() - 1; d >= 0; d--)
 		{
 			std::cout << "D: " << d << std::endl;
 			size_t half = eP[d] >> 1;
-			size_t rows = numbers / (eP[d] - sP[d] + 1);
+			size_t rows = numbers / (static_cast<size_t>(eP[d]) - static_cast<size_t>(sP[d]) + 1);
 
 			iit.setBasisDim(d);
 			iit.moveToStart();
