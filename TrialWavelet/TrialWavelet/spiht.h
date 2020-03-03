@@ -6,6 +6,7 @@
 #include <vector>
 #include <list>
 #include <tuple>
+#include <string>
 #include <bitset>
 #include "wavelet.h"
 #include "iterators.h"
@@ -53,6 +54,35 @@ namespace caWavelet
 			}
 
 			return 0;
+		}
+
+		std::string converting(std::vector<bool> code)
+		{
+			std::string output;
+			char ch;
+
+			for (size_t i = 0; i < code.size(); i++)
+			{
+				if (i % 8 == 0)
+				{
+					if (i != 0)
+						output += ch;
+
+					ch = 0;
+				}
+
+				ch <<= 1;
+				ch = ch | code[i];
+			}
+
+			while (i % 8 != 0)		// zero padding
+			{
+				ch <<= 1;
+				i++;
+			}
+			output += ch;
+
+			return output;
 		}
 
 	protected:
