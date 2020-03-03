@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <vector>
+#include <type_traits>
 #include "iterators.h"
 
 namespace caWavelet
@@ -240,6 +241,23 @@ namespace caWavelet
 		FRIEND_TEST(caMMT, buildIntermediateMMT);
 		FRIEND_TEST(caMMT, buildMMT);
 	};
+
+	template<typename Ty_, typename size_type = std::conditional_t<sizeof(Ty_) < 32, unsigned char, unsigned int>, 
+		size_t Bits_ = sizeof(Ty_) * CHAR_BIT>
+	size_type msb(Ty_ value)
+	{
+		if (value == 0)
+			return 0;
+
+		Ty_ mask = 1 << (Bits_ - 1);
+		size_type i = 0;
+		while (!(mask & value) && i++ < Bits_)
+		{
+			value <<= 1;
+		}
+
+		return Bits_ - i;
+	}
 }
 
 #endif

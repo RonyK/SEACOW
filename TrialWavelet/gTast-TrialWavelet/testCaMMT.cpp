@@ -105,6 +105,25 @@ namespace caWavelet
 		EXPECT_EQ(mmt.nodes[2][0].max, 63);
 	}
 
+	TEST(caMMT, msb)
+	{
+		//////////////////////////////
+		// Char type
+		char c0 = 0;
+		char c4 = 4;
+		char c127 = 127;
+
+		EXPECT_EQ(msb<char>(c127), 7);
+		EXPECT_EQ(msb<char>(c4), 3);
+		EXPECT_EQ(msb<char>(c0), 0);
+
+		//////////////////////////////
+		// Integer type
+		int i55858578 = 55858578;
+
+		EXPECT_EQ(msb<int>(i55858578), 26);
+	}
+
 	void build2DDummy(int* output, size_t length)
 	{
 		for (int i = 0; i < length; i++)
