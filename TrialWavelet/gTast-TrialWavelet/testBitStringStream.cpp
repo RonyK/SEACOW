@@ -4,7 +4,7 @@
 
 namespace caWavelet
 {
-	TEST(caBitStringStream, bstream)
+	TEST(caBitStringStream, bstream_bistset)
 	{
 		unsigned char expected[2] = {
 			0x36, // 0011 0110
@@ -43,7 +43,7 @@ namespace caWavelet
 		}
 	}
 
-	TEST(caBitStringStream, u32bstream)
+	TEST(caBitStringStream, u32bstream_bitset)
 	{
 		unsigned char cExpected[6] = {
 			0x26,	// 0010 0110 
@@ -91,4 +91,55 @@ namespace caWavelet
 			EXPECT_EQ(c[i], cExpected[i]);
 		}
 	}
+
+	TEST(caBitStringStream, bstream_integer)
+	{
+		bstream bs;
+
+		unsigned int i3 = 3;		// (~) 0000 0011
+		unsigned int i175 = 175;	// (~) 1010 1111
+
+		unsigned char expected[8] = {
+			0x00, 0x00, 0x00, 0x03, // 0000 0011
+			0x00, 0x00, 0x00, 0xAF  // 1010 1111
+		};
+
+		bs << i3 << i175;
+
+		//////////////////////////////
+		// Output test				//
+		//////////////////////////////
+		const char* str = bs.c_str();
+		for (int i = 0; i < (bs.size() + 7) / 8; i++)
+		{
+			EXPECT_EQ(static_cast<unsigned char>(str[i]), expected[i]);
+		}
+	}
+
+	TEST(caBitStringStream, bstream_bitset_integer)
+	{
+		bstream bs;
+
+		std::bitset<3> b3 = 0x1;;	// 001
+		unsigned int i3 = 3;		// (~) 0000 0011
+		unsigned int i175 = 175;	// (~) 1010 1111
+
+		unsigned char expected[9] = {
+			0x20, 0x00, 0x00, 0x00, // 0010 0000
+			0x60, 0x00, 0x00, 0x15, // 0110 0000 (~) 0001 0101
+			0xE0 // 111_
+		};
+		
+		bs << b3 << i3 << i175;
+
+		//////////////////////////////
+		// Output test				//
+		//////////////////////////////
+		const char* str = bs.c_str();
+		for (int i = 0; i < (bs.size() + 7) / 8; i++)
+		{
+			EXPECT_EQ(static_cast<unsigned char>(str[i]), expected[i]);
+		}
+	}
+
 }
