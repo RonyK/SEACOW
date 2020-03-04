@@ -22,7 +22,7 @@ namespace caWavelet
 	class bitstream
 	{
 	protected:
-		static const unsigned char mask[7];
+		static const unsigned char mask[9];
 	};
 
 	template <class _Elem, size_t _BlockBytes = sizeof(_Elem), size_t _BlockBits = sizeof(_Elem) * CHAR_BIT>
@@ -65,6 +65,75 @@ namespace caWavelet
 		* ¦¢ 0¦¢ 1¦¢ 2¦¢ 3¦¢¦¢ 4¦¢ 5¦¢ 6¦¢ 7¦¢ global bit order
 		* ¦¦¦¡¦ª¦¡¦ª¦¡¦ª¦¡¦¥¦¦¦¡¦ª¦¡¦ª¦¡¦ª¦¡¦¥
 		*/
+
+
+		// This function has endian problem (byte order) with numbers
+		size_type fillArray(const unsigned char* c, const size_type length)
+		{
+			size_type i = 0, remain = length;
+
+			// Head Bit + Byte Encoding
+			while (remain > CHAR_BIT)
+			{
+				remain -= this->fill((static_cast<unsigned __int16>(*(c + i)) >> ((remain - 8) % CHAR_BIT)) & 0xFF, CHAR_BIT);
+				i = (length - remain) / CHAR_BIT;
+			}
+
+			// Tail Bit Encoding
+			while (remain > 0)
+			{
+				remain -= this->fill(static_cast<unsigned char>(*(c+i)) >> (CHAR_BIT - remain), remain);
+			}
+
+			return length - remain;
+		}
+		
+		size_type fillChar(const unsigned char c, const size_type length = CHAR_BIT)
+		{
+			size_type remain = length;
+
+			while (remain > 0)
+			{
+				remain -= this->fill(c & this->mask[remain], remain);
+			}
+
+			return length;
+		}
+
+		size_type fillLongLong(const unsigned long long c, const size_type length)
+		{
+			size_type remain = length;
+
+			// Head Bit + Byte Encoding
+			while (remain >= CHAR_BIT)
+			{
+				remain -= this->fill(static_cast<unsigned char>((c >> (remain - CHAR_BIT)) & 0xFF), CHAR_BIT);
+			}
+
+			// Tail Bit Encoding
+			while (remain > 0)
+			{
+				remain -= this->fill(c & this->mask[remain], remain);
+			}
+
+			return length;
+		}
+
+		_NODISCARD const _Elem* c_str() const noexcept
+		{
+			return this->stream.c_str();
+		}
+
+		////////////////////////////////////////
+		// Set options
+		void width(size_type w)
+		{
+			assert(w <= _BlockBits);
+
+			this->bitWidth = w;
+		}
+
+	protected:
 		pos_type fill(const unsigned char c, pos_type length = 8)
 		{
 			assert(length <= 8);
@@ -84,93 +153,6 @@ namespace caWavelet
 			}
 		}
 
-		// This function has endian problem (byte order) with numbers
-		size_type fill(const unsigned char* c, const size_type length)
-		{
-			size_type i = 0, remain = length;
-
-			// Head Bit + Byte Encoding
-			while (remain > CHAR_BIT)
-			{
-				remain -= this->fill((static_cast<unsigned __int16>(*(c + i)) >> ((remain - 8) % CHAR_BIT)) & 0xFF, CHAR_BIT);
-				i = (length - remain) / CHAR_BIT;
-			}
-
-			// Tail Bit Encoding
-			while (remain > 0)
-			{
-				remain -= this->fill(static_cast<unsigned char>(*(c+i)) >> (CHAR_BIT - remain), remain);
-			}
-
-			return length - remain;
-		}
-
-		size_type fillNum(const unsigned long long c, const size_type length)
-		{
-			size_type remain = length;
-
-			// Head Bit + Byte Encoding
-			while (remain >= CHAR_BIT)
-			{
-				remain -= this->fill(static_cast<unsigned char>((c >> (remain - CHAR_BIT)) & 0xFF), CHAR_BIT);
-			}
-
-			// Tail Bit Encoding
-			while (remain > 0)
-			{
-				remain -= this->fill(c & this->mask[remain], remain);
-			}
-
-			return length;
-		}
-
-		////////////////////////////////////////
-		// To char
-		void toChar(unsigned char* output, size_type length)
-		{
-			assert(length > (this->size() + 7) / 8);
-
-			size_type oPos = 0;
-
-			// Front encoding
-			size_type fullBlocks = this->stream.size() - 1;
-			if (this->pos == 0)
-			{
-				fullBlocks += 1;
-			}
-
-			for (size_type block = 0; block < fullBlocks; block++)
-			{
-				for (size_type i = 0; i < _BlockBytes; i++)
-				{
-					//output[oPos++] = (this->stream[block] >> (_BlockBytes - i - 1) * 8).to_ulong() & 0xFF;
-					output[oPos++] = (this->stream[block] >> (_BlockBytes - i - 1) * CHAR_BIT) & 0xFF;
-				}
-			}
-
-			// Tail encoding
-			for (size_type i = 0; i < (this->pos + 7) / 8; i++)
-			{
-				//output[oPos++] = ((*this->lastBlock) >> (_BlockBytes - i - 1) * 8).to_ulong() & 0xFF;
-				output[oPos++] = ((*this->lastBlock) >> (_BlockBytes - i - 1) * CHAR_BIT).to_ulong() & 0xFF;
-			}
-		}
-
-		_NODISCARD const _Elem* c_str() const noexcept
-		{
-			return this->stream.c_str();
-		}
-
-		////////////////////////////////////////
-		// Set options
-		void width(size_type w)
-		{
-			assert(w <= _BlockBits);
-
-			this->bitWidth = w;
-		}
-
-	protected:
 		unsigned char fillBits(unsigned char c, char length)
 		{
 			pos_type i = length - 1;
@@ -193,7 +175,7 @@ namespace caWavelet
 			(*this->lastBlock) |= (static_cast<size_type>(c) << (_BlockBits - this->pos - 8));
 			this->pos = (this->pos + 8) % _BlockBits;
 
-			return 8;
+			return CHAR_BIT;
 		}
 
 	protected:
@@ -209,15 +191,15 @@ namespace caWavelet
 		int length = _Bits;
 
 		// Head Bit + Byte Encoding
-		while (length >= 8)
+		while (length > 8)
 		{
-			length -= _Ostr.fill((unsigned char)(_Right.to_ulong() >> (length - 8)) & 0xFF, 8);
+			length -= _Ostr.fillChar((unsigned char)(_Right.to_ulong() >> (length - 8)) & 0xFF, 8);
 		}
 
 		// Tail Bit Encoding
 		while (length > 0)
 		{
-			length -= _Ostr.fill((unsigned char)(_Right.to_ulong()) & 0xFF, length);
+			length -= _Ostr.fillChar((unsigned char)(_Right.to_ulong()) & 0xFF, length);
 		}
 
 		return _Ostr;
@@ -226,35 +208,42 @@ namespace caWavelet
 	template <class _Elem>
 	bitstringstream<_Elem>& operator<<(bitstringstream<_Elem>& _Ostr, const long long _val)
 	{
-		_Ostr.fillNum(static_cast<const unsigned long long>(_val), sizeof(int)* CHAR_BIT);
+		_Ostr.fillLongLong(static_cast<const unsigned long long>(_val), sizeof(int) * CHAR_BIT);
 		return _Ostr;
 	}
 
 	template <class _Elem>
 	bitstringstream<_Elem>& operator<<(bitstringstream<_Elem>& _Ostr, const unsigned long long _val)
 	{
-		_Ostr.fillNum(static_cast<const unsigned long long>(_val), sizeof(int)* CHAR_BIT);
+		_Ostr.fillLongLong(_val, sizeof(int) * CHAR_BIT);
 		return _Ostr;
 	}
 
 	template <class _Elem>
 	bitstringstream<_Elem>& operator<<(bitstringstream<_Elem>& _Ostr, const int _val)
 	{
-		_Ostr.fillNum(static_cast<const unsigned long long>(_val), sizeof(int) * CHAR_BIT);
+		_Ostr.fillLongLong(static_cast<const unsigned long long>(_val), sizeof(int) * CHAR_BIT);
 		return _Ostr;
 	}
 
 	template <class _Elem>
 	bitstringstream<_Elem>& operator<<(bitstringstream<_Elem>& _Ostr, const unsigned int _val)
 	{
-		_Ostr.fillNum(static_cast<const unsigned long long>(_val), sizeof(int)* CHAR_BIT);
+		_Ostr.fillLongLong(static_cast<const unsigned long long>(_val), sizeof(int) * CHAR_BIT);
 		return _Ostr;
 	}
 
 	template <class _Elem>
 	bitstringstream<_Elem>& operator<<(bitstringstream<_Elem>& _Ostr, const char _val)
 	{
-		_Ostr << std::bitset<CHAR_BIT>(_val);
+		_Ostr.fillChar(static_cast<const unsigned char>(_val), CHAR_BIT);
+		return _Ostr;
+	}
+
+	template <class _Elem>
+	bitstringstream<_Elem>& operator<<(bitstringstream<_Elem>& _Ostr, const unsigned char _val)
+	{
+		_Ostr.fillChar(_val, CHAR_BIT);
 		return _Ostr;
 	}
 
