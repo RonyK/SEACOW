@@ -59,7 +59,7 @@ namespace caWavelet
 				caMMT<unsigned int, int>::mmtNode* cur = nodeL0 + x + 4 * y;
 				cur->max = 2 * x + y * 16 + 9;
 				cur->min = 2 * x + y * 16;
-				cur->order = 0;
+				cur->bits = 0;
 			}
 		}
 		mmt.nodes.push_back(nodeL0);
