@@ -19,14 +19,32 @@ namespace caWavelet
 		char c;
 	};
 
-	class bitstream
+	class obitstream
 	{
+		using size_type = size_t;
+
+	public:
+		////////////////////////////////////////
+		// Set options
+		void width(size_type w)
+		{
+			this->bitWidth = w;
+		}
+
+		void initWidth()
+		{
+			this->bitWidth = 0;
+		}
+
 	protected:
 		static const unsigned char mask[9];
+
+	protected:
+		size_t bitWidth = 0;	// default: 0
 	};
 
 	template <class _Elem, size_t _BlockBytes = sizeof(_Elem), size_t _BlockBits = sizeof(_Elem) * CHAR_BIT>
-	class bitstringstream : public bitstream
+	class bitstringstream : public obitstream
 	{
 		using size_type = size_t;
 		using pos_type = std::conditional_t<sizeof(_Elem) < 31 , unsigned char, unsigned int>;
@@ -51,26 +69,10 @@ namespace caWavelet
 		}
 
 	public:
-		/*
-		* Here is an example of a bitstream with 4 bits block.
-		*
-		*  [pos]
-		*   ∪ ->
-		* 忙式成式成式成式忖忙式成式成式成式忖
-		* 弛 3弛 2弛 1弛 0弛弛 3弛 2弛 1弛 0弛 bitset<4>
-		* 戍式扛式扛式扛式扣戍式扛式扛式扛式扣
-		* 弛	  [0]	  弛弛		[1]		弛 vector<bitset<4>>
-		* 戌式式式式式式式戎戌式式式式式式式戎
-		* 忙式成式成式成式忖忙式成式成式成式忖
-		* 弛 0弛 1弛 2弛 3弛弛 4弛 5弛 6弛 7弛 global bit order
-		* 戌式扛式扛式扛式戎戌式扛式扛式扛式戎
-		*/
-
-
 		// This function has endian problem (byte order) with numbers
 		size_type fillArray(const unsigned char* c, const size_type length)
 		{
-			size_type i = 0, remain = length;
+			size_type i = 0, remain = this->getWidth(length);
 
 			// Head Bit + Byte Encoding
 			while (remain > CHAR_BIT)
@@ -90,7 +92,7 @@ namespace caWavelet
 		
 		size_type fillChar(const unsigned char c, const size_type length = CHAR_BIT)
 		{
-			size_type remain = length;
+			size_type remain = this->getWidth(length);
 
 			while (remain > 0)
 			{
@@ -102,7 +104,7 @@ namespace caWavelet
 
 		size_type fillLongLong(const unsigned long long c, const size_type length)
 		{
-			size_type remain = length;
+			size_type remain = this->getWidth(length);
 
 			// Head Bit + Byte Encoding
 			while (remain >= CHAR_BIT)
@@ -124,16 +126,21 @@ namespace caWavelet
 			return this->stream.c_str();
 		}
 
-		////////////////////////////////////////
-		// Set options
-		void width(size_type w)
-		{
-			assert(w <= _BlockBits);
-
-			this->bitWidth = w;
-		}
-
 	protected:
+		/*
+		* Here is an example of a bitstream with 4 bits block.
+		*
+		*  [pos]
+		*   ∪ ->
+		* 忙式成式成式成式忖忙式成式成式成式忖
+		* 弛 3弛 2弛 1弛 0弛弛 3弛 2弛 1弛 0弛 bitset<4>
+		* 戍式扛式扛式扛式扣戍式扛式扛式扛式扣
+		* 弛	  [0]	  弛弛		[1]		弛 vector<bitset<4>>
+		* 戌式式式式式式式戎戌式式式式式式式戎
+		* 忙式成式成式成式忖忙式成式成式成式忖
+		* 弛 0弛 1弛 2弛 3弛弛 4弛 5弛 6弛 7弛 global bit order
+		* 戌式扛式扛式扛式戎戌式扛式扛式扛式戎
+		*/
 		pos_type fill(const unsigned char c, pos_type length = 8)
 		{
 			assert(length <= 8);
@@ -153,6 +160,12 @@ namespace caWavelet
 			}
 		}
 
+		_NODISCARD inline size_type getWidth(const size_type length) const
+		{
+			return (this->bitWidth) ? std::min(length, this->bitWidth) : length;
+		}
+
+	private:
 		unsigned char fillBits(unsigned char c, char length)
 		{
 			pos_type i = length - 1;
@@ -181,8 +194,18 @@ namespace caWavelet
 	protected:
 		std::basic_string<_Elem, std::char_traits<_Elem>, std::allocator<_Elem>> stream;
 		std::bitset<sizeof(_Elem) * CHAR_BIT>* lastBlock = NULL;
-		size_t pos = 0;			// current bit in a byte
-		size_t bitWidth = 0;	// default: 0
+		pos_type pos = 0;			// current bit in a byte
+	};
+
+	// STRUCT TEMPLATE _BitSmanip
+	// Copy from _Smanip in <iomanip>
+	// iomanip requires that _Arg inherits 'ios_base'
+	template <class _Arg>
+	struct _BitSmanip { // store function pointer and argument value
+		_BitSmanip(obitstream& (__cdecl* _Left)(obitstream&, _Arg), _Arg _Val) : _Pfun(_Left), _Manarg(_Val) {}
+
+		obitstream&(__cdecl* _Pfun)(obitstream&, _Arg); // the function pointer
+		_Arg _Manarg; // the argument value
 	};
 
 	template <class  _Elem, size_t _Bits>
@@ -246,6 +269,15 @@ namespace caWavelet
 		_Ostr.fillChar(_val, CHAR_BIT);
 		return _Ostr;
 	}
+
+	template <class _Elem, class _Arg>
+	bitstringstream<_Elem>& operator<<(bitstringstream<_Elem>& _Ostr, const _BitSmanip<_Arg>& _BitManip)
+	{
+		(*_BitManip._Pfun)(_Ostr, _BitManip._Manarg);
+		return _Ostr;
+	}
+
+	_MRTIMP2 _BitSmanip<std::streamsize> __cdecl setw(std::streamsize);
 
 	using bstream = bitstringstream<char>;
 	using u16bstream = bitstringstream<char16_t>;

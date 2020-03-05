@@ -115,4 +115,31 @@ namespace caWavelet
 		}
 	}
 
+	TEST(caBitStringStream, bstream_manip)
+	{
+		bstream bs;
+
+		std::bitset<1> b1 = 0x01;		//		   1
+		std::bitset<5> b5 = 0x01;		//    0 0001
+		std::bitset<6> b6 = 0x01;		//   00 0001
+		std::bitset<7> b7 = 0x01;		//  000 0001
+		std::bitset<8> b8 = 0x36;		// 0011 0110
+
+		unsigned char expected[3] = {
+			0x08,	// 0000 1000
+			0x43,	// 0100 0011
+			0x36	// 0011 0110
+		};
+
+		bs << b5 << setw(5) << b6 << b7 << b1 << setw(0) << b8;
+
+		//////////////////////////////
+		// Output test				//
+		//////////////////////////////
+		const char* str = bs.c_str();
+		for (int i = 0; i < (bs.size() + 7) / 8; i++)
+		{
+			EXPECT_EQ(static_cast<unsigned char>(str[i]), expected[i]);
+		}
+	}
 }
