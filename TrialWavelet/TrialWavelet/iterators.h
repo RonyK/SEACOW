@@ -645,17 +645,19 @@ namespace caWavelet
 			assert(this->curBand_ != 0 || (this->curBand_ == 0 && this->curLevel_ == this->maxLevel_));
 			
 			caCoor<Dty_> newCoor(this);
-			// TODO::move to child coordiate.
 			if (this->curBand_ == 0)
 			{
+				size_type odd = 0;
 				for (size_type d = this->dSize_ - 1; d + 1 > 0; d--)
 				{
 					newCoor[d] = ((int)this->coor[d] / 2) * 2;
 					if (this->coor[d] & 0x1)
 					{
 						newCoor[d] += this->bandSize_[d];
+						odd++;
 					}
 				}
+				assert(odd != 0);	// some coor[d] is odd
 			} else
 			{
 				// Other level bands
@@ -670,7 +672,28 @@ namespace caWavelet
 
 		void moveToNextSibling()
 		{
+			size_type cur = 0;
+			for (size_type d = 0; d < this->dSize_; d++)
+			{
+				cur += (this->coor[d] % 2);
 
+				if (d != this->dSize_ - 1)
+					cur *= 2;
+			}
+			size_type next = cur + 1;
+			assert(next != pow(2, this->dSize_));
+
+			caCoor<Dty_> newCoor(this);
+			for (size_type d = this->dSize_ - 1; d + 1 > 0; d--)
+			{
+				newCoor[d] = ((next % 2) - (cur % 2));
+				newCoor[d] += this->coor[d];
+
+				next /= 2;
+				cur /= 2;
+			}
+
+			this->moveTo(newCoor);
 		}
 
 		void moveToChildBand()
