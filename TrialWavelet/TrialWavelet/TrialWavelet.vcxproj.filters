@@ -30,6 +30,12 @@
     <ClCompile Include="iterators.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="mmt.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="bitstringstream.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="wavelet.h">
@@ -45,6 +51,15 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="exceptions.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="mmt.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="bitstream.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="bitstringstream.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
