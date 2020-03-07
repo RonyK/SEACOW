@@ -60,8 +60,9 @@ namespace caWavelet
 		{
 			std::string output;
 			char ch;
+			size_t i;
 
-			for (size_t i = 0; i < code.size(); i++)
+			for (i = 0; i < code.size(); i++)
 			{
 				if (i % 8 == 0)
 				{
