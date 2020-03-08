@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="bitstringstream.cpp" />
+    <ClCompile Include="compact.h" />
     <ClCompile Include="daubechies.cpp" />
     <ClCompile Include="haar.cpp" />
     <ClCompile Include="iterators.cpp" />
