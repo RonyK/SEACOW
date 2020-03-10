@@ -12,7 +12,7 @@ namespace caWavelet
 {
 #define SIGN(val) ((val >= 0) ? 1 : -1)
 
-	template<typename Ty_, typename size_type = std::conditional_t<sizeof(Ty_) < 32, unsigned char, unsigned int > ,size_t Bits_ = sizeof(Ty_)* CHAR_BIT>
+	template<typename Ty_, typename size_type , size_t Bits_>
 		size_type msb(Ty_, size_type);
 
 	template <typename Dty_, typename Ty_>
@@ -126,6 +126,12 @@ namespace caWavelet
 			{
 				this->serializeLevelNodes(bs, l, &this->chunkNums_);
 			}
+		}
+
+		caMMT<Dty_, Ty_>::mmtNode* getNodes(size_type level)
+		{
+			assert(level < this->nodes.size());
+			return this->nodes[level];
 		}
 
 	protected:
