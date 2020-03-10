@@ -39,6 +39,9 @@
     <ClCompile Include="compact.h">
       <Filter>헤더 파일</Filter>
     </ClCompile>
+    <ClCompile Include="array.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="wavelet.h">
@@ -63,6 +66,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="bitstringstream.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="array.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

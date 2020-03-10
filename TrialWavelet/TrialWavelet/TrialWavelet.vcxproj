@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="array.cpp" />
     <ClCompile Include="bitstringstream.cpp" />
     <ClCompile Include="compact.h" />
     <ClCompile Include="daubechies.cpp" />
@@ -152,6 +153,7 @@
     <ClCompile Include="wavelet.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="array.h" />
     <ClInclude Include="bitstream.h" />
     <ClInclude Include="bitstringstream.h" />
     <ClInclude Include="exceptions.h" />
