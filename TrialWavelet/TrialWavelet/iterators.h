@@ -513,7 +513,7 @@ namespace caWavelet
 		using value_const_reference = const Ty_&;
 
 	public: 
-		caWTIterator(value_pointer x, const size_type dSize, dim_const_pointer boundary) :
+		caWTIterator(value_pointer x, const size_type dSize, dim_const_pointer boundary, size_type maxLevel = 0) :
 			caCoorIterator<Dty_, Ty_>(x, dSize, boundary)
 		{
 			this->ptrBegin_ = x;
@@ -543,6 +543,11 @@ namespace caWavelet
 			this->beP_ = new Dty_[this->dSize_];
 			memset(this->bsP_, 0, sizeof(dim_type) * this->dSize_);
 			memcpy(this->beP_, this->bandDims_, sizeof(dim_type) * this->dSize_);
+
+			if (maxLevel)
+			{
+				this->setMaxLevel(maxLevel);
+			}
 		}
 
 		caWTIterator(const self_type& mit) : caCoorIterator<Dty_, Ty_>(mit)
@@ -571,29 +576,52 @@ namespace caWavelet
 	public:
 		virtual void next(const unsigned int dim)
 		{
-			if (this->coor_[dim] + 1 < this->beP_[dim])
+			const Dty_ offset = this->getDimOffset(dim);
+			if (this->coor_[dim] + 1 < std::min(this->beP_[dim], this->eP_[dim]))
 			{
 				this->coor_[dim]++;
-				this->ptr_++;
+				this->ptr_ += offset;
 			} else
 			{
-				if ((dim > 0 && this->basisDim_ == dim - 1) || (dim == 0 && this->basisDim_ == this->dSize_ - 1))
+				if (dim > 0)
 				{
-					// If reach to the end of the current band
-					// Then move to next band
-					this->moveToNextBand();
-				} else
-				{
-					if (dim > 0)
+					if (this->basisDim_ == dim - 1)
 					{
-						this->next(dim - 1);
-					} else
-					{
-						this->next(this->dSize_ - 1);
+						this->moveToNextBand();
+						return;
 					}
-					//this->ptr_++;
-					this->coor_[dim] = this->bsP_[dim];
+					this->next(dim - 1);
 				}
+				else
+				{
+					if (this->basisDim_ == this->dSize_ - 1)
+					{
+						this->moveToNextBand();
+						return;
+					}
+					this->next(this->dSize_ - 1);
+				}
+
+				this->moveDimCoor(dim, std::max(this->bsP_[dim], this->sP_[dim]), offset);
+
+				/////
+				//if ((dim > 0 && this->basisDim_ == dim - 1) || (dim == 0 && this->basisDim_ == this->dSize_ - 1))
+				//{
+				//	// If reach to the end of the current band
+				//	// Then move to next band
+				//	this->moveToNextBand();
+				//} else
+				//{
+				//	if (dim > 0)
+				//	{
+				//		this->next(dim - 1);
+				//	} else
+				//	{
+				//		this->next(this->dSize_ - 1);
+				//	}
+				//	//this->ptr_++;
+				//	this->coor_[dim] = std::max(this->bsP_[dim], this->sP_[dim]);
+				//}
 			}
 		}
 
@@ -800,6 +828,37 @@ namespace caWavelet
 			this->moveTo(caCoor<Dty_>(this->dSize_, this->beP_));
 		}
 
+		inline void moveDimCoor(const size_type dim, const Dty_ coor, const Dty_ offset)
+		{
+			if (coor >= this->coor_[dim])
+			{
+				this->ptr_ += (coor - this->coor_[dim]) * offset;
+			}
+			else
+			{
+				this->ptr_ -= (this->coor_[dim] - coor) * offset;
+			}
+			this->coor_[dim] = coor;
+		}
+
+		size_t getDimOffset(_In_range_(0, dSize_ - 1) const unsigned int dim)
+		{
+			if (dim == this->basisDim_)
+			{
+				return this->offset_;
+			}
+
+			size_t offset = 1;
+			dim_type* curBandDims = this->getBandDims(this->curLevel_);
+			for (unsigned int i = this->dSize_ - 1; i > dim; i--)
+			{
+				offset *= curBandDims[i];
+			}
+
+			//std::cout << "dim : " << dim << ", getOffset: " << offset << std::endl;
+			return offset;
+		}
+
 		void calcBandBoundary()
 		{
 			dim_pointer dims = this->getBandDims(this->curLevel_);
@@ -960,8 +1019,76 @@ namespace caWavelet
 		FRIEND_TEST(caIterators, caWTIteratorCalcBandDim);
 	};
 
-	//template <typename Dty_, typename Ty_>
-	//class caWTChildIterator: public: 
+	// Cannot over band boundaries and level boundaries
+	template <typename Dty_, typename Ty_>
+	class caWTRangeIterator : public caWTIterator<Dty_, Ty_>
+	{
+		using self_type = caWTRangeIterator<Dty_, Ty_>;
+		using size_type = size_t;
+		using dim_type = Dty_;
+		using dim_pointer = Dty_*;
+		using dim_const_pointer = const Dty_*;
+		using dim_reference = Dty_&;
+		using dim_const_reference = const Dty_&;
+
+		using value_type = Ty_;
+		using value_pointer = Ty_*;
+		using value_const_pointer = const Ty_*;
+		using value_reference = Ty_&;
+		using value_const_reference = const Ty_&;
+
+	public:
+		caWTRangeIterator(value_pointer x, const size_type dSize, dim_const_pointer boundary,
+			dim_const_pointer sP, dim_const_pointer eP, size_type maxLevel = 0) :
+			caWTIterator<Dty_, Ty_>(x, dSize, boundary, maxLevel)
+		{
+			this->eP_ = new Dty_[dSize];
+			memcpy(this->sP_, sP, dSize * sizeof(dim_type));
+			memcpy(this->eP_, eP, dSize * sizeof(dim_type));
+
+			this->moveToStart();
+		}
+
+		caWTRangeIterator(const self_type& mit) : caWTIterator<Dty_, Ty_>(mit)
+		{
+			this->eP_ = new Dty_[mit.dSize_];
+			memcpy(this->eP_, mit.eP_, mit.dSize_ * sizeof(dim_type));
+		}
+
+		~caWTRangeIterator()
+		{
+			delete[] this->eP_;
+		}
+
+	protected:
+		// Check if sP_ and eP_ has proper range.
+		bool checkSpEp()
+		{
+			for (int i = 0; i < this->dSize_; i++)
+			{
+				if (this->sP_[i] > this->eP_[i])
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		// Check if eP_ and boundary_ has proper range.
+		bool checkEpBoundary()
+		{
+			for (int i = 0; i < this->dSize_; i++)
+			{
+				if (this->dims_[i] < this->eP_[i])
+				{
+					return false;
+				}
+			}
+
+			return false;
+		}
+	};
 }
 
 #endif // _caIterators_
