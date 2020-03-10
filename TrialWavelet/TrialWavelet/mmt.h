@@ -12,6 +12,9 @@ namespace caWavelet
 {
 #define SIGN(val) ((val >= 0) ? 1 : -1)
 
+	template<typename Ty_, typename size_type = std::conditional_t<sizeof(Ty_) < 32, unsigned char, unsigned int > ,size_t Bits_ = sizeof(Ty_)* CHAR_BIT>
+		size_type msb(Ty_, size_type);
+
 	template <typename Dty_, typename Ty_>
 	class caMMT
 	{
@@ -88,7 +91,7 @@ namespace caWavelet
 
 			// Build MMT from a 0 level.
 			this->buildLeafMMT(data, length, chunkDims, &this->chunkNums_);
-			for (size_type level = 1; level <= maxLevel; level++)
+			for (size_type level = 1; level < maxLevel; level++)
 			{
 				this->buildIntermediateMMT(level, chunkDims, &this->chunkNums_);
 			}

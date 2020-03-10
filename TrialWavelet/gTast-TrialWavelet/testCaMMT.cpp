@@ -100,7 +100,7 @@ namespace caWavelet
 		caMMT<unsigned int, int> mmt;
 		//////////////////////////////
 
-		mmt.buildMMT(data, DATA_LENGTH_2D_DUMMY, &dims, &chunkDim, 2);
+		mmt.buildMMT(data, DATA_LENGTH_2D_DUMMY, &dims, &chunkDim, 3);
 
 		EXPECT_EQ(mmt.nodes.size(), 3);	// Level 0~2
 		EXPECT_EQ(mmt.nodes[2][0].min, 0);
@@ -149,7 +149,7 @@ namespace caWavelet
 		bstream bs;
 		//////////////////////////////
 
-		mmt.buildMMT(data, DATA_LENGTH_2D_DUMMY, &dims, &chunkDims, 2);
+		mmt.buildMMT(data, DATA_LENGTH_2D_DUMMY, &dims, &chunkDims, 3);
 		mmt.serialize(bs);
 
 		//////////////////////////////
