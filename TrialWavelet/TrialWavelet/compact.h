@@ -37,24 +37,21 @@ namespace caWavelet
 
 	public:
 		caCompact(dim_vector_const_reference dims, dim_vector_const_reference leafChunkNums, size_type maxLevel) 
+			: dims_(dims), dSize_(dims.size()), maxLevel_(maxLevel)
 		{
-			this->dims_ = dims;
-			this->dSize_ = dims.size();
-			this->maxLevel_ = maxLevel;
-
 			this->calcBandDims(dims, maxLevel);
 			this->calcChunkNums(leafChunkNums, maxLevel);
-			this->calcChunkDims(this->bandDims_, this->chunkNums_, maxLevel);
+			this->calcChunkDims(maxLevel);
 		}
 
-		int encode(bstream& output, dim_const_pointer wtData, mmt_reference mmt)
+		void encode(bstream& output, value_pointer wtData, mmt_reference mmt)
 		{
 			this->enApprximate(output, wtData, mmt);
 			this->enDetail(output, wtData, mmt);
 		}
 
 	protected:
-		void enApprximate(bstream& output, dim_const_pointer wtData, mmt_reference mmt)
+		void enApprximate(bstream& output, value_pointer wtData, mmt_reference mmt)
 		{
 			dim_vector chunkNum = this->chunkNums_[this->maxLevel_];
 			dim_vector chunkDims = this->chunkDims_[this->maxLevel_];
@@ -64,7 +61,7 @@ namespace caWavelet
 			size_type dataLength = calcLength(chunkDims.data(), chunkDims.size());
 
 			dim_vector cSp(this->dSize_);	// start point of chunk
-			dim_vector cEp = chunkDims;		// end point of chunk
+			dim_vector cEp(this->dSize_);	// end point of chunk
 
 			auto nodes = mmt.getNodes(this->maxLevel_);
 
@@ -78,11 +75,11 @@ namespace caWavelet
 					cEp[d] = (coor[d] + 1) * chunkDims[d];
 				}
 
-				this->encodeChunk(output, wtData, cSp, cEp, dataLength, nodes[c].bits);
+				this->encodeChunk(output, wtData, cSp.data(), cEp.data(), dataLength, nodes[c].bits);
 			}
 		}
 
-		void enDetail(bstream& output, dim_const_pointer wtData, mmt_reference mmt)
+		void enDetail(bstream& output, value_pointer wtData, mmt_reference mmt)
 		{
 			size_type bandLength = pow(2, this->dSize_);
 
@@ -99,13 +96,13 @@ namespace caWavelet
 
 				for (size_type chunk_id = 0; chunk_id < chunkLength; chunk_id++)
 				{
-					this->enDetailChunk(output, wtData, mmt, level, chunkIt, chunk_id, dataLength);
+					this->enDetailChunk(output, wtData, mmt, level, chunk_id, chunkIt.coor(), dataLength);
 				}
 			}
 		}
 
 	private:
-		void enDetailChunk(bstream& output, dim_const_pointer wtData, mmt_reference mmt, size_type level, 
+		void enDetailChunk(bstream& output, value_pointer wtData, mmt_reference mmt, size_type level,
 			size_type chunk_id, caCoor<Dty_> chunkCoor, size_type length)
 		{
 			dim_vector cSp(this->dSize_);	// start point of chunk
@@ -128,11 +125,11 @@ namespace caWavelet
 					}
 				}
 
-				this->encodeChunk(output, wtData, cSp, cEp, length, mmtChunk.bits);
+				this->encodeChunk(output, wtData, cSp.data(), cEp.data(), length, mmtChunk.bits);
 			}
 		}
 
-		void encodeChunk(bstream& output, dim_const_pointer wtData, const caCoor<Dty_>& cSp, const caCoor<Dty_>& cEp,
+		void encodeChunk(bstream& output, value_pointer wtData, dim_const_pointer cSp, dim_const_pointer cEp,
 			const size_type length, const size_type bits)
 		{
 			caWTRangeIterator<Dty_, Ty_> it(wtData, this->dSize_, this->dims_.data(), cSp, cEp, this->maxLevel_);
@@ -168,16 +165,15 @@ namespace caWavelet
 				{
 					this->chunkNums_.push_back(dim_vector());
 				}
-				size_type factor = pow(2, level);
+				size_type factor = (size_type)pow(2, level);
 				for (size_type d = 0; d < this->dSize_; d++)
 				{
-					this->chunkNums_.back().push_back(leafChunkNums[d] / factor);
+					this->chunkNums_.back().push_back((leafChunkNums[d] / factor));
 				}
 			}
 		}
 
-		void calcChunkDims(const std::vector<const dim_vector>& bandDims,
-			const std::vector<const dim_vector>& chunkNums, size_type maxLevel)
+		void calcChunkDims(size_type maxLevel)
 		{
 			for (size_type level = 0; level <= maxLevel; level++)
 			{
@@ -187,7 +183,7 @@ namespace caWavelet
 				}
 				for (size_type d = 0; d < this->dSize_; d++)
 				{
-					this->chunkDims_.back().push_back(bandDims[level][d] / chunkNums[level][d]);
+					this->chunkDims_.back().push_back(this->bandDims_[level][d] / this->chunkNums_[level][d]);
 				}
 			}
 		}

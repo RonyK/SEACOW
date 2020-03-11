@@ -258,7 +258,7 @@ namespace caWavelet
 			assert(this->dSize_ == coor.size());
 
 			size_type offset = 1;
-			for (Dty_ d = this->dSize_ - 1; d != -1; d--)
+			for (Dty_ d = this->dSize_ - 1; d != (Dty_)-1; d--)
 			{
 				//if (coor[i] >= this->coor_[i])
 				//{
@@ -529,25 +529,16 @@ namespace caWavelet
 			 */
 			this->curBand_ = 0;
 
-			this->bandDims_ = new dim_type[this->dSize_];
-			memcpy(this->bandDims_, this->dims_, sizeof(dim_type) * this->dSize_);
-
+			// NOTE::BandDims and Band Size will be reassigned in setMaxLevel function
+			this->bandDims_ = new dim_type[1];
 			this->bandSize_ = new size_type[1];
-			this->bandSize_[0] = 1;
-			for (size_type d = 0; d < this->dSize_; d++)
-			{
-				this->bandSize_[0] *= this->bandDims_[d];
-			}
 
 			this->bsP_ = new Dty_[this->dSize_];
 			this->beP_ = new Dty_[this->dSize_];
 			memset(this->bsP_, 0, sizeof(dim_type) * this->dSize_);
 			memcpy(this->beP_, this->bandDims_, sizeof(dim_type) * this->dSize_);
 
-			if (maxLevel)
-			{
-				this->setMaxLevel(maxLevel);
-			}
+			this->setMaxLevel(maxLevel);
 		}
 
 		caWTIterator(const self_type& mit) : caCoorIterator<Dty_, Ty_>(mit)
@@ -968,7 +959,7 @@ namespace caWavelet
 
 		virtual size_type findLevel(const caCoor<Dty_>& coor)
 		{
-			size_type level;
+			size_type level = 0;
 			dim_type* levelBoundary;
 			for (level = this->maxLevel_; level > 0; level--)
 			{
