@@ -91,7 +91,7 @@ namespace caWavelet
 
 			// Build MMT from a 0 level.
 			this->buildLeafMMT(data, length, chunkDims, &this->chunkNums_);
-			for (size_type level = 1; level < maxLevel; level++)
+			for (size_type level = 1; level <= maxLevel; level++)
 			{
 				this->buildIntermediateMMT(level, chunkDims, &this->chunkNums_);
 			}
@@ -120,7 +120,7 @@ namespace caWavelet
 				return;
 			}
 
-			this->serializeMaxLevel(bs, &this->chunkNums_);
+			this->serializeMaxLevelNodes(bs, &this->chunkNums_);
 
 			for (size_type l = level - 1; l != -1; l--)
 			{
@@ -263,7 +263,7 @@ namespace caWavelet
 		}
 
 		// For max level nodes
-		void serializeMaxLevel(bstream& bs, dim_vector_pointer chunkNum)
+		void serializeMaxLevelNodes(bstream& bs, dim_vector_pointer chunkNum)
 		{
 			const size_type level = this->nodes.size() - 1;
 			dim_vector curLevelChunkNum(*chunkNum);		// Copy chunkNum vector

@@ -23,15 +23,15 @@ namespace caWavelet
 		std::vector<dim_type> chunkDims = { 2, 2 };
 		std::vector<dim_type> chunkNums = { 2, 2 };
 		std::vector<dim_type> dims = { 4, 4 };
-		size_t level = 1;
+		size_t maxLevel = 0;
 
 		caMMT<dim_type, value_type> mmt;
-		mmt.buildMMT(data, DATA_LENGTH_2D_4x4_DUMMY, &dims, &chunkDims, level);
+		mmt.buildMMT(data, DATA_LENGTH_2D_4x4_DUMMY, &dims, &chunkDims, maxLevel);
 
 		bstream bs;
 		//////////////////////////////
 
-		caCompact<dim_type, value_type> compact(dims, chunkNums, level - 1);
+		caCompact<dim_type, value_type> compact(dims, chunkNums, maxLevel);
 		
 		compact.encode(bs, wtData, mmt);
 	}
