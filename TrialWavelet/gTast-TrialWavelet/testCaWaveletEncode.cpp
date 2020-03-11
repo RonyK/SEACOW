@@ -75,3 +75,26 @@ TEST(caWaveletEncode, caWaveletHaar_2D_Encode)
 
 	free(output);
 }
+
+TEST(caWaveletEncode, caWaveletHaarSimple_2D_Encode)
+{
+	EXPECT_TRUE(true);
+	caWavelet::caWavelet w("HaarSimple");
+	double data[][4] = { {9,7,6,2}, {5,3,4,4}, {8,2,4,0}, {6,0,2,2} };
+
+	double* output = (double*)malloc(sizeof(data));
+	std::vector<int> dims = { sizeof(data) / sizeof(double) / 4, 4 };
+
+	caWavelet::caWaveletEncode(&w, (double*)data, output, sizeof(data) / sizeof(double), &dims);
+
+	double expectedOutput[] = {
+		6, 4, 1, 1,  4, 2, 3, 1,  2, 0, 0, 1,  1, 0, 0, 1
+	};
+
+	for (int i = 0; i < sizeof(data) / sizeof(double); i++)
+	{
+		EXPECT_EQ(ROUNDING(output[i], 6), ROUNDING(expectedOutput[i], 6));
+	}
+
+	free(output);
+}

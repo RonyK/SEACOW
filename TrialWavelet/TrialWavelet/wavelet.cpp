@@ -23,15 +23,25 @@ namespace caWavelet
 	{
 		switch (t)
 		{
+		case caWaveletType::HaarSimple:
+		{
+			const double* h_0, * g_0, * h_1, * g_1;
+			size_t c, offset;
+
+			caGetHaarSimpleWavelet(&h_0, &g_0, &h_1, &g_1, &c, &offset);
+			this->init(h_0, g_0, h_1, g_1, c, offset, t);
+			break;
+		}
 		case caWaveletType::Haar:
 		default:
-			const double* h_0, *g_0, *h_1, *g_1;
+		{
+			const double* h_0, * g_0, * h_1, * g_1;
 			size_t c, offset;
 
 			caGetHaarWavelet(&h_0, &g_0, &h_1, &g_1, &c, &offset);
 			this->init(h_0, g_0, h_1, g_1, c, offset, t);
 			break;
-
+		}
 		}
 	}
 
@@ -54,6 +64,10 @@ namespace caWavelet
 		if (strcmp(name, "Haar") == 0)
 		{
 			t = caWaveletType::Haar;
+		}
+		else if (strcmp(name, "HaarSimple") == 0)
+		{
+			t = caWaveletType::HaarSimple;
 		}
 		else if (strcmp(name, "Daubechies") == 0)
 		{
@@ -99,7 +113,7 @@ namespace caWavelet
 
 		for (int d = eP.size() - 1; d >= 0; d--)
 		{
-			std::cout << "D: " << d << std::endl;
+			std::cout << "[" << d << "] ------------------------------" << std::endl;
 			size_t half = eP[d] >> 1;
 			size_t rows = numbers / (static_cast<size_t>(eP[d]) - static_cast<size_t>(sP[d]) + 1);
 
@@ -124,7 +138,7 @@ namespace caWavelet
 					oit[half] = g;
 					
 					iit += 2;
-					oit++;
+					++oit;
 				}
 				oit += half;
 			}
@@ -137,9 +151,11 @@ namespace caWavelet
 
 				if (length % eP[d] == 0)
 				{
-					std::cout << "/" << std::endl;
+					std::cout << "/";
 				}
 			}
+
+			std::cout << std::endl;
 		}
 
 		return 0;

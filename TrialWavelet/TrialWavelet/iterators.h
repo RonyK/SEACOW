@@ -647,6 +647,10 @@ namespace caWavelet
 
 		void setCurLevel(size_type level, bool adjustCoor = false)
 		{
+			if (level > this->maxLevel_)
+			{
+				std::cout << level << " / " << this->maxLevel_ << std::endl;
+			}
 			assert(level <= this->maxLevel_);
 
 			this->curLevel_ = level;
@@ -781,7 +785,7 @@ namespace caWavelet
 		{
 			if (this->curBand_ + 1 >= pow(2, this->dSize_))
 			{
-				if (this->curLevel_ < 0)
+				if (this->curLevel_ == 0)
 				{
 					return;
 				}

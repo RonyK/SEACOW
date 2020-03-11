@@ -15,6 +15,7 @@ namespace caWavelet
 	{
 		None,
 		Haar,
+		HaarSimple,
 		Daubechies
 	};
 

@@ -5,6 +5,7 @@ namespace caWavelet
 {
 	void get2DDummy_s4x4(char*, size_t);
 	void get2DWTDummy_s4x4(char*, size_t);
+	void getEx2DWTDummy_s4x4(char*, size_t );
 
 #define DATA_LENGTH_2D_4x4_DUMMY	16
 	TEST(caCompact, d2_s4x4_compact)
@@ -16,9 +17,11 @@ namespace caWavelet
 		// Build Dummy Data
 		char data[DATA_LENGTH_2D_4x4_DUMMY];
 		char wtData[DATA_LENGTH_2D_4x4_DUMMY];
+		char expected[DATA_LENGTH_2D_4x4_DUMMY];
 
 		get2DDummy_s4x4(data, DATA_LENGTH_2D_4x4_DUMMY);
 		get2DWTDummy_s4x4(wtData, DATA_LENGTH_2D_4x4_DUMMY);
+		getEx2DWTDummy_s4x4(expected, DATA_LENGTH_2D_4x4_DUMMY);
 
 		std::vector<dim_type> chunkDims = { 2, 2 };
 		std::vector<dim_type> chunkNums = { 2, 2 };
@@ -34,6 +37,13 @@ namespace caWavelet
 		caCompact<dim_type, value_type> compact(dims, chunkNums, maxLevel);
 		
 		compact.encode(bs, wtData, mmt);
+
+		const char* converted = bs.c_str();
+		for (size_t i = 0; i < (bs.size() + CHAR_BIT - 1) / CHAR_BIT; i++)
+		{
+			std::cout << std::dec << "[" << i << "]" << std::setfill('0') << std::setw(2) << std::right << std::hex << (short)converted[i] << std::endl;
+			EXPECT_EQ((unsigned char)expected[i], (unsigned char)converted[i]);
+		}
 	}
 
 	void get2DDummy_s4x4(char* output, size_t length)
@@ -57,19 +67,41 @@ namespace caWavelet
 	void get2DWTDummy_s4x4(char* output, size_t length)
 	{
 		assert(length == 4 * 4);
-		const static char arr[4][4] = {
-			{12, 8, 2, 2 },
-			{8, 4, 6, 2 },
-			{4, 0, 0, 2 },
-			{2, 0, 0, 2 }
+		// Wavelet represent array as a band-wise fashion
+		const static char arr[4][2][2] = {
+			{ {6, 4}, {4, 2}},
+			{ {1, 1}, {3, 1}},
+			{ {2, 0}, {1, 0}},
+			{ {0, 1}, {0, 1}}
+		};
+		
+		// In multi-dimensional fashion
+		//{
+		//	{6, 4, 1, 1 },
+		//	{4, 2, 3, 1 },
+		//	{2, 0, 0, 1 },
+		//	{1, 0, 0, 1 }
+		//};
+
+		const char* seqArr = (char*)arr;
+
+		for (int i = 0; i < 4 * 4; i++)
+		{
+			output[i] = seqArr[i];
+		}
+	}
+
+	void getEx2DWTDummy_s4x4(char* output, size_t length)
+	{
+		assert(length > 10);
+		// Wavelet represent array as a band-wise fashion
+		const static char arr[9] = {
+			6, 4, 4, 2, 0x28, 0x22, 0x62, 0x04, 0x10
 		};
 
-		for (int y = 0; y < 4; y++)
+		for (int i = 0; i < 9; i++)
 		{
-			for (int x = 0; x < 4; x++)
-			{
-				output[y * 4 + x] = arr[y][x];
-			}
+			output[i] = arr[i];
 		}
 	}
 }

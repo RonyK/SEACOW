@@ -53,30 +53,35 @@ namespace caWavelet
 	protected:
 		void enApprximate(bstream& output, value_pointer wtData, mmt_reference mmt)
 		{
-			dim_vector chunkNum = this->chunkNums_[this->maxLevel_];
-			dim_vector chunkDims = this->chunkDims_[this->maxLevel_];
+			dim_vector chunkNum = this->chunkNums_[this->maxLevel_];	// size of approximate chunks are different 
+			dim_vector bandDims = this->bandDims_[this->maxLevel_];
 
 			caCoorIterator<Dty_, size_type> chunkIt(NULL, this->dSize_, chunkNum.data());
 			size_type chunkLength = calcLength(chunkNum.data(), chunkNum.size());
-			size_type dataLength = calcLength(chunkDims.data(), chunkDims.size());
+			size_type dataLength = calcLength(bandDims.data(), bandDims.size());
 
 			dim_vector cSp(this->dSize_);	// start point of chunk
 			dim_vector cEp(this->dSize_);	// end point of chunk
 
 			auto nodes = mmt.getNodes(this->maxLevel_);
 
+			size_type maxBits = 0;
 			for (size_type c = 0; c < chunkLength; c++)
 			{
-				// Set chunk boundary (start, end)
-				caCoor<Dty_> coor = chunkIt.coor();
-				for (size_type d = 0; d < this->dSize_; d++)
+				if (nodes[c].bits > maxBits)
 				{
-					cSp[d] = coor[d] * chunkDims[d];
-					cEp[d] = (coor[d] + 1) * chunkDims[d];
+					maxBits = nodes[c].bits;
 				}
-
-				this->encodeChunk(output, wtData, cSp.data(), cEp.data(), dataLength, nodes[c].bits);
 			}
+
+			for (size_type d = 0; d < this->dSize_; d++)
+			{
+				cSp[d] = 0;
+				cEp[d] = bandDims[d];
+			}
+
+			// Approximate data consists of one chunk
+			this->encodeChunk(output, wtData, cSp.data(), cEp.data(), dataLength, maxBits);
 		}
 
 		void enDetail(bstream& output, value_pointer wtData, mmt_reference mmt)
@@ -113,8 +118,8 @@ namespace caWavelet
 			for (size_type band_id = 1; band_id < pow(2, this->dSize_); band_id++)
 			{
 				// Set band start point (start, end)
-				size_type mask = 0x1;
-				for (size_type d = this->dSize_ - 1; d != -1; d--)
+				size_type mask = (size_type)0x1 << (this->dSize_ - 1);
+				for (size_type d = 0; d < this->dSize_; d++)
 				{
 					cSp[d] = chunkCoor[d] * this->chunkDims_[level][d];
 					cEp[d] = (chunkCoor[d] + 1) * this->chunkDims_[level][d];
@@ -123,6 +128,7 @@ namespace caWavelet
 						cSp[d] += this->bandDims_[level][d];
 						cEp[d] += this->bandDims_[level][d];
 					}
+					mask >>= 1;
 				}
 
 				this->encodeChunk(output, wtData, cSp.data(), cEp.data(), length, mmtChunk.bits);
@@ -137,7 +143,7 @@ namespace caWavelet
 			output << setw(bits);
 			for (size_type i = 0; i < length; i++)
 			{
-				output << (*it);
+				output << (*it++);
 			}
 		}
 
