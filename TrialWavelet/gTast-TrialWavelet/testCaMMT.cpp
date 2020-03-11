@@ -37,7 +37,7 @@ namespace caWavelet
 
 		mmt.buildLeafMMT(data, DATA_LENGTH_2D_DUMMY, &chunkDim, &chunkNum);
 
-		for (size_t i = 0; i < chunkNum[0] * chunkNum[1]; i++)
+		for (size_t i = 0; i < (size_t)chunkNum[0] * chunkNum[1]; i++)
 		{
 			EXPECT_EQ(mmt.nodes[0][i].max, expectedMax[i]);
 			EXPECT_EQ(mmt.nodes[0][i].min, expectedMin[i]);
@@ -81,7 +81,7 @@ namespace caWavelet
 
 		mmt.buildIntermediateMMT(level, &chunkDims, &chunkNum);
 
-		for (size_t i = 0; i < chunkNum[0] * chunkNum[1] / pow(2, 2); i++)
+		for (size_t i = 0; i < (size_t)chunkNum[0] * chunkNum[1] / pow(2, 2); i++)
 		{
 			EXPECT_EQ(mmt.nodes[1][i].max, expectedMax[i]);
 			EXPECT_EQ(mmt.nodes[1][i].min, expectedMin[i]);
@@ -95,14 +95,15 @@ namespace caWavelet
 		int data[DATA_LENGTH_2D_DUMMY];
 		std::vector<unsigned int> chunkDim = { 2, 2 };
 		std::vector<unsigned int> dims = { 8, 8 };
+		size_t maxLevel = 2;
 
 		build2DDummy(data, DATA_LENGTH_2D_DUMMY);
 		caMMT<unsigned int, int> mmt;
 		//////////////////////////////
 
-		mmt.buildMMT(data, DATA_LENGTH_2D_DUMMY, &dims, &chunkDim, 3);
+		mmt.buildMMT(data, DATA_LENGTH_2D_DUMMY, &dims, &chunkDim, maxLevel);
 
-		EXPECT_EQ(mmt.nodes.size(), 3);	// Level 0~2
+		EXPECT_EQ(mmt.nodes.size(), maxLevel + 1);	// Level 0~2 (maxLevel)
 		EXPECT_EQ(mmt.nodes[2][0].min, 0);
 		EXPECT_EQ(mmt.nodes[2][0].max, 63);
 	}
@@ -143,13 +144,14 @@ namespace caWavelet
 		int data[DATA_LENGTH_2D_DUMMY];
 		std::vector<unsigned int> chunkDims = { 2, 2 };
 		std::vector<unsigned int> dims = { 8, 8 };
+		size_t maxLevel = 2;
 
 		build2DDummy_s8x8(data, DATA_LENGTH_2D_DUMMY);
 		caMMT<unsigned int, int> mmt;
 		bstream bs;
 		//////////////////////////////
 
-		mmt.buildMMT(data, DATA_LENGTH_2D_DUMMY, &dims, &chunkDims, 3);
+		mmt.buildMMT(data, DATA_LENGTH_2D_DUMMY, &dims, &chunkDims, maxLevel);
 		mmt.serialize(bs);
 
 		//////////////////////////////
