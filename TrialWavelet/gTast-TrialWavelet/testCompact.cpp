@@ -96,7 +96,7 @@ namespace caWavelet
 		assert(length > 10);
 		// Wavelet represent array as a band-wise fashion
 		const static char arr[9] = {
-			6, 4, 4, 2, 0x28, 0x22, 0x62, 0x04, 0x10
+			0x64, 0x42, 0x28, 0x10, 0x4C, 0x40, 0x82
 		};
 
 		for (int i = 0; i < 9; i++)

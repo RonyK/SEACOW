@@ -99,7 +99,7 @@ namespace caWavelet
 				size_type chunkLength = calcLength(chunkNum.data(), chunkNum.size());
 				size_type dataLength = calcLength(chunkDims.data(), chunkDims.size());
 
-				for (size_type chunk_id = 0; chunk_id < chunkLength; chunk_id++)
+				for (size_type chunk_id = 0; chunk_id < chunkLength; ++chunk_id, ++chunkIt)
 				{
 					this->enDetailChunk(output, wtData, mmt, level, chunk_id, chunkIt.coor(), dataLength);
 				}
