@@ -7,6 +7,7 @@
 #include <type_traits>
 #include "iterators.h"
 #include "bitstringstream.h"
+#include "array.h"
 
 namespace caWavelet
 {
@@ -36,7 +37,11 @@ namespace caWavelet
 
 		using dim_vector = std::vector<Dty_>;
 		using dim_vector_pointer = std::vector<Dty_>*;
+		using dim_vector_reference = std::vector<Dty_>&;
 		using dim_vector_const_pointer = const std::vector<Dty_>*;
+		using dim_vector_const_reference = std::vector<Dty_>&;
+
+		using bit_cnt_type = unsigned char;
 
 		const size_type TySize_ = sizeof(Ty_);
 		const size_type TyBits_ = sizeof(Ty_) * CHAR_BIT;
@@ -48,10 +53,10 @@ namespace caWavelet
 			Ty_ min;
 			char bMax;					// significant bit of max value
 			char bMin;					// significant bit of min value
-			unsigned char bMaxDelta;	// bMax delta from a parent node
-			unsigned char bMinDelta;	// bMin delta from a parent node
-			unsigned char order;		// n th significant bit
-			unsigned char bits;			// required bits to represent min/max value
+			bit_cnt_type bMaxDelta;	// bMax delta from a parent node
+			bit_cnt_type bMinDelta;	// bMin delta from a parent node
+			bit_cnt_type order;		// n th significant bit
+			bit_cnt_type bits;			// required bits to represent min/max value
 
 		public:
 			mmtNode() : max(0), min(0), bMax(0), bMin(0), bits(0x80), order(1), bMaxDelta(0), bMinDelta(0) {}
@@ -63,38 +68,38 @@ namespace caWavelet
 		};
 
 	public:
-		caMMT()
+		caMMT(dim_vector_reference dim, dim_vector_reference chunkDim, size_const maxLevel)
 		{
-
+			this->dim_ = dim;
+			this->dSize_ = dim.size();
+			this->leafChunkDim_ = chunkDim;
+			this->maxLevel_ = maxLevel;
+			this->initChunkInDim(dim, chunkDim, maxLevel);
 		}
 
-		~caMMT()
-		{
-			auto it = this->nodes.begin();
-			while (it != this->nodes.end())
-			{
-				if (!(*it))
-				{
-					delete[] (*it);
-				}
-				it++;
-			}
-		}
+		~caMMT() { }
 
-		void buildMMT(value_pointer data, size_const length,
-			dim_vector_pointer dims, dim_vector_pointer chunkDims, size_const maxLevel)
+		void buildMMT(value_pointer data, size_const length)
 		{
-			this->length = length;
-			this->dims_ = *dims;
-			this->chunkDims_ = *chunkDims;
-			this->calcChunkNum(&this->chunkNums_, chunkDims);
-
-			// Build MMT from a 0 level.
-			this->buildLeafMMT(data, length, chunkDims, &this->chunkNums_);
-			for (size_type level = 1; level <= maxLevel; level++)
+			//////////////////////////////
+			// Forward build
+			// Set Min/Max values [0 (leaf) level -> maxLevel]
+			this->forwardBuildLeaf(data, length);
+			for (size_type level = 1; level <= this->maxLevel_; level++)
 			{
-				this->buildIntermediateMMT(level, chunkDims, &this->chunkNums_);
+				this->forwardBuildNonLeaf(level);
 			}
+			//////////////////////////////
+
+			//////////////////////////////
+			// Backward Build
+			// Set bits [maxLevel -> 0 level]
+			this->backwardBuildRoot();
+			for (size_type level = this->maxLevel_ - 1; level != (size_type)-1; level--)
+			{
+				this->backwardBuildNonRoot(level);
+			}
+			//////////////////////////////
 		}
 
 		void serialize(value_const_pointer* output, size_const length)
@@ -112,46 +117,47 @@ namespace caWavelet
 
 		void serialize(bstream& bs)
 		{
-			size_type level = this->nodes.size() - 1;
+			size_type maxLevel = this->nodes_.size() - 1;
 
-			if (level == -1)
+			if (maxLevel == -1)
 			{
-				// Empty
-				return;
+				return;		// Empty
 			}
 
-			this->serializeMaxLevelNodes(bs, &this->chunkNums_);
+			this->serializeRoot(bs);
 
-			for (size_type l = level - 1; l != -1; l--)
+			for (size_type l = maxLevel - 1; l != (size_type)-1; l--)
 			{
-				this->serializeLevelNodes(bs, l, &this->chunkNums_);
+				this->serializeNonRoot(bs, l);
 			}
 		}
 
 		caMMT<Dty_, Ty_>::mmtNode* getNodes(size_type level)
 		{
-			assert(level < this->nodes.size());
-			return this->nodes[level];
+			assert(level < this->nodes_.size());
+			return this->nodes_[level].data();
 		}
 
 	protected:
+		//////////////////////////////
+		// MMT Build Functions
 		// For level 0
-		void buildLeafMMT(value_pointer data, size_const length, dim_vector_pointer chunkDims,
-			dim_vector_pointer chunkNum)
+		void forwardBuildLeaf(value_pointer data, size_const length)
 		{
-			size_type dimSize = this->dims_.size();
-			this->nodes.push_back(new mmtNode[this->calcLength(chunkNum)]);
+			auto chunksInDim = this->chunksInDim_[0];
+			size_type chunkCnt = calcLength(chunksInDim.data(), chunksInDim.size());
+			this->nodes_.push_back(std::vector<mmtNode>(chunkCnt));
 
-			caCoorIterator<Dty_, Ty_> it(data, dimSize, this->dims_.data());
-			caCoorIterator<Dty_, mmtNode> cit(this->nodes[0], dimSize, chunkNum->data());
+			caCoorIterator<Dty_, Ty_> it(data, this->dSize_, this->dim_.data());
+			caCoorIterator<Dty_, mmtNode> cit(this->nodes_[0].data(), this->dSize_, chunksInDim.data());
 
 			for (size_type i = 0; i < length; i++)
 			{
 				// current iterator coordiate -> chunk coordinate
 				caCoor<Dty_> cur = it;
-				for (size_type d = 0; d < dimSize; d++)
+				for (size_type d = 0; d < this->dSize_; d++)
 				{
-					cur[d] /= chunkDims->at(d);
+					cur[d] /= this->leafChunkDim_[d];
 				}
 
 				// get target chunk
@@ -165,7 +171,7 @@ namespace caWavelet
 					node->min = *it;
 					node->bMax = msb<Ty_>(std::abs(node->max)) * SIGN(node->max);
 					node->bMin = msb<Ty_>(std::abs(node->min)) * SIGN(node->min);
-					node->bits = TyBits_;
+					node->bits = (bit_cnt_type)TyBits_;
 				}
 				else
 				{
@@ -187,44 +193,32 @@ namespace caWavelet
 			}
 		}
 
-		// Except level 0, (1 ~ maxLevel)
-		void buildIntermediateMMT(const size_type level, dim_vector_pointer chunkDims, dim_vector_pointer chunkNum)
+		// For level 1 ~ maxLevel
+		// Notes: In this method, prev is a lower level nodes (finer)
+		void forwardBuildNonLeaf(const size_type level)
 		{
 			assert(level > 0);
-
-			size_type prevLevel = level - 1;
-			const size_type dimSize = this->dims_.size();
-
-			////////////////////////////////////////
-			// Calc chunk num of prev and current level
-			//
-			// Notes: In this method, prev is a lower level nodes (finer)
-			dim_vector prevLevelChunkNum(*chunkNum);		// Copy chunkNum vector
-			dim_vector curLevelChunkNum(dimSize);			// Init with 0s
-
-			for (size_type d = 0; d < dimSize; d++)
-			{
-				prevLevelChunkNum[d] /= pow(2, prevLevel);
-				curLevelChunkNum[d] = prevLevelChunkNum[d] / 2;
-			}
+			dim_vector pChunksInDim = this->chunksInDim_[level - 1];
+			dim_vector chunksInDim = this->chunksInDim_[level];
 
 			////////////////////////////////////////
 			// Create new mmtNodes
-			const size_type prevLength = this->calcLength(&prevLevelChunkNum);
-			this->nodes.push_back(new mmtNode[prevLength / pow(2, dimSize)]);
+			const size_type chunkCnt = calcLength(chunksInDim.data(), chunksInDim.size());
+			this->nodes_.push_back(std::vector<mmtNode>(chunkCnt));
+			
 
 			////////////////////////////////////////
 			// Update min/max values
-			caCoorIterator<Dty_, mmtNode> pcit(this->nodes[prevLevel], dimSize,
-				prevLevelChunkNum.data());
-			caCoorIterator<Dty_, mmtNode> cit(this->nodes[level], dimSize,
-				curLevelChunkNum.data());
+			caCoorIterator<Dty_, mmtNode> pcit(this->nodes_[level - 1].data(), this->dSize_,
+				pChunksInDim.data());
+			caCoorIterator<Dty_, mmtNode> cit(this->nodes_[level].data(), this->dSize_,
+				chunksInDim.data());
 
-			for (size_type i = 0; i < prevLength; i++)
+			for (size_type i = 0; i < this->nodes_[level - 1].size(); i++)
 			{
 				// current iterator coordiate -> parent coordinate
 				caCoor<Dty_> cur = pcit;
-				for (size_type d = 0; d < dimSize; d++)
+				for (size_type d = 0; d < this->dSize_; d++)
 				{
 					cur[d] /= 2;
 				}
@@ -240,7 +234,7 @@ namespace caWavelet
 					node->bMax = (*pcit).bMax;
 					node->min = (*pcit).min;
 					node->bMin = (*pcit).bMin;
-					node->bits = TyBits_;
+					node->bits = (bit_cnt_type)TyBits_;
 				}
 				else
 				{
@@ -263,77 +257,61 @@ namespace caWavelet
 		}
 
 		// For max level nodes
-		void serializeMaxLevelNodes(bstream& bs, dim_vector_pointer chunkNum)
+		void backwardBuildRoot()
 		{
-			const size_type level = this->nodes.size() - 1;
-			dim_vector curLevelChunkNum(*chunkNum);		// Copy chunkNum vector
+			mmtNode* curLevel = this->nodes_.back().data();
 
-			for (size_type d = 0; d < this->dims_.size(); d++)
+			for (size_type i = 0; i < this->nodes_.back().size(); i++)
 			{
-				curLevelChunkNum[d] /= pow(2, level);
-			}
-
-			const size_type length = this->calcLength(&curLevelChunkNum);
-			const size_type bitLength = sizeof(Ty_);
-			mmtNode* curLevelNodes = nodes.back();
-
-			for (size_type i = 0; i < length; i++)
-			{
-				bs << setw(sizeof(Ty_) * CHAR_BIT) << curLevelNodes[i].max << curLevelNodes[i].min;
+				curLevel[i].bits = msb<Ty_>(curLevel[i].max - curLevel[i].min);
 			}
 		}
 
 		// Except max level nodes (0 ~ (maxLevel - 1))
-		void serializeLevelNodes(bstream& bs, const size_type level, dim_vector_pointer chunkNum)
+		void backwardBuildNonRoot(const size_type level)
 		{
-			assert(level < this->nodes.size() - 1);		// Not for max level nodes
+			assert(level < this->nodes_.size() - 1);		// Not for max level nodes
 			assert(level != -1);
 
 			size_type pLevel = level + 1;
-			size_type siblings = pow(2, this->dims_.size());
-			const size_type dimSize = this->dims_.size();
+			size_type siblings = (size_type)pow(2, this->dim_.size());
 
 			////////////////////////////////////////
 			// Calc chunk num of prev and current level
 			//
 			// Notes: In this method, prev is a upper level nodes (coarse)
-			dim_vector pChunkNum(dimSize);			// Init with 0s
-			dim_vector cChunkNum(*chunkNum);		// Copy chunkNum vector
-
-			for (size_type d = 0; d < dimSize; d++)
-			{
-				cChunkNum[d] /= pow(2, level);
-				pChunkNum[d] = cChunkNum[d] / 2;
-			}
+			dim_vector pChunksInDim = this->chunksInDim_[level + 1];
+			dim_vector chunksInDim = this->chunksInDim_[level];
 
 			////////////////////////////////////////
 			// Update bit order for chunks in current level
-			caCoorIterator<Dty_, mmtNode> cit(this->nodes[level], dimSize,
-				cChunkNum.data());
-			caCoorIterator<Dty_, mmtNode> pcit(this->nodes[level + 1], dimSize,
-				pChunkNum.data());
+			// Prev
+			caCoorIterator<Dty_, mmtNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
+				pChunksInDim.data());
 
-			const size_type prevLength = this->calcLength(&pChunkNum);
+			// Current
+			caCoorIterator<Dty_, mmtNode> cit(this->nodes_[level].data(), this->dSize_,
+				chunksInDim.data());
 
-			for (size_type i = 0; i < prevLength; ++i, ++pcit)
+			for (size_type i = 0; i < this->nodes_[level + 1].size(); ++i, ++pcit)
 			{
 				caCoor<Dty_> childBase = pcit;
-				for (size_type d = 0; d < dimSize; d++)
+				for (size_type d = 0; d < this->dSize_; d++)
 				{
 					childBase[d] *= 2;
 				}
 
 				mmtNode* pNode = &(*pcit);
 				bool sameOrder = (bool)(pNode->bMax - pNode->bMin);	// if bMax == bMin, move on to the next most significant bit
-				size_type bits = sameOrder ? msb<Ty_>(pNode->bMax - pNode->bMin) : msb<Ty_>(std::abs(pNode->bMax) - 1);
+				bit_cnt_type bits = sameOrder ? msb<Ty_>(pNode->bMax - pNode->bMin) : msb<Ty_>(std::abs(pNode->bMax) - 1);
 
 				for (size_type cID = 0; cID < siblings; cID++)
 				{
 					// Set child coordinate and move to it
 					caCoor<Dty_> cur = childBase;
-					for (size_type d = 0; d < dimSize; d++)
+					for (size_type d = 0; d < this->dSize_; d++)
 					{
-						if (cID & (0x1 << d))
+						if (cID & ((size_type)0x1 << d))
 						{
 							cur[d] += 1;
 						}
@@ -372,12 +350,24 @@ namespace caWavelet
 					}
 				}
 			}
+		}
 
-			////////////////////////////////////////
-			// Write bits in an outstream
-			mmtNode* cNodes = nodes[level];
-			const size_type length = this->calcLength(&cChunkNum);
-			for (size_type i = 0; i < length; i++)
+		////////////////////////////////////////
+		// Write bits in an outstream
+		void serializeRoot(bstream& bs)
+		{
+			mmtNode* curLevelNodes = this->nodes_.back().data();
+
+			for (size_type i = 0; i < this->nodes_.back().size(); i++)
+			{
+				bs << setw(sizeof(Ty_) * CHAR_BIT) << curLevelNodes[i].max << curLevelNodes[i].min;
+			}
+		}
+
+		void serializeNonRoot(bstream& bs, size_type level)
+		{
+			mmtNode* cNodes = this->nodes_[level].data();
+			for (size_type i = 0; i < this->nodes_[level].size(); i++)
 			{
 				bs << setw(cNodes[i].bits) << cNodes[i].bMaxDelta << cNodes[i].bMinDelta;
 			}
@@ -387,41 +377,22 @@ namespace caWavelet
 		// UTILS					//
 		//////////////////////////////
 	protected:
-		size_type calcLength(dim_vector_const_pointer dims)
-		{
-			size_type length = 1;
-			for (size_type i = 0; i < dims->size(); i++)
-			{
-				length *= dims->at(i);
-			}
-			return length;
-		}
-
 		// Calculate number of chunk on each dimension using the dimension sizes and chunk sizes
-		void calcChunkNum(dim_vector_pointer output, dim_vector_pointer chunkDims)
+		void initChunkInDim(dim_vector_const_reference dims, dim_vector_const_reference chunkDim, size_type maxLevel)
 		{
-			for (size_type d = 0; d < this->dims_.size(); d++)
+			for (size_type level = 0; level <= maxLevel; level++)
 			{
-				// ceiling
-				size_type chunks = 1 + (this->dims_[d] - 1) / chunkDims->at(d);
-
-				if (output->size() <= d)
-				{
-					output->push_back(chunks);
-				}
-				else
-				{
-					output->at(d) = chunks;
-				}
+				this->chunksInDim_.push_back(calcChunkNums(dims.data(), chunkDim.data(), dims.size(), level));
 			}
 		}
 
 	private:
-		size_type length;				// length of data
-		std::vector<Dty_> dims_;		// dimensions
-		std::vector<Dty_> chunkDims_;
-		std::vector<Dty_> chunkNums_;
-		std::vector<mmtNode*> nodes;	// mmt
+		size_type dSize_;
+		size_type maxLevel_;
+		dim_vector dim_;		// dimensions
+		dim_vector leafChunkDim_;
+		std::vector<dim_vector> chunksInDim_;
+		std::vector<std::vector<mmtNode>> nodes_;	// mmt
 
 	private:
 		FRIEND_TEST(caMMT, buildLeafMMT);

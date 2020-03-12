@@ -28,8 +28,8 @@ namespace caWavelet
 		std::vector<dim_type> dims = { 4, 4 };
 		size_t maxLevel = 0;
 
-		caMMT<dim_type, value_type> mmt;
-		mmt.buildMMT(data, DATA_LENGTH_2D_4x4_DUMMY, &dims, &chunkDims, maxLevel);
+		caMMT<dim_type, value_type> mmt(dims, chunkDims, maxLevel);
+		mmt.buildMMT(data, DATA_LENGTH_2D_4x4_DUMMY);
 
 		bstream bs;
 		//////////////////////////////
