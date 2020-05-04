@@ -33,9 +33,11 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
+    <ClInclude Include="dummy.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="dummy.cpp" />
     <ClCompile Include="testBitstream.cpp" />
     <ClCompile Include="testBitStringStream.cpp" />
     <ClCompile Include="testCaIterators.cpp" />
