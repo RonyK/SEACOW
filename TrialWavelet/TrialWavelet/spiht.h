@@ -20,17 +20,32 @@ namespace caWavelet
 	class caSPIHT
 	{
 	public:
+		using size_type = size_t;
+		using size_const = const size_t;
+
+		using dim_type = Dty_;
+		using dim_pointer = Dty_*;
+		using dim_const_pointer = const Dty_*;
+		using dim_reference = Dty_&;
+		using dim_const_reference = const Dty_;
+
+		using value_type = Ty_;
+		using value_pointer = Ty_*;
+		using value_const_pointer = const Ty_*;
+		using value_reference = Ty_&;
+		using value_const_reference = const Ty_&;
+
 		caSPIHT()       
 		{
 
 		}
 
-		int encode(Ty_& wtData, std::vector<std::bitset<BS_SIZE_>>& output, 
-			std::vector<Dty_>& dims, size_t wtLevel)
+		int encode(value_pointer wtData, std::vector<std::bitset<BS_SIZE_>>& output,
+			std::vector<Dty_>& dims, size_const wtLevel)
 		{
-			this->data = &wtData;
+			this->data = wtData;
 			this->wtLevel_ = wtLevel;
-			this->dims_ = &dims;
+			this->dims_ = dims;
 
 			enInit();
 

@@ -51,6 +51,7 @@
     </ClCompile>
     <ClCompile Include="testCompact.cpp" />
     <ClCompile Include="testCurrent.cpp" />
+    <ClCompile Include="testSPIHT.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TrialWavelet\TrialWavelet.vcxproj">
