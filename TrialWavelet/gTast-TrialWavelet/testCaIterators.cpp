@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "../TrialWavelet/iterators.h"
 
-
 namespace caWavelet
 {
 	TEST(caIterators, caCoor)
@@ -350,8 +349,7 @@ namespace caWavelet
 		}
 
 		// Create WTIterator
-		caWavelet::caWTIterator<int, double> it(data, sizeof(d) / sizeof(int), d);
-		it.setMaxLevel(1);
+		caWavelet::caWTIterator<int, double> it(data, sizeof(d) / sizeof(int), d, 1);
 		it.setCurLevel(1);
 		it.setCurBand(0);
 
@@ -379,5 +377,45 @@ namespace caWavelet
 				}
 			}
 		}
+	}
+
+	TEST(caIterators, caWTIterator2DRange)
+	{
+		double data[256] = { 0 };	// WT data
+		int d[] = { 16, 16 };		// Dimension
+		size_t level = 1;
+		int bandSize_L1[] = { d[0] / std::pow(2, level + 1), d[1] / std::pow(2, level + 1) };
+
+		// Data initialization
+		for (int i = 0; i < 256; i++)
+		{
+			data[i] = i;
+		}
+
+		// Test 01 in level 1, band 0
+		{
+			int s[] = { 1, 2 };
+			int e[] = { 3, 4 };
+			// Create WTIterator
+			caWavelet::caWTRangeIterator<int, double> it(data, sizeof(d) / sizeof(int), d, s, e, level);
+
+			// Level 1
+			int length = (s[0] - e[0]) * (s[1] - e[1]);
+			
+			for (int y = s[0]; y < e[0]; y++)
+			{
+				for (int x = s[1]; x < e[1]; x++)
+				{
+					std::cout << "y: " << y << "(" << y << "), x: " << x << "(" << x << ")" << std::endl;
+					std::cout << "coor[0]: " << it.coor()[0] << ", coor[1]: " << it.coor()[1] << std::endl;
+					std::cout << y * bandSize_L1[1] + x << " / " << *it << std::endl;
+					EXPECT_EQ(it.coor()[0], y);
+					EXPECT_EQ(it.coor()[1], x);
+					EXPECT_EQ(*it, y * bandSize_L1[1] + x);
+					++it;
+				}
+			}
+		}
+
 	}
 }
