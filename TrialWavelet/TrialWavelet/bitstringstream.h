@@ -19,7 +19,7 @@ namespace caWavelet
 		char c;
 	};
 
-	class obitstream
+	class iobs_base
 	{
 		using size_type = size_t;
 
@@ -37,36 +37,40 @@ namespace caWavelet
 		}
 
 	protected:
+		_NODISCARD inline size_type getWidth(const size_type length) const
+		{
+			return (this->bitWidth) ? std::min(length, this->bitWidth) : length;
+		}
+
+	protected:
 		static const unsigned char mask[9];
 
 	protected:
 		size_t bitWidth = 0;	// default: 0
 	};
 
-	template <class _Elem, size_t _BlockBytes = sizeof(_Elem), size_t _BlockBits = sizeof(_Elem) * CHAR_BIT>
-	class bitstringstream : public obitstream
+	template <class _Elem>
+	class iobs : public iobs_base
 	{
+	public:
 		using size_type = size_t;
-		using pos_type = std::conditional_t<sizeof(_Elem) < 31 , unsigned char, unsigned int>;
+		using pos_type = std::conditional_t < sizeof(_Elem) < 31, unsigned char, unsigned int > ;
 
 	public:
-		bitstringstream() {}
-
-		// Return total number of used bits
-		_NODISCARD size_type size() const noexcept
+		_NODISCARD const _Elem* c_str() const noexcept
 		{
-			if (this->pos)
-			{
-				return (this->stream.size() - 1) * _BlockBits + this->pos;
-			}
-			return this->stream.size() * _BlockBits;
+			return this->stream.c_str();
 		}
 
-		// Return total number of bits capacity
-		_NODISCARD size_type capacity() const noexcept
-		{
-			return this->stream.size() * _BlockBits;
-		}
+	protected:
+		std::basic_string<_Elem, std::char_traits<_Elem>, std::allocator<_Elem>> stream;
+	};
+
+	template <class _Elem, size_t _BlockBytes = sizeof(_Elem), size_t _BlockBits = sizeof(_Elem)* CHAR_BIT>
+	class obitstream : public iobs<_Elem>
+	{
+		using size_type = size_t;
+		using pos_type = std::conditional_t < sizeof(_Elem) < 31, unsigned char, unsigned int > ;
 
 	public:
 		// This function has endian problem (byte order) with numbers
@@ -84,12 +88,12 @@ namespace caWavelet
 			// Tail Bit Encoding
 			while (remain > 0)
 			{
-				remain -= this->fill(static_cast<unsigned char>(*(c+i)) >> (CHAR_BIT - remain), remain);
+				remain -= this->fill(static_cast<unsigned char>(*(c + i)) >> (CHAR_BIT - remain), remain);
 			}
 
 			return length - remain;
 		}
-		
+
 		size_type fillChar(const unsigned char c, const size_type length = CHAR_BIT)
 		{
 			size_type remain = this->getWidth(length);
@@ -102,7 +106,7 @@ namespace caWavelet
 			return length;
 		}
 
-		size_type fillLongLong(const unsigned long long c, const size_type length)
+		size_type fillLongLong(const unsigned long long c, const size_type length = CHAR_BIT * sizeof(long long))
 		{
 			size_type remain = this->getWidth(length);
 
@@ -121,25 +125,20 @@ namespace caWavelet
 			return length;
 		}
 
-		_NODISCARD const _Elem* c_str() const noexcept
-		{
-			return this->stream.c_str();
-		}
-
 	protected:
 		/*
 		* Here is an example of a bitstream with 4 bits block.
 		*
 		*  [pos]
-		*   ¡å ->
-		* ¦£¦¡¦¨¦¡¦¨¦¡¦¨¦¡¦¤¦£¦¡¦¨¦¡¦¨¦¡¦¨¦¡¦¤
-		* ¦¢ 3¦¢ 2¦¢ 1¦¢ 0¦¢¦¢ 3¦¢ 2¦¢ 1¦¢ 0¦¢ bitset<4>
-		* ¦§¦¡¦ª¦¡¦ª¦¡¦ª¦¡¦©¦§¦¡¦ª¦¡¦ª¦¡¦ª¦¡¦©
-		* ¦¢	  [0]	  ¦¢¦¢		[1]		¦¢ vector<bitset<4>>
-		* ¦¦¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¥¦¦¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¥
-		* ¦£¦¡¦¨¦¡¦¨¦¡¦¨¦¡¦¤¦£¦¡¦¨¦¡¦¨¦¡¦¨¦¡¦¤
-		* ¦¢ 0¦¢ 1¦¢ 2¦¢ 3¦¢¦¢ 4¦¢ 5¦¢ 6¦¢ 7¦¢ global bit order
-		* ¦¦¦¡¦ª¦¡¦ª¦¡¦ª¦¡¦¥¦¦¦¡¦ª¦¡¦ª¦¡¦ª¦¡¦¥
+		*   â–¼ ->
+		* â”Œâ”€â”¬â”€â”¬â”€â”¬â”€â”â”Œâ”€â”¬â”€â”¬â”€â”¬â”€â”
+		* â”‚ 3â”‚ 2â”‚ 1â”‚ 0â”‚â”‚ 3â”‚ 2â”‚ 1â”‚ 0â”‚ bitset<4>
+		* â”œâ”€â”´â”€â”´â”€â”´â”€â”¤â”œâ”€â”´â”€â”´â”€â”´â”€â”¤
+		* â”‚	  [0]	  â”‚â”‚		[1]		â”‚ vector<bitset<4>>
+		* â””â”€â”€â”€â”€â”€â”€â”€â”˜â””â”€â”€â”€â”€â”€â”€â”€â”˜
+		* â”Œâ”€â”¬â”€â”¬â”€â”¬â”€â”â”Œâ”€â”¬â”€â”¬â”€â”¬â”€â”
+		* â”‚ 0â”‚ 1â”‚ 2â”‚ 3â”‚â”‚ 4â”‚ 5â”‚ 6â”‚ 7â”‚ global bit order
+		* â””â”€â”´â”€â”´â”€â”´â”€â”˜â””â”€â”´â”€â”´â”€â”´â”€â”˜
 		*/
 		pos_type fill(const unsigned char c, pos_type length = 8)
 		{
@@ -147,7 +146,7 @@ namespace caWavelet
 			if (this->pos == 0)
 			{
 				this->stream.push_back(0x0);
-				this->lastBlock = reinterpret_cast<std::bitset<sizeof(_Elem) * CHAR_BIT>*>(&this->stream.back());
+				this->endBlock = reinterpret_cast<std::bitset<sizeof(_Elem) * CHAR_BIT>*>(&this->stream.back());
 			}
 
 			if (this->pos % 8 != 0 || length % 8 != 0)
@@ -160,12 +159,8 @@ namespace caWavelet
 			}
 		}
 
-		_NODISCARD inline size_type getWidth(const size_type length) const
-		{
-			return (this->bitWidth) ? std::min(length, this->bitWidth) : length;
-		}
-
 	private:
+		// out: number of filled bits
 		unsigned char fillBits(unsigned char c, char length)
 		{
 			pos_type i = length - 1;
@@ -175,7 +170,7 @@ namespace caWavelet
 			{
 				if ((c >> i) & 0x1)
 				{
-					lastBlock->set(_BlockBits - this->pos - 1);
+					(this->endBlock)->set(_BlockBits - this->pos - 1);
 				}
 			}
 			this->pos %= _BlockBits;
@@ -183,18 +178,57 @@ namespace caWavelet
 			return length - last;
 		}
 
+		// out: number of filled bits
 		unsigned char fillByte(unsigned char c)
 		{
-			(*this->lastBlock) |= (static_cast<size_type>(c) << (_BlockBits - this->pos - 8));
+			(*this->endBlock) |= (static_cast<size_type>(c) << (_BlockBits - this->pos - 8));
 			this->pos = (this->pos + 8) % _BlockBits;
 
 			return CHAR_BIT;
 		}
 
 	protected:
-		std::basic_string<_Elem, std::char_traits<_Elem>, std::allocator<_Elem>> stream;
-		std::bitset<sizeof(_Elem) * CHAR_BIT>* lastBlock = NULL;
 		pos_type pos = 0;			// current bit in a byte
+		std::bitset<sizeof(_Elem) * CHAR_BIT>* endBlock = NULL;
+	};
+
+	template <class _Elem, size_t _BlockBytes = sizeof(_Elem), size_t _BlockBits = sizeof(_Elem)* CHAR_BIT>
+	class ibitstream : public iobs<_Elem>
+	{
+
+	};
+
+	template <class _Elem, size_t _BlockBytes = sizeof(_Elem), size_t _BlockBits = sizeof(_Elem) * CHAR_BIT>
+	class bitstringstream : public obitstream<_Elem>, ibitstream<_Elem>
+	{
+		using size_type = size_t;
+		using pos_type = std::conditional_t<sizeof(_Elem) < 31 , unsigned char, unsigned int>;
+
+	public:
+		using iobs<_Elem>::c_str;
+		using iobs<_Elem>::width;
+		using iobs<_Elem>::initWidth;
+		using iobs<_Elem>::stream;
+
+
+	public:
+		bitstringstream() {}
+
+		// Return total number of used bits
+		_NODISCARD size_type size() const noexcept
+		{
+			if (obitstream<_Elem>::pos)
+			{
+				return (this->stream.size() - 1) * _BlockBits + obitstream<_Elem>::pos;
+			}
+			return this->stream.size() * _BlockBits;
+		}
+
+		// Return total number of bits capacity
+		_NODISCARD size_type capacity() const noexcept
+		{
+			return this->stream.size() * _BlockBits;
+		}
 	};
 
 	// STRUCT TEMPLATE _BitSmanip
@@ -202,14 +236,14 @@ namespace caWavelet
 	// iomanip requires that _Arg inherits 'ios_base'
 	template <class _Arg>
 	struct _BitSmanip { // store function pointer and argument value
-		_BitSmanip(obitstream& (__cdecl* _Left)(obitstream&, _Arg), _Arg _Val) : _Pfun(_Left), _Manarg(_Val) {}
+		_BitSmanip(iobs_base& (__cdecl* _Left)(iobs_base&, _Arg), _Arg _Val) : _Pfun(_Left), _Manarg(_Val) {}
 
-		obitstream&(__cdecl* _Pfun)(obitstream&, _Arg); // the function pointer
+		iobs_base&(__cdecl* _Pfun)(iobs_base&, _Arg); // the function pointer
 		_Arg _Manarg; // the argument value
 	};
 
 	template <class  _Elem, size_t _Bits>
-	bitstringstream<_Elem>& operator<<(bitstringstream<_Elem>& _Ostr, const std::bitset<_Bits>& _Right)
+	obitstream<_Elem>& operator<<(obitstream<_Elem>& _Ostr, const std::bitset<_Bits>& _Right)
 	{
 		int length = _Bits;
 
@@ -229,53 +263,69 @@ namespace caWavelet
 	}
 
 	template <class _Elem>
-	bitstringstream<_Elem>& operator<<(bitstringstream<_Elem>& _Ostr, const long long _val)
+	obitstream<_Elem>& operator<<(obitstream<_Elem>& _Ostr, const long long _val)
 	{
 		_Ostr.fillLongLong(static_cast<const unsigned long long>(_val), sizeof(int) * CHAR_BIT);
 		return _Ostr;
 	}
 
 	template <class _Elem>
-	bitstringstream<_Elem>& operator<<(bitstringstream<_Elem>& _Ostr, const unsigned long long _val)
+	obitstream<_Elem>& operator<<(obitstream<_Elem>& _Ostr, const unsigned long long _val)
 	{
 		_Ostr.fillLongLong(_val, sizeof(int) * CHAR_BIT);
 		return _Ostr;
 	}
 
 	template <class _Elem>
-	bitstringstream<_Elem>& operator<<(bitstringstream<_Elem>& _Ostr, const int _val)
+	obitstream<_Elem>& operator<<(obitstream<_Elem>& _Ostr, const int _val)
 	{
 		_Ostr.fillLongLong(static_cast<const unsigned long long>(_val), sizeof(int) * CHAR_BIT);
 		return _Ostr;
 	}
 
 	template <class _Elem>
-	bitstringstream<_Elem>& operator<<(bitstringstream<_Elem>& _Ostr, const unsigned int _val)
+	obitstream<_Elem>& operator<<(obitstream<_Elem>& _Ostr, const unsigned int _val)
 	{
 		_Ostr.fillLongLong(static_cast<const unsigned long long>(_val), sizeof(int) * CHAR_BIT);
 		return _Ostr;
 	}
 
 	template <class _Elem>
-	bitstringstream<_Elem>& operator<<(bitstringstream<_Elem>& _Ostr, const char _val)
+	obitstream<_Elem>& operator<<(obitstream<_Elem>& _Ostr, const char _val)
 	{
 		_Ostr.fillChar(static_cast<const unsigned char>(_val), CHAR_BIT);
 		return _Ostr;
 	}
 
 	template <class _Elem>
-	bitstringstream<_Elem>& operator<<(bitstringstream<_Elem>& _Ostr, const unsigned char _val)
+	obitstream<_Elem>& operator<<(obitstream<_Elem>& _Ostr, const unsigned char _val)
 	{
 		_Ostr.fillChar(_val, CHAR_BIT);
 		return _Ostr;
 	}
 
 	template <class _Elem, class _Arg>
-	bitstringstream<_Elem>& operator<<(bitstringstream<_Elem>& _Ostr, const _BitSmanip<_Arg>& _BitManip)
+	obitstream<_Elem>& operator<<(obitstream<_Elem>& _Ostr, const _BitSmanip<_Arg>& _BitManip)
 	{
 		(*_BitManip._Pfun)(_Ostr, _BitManip._Manarg);
 		return _Ostr;
 	}
+
+	//////////////////////////////
+	template <class _Elem, class _Arg>
+	bitstringstream<_Elem>& operator>>(bitstringstream<_Elem>& _is, char& _val)
+	{
+		_val = _is.getChar(_val, CHAR_BIT);
+		return _is;
+	}
+
+	template <class _Elem, class _Arg>
+	bitstringstream<_Elem>& operator>>(bitstringstream<_Elem>& _is, _BitSmanip<_Arg>& _BitManip)
+	{
+		(*_BitManip._Pfun)(_is, _BitManip._Manarg);
+		return _is;
+	}
+
 
 	_MRTIMP2 _BitSmanip<std::streamsize> __cdecl setw(std::streamsize);
 
