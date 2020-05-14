@@ -155,12 +155,12 @@ namespace caWavelet
 		mmt.serialize(bs);
 
 		//////////////////////////////
-		const char* converted = bs.c_str();
+		const unsigned char* converted = bs.data();
 		int expected[DATA_LENGTH_2D_DUMMY] = { 0 };
 		expected2DDummy_s8x8(expected, DATA_LENGTH_2D_DUMMY);
 		for (size_t i = 0; i < (bs.size() + CHAR_BIT - 1) / CHAR_BIT; i++)
 		{
-			EXPECT_EQ(converted[i], expected[i]);
+			EXPECT_EQ(converted[i], (unsigned char)expected[i]);
 			std::cout << std::dec << "[" << i << "]: " << std::setfill('0') << std::setw(1) << std::hex << (short)converted[i] << std::endl;
 		}
 		std::cout << std::endl;

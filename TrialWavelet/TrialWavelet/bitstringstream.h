@@ -10,6 +10,15 @@
 #include <algorithm>
 #include <iosfwd>
 #include <type_traits>
+#include "exceptions.h"
+
+#define _TRY_CA_IO_BEGIN _TRY_BEGIN // begin try block
+
+#define _CATCH_CA_IO_END															\
+    _CATCH_ALL /* catch block for _Myios */											\
+		throw BitstreamIOException();												\
+        /* _Myios::setstate(ios_base::badbit, true); /* set badbit and rethrow */	\
+    _CATCH_END
 
 namespace caWavelet
 {
@@ -24,6 +33,8 @@ namespace caWavelet
 		using size_type = size_t;
 
 	public:
+		iobs_base() {}
+
 		////////////////////////////////////////
 		// Set options
 		void width(size_type w)
@@ -44,35 +55,62 @@ namespace caWavelet
 
 	protected:
 		static const unsigned char mask[9];
+		static const unsigned char rmask[9];
 
 	protected:
 		size_t bitWidth = 0;	// default: 0
 	};
 
-	template <class _Elem>
-	class iobs : public iobs_base
+	template <class _Block, class _Traits>
+	class vector_iobs : public iobs_base
 	{
 	public:
+		using container_type = std::vector<_Block>;
 		using size_type = size_t;
-		using pos_type = std::conditional_t < sizeof(_Elem) < 31, unsigned char, unsigned int > ;
+		using block_type = _Block;
 
-	public:
-		_NODISCARD const _Elem* c_str() const noexcept
-		{
-			return this->stream.c_str();
-		}
+		using traits_type = _Traits;
+		using int_type = typename _Traits::int_type;
+		using pos_type = typename _Traits::pos_type;
+		
+		// off_type?
+		// using pos_type = std::conditional_t < sizeof(_Block) < 31, unsigned char, unsigned int > ;
+
+		vector_iobs(container_type* mem) : _container(mem), iobs_base() {};
+
+	private:
+		container_type* _container;		// memory space to store the data
 
 	protected:
-		std::basic_string<_Elem, std::char_traits<_Elem>, std::allocator<_Elem>> stream;
+		void init(container_type* mem)
+		{
+			this->_container = mem;
+		}
+
+		vector_iobs() {};
 	};
 
-	template <class _Elem, size_t _BlockBytes = sizeof(_Elem), size_t _BlockBits = sizeof(_Elem)* CHAR_BIT>
-	class obitstream : public iobs<_Elem>
+	template <class _Block, class _Traits, size_t _BlockBytes = sizeof(_Block), size_t _BlockBits = sizeof(_Block)* CHAR_BIT>
+	class vector_obitstream : virtual public vector_iobs<_Block, _Traits>
 	{
+	public:
+		using _myBase = vector_iobs<_Block, _Traits>;
+
+		using container_type = std::vector<_Block>;
+		using block_bitset_type = std::bitset<sizeof(_Block) * CHAR_BIT>;
 		using size_type = size_t;
-		using pos_type = std::conditional_t < sizeof(_Elem) < 31, unsigned char, unsigned int > ;
+		using block_type = _Block;
+
+		using traits_type = _Traits;
+		using int_type = typename _Traits::int_type;
+		using pos_type = typename _Traits::pos_type;
 
 	public:
+		vector_obitstream(container_type* mem) : _container(mem) 
+		{
+			_myBase::init(mem);
+		}
+
 		// This function has endian problem (byte order) with numbers
 		size_type fillArray(const unsigned char* c, const size_type length)
 		{
@@ -103,7 +141,7 @@ namespace caWavelet
 				remain -= this->fill(c & this->mask[remain], remain);
 			}
 
-			return length;
+			return length - remain;
 		}
 
 		size_type fillLongLong(const unsigned long long c, const size_type length = CHAR_BIT * sizeof(long long))
@@ -122,16 +160,18 @@ namespace caWavelet
 				remain -= this->fill(c & this->mask[remain], remain);
 			}
 
-			return length;
+			return length - remain;
 		}
 
 	protected:
 		/*
 		* Here is an example of a bitstream with 4 bits block.
 		*
-		*  [pos]
-		*   ▼ ->
-		* ┌─┬─┬─┬─┐┌─┬─┬─┬─┐
+		*  
+		* ┌───────┐
+		* │[pos]         │
+		* │▼ ->		  │
+		* ├─┬─┬─┬─┤┌─┬─┬─┬─┐
 		* │ 3│ 2│ 1│ 0││ 3│ 2│ 1│ 0│ bitset<4>
 		* ├─┴─┴─┴─┤├─┴─┴─┴─┤
 		* │	  [0]	  ││		[1]		│ vector<bitset<4>>
@@ -140,16 +180,16 @@ namespace caWavelet
 		* │ 0│ 1│ 2│ 3││ 4│ 5│ 6│ 7│ global bit order
 		* └─┴─┴─┴─┘└─┴─┴─┴─┘
 		*/
-		pos_type fill(const unsigned char c, pos_type length = 8)
+		pos_type fill(const unsigned char c, pos_type length = CHAR_BIT)
 		{
-			assert(length <= 8);
-			if (this->pos == 0)
+			assert(0 < length && length <= CHAR_BIT);
+
+			if (this->bitPos == 0)
 			{
-				this->stream.push_back(0x0);
-				this->endBlock = reinterpret_cast<std::bitset<sizeof(_Elem) * CHAR_BIT>*>(&this->stream.back());
+				this->addNewBlock();
 			}
 
-			if (this->pos % 8 != 0 || length % 8 != 0)
+			if (this->bitPos % CHAR_BIT != 0 || length % CHAR_BIT != 0)
 			{
 				return this->fillBits(c, length);
 			}
@@ -160,75 +200,301 @@ namespace caWavelet
 		}
 
 	private:
+		void addNewBlock()
+		{
+			this->_container->push_back(0x0);
+			this->endBlock = reinterpret_cast<block_bitset_type*>(&this->_container->back());
+		}
+
 		// out: number of filled bits
-		unsigned char fillBits(unsigned char c, char length)
+		unsigned char fillBits(const unsigned char c, const pos_type length)
 		{
 			pos_type i = length - 1;
-			pos_type last = std::max(length - (8 - (unsigned char)(this->pos % 8)), 0);
+			pos_type last = std::max((pos_type)(length - (CHAR_BIT - (char)(this->bitPos % CHAR_BIT))), (pos_type)0);
 
-			for (; i != (pos_type)(-1) && i >= last; i--, this->pos++)
+			for (; i != (pos_type)(-1) && i >= last; i--, this->bitPos++)
 			{
 				if ((c >> i) & 0x1)
 				{
-					(this->endBlock)->set(_BlockBits - this->pos - 1);
+					(this->endBlock)->set(_BlockBits - this->bitPos - 1);
 				}
 			}
-			this->pos %= _BlockBits;
+			this->bitPos %= _BlockBits;
 
 			return length - last;
 		}
 
 		// out: number of filled bits
-		unsigned char fillByte(unsigned char c)
+		unsigned char fillByte(const unsigned char c)
 		{
-			(*this->endBlock) |= (static_cast<size_type>(c) << (_BlockBits - this->pos - 8));
-			this->pos = (this->pos + 8) % _BlockBits;
+			(*this->endBlock) |= (static_cast<size_type>(c) << (_BlockBits - this->bitPos - CHAR_BIT));
+			//this->bitPos = this->bitPos + CHAR_BIT;
+			this->bitPos = (this->bitPos + CHAR_BIT) % _BlockBits;
 
 			return CHAR_BIT;
 		}
 
 	protected:
-		pos_type pos = 0;			// current bit in a byte
-		std::bitset<sizeof(_Elem) * CHAR_BIT>* endBlock = NULL;
+		pos_type bitPos = 0;			// current bit in a block
+		block_bitset_type* endBlock = nullptr;
+
+	private:
+		container_type* _container;
 	};
 
-	template <class _Elem, size_t _BlockBytes = sizeof(_Elem), size_t _BlockBits = sizeof(_Elem)* CHAR_BIT>
-	class ibitstream : public iobs<_Elem>
+	template <class _Block, class _Traits, size_t _BlockBytes = sizeof(_Block), size_t _BlockBits = sizeof(_Block)* CHAR_BIT>
+	class vector_ibitstream : virtual public vector_iobs<_Block, _Traits>
 	{
+	public:
+		using _myBase = vector_iobs<_Block, _Traits>;
 
-	};
-
-	template <class _Elem, size_t _BlockBytes = sizeof(_Elem), size_t _BlockBits = sizeof(_Elem) * CHAR_BIT>
-	class bitstringstream : public obitstream<_Elem>, ibitstream<_Elem>
-	{
+		using container_type = std::vector<_Block>;
+		using block_bitset_type = std::bitset<sizeof(_Block) * CHAR_BIT>;
 		using size_type = size_t;
-		using pos_type = std::conditional_t<sizeof(_Elem) < 31 , unsigned char, unsigned int>;
+		using block_type = _Block;
+
+		using traits_type = _Traits;
+		using int_type = typename _Traits::int_type;
+		using pos_type = typename _Traits::pos_type;
+
+		vector_ibitstream(container_type* mem) : _container(mem) 
+		{
+			_myBase::init(mem);
+		};
 
 	public:
-		using iobs<_Elem>::c_str;
-		using iobs<_Elem>::width;
-		using iobs<_Elem>::initWidth;
-		using iobs<_Elem>::stream;
+		unsigned char getChar(size_type length = CHAR_BIT)
+		{
+			unsigned char out = 0x00;
+			size_type remain = length;
 
+			while (remain > 0)
+			{
+				unsigned char temp = 0x00;
+				remain -= this->get(temp, remain);
+				out |= (temp << remain);
+			}
+
+			return out;
+		}
+
+		unsigned long long getLongLong(size_type length = CHAR_BIT * sizeof(long long))
+		{
+			unsigned long long out = 0x00;
+			size_type remain = length;
+
+			// Head bits -> get by byte
+			while (remain >= CHAR_BIT)
+			{
+				unsigned char temp = 0x00;
+				remain -= this->get(temp, CHAR_BIT);
+				out |= (temp << remain);
+			}
+
+			// Tail bits -> get by bit length
+			while (remain > 0)
+			{
+				unsigned char temp = 0x00;
+				remain -= this->get(temp, remain);
+				out |= (temp << remain);
+			}
+
+			return length - remain;
+		}
+
+		bool eof()
+		{
+			// this->bitPos == _BlockBytes ?
+			if (this->_container->size() <= this->blockPos)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+	protected:
+		pos_type get(unsigned char& out, const pos_type length = CHAR_BIT)
+		{
+			assert(length <= CHAR_BIT);
+			if (this->eof())
+			{
+				return 0;
+			}
+
+			if (this->frontBlock == nullptr)
+			{
+				this->frontBlock = reinterpret_cast<block_bitset_type*>(&this->_container->front());
+			}
+
+			pos_type move = 0;
+			if (this->bitPos % CHAR_BIT != 0 || length % CHAR_BIT != 0)
+			{
+				move = this->getBits(out, length);
+			}
+			else
+			{
+				move = this->getByte(out);
+			}
+
+			if (move && this->bitPos == 0)
+			{
+				this->moveToNextInputBlock();
+			}
+
+			return move;
+		}
+
+	private:
+		unsigned char getBits(unsigned char& out, const pos_type length)
+		{
+			pos_type i = length;
+			pos_type possible = std::min(static_cast<pos_type>(_BlockBits - this->bitPos), static_cast<pos_type>(length));
+			// TODO:: Test and Fix
+			out |= (*this->frontBlock << this->bitPos).to_ulong() & this->rmask[length - possible];
+
+			this->bitPos %= _BlockBits;
+
+			return possible;
+		}
+
+		unsigned char getByte(unsigned char& out)
+		{
+			out |= ((*this->frontBlock << (_BlockBits - this->bitPos - CHAR_BIT)).to_ulong() & 0xFF);
+			this->bitPos = (this->bitPos + CHAR_BIT) % _BlockBits;
+
+			return CHAR_BIT;
+		}
+
+		void moveToNextInputBlock()
+		{
+			this->blockPos++;
+
+			if (this->eof())
+			{
+				this->blockPos = this->_container->size();
+				return;
+			}
+			
+			this->frontBlock = reinterpret_cast<block_bitset_type*>(&this->_container->at(this->blockPos));
+			//this->frontBlock = reinterpret_cast<std::bitset<sizeof(_Block) * CHAR_BIT>*>(this->_[this->blockPos]);
+		}
+
+		/*unsigned char getBits(unsigned char& out, const pos_type length)
+		{
+			unsigned char bits = 0;
+			for (; this->bitPos < _BlockBits || bits < length; this->bitPos++, bits++)
+			{
+				if (length - bits >= CHAR_BIT)
+				{
+					output |= ((*this->frontBlock) << (_BlockBits - this->bitPos) | 0xFF) << bits;
+				}
+				else
+				{
+					output |= ((*this->frontBlock) << (_BlockBits - this->bitPos) | this->rmask[length - bits]) << bits;
+				}
+			}
+
+			this->bitPos %= _BlockBits;
+
+			return bits;
+		}*/
+
+		// Not used yet.
+		// See pos_type get(unsigned char& out, pos_type length = CHAR_BIT);
+		//unsigned char getBlock(std::bitset<sizeof(_Elem)& out)
+		//{
+		//	if (this->eof())
+		//	{
+		//		return 0;
+		//	}
+		//	out = (*this->frontBlock);
+
+		//	this->bytePos += 1;
+		//	this->frontBlock = !this->eof() ? &(this->stream[this->bytePos]) : NULL;
+
+		//	return CHAR_BIT * sizeof(_Elem);
+		//}
+
+	protected:	
+		pos_type blockPos = 0;		// current byte in a stream
+		pos_type bitPos = 0;		// current bit in a byte
+		block_bitset_type* frontBlock = nullptr;
+
+	private:
+		container_type* _container;
+	};
+
+	template <class _Block, class _Traits, size_t _BlockBytes = sizeof(_Block), size_t _BlockBits = sizeof(_Block)* CHAR_BIT>
+	class vector_iobitstream : public vector_ibitstream<_Block, _Traits>,
+							   public vector_obitstream<_Block, _Traits>
+	{
+	public:
+		using _myIs = vector_ibitstream<_Block, _Traits>;
+		using _myOs = vector_obitstream<_Block, _Traits>;
+
+		using container_type = std::vector<_Block>;
+		using block_bitset_type = std::bitset<sizeof(_Block) * CHAR_BIT>;
+		using size_type = size_t;
+		using block_type = _Block;
+
+		using traits_type = _Traits;
+		using int_type = typename _Traits::int_type;
+		using pos_type = typename _Traits::pos_type;
+
+		vector_iobitstream(container_type* myContainer)
+			: _myIs(myContainer), _myOs(myContainer)
+		{
+
+		}
+	};
+
+	template <class _Block, class _Traits, size_t _BlockBytes = sizeof(_Block), size_t _BlockBits = sizeof(_Block) * CHAR_BIT>
+	class vector_bitstringstream : public vector_iobitstream<_Block, _Traits>
+	{
+	public:
+		using _myBase = vector_iobitstream<_Block, _Traits>;
+
+		using container_type = std::vector<_Block>;
+		using block_bitset_type = std::bitset<sizeof(_Block) * CHAR_BIT>;
+		using size_type = size_t;
+		using block_type = _Block;
+
+		using traits_type = _Traits;
+		using int_type = typename _Traits::int_type;
+		using pos_type = typename _Traits::pos_type;
 
 	public:
-		bitstringstream() {}
+		vector_bitstringstream()
+			: _myBase(_STD addressof(this->_container)) 
+		{
+		}
+
+		//: _myBase(_STD addressof(_container)) {}
 
 		// Return total number of used bits
 		_NODISCARD size_type size() const noexcept
 		{
-			if (obitstream<_Elem>::pos)
+			if (vector_obitstream<_Block, _Traits>::bitPos)
 			{
-				return (this->stream.size() - 1) * _BlockBits + obitstream<_Elem>::pos;
+				return (this->_container.size() - 1) * _BlockBits + vector_obitstream<_Block, _Traits>::bitPos;
 			}
-			return this->stream.size() * _BlockBits;
+			return this->_container.size() * _BlockBits;
 		}
 
 		// Return total number of bits capacity
 		_NODISCARD size_type capacity() const noexcept
 		{
-			return this->stream.size() * _BlockBits;
+			return this->_container.size() * _BlockBits;
 		}
+
+		_NODISCARD const _Block* data() const noexcept
+		{
+			return this->_container.data();
+		}
+
+	protected:
+		container_type _container;
 	};
 
 	// STRUCT TEMPLATE _BitSmanip
@@ -242,8 +508,8 @@ namespace caWavelet
 		_Arg _Manarg; // the argument value
 	};
 
-	template <class  _Elem, size_t _Bits>
-	obitstream<_Elem>& operator<<(obitstream<_Elem>& _Ostr, const std::bitset<_Bits>& _Right)
+	template <class  _Block, class _Traits, size_t _Bits>
+	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const std::bitset<_Bits>& _Right)
 	{
 		int length = _Bits;
 
@@ -262,75 +528,134 @@ namespace caWavelet
 		return _Ostr;
 	}
 
-	template <class _Elem>
-	obitstream<_Elem>& operator<<(obitstream<_Elem>& _Ostr, const long long _val)
+	template <class _Block, class _Traits>
+	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const long long _val)
 	{
 		_Ostr.fillLongLong(static_cast<const unsigned long long>(_val), sizeof(int) * CHAR_BIT);
 		return _Ostr;
 	}
 
-	template <class _Elem>
-	obitstream<_Elem>& operator<<(obitstream<_Elem>& _Ostr, const unsigned long long _val)
+	template <class _Block, class _Traits>
+	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const unsigned long long _val)
 	{
 		_Ostr.fillLongLong(_val, sizeof(int) * CHAR_BIT);
 		return _Ostr;
 	}
 
-	template <class _Elem>
-	obitstream<_Elem>& operator<<(obitstream<_Elem>& _Ostr, const int _val)
+	template <class _Block, class _Traits>
+	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const int _val)
 	{
 		_Ostr.fillLongLong(static_cast<const unsigned long long>(_val), sizeof(int) * CHAR_BIT);
 		return _Ostr;
 	}
 
-	template <class _Elem>
-	obitstream<_Elem>& operator<<(obitstream<_Elem>& _Ostr, const unsigned int _val)
+	template <class _Block, class _Traits>
+	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const unsigned int _val)
 	{
 		_Ostr.fillLongLong(static_cast<const unsigned long long>(_val), sizeof(int) * CHAR_BIT);
 		return _Ostr;
 	}
 
-	template <class _Elem>
-	obitstream<_Elem>& operator<<(obitstream<_Elem>& _Ostr, const char _val)
+	template <class _Block, class _Traits>
+	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const char _val)
 	{
 		_Ostr.fillChar(static_cast<const unsigned char>(_val), CHAR_BIT);
 		return _Ostr;
 	}
 
-	template <class _Elem>
-	obitstream<_Elem>& operator<<(obitstream<_Elem>& _Ostr, const unsigned char _val)
+	template <class _Block, class _Traits>
+	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const unsigned char _val)
 	{
 		_Ostr.fillChar(_val, CHAR_BIT);
 		return _Ostr;
 	}
 
-	template <class _Elem, class _Arg>
-	obitstream<_Elem>& operator<<(obitstream<_Elem>& _Ostr, const _BitSmanip<_Arg>& _BitManip)
+	template <class _Block, class _Traits, class _Arg>
+	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const _BitSmanip<_Arg>& _BitManip)
 	{
 		(*_BitManip._Pfun)(_Ostr, _BitManip._Manarg);
 		return _Ostr;
 	}
 
 	//////////////////////////////
-	template <class _Elem, class _Arg>
-	bitstringstream<_Elem>& operator>>(bitstringstream<_Elem>& _is, char& _val)
+	template <class _Block, class _Traits>
+	vector_ibitstream<_Block, _Traits>& operator>>(vector_ibitstream<_Block, _Traits>& _is, char& _val)
 	{
-		_val = _is.getChar(_val, CHAR_BIT);
+		_val = (char)_is.getChar();
 		return _is;
 	}
 
-	template <class _Elem, class _Arg>
-	bitstringstream<_Elem>& operator>>(bitstringstream<_Elem>& _is, _BitSmanip<_Arg>& _BitManip)
+	template <class _Block, class _Traits>
+	vector_ibitstream<_Block, _Traits>& operator>>(vector_ibitstream<_Block, _Traits>& _is, unsigned char& _val)
+	{
+		_val = (char)_is.getChar();
+		return _is;
+	}
+
+	template <class _Block, class _Traits, class _Arg>
+	vector_ibitstream<_Block, _Traits>& operator>>(vector_ibitstream<_Block, _Traits>& _is, _BitSmanip<_Arg>& _BitManip)
 	{
 		(*_BitManip._Pfun)(_is, _BitManip._Manarg);
 		return _is;
 	}
 
+	template <class _Elem, class _IntType>
+	struct _BlockTraits
+	{
+		using char_type = _Elem;
+		using int_type = _IntType;
+		using pos_type = long long;
+
+		static _CONSTEXPR17 void assign(_Elem& _Left, const _Elem& _Right) noexcept
+		{
+			_Left = _Right;
+		}
+
+		_NODISCARD static constexpr bool eq(const _Elem& _Left, const _Elem& _Right) noexcept
+		{
+			return _Left == _Right;
+		}
+
+		_NODISCARD static constexpr bool lt(const _Elem& _Left, const _Elem& _Right) noexcept
+		{
+			return _Left < _Right;
+		}
+
+		_NODISCARD static constexpr _Elem to_char_type(const int_type& _Meta) noexcept
+		{
+			return static_cast<_Elem>(_Meta);
+		}
+
+		_NODISCARD static constexpr int_type to_int_type(const _Elem& _Ch) noexcept
+		{
+			return static_cast<int_type>(_Ch);
+		}
+
+		_NODISCARD static constexpr bool eq_int_type(const int_type& _Left, const int_type& _Right) noexcept
+		{
+			return _Left == _Right;
+		}
+	};
+
+	template <class _Elem>
+	struct _charBlockTraits : _BlockTraits<char, unsigned long>
+	{
+
+	};
+
+	template <>
+	struct _charBlockTraits<unsigned char> : _BlockTraits<unsigned char, unsigned char> {};
+
+	template <>
+	struct _charBlockTraits<char16_t> : _BlockTraits<char, unsigned long> {};
+	
+	template <>
+	struct _charBlockTraits<char32_t> : _BlockTraits<char, unsigned int> {};
 
 	_MRTIMP2 _BitSmanip<std::streamsize> __cdecl setw(std::streamsize);
 
-	using bstream = bitstringstream<char>;
-	using u16bstream = bitstringstream<char16_t>;
-	using u32bstream = bitstringstream<char32_t>;
+	using bstream = vector_bitstringstream<unsigned char, _charBlockTraits<unsigned char>>;
+	using u16bstream = vector_bitstringstream<char16_t, _charBlockTraits<char16_t>>;
+	using u32bstream = vector_bitstringstream<char32_t, _charBlockTraits<char32_t>>;
 }
 #endif	// _caBitstringstream_

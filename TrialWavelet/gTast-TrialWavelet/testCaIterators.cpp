@@ -367,9 +367,8 @@ namespace caWavelet
 			{
 				for (int x = 0; x < 2; x++)
 				{
-					std::cout << "b: " << b << ", y: " << y << "(" << (y + (b & 0x02)) << "), x: " << x << "(" << (x + (b & 0x01) * 2) << ")" << std::endl;
-					std::cout << "coor[0]: " << it.coor()[0] << ", coor[1]: " << it.coor()[1] << std::endl;
-					std::cout << b * sizeLevel_1 + y * 2 + x << std::endl;
+					std::cout << "b: " << b << ", y: " << y << "(" << (y + (b & 0x02)) << ", " << it.coor()[0] << "), x: " << x << "(" << (x + (b & 0x01) * 2) << ", " << it.coor()[1] << ")" << std::endl;
+					std::cout << b * sizeLevel_1 + y * 2 + x << ", " << *it << std::endl;
 					EXPECT_EQ(it.coor()[0], y + (b & 0x02));
 					EXPECT_EQ(it.coor()[1], x + (b & 0x01) * 2);
 					EXPECT_EQ(*it, b * sizeLevel_1 + y * 2 + x);

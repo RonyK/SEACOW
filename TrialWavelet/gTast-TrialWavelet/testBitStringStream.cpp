@@ -23,7 +23,7 @@ namespace caWavelet
 		//////////////////////////////
 		// Output test				//
 		//////////////////////////////
-		const char* str = bs.c_str();
+		const unsigned char* str = bs.data();
 		for (int i = 0; i < (bs.size() + 7) / 8; i++)
 		{
 			EXPECT_EQ(static_cast<unsigned char>(str[i]), expected[i]);
@@ -58,7 +58,7 @@ namespace caWavelet
 		//////////////////////////////
 		// Output test				//
 		//////////////////////////////
-		const char32_t* str = bs.c_str();
+		const char32_t* str = bs.data();
 		for (int i = 0; i < (bs.size() + 31) / 32; i++)
 		{
 			EXPECT_EQ(static_cast<char32_t>(str[i]), u32Expected[i]);
@@ -82,7 +82,7 @@ namespace caWavelet
 		//////////////////////////////
 		// Output test				//
 		//////////////////////////////
-		const char* str = bs.c_str();
+		const unsigned char* str = bs.data();
 		for (int i = 0; i < (bs.size() + 7) / 8; i++)
 		{
 			EXPECT_EQ(static_cast<unsigned char>(str[i]), expected[i]);
@@ -108,7 +108,7 @@ namespace caWavelet
 		//////////////////////////////
 		// Output test				//
 		//////////////////////////////
-		const char* str = bs.c_str();
+		const unsigned char* str = bs.data();
 		for (int i = 0; i < (bs.size() + 7) / 8; i++)
 		{
 			EXPECT_EQ(static_cast<unsigned char>(str[i]), expected[i]);
@@ -136,10 +136,48 @@ namespace caWavelet
 		//////////////////////////////
 		// Output test				//
 		//////////////////////////////
-		const char* str = bs.c_str();
+		const unsigned char* str = bs.data();
 		for (int i = 0; i < (bs.size() + 7) / 8; i++)
 		{
 			EXPECT_EQ(static_cast<unsigned char>(str[i]), expected[i]);
 		}
+	}
+
+	TEST(caBitStringStream, iobstream)
+	{
+		bstream bs;
+
+		std::bitset<1> b1 = 0x1;		// 1
+		std::bitset<2> b2 = 0x1;		// 01
+		std::bitset<3> b3 = 0x1;		// 001
+		std::bitset<8> b8 = 0x36;		// 0011 0110
+
+		unsigned char expected[2] = {
+			0x36, // 0011 0110
+			0xD2  // 1101 0010
+		};
+
+		bs << b8 << b1 << b1 << b2 << b3;
+
+		//////////////////////////////
+		// Output test				//
+		//////////////////////////////
+		std::cout << "output" << std::endl;
+		const unsigned char* str = bs.data();
+		for (int i = 0; i < (bs.size() + 7) / 8; i++)
+		{
+			
+			EXPECT_EQ(static_cast<unsigned char>(str[i]), expected[i]);
+		}
+
+		unsigned char result[2];
+		bs >> result[0] >> result[1];
+
+		std::cout << "input" << std::endl;
+		for (int i = 0; i < (bs.size() + 7) / 8; i++)
+		{
+			EXPECT_EQ(result[i], expected[i]);
+		}
+
 	}
 }

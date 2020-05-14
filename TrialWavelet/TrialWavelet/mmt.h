@@ -112,7 +112,7 @@ namespace caWavelet
 				throw std::length_error();
 			}
 
-			memcpy(output, bs.c_str(), (bs.size() + CHAR_BIT - 1) / CHAR_BIT);
+			memcpy(output, bs.data(), (bs.size() + CHAR_BIT - 1) / CHAR_BIT);
 		}
 
 		void serialize(bstream& bs)

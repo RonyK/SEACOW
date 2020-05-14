@@ -29,7 +29,7 @@ namespace caWavelet
 
 				compact.encode(bs, wtData, mmt);
 
-				const char* converted = bs.c_str();
+				const unsigned char* converted = bs.data();
 				for (size_t i = 0; i < (bs.size() + CHAR_BIT - 1) / CHAR_BIT; i++)
 				{
 					std::cout << std::dec << "[" << i << "]" << std::setfill('0') << std::setw(2) << std::right << std::hex << (short)converted[i] << std::endl;
