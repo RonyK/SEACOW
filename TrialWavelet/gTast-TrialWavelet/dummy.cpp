@@ -36,7 +36,7 @@ namespace caWavelet
 
 			void getWTDummy(char* output, size_t length)
 			{
-				assert(length == 4 * 4);
+				assert(length >= 4 * 4);
 				// Wavelet represent array as a band-wise fashion
 				const static char arr[4][2][2] = {
 					{ {6, 4}, {4, 2}},

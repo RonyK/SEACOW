@@ -12,9 +12,9 @@ namespace caWavelet
 			{
 				//////////////////////////////
 				// Build Dummy Data
-				char data[dummyDataLength];
-				char wtData[dummyDataLength];
-				char expected[dummyDataLength];
+				value_type data[dummyDataLength];
+				value_type wtData[dummyDataLength];
+				value_type expected[dummyDataLength];
 
 				getDummy(data, dummyDataLength);
 				getWTDummy(wtData, dummyDataLength);
