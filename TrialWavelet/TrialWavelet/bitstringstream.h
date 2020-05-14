@@ -15,7 +15,7 @@
 #define _TRY_CA_IO_BEGIN _TRY_BEGIN // begin try block
 
 #define _CATCH_CA_IO_END															\
-    _CATCH_ALL /* catch block for _Myios */											\
+    _CATCH_ALL /* catch block */													\
 		throw BitstreamIOException();												\
         /* _Myios::setstate(ios_base::badbit, true); /* set badbit and rethrow */	\
     _CATCH_END
@@ -350,7 +350,6 @@ namespace caWavelet
 		{
 			pos_type i = length;
 			pos_type possible = std::min(static_cast<pos_type>(_BlockBits - this->bitPos), static_cast<pos_type>(length));
-			// TODO:: Test and Fix
 			out |= (*this->frontBlock << this->bitPos).to_ulong() & this->rmask[length - possible];
 
 			this->bitPos %= _BlockBits;
@@ -377,44 +376,7 @@ namespace caWavelet
 			}
 			
 			this->frontBlock = reinterpret_cast<block_bitset_type*>(&this->_container->at(this->blockPos));
-			//this->frontBlock = reinterpret_cast<std::bitset<sizeof(_Block) * CHAR_BIT>*>(this->_[this->blockPos]);
 		}
-
-		/*unsigned char getBits(unsigned char& out, const pos_type length)
-		{
-			unsigned char bits = 0;
-			for (; this->bitPos < _BlockBits || bits < length; this->bitPos++, bits++)
-			{
-				if (length - bits >= CHAR_BIT)
-				{
-					output |= ((*this->frontBlock) << (_BlockBits - this->bitPos) | 0xFF) << bits;
-				}
-				else
-				{
-					output |= ((*this->frontBlock) << (_BlockBits - this->bitPos) | this->rmask[length - bits]) << bits;
-				}
-			}
-
-			this->bitPos %= _BlockBits;
-
-			return bits;
-		}*/
-
-		// Not used yet.
-		// See pos_type get(unsigned char& out, pos_type length = CHAR_BIT);
-		//unsigned char getBlock(std::bitset<sizeof(_Elem)& out)
-		//{
-		//	if (this->eof())
-		//	{
-		//		return 0;
-		//	}
-		//	out = (*this->frontBlock);
-
-		//	this->bytePos += 1;
-		//	this->frontBlock = !this->eof() ? &(this->stream[this->bytePos]) : NULL;
-
-		//	return CHAR_BIT * sizeof(_Elem);
-		//}
 
 	protected:	
 		pos_type blockPos = 0;		// current byte in a stream
@@ -444,8 +406,7 @@ namespace caWavelet
 
 		vector_iobitstream(container_type* myContainer)
 			: _myIs(myContainer), _myOs(myContainer)
-		{
-
+		{ 
 		}
 	};
 
