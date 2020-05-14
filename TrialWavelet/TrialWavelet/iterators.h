@@ -59,6 +59,16 @@ namespace caWavelet
 			return this->dSize_ != rhs.dSize_ || (memcmp(this->coor_, rhs.coor_, this->dSize * sizeof(dim_type)) != 0);
 		}
 
+		self_type& operator=(const self_type& mit)
+		{
+			delete[] this->coor_;
+			this->dSize_ = mit.dSize_;
+			this->coor_ = new dim_type[mit.dSize_];
+			memcpy(this->coor_, mit.coor_, mit.dSize_ * sizeof(dim_type));
+
+			return *this;
+		}
+
 		self_type& operator++()
 		{
 			this->coor_[this->dSize_ - 1];
@@ -182,7 +192,7 @@ namespace caWavelet
 
 		// Infinite loop warning
 		// if all eP_ is 0
-		virtual void next(const unsigned int dim)
+		virtual void next(const size_type dim)
 		{
 			const Dty_ offset = this->getDimOffset(dim);
 			if (this->coor_[dim] + 1 < this->eP_[dim])
@@ -222,7 +232,7 @@ namespace caWavelet
 			}
 		}
 
-		virtual void prev(const unsigned int dim)
+		virtual void prev(const size_type dim)
 		{
 			const Dty_ offset = this->getDimOffset(dim);
 			if (this->coor_[dim] > this->sP_[dim])
@@ -383,7 +393,7 @@ namespace caWavelet
 			}
 
 			size_t offset = 1;
-			for (unsigned int i = this->dSize_ - 1; i > dim; i--)
+			for (size_type i = this->dSize_ - 1; i > dim; i--)
 			{
 				offset *= this->dims_[i];
 			}
@@ -565,9 +575,9 @@ namespace caWavelet
 		}
 
 	public:
-		virtual void next(const unsigned int dim)
+		virtual void next(const size_type dim)
 		{
-			const Dty_ offset = this->getDimOffset(dim);
+			const Dty_ offset = static_cast<Dty_>(this->getDimOffset(dim));
 			if (this->coor_[dim] + 1 < std::min(this->beP_[dim], this->eP_[dim]))
 			{
 				this->coor_[dim]++;
@@ -590,7 +600,7 @@ namespace caWavelet
 						this->moveToNextBand();
 						return;
 					}
-					this->next(this->dSize_ - 1);
+					this->next(static_cast<unsigned int>(this->dSize_ - 1));
 				}
 
 				this->moveDimCoor(dim, std::max(this->bsP_[dim], this->sP_[dim]), offset);
@@ -845,7 +855,7 @@ namespace caWavelet
 
 			size_t offset = 1;
 			dim_type* curBandDims = this->getBandDims(this->curLevel_);
-			for (unsigned int i = this->dSize_ - 1; i > dim; i--)
+			for (size_type i = this->dSize_ - 1; i > dim; i--)
 			{
 				offset *= curBandDims[i];
 			}
@@ -945,7 +955,7 @@ namespace caWavelet
 			size_type offset = 1;
 			dim_type* curBandDim = this->getBandDims(this->curLevel_);
 
-			for (int d = this->dSize_ - 1; d >= 0; d--)
+			for (size_type d = this->dSize_ - 1; d != (size_type)-1; d--)
 			{
 				if (size_type(coor[d]) / size_type(curBandDim[d]))
 				{
@@ -969,7 +979,7 @@ namespace caWavelet
 			{
 				levelBoundary = this->getBandDims(level - 1);
 				bool flag = true;
-				for (int d = this->dSize_ - 1; d >= 0; d--)
+				for (size_type d = this->dSize_ - 1; d != (size_type)-1; d--)
 				{
 					if (coor[d] > levelBoundary[d])
 					{
@@ -990,7 +1000,7 @@ namespace caWavelet
 		{
 			size_type band = 0;
 			dim_type* curBandDim = this->getBandDims(level);
-			for (int d = this->dSize_ - 1; d >= 0; d--)
+			for (size_type d = this->dSize_ - 1; d != (size_type)-1; d--)
 			{
 				band |= (size_type(coor[d]) / size_type(curBandDim[d])) << (this->dSize_ - 1 - d);
 			}
