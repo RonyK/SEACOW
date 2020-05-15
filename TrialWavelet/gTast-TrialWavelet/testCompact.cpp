@@ -6,7 +6,7 @@ namespace caWavelet
 {
 	namespace caDummy
 	{
-		namespace data2D_s4x4
+		namespace data2D_sc4x4
 		{
 			TEST(caCompact, d2_s4x4_compact)
 			{
@@ -18,7 +18,7 @@ namespace caWavelet
 
 				getDummy(data, dummyDataLength);
 				getWTDummy(wtData, dummyDataLength);
-				getEXDummy(expected, dummyDataLength);
+				getExDummy(expected, dummyDataLength);
 				//////////////////////////////
 
 				caMMT<dim_type, value_type> mmt(dims, chunkDims, maxLevel);

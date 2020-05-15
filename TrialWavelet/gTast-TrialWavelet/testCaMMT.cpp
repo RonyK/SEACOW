@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "dummy.h"
 #include "../TrialWavelet/mmt.h"
 
 namespace caWavelet
@@ -6,8 +7,6 @@ namespace caWavelet
 #define DATA_LENGTH_2D_DUMMY	64
 
 	void build2DDummy(int* output, size_t length);
-	void build2DDummy_s8x8(int* output, size_t length);
-	void expected2DDummy_s8x8(int* output, size_t length);
 
 	TEST(caMMT, buildLeafMMT)
 	{
@@ -137,33 +136,39 @@ namespace caWavelet
 		EXPECT_EQ(msb<int>(i55858578, 3), 23);
 	}
 
-	TEST(caMMT, serialize)
+	namespace caDummy
 	{
-		//////////////////////////////
-		// Build Dummy Data
-		int data[DATA_LENGTH_2D_DUMMY];
-		std::vector<unsigned int> dim = { 8, 8 };
-		std::vector<unsigned int> chunkDim = { 2, 2 };
-		size_t maxLevel = 2;
-
-		build2DDummy_s8x8(data, DATA_LENGTH_2D_DUMMY);
-		caMMT<unsigned int, int> mmt(dim, chunkDim, maxLevel);
-		bstream bs;
-		//////////////////////////////
-
-		mmt.buildMMT(data, DATA_LENGTH_2D_DUMMY);
-		mmt.serialize(bs);
-
-		//////////////////////////////
-		const unsigned char* converted = bs.data();
-		int expected[DATA_LENGTH_2D_DUMMY] = { 0 };
-		expected2DDummy_s8x8(expected, DATA_LENGTH_2D_DUMMY);
-		for (size_t i = 0; i < (bs.size() + CHAR_BIT - 1) / CHAR_BIT; i++)
+		namespace data2D_sc8x8
 		{
-			EXPECT_EQ(converted[i], (unsigned char)expected[i]);
-			std::cout << std::dec << "[" << i << "]: " << std::setfill('0') << std::setw(1) << std::hex << (short)converted[i] << std::endl;
+			TEST(caMMT, mmt_serialize_sc8x8)
+			{
+				//////////////////////////////
+				// Build Dummy Data
+				value_type data[DATA_LENGTH_2D_DUMMY];
+				std::vector<unsigned char> dim = { 8, 8 };
+				std::vector<unsigned char> chunkDim = { 2, 2 };
+				size_t maxLevel = 2;
+
+				getDummy(data, DATA_LENGTH_2D_DUMMY);
+				caMMT<unsigned char, char> mmt(dim, chunkDim, maxLevel);
+				bstream bs;
+				//////////////////////////////
+
+				mmt.buildMMT(data, DATA_LENGTH_2D_DUMMY);
+				mmt.serialize(bs);
+
+				//////////////////////////////
+				const unsigned char* converted = bs.data();
+				char expected[DATA_LENGTH_2D_DUMMY] = { 0 };
+				getExMMT(expected, DATA_LENGTH_2D_DUMMY);
+				for (size_t i = 0; i < (bs.size() + CHAR_BIT - 1) / CHAR_BIT; i++)
+				{
+					EXPECT_EQ(converted[i], (unsigned char)expected[i]);
+					std::cout << std::dec << "[" << i << "]: " << std::setfill('0') << std::setw(1) << std::hex << (short)converted[i] << std::endl;
+				}
+				std::cout << std::endl;
+			}
 		}
-		std::cout << std::endl;
 	}
 
 	void build2DDummy(int* output, size_t length)
@@ -173,46 +178,4 @@ namespace caWavelet
 			output[i] = i;
 		}
 	}
-
-	// with sign
-	void build2DDummy_s8x8(int* output, size_t length)
-	{
-		assert(length == 8 * 8);
-		const static char arr[8][8] = {
-			{105, 91, 94, 66,		6, 26, 52, 40	},
-			{115, 101, 74, 50,		4, 32, -40, -56	},
-			{108, 100, 75, 71,		24, 12, -1, 3	},
-			{100, 96, 79, 67,		30, 18, -3, -3	},
-			{115, 103, 93, 103,		62, 54, 54, 38	},
-			{109, 101, 95, 113,		48, 44, 64, 44	},
-			{118, 110, 105, 107,	63, 59, 63, 57	},
-			{108, 100, 81, 87,		55, 47, 49, 47	}
-		};
-
-		for (int y = 0; y < 8; y++)
-		{
-			for (int x = 0; x < 8; x++)
-			{
-				output[y * 8 + x] = arr[y][x];
-			}
-		}
-	}
-
-	void expected2DDummy_s8x8(int* output, size_t length)
-	{
-		assert(length > 21);
-		const static char arr[21] = {
-			0x00, 0x00, 0x00, 0x76, 0xFF,
-			0xFF, 0xFF, 0xC8, 0x0C, 0x10,
-			0x0D, 0x0C, 0x40, 0x90, 0x05,
-			0x1A, 0x44, 0x18, 0x58, 0x18, 
-			0x5A
-		};
-
-		for (size_t i = 0; i < 21; i++)
-		{
-			output[i] = arr[i];
-		}
-	}
-
 }

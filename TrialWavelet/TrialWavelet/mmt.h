@@ -53,9 +53,9 @@ namespace caWavelet
 			Ty_ min;
 			char bMax;					// significant bit of max value
 			char bMin;					// significant bit of min value
-			bit_cnt_type bMaxDelta;	// bMax delta from a parent node
-			bit_cnt_type bMinDelta;	// bMin delta from a parent node
-			bit_cnt_type order;		// n th significant bit
+			bit_cnt_type bMaxDelta;		// bMax delta from a parent node
+			bit_cnt_type bMinDelta;		// bMin delta from a parent node
+			bit_cnt_type order;			// n th significant bit
 			bit_cnt_type bits;			// required bits to represent min/max value
 
 		public:
@@ -64,6 +64,18 @@ namespace caWavelet
 			_NODISCARD const Ty_ delta() const noexcept
 			{
 				return this->max - this->min;
+			}
+
+			inline void copyMaxFrom(mmtNode* _right)
+			{
+				this->max = _right->max;
+				this->bMax = _right->bMax;
+			}
+
+			inline void copyMinFrom(mmtNode* _right)
+			{
+				this->min = _right->min;
+				this->bMin = _right->bMin;
 			}
 		};
 
@@ -130,6 +142,14 @@ namespace caWavelet
 			{
 				this->serializeNonRoot(bs, l);
 			}
+		}
+
+		// build MMT from bstream
+		void deserialize(bstream& bs)
+		{
+			this->deserializeRoot(bs);
+
+
 		}
 
 		caMMT<Dty_, Ty_>::mmtNode* getNodes(size_type level)
@@ -241,13 +261,11 @@ namespace caWavelet
 					// compare min max value
 					if ((*pcit).max > node->max)
 					{
-						node->max = (*pcit).max;
-						node->bMax = (*pcit).bMax;
+						node->copyMaxFrom(&(*pcit));
 					}
 					if ((*pcit).min < node->min)
 					{
-						node->min = (*pcit).min;
-						node->bMin = (*pcit).bMin;
+						node->copyMinFrom(&(*pcit));
 					}
 				}
 
@@ -373,6 +391,16 @@ namespace caWavelet
 			}
 		}
 
+		void deserializeRoot(bstream& bs)
+		{
+
+		}
+
+		void deserializeNonRoot(bstream& bs)
+		{
+
+		}
+
 		//////////////////////////////
 		// UTILS					//
 		//////////////////////////////
@@ -393,6 +421,15 @@ namespace caWavelet
 		dim_vector leafChunkDim_;
 		std::vector<dim_vector> chunksInDim_;
 		std::vector<std::vector<mmtNode>> nodes_;	// mmt
+		/*
+		* Here is an example of a 'nodes_' with size 4 (has 0~3 levels).
+		*
+		*  Leaf        Root
+		*   ∪          ∪
+		* 忙式成式成式成式忖
+		* 弛 0弛 1弛 2弛 3弛 Level
+		* 戌式扛式扛式扛式戎
+		*/
 
 	private:
 		FRIEND_TEST(caMMT, buildLeafMMT);
