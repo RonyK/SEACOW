@@ -7,7 +7,7 @@
 namespace caWavelet
 {
 	template <typename Dty_>
-	size_t calcLength(const Dty_* dims, const size_t dSize)
+	size_t calcArrayCellNums(const Dty_* dims, const size_t dSize)
 	{
 		size_t length = 1;
 		for (size_t d = 0; d < dSize; d++)

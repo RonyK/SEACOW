@@ -57,8 +57,8 @@ namespace caWavelet
 			dim_vector bandDims = this->bandDims_[this->maxLevel_];
 
 			caCoorIterator<Dty_, size_type> chunkIt(NULL, this->dSize_, chunkNum.data());
-			size_type chunkLength = calcLength(chunkNum.data(), chunkNum.size());
-			size_type dataLength = calcLength(bandDims.data(), bandDims.size());
+			size_type chunkLength = calcArrayCellNums(chunkNum.data(), chunkNum.size());
+			size_type dataLength = calcArrayCellNums(bandDims.data(), bandDims.size());
 
 			dim_vector cSp(this->dSize_);	// start point of chunk
 			dim_vector cEp(this->dSize_);	// end point of chunk
@@ -96,8 +96,8 @@ namespace caWavelet
 
 				// Get chunk Iterator
 				caCoorIterator<Dty_, size_type> chunkIt(NULL, this->dSize_, chunkNum.data());
-				size_type chunkLength = calcLength(chunkNum.data(), chunkNum.size());
-				size_type dataLength = calcLength(chunkDims.data(), chunkDims.size());
+				size_type chunkLength = calcArrayCellNums(chunkNum.data(), chunkNum.size());
+				size_type dataLength = calcArrayCellNums(chunkDims.data(), chunkDims.size());
 
 				for (size_type chunk_id = 0; chunk_id < chunkLength; ++chunk_id, ++chunkIt)
 				{

@@ -167,8 +167,10 @@ namespace caWavelet
 		// For level 0
 		void forwardBuildLeaf(value_pointer data, size_const length)
 		{
+			////////////////////////////////////////
+			// Create new mmtNodes
 			auto chunksInDim = this->chunksInDim_[0];
-			size_type chunkCnt = calcLength(chunksInDim.data(), chunksInDim.size());
+			size_type chunkCnt = calcArrayCellNums(chunksInDim.data(), chunksInDim.size());
 			this->nodes_.push_back(std::vector<mmtNode>(chunkCnt));
 
 			caCoorIterator<Dty_, Ty_> it(data, this->dSize_, this->dim_.data());
@@ -226,7 +228,7 @@ namespace caWavelet
 
 			////////////////////////////////////////
 			// Create new mmtNodes
-			const size_type chunkCnt = calcLength(chunksInDim.data(), chunksInDim.size());
+			const size_type chunkCnt = calcArrayCellNums(chunksInDim.data(), chunksInDim.size());
 			this->nodes_.push_back(std::vector<mmtNode>(chunkCnt));
 			
 
