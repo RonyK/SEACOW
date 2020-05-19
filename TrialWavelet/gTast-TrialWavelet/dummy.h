@@ -53,7 +53,7 @@ namespace caWavelet
 		namespace data2D_si8x8
 		{
 #define dummyDataLength 64
-			using dim_type = unsigned char;
+			using dim_type = unsigned int;
 			using value_type = int;
 
 			extern const size_t dimX;
@@ -63,7 +63,6 @@ namespace caWavelet
 			extern std::vector<dim_type> dims;
 			extern std::vector<dim_type> chunkDims;
 			extern std::vector<dim_type> chunkNums;
-
 
 			void getDummy(char* output, size_t length);
 			void getWTDummy(char* output, size_t length);

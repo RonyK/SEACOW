@@ -13,6 +13,9 @@ namespace caWavelet
 {
 #define SIGN(val) ((val >= 0) ? 1 : -1)
 
+	using bit_cnt_type = unsigned char;
+	using sig_bit_type = char;
+
 	template<typename Ty_, typename size_type , size_t Bits_>
 		size_type msb(Ty_, size_type);
 
@@ -51,8 +54,8 @@ namespace caWavelet
 		public:
 			Ty_ max;
 			Ty_ min;
-			char bMax;					// significant bit of max value
-			char bMin;					// significant bit of min value
+			sig_bit_type bMax;					// significant bit of max value
+			sig_bit_type bMin;					// significant bit of min value
 			bit_cnt_type bMaxDelta;		// bMax delta from a parent node
 			bit_cnt_type bMinDelta;		// bMin delta from a parent node
 			bit_cnt_type order;			// n th significant bit
@@ -285,7 +288,7 @@ namespace caWavelet
 			}
 		}
 
-		// Except max level nodes (0 ~ (maxLevel - 1))
+		// Except max level nodes ((maxLevel - 1) -> level 0 )
 		void backwardBuildNonRoot(const size_type level)
 		{
 			assert(level < this->nodes_.size() - 1);		// Not for max level nodes
@@ -343,25 +346,24 @@ namespace caWavelet
 						cNode->bits = bits;
 						cNode->order = pNode->order;
 
-						cNode->bMaxDelta = static_cast<unsigned char>(pNode->bMax - cNode->bMax);	// max: prev >= cur
-						cNode->bMinDelta = static_cast<unsigned char>(cNode->bMin - pNode->bMin);	// min: prev <= cur
-					}
-					else
+						cNode->bMaxDelta = static_cast<bit_cnt_type>(pNode->bMax - cNode->bMax);	// max: prev >= cur
+						cNode->bMinDelta = static_cast<bit_cnt_type>(cNode->bMin - pNode->bMin);	// min: prev <= cur
+					} else
 					{
-						// Move to next significant bit
-						if ((size_type)pNode->order + 1 < TyBits_)
+						if ((bit_cnt_type)pNode->order + 1 < TyBits_)
 						{
+							// Move to next significant bit
 							cNode->bits = bits;
 							cNode->order = pNode->order + 1;
 
-							cNode->bMax = pNode->bMax - msb<Ty_>(std::abs(cNode->max), cNode->order) * SIGN(cNode->max) - 1;
+							cNode->bMax = msb<Ty_>(std::abs(cNode->max), cNode->order) * SIGN(cNode->max);
 							cNode->bMin = msb<Ty_>(std::abs(cNode->min), cNode->order) * SIGN(cNode->min);
 
-							cNode->bMaxDelta = std::abs(cNode->bMax);
-							cNode->bMinDelta = std::abs(cNode->bMin);
-						}
-						else
+							cNode->bMaxDelta = std::abs(pNode->bMax - cNode->bMax);
+							cNode->bMinDelta = std::abs(cNode->bMin - pNode->bMin);
+						} else
 						{
+							// The last bit. Has no more next significant bit
 							cNode->bits = 0;
 							cNode->order = pNode->order;
 						}
