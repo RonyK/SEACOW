@@ -13,11 +13,31 @@ namespace caWavelet
 {
 #define SIGN(val) ((val >= 0) ? 1 : -1)
 
+	namespace caDummy
+	{
+		namespace data2D_sc8x8
+		{
+			class caMMT_mmt_deserialize_sc8x8_Test;
+		}
+	}
+
 	using bit_cnt_type = unsigned char;
 	using sig_bit_type = char;
 
-	template<typename Ty_, typename size_type , size_t Bits_>
-		size_type msb(Ty_, size_type);
+	template<typename Ty_, typename size_type, size_t Bits_>
+	size_type msb(Ty_, size_type);
+
+	unsigned long long calcMaxLimit(bit_cnt_type bits);
+	unsigned long long calcMinLimit(bit_cnt_type bits);
+
+	template <typename Ty_>
+	Ty_ getMaxBoundary(Ty_, bit_cnt_type, sig_bit_type);
+
+	template <typename Ty_>
+	Ty_ getMinBoundary(Ty_, bit_cnt_type, sig_bit_type);
+
+	template <typename Ty_>
+	bit_cnt_type getPrefixPosForPrevLimit(Ty_, bit_cnt_type);
 
 	template <typename Dty_, typename Ty_>
 	class caMMT
@@ -44,8 +64,6 @@ namespace caWavelet
 		using dim_vector_const_pointer = const std::vector<Dty_>*;
 		using dim_vector_const_reference = std::vector<Dty_>&;
 
-		using bit_cnt_type = unsigned char;
-
 		const size_type TySize_ = sizeof(Ty_);
 		const size_type TyBits_ = sizeof(Ty_) * CHAR_BIT;
 
@@ -54,8 +72,8 @@ namespace caWavelet
 		public:
 			Ty_ max;
 			Ty_ min;
-			sig_bit_type bMax;					// significant bit of max value
-			sig_bit_type bMin;					// significant bit of min value
+			sig_bit_type bMax;			// significant bit of max value
+			sig_bit_type bMin;			// significant bit of min value
 			bit_cnt_type bMaxDelta;		// bMax delta from a parent node
 			bit_cnt_type bMinDelta;		// bMin delta from a parent node
 			bit_cnt_type order;			// n th significant bit
@@ -80,6 +98,18 @@ namespace caWavelet
 				this->min = _right->min;
 				this->bMin = _right->bMin;
 			}
+
+			inline void setMax(Ty_ max)
+			{
+				this->max = max;
+				this->bMax = msb<Ty_>(std::abs(max)) * SIGN(max);
+			}
+
+			inline void setMin(Ty_ min)
+			{
+				this->min = min;
+				this->bMin = msb<Ty_>(std::abs(min)) * SIGN(min);
+			}
 		};
 
 	public:
@@ -92,7 +122,7 @@ namespace caWavelet
 			this->initChunkInDim(dim, chunkDim, maxLevel);
 		}
 
-		~caMMT() { }
+		~caMMT() {}
 
 		void buildMMT(value_pointer data, size_const length)
 		{
@@ -152,7 +182,10 @@ namespace caWavelet
 		{
 			this->deserializeRoot(bs);
 
-
+			for (size_type l = this->maxLevel_ - 1; l != (size_type)-1; l--)
+			{
+				this->deserializeNonRoot(bs, l);
+			}
 		}
 
 		caMMT<Dty_, Ty_>::mmtNode* getNodes(size_type level)
@@ -192,24 +225,19 @@ namespace caWavelet
 				// init min, max value
 				if (node->bits == 0x80)
 				{
-					node->max = *it;
-					node->min = *it;
-					node->bMax = msb<Ty_>(std::abs(node->max)) * SIGN(node->max);
-					node->bMin = msb<Ty_>(std::abs(node->min)) * SIGN(node->min);
+					node->setMax(*it);
+					node->setMin(*it);
 					node->bits = (bit_cnt_type)TyBits_;
-				}
-				else
+				} else
 				{
 					// compare min max value
 					if (*it > node->max)
 					{
-						node->max = *it;
-						node->bMax = msb<Ty_>(std::abs(node->max)) * SIGN(node->max);
+						node->setMax(*it);
 					}
 					if (*it < node->min)
 					{
-						node->min = *it;
-						node->bMin = msb<Ty_>(std::abs(node->min)) * SIGN(node->min);
+						node->setMin(*it);
 					}
 				}
 
@@ -223,21 +251,20 @@ namespace caWavelet
 		void forwardBuildNonLeaf(const size_type level)
 		{
 			assert(level > 0);
-			dim_vector pChunksInDim = this->chunksInDim_[level - 1];
-			dim_vector chunksInDim = this->chunksInDim_[level];
 
 			////////////////////////////////////////
 			// Create new mmtNodes
+			dim_vector pChunksInDim = this->chunksInDim_[level - 1];
+			dim_vector chunksInDim = this->chunksInDim_[level];
 			const size_type chunkCnt = calcArrayCellNums(chunksInDim.data(), chunksInDim.size());
 			this->nodes_.push_back(std::vector<mmtNode>(chunkCnt));
-			
 
 			////////////////////////////////////////
 			// Update min/max values
 			caCoorIterator<Dty_, mmtNode> pcit(this->nodes_[level - 1].data(), this->dSize_,
-				pChunksInDim.data());
+											   pChunksInDim.data());
 			caCoorIterator<Dty_, mmtNode> cit(this->nodes_[level].data(), this->dSize_,
-				chunksInDim.data());
+											  chunksInDim.data());
 
 			for (size_type i = 0; i < this->nodes_[level - 1].size(); i++)
 			{
@@ -255,13 +282,10 @@ namespace caWavelet
 				// init min, max value
 				if (node->bits == 0x80)
 				{
-					node->max = (*pcit).max;
-					node->bMax = (*pcit).bMax;
-					node->min = (*pcit).min;
-					node->bMin = (*pcit).bMin;
+					node->copyMaxFrom(&(*pcit));
+					node->copyMinFrom(&(*pcit));
 					node->bits = (bit_cnt_type)TyBits_;
-				}
-				else
+				} else
 				{
 					// compare min max value
 					if ((*pcit).max > node->max)
@@ -310,11 +334,11 @@ namespace caWavelet
 			// Update bit order for chunks in current level
 			// Prev
 			caCoorIterator<Dty_, mmtNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
-				pChunksInDim.data());
+											   pChunksInDim.data());
 
-			// Current
+										   // Current
 			caCoorIterator<Dty_, mmtNode> cit(this->nodes_[level].data(), this->dSize_,
-				chunksInDim.data());
+											  chunksInDim.data());
 
 			for (size_type i = 0; i < this->nodes_[level + 1].size(); ++i, ++pcit)
 			{
@@ -361,8 +385,8 @@ namespace caWavelet
 							cNode->bMax = msb<Ty_>(std::abs(cNode->max), cNode->order) * SIGN(cNode->max);
 							cNode->bMin = msb<Ty_>(std::abs(cNode->min), cNode->order) * SIGN(cNode->min);
 
-							cNode->bMaxDelta = std::abs(pNode->bMax - cNode->bMax);
-							cNode->bMinDelta = std::abs(cNode->bMin - pNode->bMin);
+							cNode->bMaxDelta = std::max(std::abs(pNode->bMax - cNode->bMax) - 1, 0);
+							cNode->bMinDelta = std::max(std::abs(cNode->bMin - pNode->bMin) - 1, 0);
 						} else
 						{
 							// The last bit. Has no more next significant bit
@@ -382,7 +406,7 @@ namespace caWavelet
 
 			for (size_type i = 0; i < this->nodes_.back().size(); i++)
 			{
-				bs << setw(sizeof(Ty_) * CHAR_BIT) << curLevelNodes[i].max << curLevelNodes[i].min;
+				bs << setw(TyBits_) << curLevelNodes[i].max << curLevelNodes[i].min;
 			}
 		}
 
@@ -395,14 +419,116 @@ namespace caWavelet
 			}
 		}
 
+		////////////////////////////////////////
+		// Build MMT from an instream
 		void deserializeRoot(bstream& bs)
 		{
+			////////////////////////////////////////
+			// Re-generate nodes
+			// TODO:: Seperate this block to distict function.
+			this->nodes_.clear();
+			for (size_type l = 0; l < this->maxLevel_ + 1; l++)
+			{
+				// TODO:: Calc chunkCnt on each level
+				this->nodes_.push_back(std::vector<mmtNode>());
+			}
 
+			////////////////////////////////////////
+			// Create new mmtNodes
+			auto chunksInDim = this->chunksInDim_[this->maxLevel_];
+			size_type chunkCnt = calcArrayCellNums(chunksInDim.data(), chunksInDim.size());
+			this->nodes_[this->maxLevel_].resize(chunkCnt);	// TODO::If generating Nodes are complete, remove this line.
+			mmtNode* rootNodes = this->nodes_[this->maxLevel_].data();
+
+			for (size_type i = 0; i < chunkCnt; i++)
+			{
+				Ty_ max, min;
+				bs >> setw(TyBits_) >> max >> min;
+				rootNodes[i].setMax(max);
+				rootNodes[i].setMin(min);
+				rootNodes[i].bits = msb<Ty_>(max - min);
+			}
 		}
 
-		void deserializeNonRoot(bstream& bs)
+		void deserializeNonRoot(bstream& bs, size_type level)
 		{
+			// Calc chunk num of prev and current level
+			dim_vector pChunksInDim = this->chunksInDim_[level + 1];
+			dim_vector chunksInDim = this->chunksInDim_[level];
+			size_type chunkCnt = calcArrayCellNums(chunksInDim.data(), chunksInDim.size());
+			this->nodes_[level].resize(chunkCnt);
 
+			// Prev
+			caCoorIterator<Dty_, mmtNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
+											   pChunksInDim.data());
+			// Current
+			caCoorIterator<Dty_, mmtNode> cit(this->nodes_[level].data(), this->dSize_,
+											  chunksInDim.data());
+
+			for (size_type i = 0; i < chunkCnt; i++)
+			{
+				mmtNode* cNode = &(*cit);
+				pcit.moveTo(this->getParentCoor(cit));
+				mmtNode* pNode = &(*pcit);
+
+				bool sameOrder = pNode->bMax != pNode->bMin;	// if bMax == bMin, move on to the next most significant bit
+				cNode->bits = sameOrder ? msb<Ty_>(pNode->bMax - pNode->bMin) : msb<Ty_>(std::abs(pNode->bMax) - 1);
+
+				bs >> setw(cNode->bits) >> cNode->bMaxDelta >> cNode->bMinDelta;
+
+				if (sameOrder)
+				{
+					cNode->order = pNode->order;
+					cNode->bMax = pNode->bMax - cNode->bMaxDelta;
+					cNode->bMin = pNode->bMin + cNode->bMinDelta;
+
+					if (cNode->order == 1)
+					{
+						cNode->max = getMaxBoundary<Ty_>(cNode->bMax);
+						cNode->min = getMinBoundary<Ty_>(cNode->bMin);
+					} else
+					{
+						cNode->max = getMaxBoundary(pNode->max, cNode->order, cNode->bMax);
+						cNode->min = getMinBoundary(pNode->min, cNode->order, cNode->bMin);
+					}
+				} else
+				{
+					if ((size_type)pNode->order + 1 < TyBits_)
+					{
+						// Move to next significant bit
+						cNode->order = pNode->order + 1;
+						cNode->bMax = pNode->bMax - cNode->bMaxDelta - 1;
+						cNode->bMin = pNode->bMin - cNode->bMinDelta - 1;
+
+						cNode->max = getMaxBoundary(pNode->max, cNode->order, cNode->bMax);
+						cNode->min = getMinBoundary(pNode->min, cNode->order, cNode->bMin);
+					} else
+					{
+						cNode->bits = 0;
+						cNode->order = pNode->order;
+						cNode->copyMaxFrom(pNode);
+						cNode->copyMinFrom(pNode);
+					}
+				}
+
+				// Fill out min, max values.
+				if (cNode->order == 1)
+				{
+					cNode->max = getMaxBoundary<Ty_>(cNode->bMax);
+					cNode->min = getMinBoundary<Ty_>(cNode->bMin);
+				} else
+				{
+					if (cNode->bits)
+					{
+						cNode->max = getMaxBoundary(pNode->max, cNode->order, cNode->bMax);
+						cNode->min = getMinBoundary(pNode->min, cNode->order, cNode->bMin);
+					}
+				}
+
+				cit++;	// Move to next data
+			}
+
+			auto a = 0;
 		}
 
 		//////////////////////////////
@@ -418,6 +544,26 @@ namespace caWavelet
 			}
 		}
 
+		_NODISCARD caCoor<Dty_> getChildBaseCoor(caCoor<Dty_>& it)
+		{
+			caCoor<Dty_> childBase = it;
+			for (size_type d = 0; d < this->dSize_; d++)
+			{
+				childBase[d] *= 2;
+			}
+			return childBase;
+		}
+
+		_NODISCARD caCoor<Dty_> getParentCoor(caCoor<Dty_>& it)
+		{
+			caCoor<Dty_> coorParent = it;
+			for (size_type d = 0; d < this->dSize_; d++)
+			{
+				coorParent[d] /= 2;
+			}
+			return coorParent;
+		}
+
 	private:
 		size_type dSize_;
 		size_type maxLevel_;
@@ -428,19 +574,143 @@ namespace caWavelet
 		/*
 		* Here is an example of a 'nodes_' with size 4 (has 0~3 levels).
 		*
-		*  Leaf        Root
-		*   ��          ��
-		* ������������������
-		* �� 0�� 1�� 2�� 3�� Level
-		* ������������������
+		*  Leaf     Root
+		*   ▼        ▼
+		* ┌──┬──┬──┬──┐
+		* │ 0│ 1│ 2│ 3│ Level
+		* └──┴──┴──┴──┘
+		*
+		*  NOTE::Root nodes are in 'MaxLevel'.
+		*  MMT is serialized from 'MaxLevel' -> '0 Level'.
+		*
 		*/
 
 	private:
 		FRIEND_TEST(caMMT, buildLeafMMT);
 		FRIEND_TEST(caMMT, buildIntermediateMMT);
 		FRIEND_TEST(caMMT, buildMMT);
-		FRIEND_TEST(caMMT, serialize);
+		FRIEND_TEST(caMMT, mmt_deserialize_sc8x8);
+
+		//friend class caMMT_mmtserialize_sc8x8;
+		FRIEND_TEST(caDummy::data2D_sc8x8::caMMT, mmt_deserialize_sc8x8);
+		//friend class caDummy::data2D_sc8x8::caMMT_mmt_deserialize_sc8x8;
 	};
+
+	// Return Max Limit value where num of bits is provided.
+	template <typename Ty_>
+	Ty_ getMaxBoundary(sig_bit_type bits)
+	{
+		if (bits == 0)
+		{
+			return 0;
+		} else if (bits > 0)
+		{
+			return static_cast<Ty_>(calcMaxLimit(bits));
+		} else
+		{
+			return static_cast<Ty_>(calcMinLimit(-bits) * -1);
+		}
+	}
+
+	template <typename Ty_>
+	Ty_ getMinBoundary(sig_bit_type bits)
+	{
+		if (bits == 0)
+		{
+			return 0;
+		} else if (bits > 0)
+		{
+			return static_cast<Ty_>(calcMinLimit(bits));
+		} else
+		{
+			return static_cast<Ty_>(calcMaxLimit(-bits) * -1);
+		}
+	}
+
+	// Return Max Limit value where num of bits is provided.
+	template <typename Ty_>
+	Ty_ getMaxBoundary(Ty_ prevLimit, bit_cnt_type order, sig_bit_type sigBitPos)
+	{
+		assert(order > 1 && sigBitPos > 0);
+
+		if (prevLimit == 0)
+		{
+			return 0;
+		} else if (prevLimit > 0)
+		{
+			bit_cnt_type prefixPos = getPrefixPosForPrevLimit(prevLimit, order);
+			assert(prefixPos >= sigBitPos);
+
+			return (prevLimit | ~static_cast<Ty_>(calcMaxLimit(prefixPos)))& calcMaxLimit(sigBitPos);
+		} else
+		{
+			bit_cnt_type prefixPos = getPrefixPosForPrevLimit(prevLimit, order);
+			assert(prefixPos >= sigBitPos);
+
+			return ((std::abs(prevLimit) | ~static_cast<Ty_>(calcMaxLimit(prefixPos))) & ((Ty_)1 << (sigBitPos - 1))) * -1;
+		}
+	}
+
+	template <typename Ty_>
+	Ty_ getMinBoundary(Ty_ prevLimit, bit_cnt_type order, sig_bit_type sigBitPos)
+	{
+		assert(order > 1 && sigBitPos > 0);
+
+		if (prevLimit == 0)
+		{
+			return 0;
+		} else if (prevLimit > 0)
+		{
+			bit_cnt_type prefixPos = getPrefixPosForPrevLimit(prevLimit, order);
+			assert(prefixPos >= sigBitPos);
+
+			return (prevLimit | ~static_cast<Ty_>(calcMaxLimit(prefixPos)))& ((Ty_)1 << (sigBitPos - 1));
+		} else
+		{
+			bit_cnt_type prefixPos = getPrefixPosForPrevLimit(prevLimit, order);
+			assert(prefixPos >= sigBitPos);
+
+			return ((std::abs(prevLimit) | ~static_cast<Ty_>(calcMaxLimit(prefixPos)))& calcMaxLimit(sigBitPos)) * -1;
+		}
+	}
+
+	template <typename Ty_>
+	bit_cnt_type getPrefixPosForPrevLimit(Ty_ prevLimit, bit_cnt_type order)
+	{
+		/*
+		*  Here is an example:
+		*
+		*  Suppose prevLimit (1001 1111), order (3), significantBit (3)
+		*  ┌──┬──┬──┬──┬──┬──┬──┬──┐
+		*  │ 1│ 0│ 0│ 1│ 1│ 1│ 1│ 1│
+		*  └──┴──┴──┴──┴──┴──┴──┴──┘
+		*               ▲      ▲
+		*               pL     sB
+		*  ==================================
+		*  Result:
+		*  ┌──┬──┬──┬──┬──┬──┬──┬──┐
+		*  │ 1│ 0│ 0│ 1│ 0│ 0│ 1│ 1│
+		*  ├──┴──┴──┴──┼──┴──┼──┴──┤
+		*  │prefix_copy│ 0's │ 1's │
+		*  └───────────┴─────┴─────┘
+		*               ▲      ▲
+		*               pL     sB
+		*/
+		assert(order > 0);
+
+		Ty_ absPrevLimit = std::abs(prevLimit);
+		sig_bit_type bits = msb<Ty_>(absPrevLimit);
+		Ty_ mask = (unsigned long long)1 << (bits - 1);
+		size_t prefixPos = bits;
+
+		while (prefixPos > 0 && order > 1)
+		{
+			(absPrevLimit & mask) && --order;
+			--prefixPos;
+			mask >>= 1;
+		}
+		return prefixPos;
+	}
 
 	template<typename Ty_, typename size_type = std::conditional_t<sizeof(Ty_) < 32, unsigned char, unsigned int > ,
 		size_t Bits_ = sizeof(Ty_)* CHAR_BIT>

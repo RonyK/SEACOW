@@ -50,7 +50,7 @@ namespace caWavelet
 	protected:
 		_NODISCARD inline size_type getWidth(const size_type length) const
 		{
-			return (this->bitWidth) ? std::min(length, this->bitWidth) : length;
+			return this->bitWidth ? std::min(length, this->bitWidth) : length;
 		}
 
 	protected:
@@ -168,17 +168,17 @@ namespace caWavelet
 		* Here is an example of a bitstream with 4 bits block.
 		*
 		*  
-		* ┌───────┐
-		* │[pos]         │
+		* ┌───────────┐
+		* │[pos]      │
 		* │▼ ->		  │
-		* ├─┬─┬─┬─┤┌─┬─┬─┬─┐
+		* ├──┬──┬──┬──┤┌──┬──┬──┬──┐
 		* │ 3│ 2│ 1│ 0││ 3│ 2│ 1│ 0│ bitset<4>
-		* ├─┴─┴─┴─┤├─┴─┴─┴─┤
-		* │	  [0]	  ││		[1]		│ vector<bitset<4>>
-		* └───────┘└───────┘
-		* ┌─┬─┬─┬─┐┌─┬─┬─┬─┐
+		* ├──┴──┴──┴──┤├──┴──┴──┴──┤
+		* │	[0]	      ││ [1]	   │ vector<bitset<4>>
+		* └───────────┘└───────────┘
+		* ┌──┬──┬──┬──┐┌──┬──┬──┬──┐
 		* │ 0│ 1│ 2│ 3││ 4│ 5│ 6│ 7│ global bit order
-		* └─┴─┴─┴─┘└─┴─┴─┴─┘
+		* └──┴──┴──┴──┘└──┴──┴──┴──┘
 		*/
 		pos_type fill(const unsigned char c, pos_type length = CHAR_BIT)
 		{
@@ -266,7 +266,7 @@ namespace caWavelet
 		unsigned char getChar(size_type length = CHAR_BIT)
 		{
 			unsigned char out = 0x00;
-			size_type remain = length;
+			size_type remain = this->getWidth(length);
 
 			while (remain > 0)
 			{
@@ -281,7 +281,7 @@ namespace caWavelet
 		unsigned long long getLongLong(size_type length = CHAR_BIT * sizeof(long long))
 		{
 			unsigned long long out = 0x00;
-			size_type remain = length;
+			size_type remain = this->getWidth(length);
 
 			// Head bits -> get by byte
 			while (remain >= CHAR_BIT)
@@ -348,11 +348,12 @@ namespace caWavelet
 	private:
 		unsigned char getBits(unsigned char& out, const pos_type length)
 		{
-			pos_type i = length;
 			pos_type possible = std::min(static_cast<pos_type>(_BlockBits - this->bitPos), static_cast<pos_type>(length));
-			out |= (*this->frontBlock << this->bitPos).to_ulong() & this->rmask[length - possible];
 
-			this->bitPos %= _BlockBits;
+			out |= (((*this->frontBlock << this->bitPos).to_ulong() & this->rmask[possible]) >> (_BlockBits - possible)) << (length - possible);
+			auto blockBits = (*this->frontBlock << this->bitPos).to_ulong();
+
+			this->bitPos = (this->bitPos + possible) % _BlockBits;
 
 			return possible;
 		}
@@ -619,4 +620,4 @@ namespace caWavelet
 	using u16bstream = vector_bitstringstream<char16_t, _charBlockTraits<char16_t>>;
 	using u32bstream = vector_bitstringstream<char32_t, _charBlockTraits<char32_t>>;
 }
-#endif	// _caBitstringstream_
+#endif	// _caBitstringstream_w

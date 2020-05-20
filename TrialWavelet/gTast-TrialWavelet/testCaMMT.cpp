@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "dummy.h"
 #include "../TrialWavelet/mmt.h"
+#include "../TrialWavelet/array.h"
 
 namespace caWavelet
 {
@@ -145,13 +146,10 @@ namespace caWavelet
 				//////////////////////////////
 				// Build Dummy Data
 				value_type data[DATA_LENGTH_2D_DUMMY];
-				std::vector<unsigned char> dim = { 8, 8 };
-				std::vector<unsigned char> chunkDim = { 2, 2 };
-				size_t maxLevel = 2;
+				caMMT<unsigned char, char> mmt(dims, chunkDims, maxLevel);
+				bstream bs;
 
 				getDummy(data, DATA_LENGTH_2D_DUMMY);
-				caMMT<unsigned char, char> mmt(dim, chunkDim, maxLevel);
-				bstream bs;
 				//////////////////////////////
 
 				mmt.buildMMT(data, DATA_LENGTH_2D_DUMMY);
@@ -167,6 +165,43 @@ namespace caWavelet
 					std::cout << std::dec << "[" << i << "]: " << std::setfill('0') << std::setw(1) << std::hex << (short)converted[i] << std::endl;
 				}
 				std::cout << std::endl;
+			}
+
+			TEST(caMMT, mmt_deserialize_sc8x8)
+			{
+				using mmt_type = caMMT<unsigned char, char>;
+				//////////////////////////////
+				// Build Dummy Data
+				value_type data[DATA_LENGTH_2D_DUMMY];
+				mmt_type mmt(dims, chunkDims, maxLevel);
+				bstream bs;
+
+				getDummy(data, DATA_LENGTH_2D_DUMMY);
+				//////////////////////////////
+
+				mmt.buildMMT(data, DATA_LENGTH_2D_DUMMY);
+				mmt.serialize(bs);
+
+				mmt_type dMmt(dims, chunkDims, maxLevel);
+				dMmt.deserialize(bs);
+
+				for (size_t l = 0; l <= maxLevel; l++)
+				{
+					mmt_type::mmtNode* nodes = mmt.getNodes(l);
+					mmt_type::mmtNode* dNodes = dMmt.getNodes(l);
+					size_t chunkCnt = calcArrayCellNums(mmt.chunksInDim_[l].data(), mmt.chunksInDim_[l].size());
+
+					std::cout << "level: " << l << std::endl;
+					for (size_t i = 0; i < chunkCnt; i++)
+					{
+						std::cout << "[" << i << "]" << std::endl;
+						EXPECT_EQ(nodes[i].bits, dNodes[i].bits);
+						EXPECT_EQ(nodes[i].bMax, dNodes[i].bMax);
+						EXPECT_EQ(nodes[i].bMaxDelta, dNodes[i].bMaxDelta);
+						EXPECT_EQ(nodes[i].bMin, dNodes[i].bMin);
+						EXPECT_EQ(nodes[i].bMinDelta, dNodes[i].bMinDelta);
+					}
+				}
 			}
 		}
 	}
