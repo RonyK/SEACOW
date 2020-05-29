@@ -2,15 +2,25 @@
 #ifndef _MSDB_EXCEPTIONS_H_
 #define _MSDB_EXCEPTIONS_H_
 
-#include <iostream>
+#include <system/errorCodes.h>
+
+constexpr char const* const __NAMESPACE = "msdb";
 
 namespace msdb
 {
-#define EXCEPTIONS(_error_category, _error_code)               \
-    msdb::UserException(REL_FILE, __FUNCTION__, __LINE__,      \
-                         CORE_ERROR_NAMESPACE,                  \
-                         _error_category, _error_code,             \
+#define EXCEPTIONS(_error_category, _error_code)                \
+    msdb::msdb_exception(__FILE__, __FUNCTION__, __LINE__,      \
+                         __NAMESPACE,                           \
+                         _error_category, _error_code,          \
                          #_error_category, #_error_code)
+
+#define EXCEPTIONS_MSG(_error_category, _error_code, _msg)      \
+    msdb::msdb_exception(__FILE__, __FUNCTION__, __LINE__,      \
+                         __NAMESPACE,                           \
+                         _error_category, _error_code,          \
+                         #_error_category, #_error_code,        \
+                         getErrorCategoryMsg(_error_category),  \
+                         getErrorMsg(_error_code), #_msg)
 
     class msdb_exception : public virtual std::exception
     {
@@ -23,6 +33,15 @@ namespace msdb
                        const char* stringified_error_category,
                        const char* stringified_error_code);
 
+        msdb_exception(const char* file, const char* function, int32_t line,
+                       const char* errors_namespace,
+                       int32_t error_category, int32_t error_code,
+                       const char* stringified_error_category,
+                       const char* stringified_error_code,
+                       const char* error_category_msg,
+                       const char* error_msg,
+                       const char* what);
+
         virtual ~msdb_exception() noexcept = default;
 
     private:
@@ -34,6 +53,8 @@ namespace msdb
         int32_t _error_code;
         std::string _stringified_error_category;
         std::string _stringified_error_code;
+        std::string _error_category_msg;
+        std::string _error_msg;
     };
 }
 

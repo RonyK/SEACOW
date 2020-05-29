@@ -2,6 +2,8 @@
 #ifndef _MSDB_ERRORCODES_H_
 #define _MSDB_ERRORCODES_H_
 
+#include <iostream>
+
 namespace msdb
 {
 	enum
@@ -11,6 +13,9 @@ namespace msdb
 #include "errors.inc"
 #undef X
 	};
+
+	const char* getErrorCategoryMsg(int32_t code);
+	const char* getErrorMsg(int32_t code);
 }
 
 #endif

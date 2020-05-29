@@ -2,4 +2,14 @@
 #ifndef _MSDB_CHUNKMGR_H_
 #define _MSDB_CHUNKMGR_H_
 
+#include <util/singleton.h>
+
+namespace msdb
+{
+	class chunkMgr : singleton<chunkMgr>
+	{
+
+	};
+}
+
 #endif

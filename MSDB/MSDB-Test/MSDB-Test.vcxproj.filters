@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="test\dummy\dummy.cpp">
+      <Filter>test\dummy</Filter>
+    </ClCompile>
+    <ClCompile Include="test\io\testBitstringstream.cpp">
+      <Filter>test\io</Filter>
+    </ClCompile>
+    <ClCompile Include="test\util\testIterator.cpp">
+      <Filter>test\util</Filter>
+    </ClCompile>
+    <ClCompile Include="test\util\testWaveletIterator.cpp" />
+    <ClCompile Include="test\wavelet\testCompact.cpp">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="test\wavelet\testMMT.cpp">
+      <Filter>test\wavelet</Filter>
+    </ClCompile>
+    <ClCompile Include="test\wavelet\testWavelet.cpp">
+      <Filter>test\wavelet</Filter>
+    </ClCompile>
+    <ClCompile Include="test\pch.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="test\dummy\dummy.h">
+      <Filter>test\dummy</Filter>
+    </ClInclude>
+    <ClInclude Include="test\pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="test">
+      <UniqueIdentifier>{18cc2234-b6d5-437b-8c87-2f19b1a1c1d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test\io">
+      <UniqueIdentifier>{6ccc9158-8ab6-4cd3-bca4-13a83c7314b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test\wavelet">
+      <UniqueIdentifier>{ef91e524-5d1b-4c82-9349-2acab503c9c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test\util">
+      <UniqueIdentifier>{f4dca203-4a22-4a9d-aea1-29dc632f982c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test\dummy">
+      <UniqueIdentifier>{6e9b9d9f-8aec-44f6-ad43-3cf3e718c9f6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>

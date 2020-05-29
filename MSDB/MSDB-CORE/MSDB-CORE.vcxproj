@@ -39,7 +39,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -75,6 +75,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)include;$(IncludePath)</IncludePath>
+    <SourcePath>$(ProjectDir)src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -88,6 +90,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -100,6 +103,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <ShowIncludes>true</ShowIncludes>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,15 +156,38 @@
     <ClInclude Include="include\array\dimensionDesc.h" />
     <ClInclude Include="include\array\memBlock.h" />
     <ClInclude Include="include\array\memChunk.h" />
+    <ClInclude Include="include\io\bitstream.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="include\io\io.h" />
+    <ClInclude Include="include\query\operator.h" />
     <ClInclude Include="include\query\query.h" />
     <ClInclude Include="include\system\errorCodes.h" />
     <ClInclude Include="include\system\exceptions.h" />
+    <ClInclude Include="include\util\coordinate.h" />
     <ClInclude Include="include\util\singleton.h" />
+    <ClInclude Include="include\util\stringUtil.h" />
+    <ClInclude Include="include\util\waveletIterator.h" />
+    <ClInclude Include="include\wavelet\compact.h" />
+    <ClInclude Include="include\wavelet\haar.h" />
+    <ClInclude Include="include\wavelet\mmt.h" />
+    <ClInclude Include="include\wavelet\wavelet.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\array\array.cpp" />
+    <ClCompile Include="src\array\compChunk.cpp" />
     <ClCompile Include="src\array\chunkDesc.cpp" />
+    <ClCompile Include="src\io\bitstream.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\system\errorCodes.cpp" />
     <ClCompile Include="src\system\exceptions.cpp" />
     <ClCompile Include="src\util\singleton.cpp" />
+    <ClCompile Include="src\wavelet\compact.cpp" />
+    <ClCompile Include="src\wavelet\daubechies.cpp" />
+    <ClCompile Include="src\wavelet\haar.cpp" />
+    <ClCompile Include="src\wavelet\mmt.cpp" />
+    <ClCompile Include="src\wavelet\wavelet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\system\errorCategories.inc" />

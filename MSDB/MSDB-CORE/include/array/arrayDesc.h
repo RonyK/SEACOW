@@ -4,8 +4,8 @@
 
 #include <string>
 #include <vector>
-#include "attributeDesc.h"
-#include "dimensionDesc.h"
+#include <array/attributeDesc.h>
+#include <array/dimensionDesc.h>
 
 namespace msdb
 {

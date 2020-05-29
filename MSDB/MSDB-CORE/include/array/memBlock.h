@@ -2,8 +2,8 @@
 #ifndef _MSDB_MEMBLOCK_H_
 #define _MSDB_MEMBLOCK_H_
 
-#include "block.h"
-#include "compBlock.h"
+#include <array/block.h>
+#include <array/compBlock.h>
 
 namespace msdb
 {
