@@ -8,86 +8,91 @@ namespace msdb
 
 	void build2DDummy(int* output, size_t length);
 
-	TEST(caMMT, buildLeafMMT)
-	{
-		//////////////////////////////
-		// Build Dummy Data
-		int data[DATA_LENGTH_2D_DUMMY];
-		std::vector<unsigned int> dim = { 8, 8 };
-		std::vector<unsigned int> chunkDim = { 2, 2 };
-		std::vector<unsigned int> chunkNum = { 4, 4 };
-		size_t maxLevel = 0;
+	//////////////////////////////
+	// Deprecated
+	//
+	// This test uses private member function
+	//
+	//TEST(caMMT, buildLeafMMT)
+	//{
+	//	//////////////////////////////
+	//	// Build Dummy Data
+	//	int data[DATA_LENGTH_2D_DUMMY];
+	//	std::vector<unsigned int> dim = { 8, 8 };
+	//	std::vector<unsigned int> chunkDim = { 2, 2 };
+	//	std::vector<unsigned int> chunkNum = { 4, 4 };
+	//	size_t maxLevel = 0;
 
-		build2DDummy(data, DATA_LENGTH_2D_DUMMY);
-		mmt<unsigned int, int> mmt(dim, chunkDim, maxLevel);
+	//	build2DDummy(data, DATA_LENGTH_2D_DUMMY);
+	//	mmt<unsigned int, int> mmt(dim, chunkDim, maxLevel);
 
-		std::vector<int> expectedMax = {
-			9, 11, 13, 15,
-			25, 27, 29, 31,
-			41, 43, 45, 47,
-			57, 59, 61, 63
-		};
-		std::vector<int> expectedMin = {
-			0, 2, 4, 6,
-			16, 18, 20, 22,
-			32, 34, 36, 38,
-			48, 50, 52, 54
-		};
-		//////////////////////////////
+	//	std::vector<int> expectedMax = {
+	//		9, 11, 13, 15,
+	//		25, 27, 29, 31,
+	//		41, 43, 45, 47,
+	//		57, 59, 61, 63
+	//	};
+	//	std::vector<int> expectedMin = {
+	//		0, 2, 4, 6,
+	//		16, 18, 20, 22,
+	//		32, 34, 36, 38,
+	//		48, 50, 52, 54
+	//	};
+	//	//////////////////////////////
 
-		mmt.forwardBuildLeaf(data, DATA_LENGTH_2D_DUMMY);
+	//	mmt.forwardBuildLeaf(data, DATA_LENGTH_2D_DUMMY);
 
-		for (size_t i = 0; i < (size_t)chunkNum[0] * chunkNum[1]; i++)
-		{
-			EXPECT_EQ(mmt.nodes_[0][i].max, expectedMax[i]);
-			EXPECT_EQ(mmt.nodes_[0][i].min, expectedMin[i]);
-		}
-	}
+	//	for (size_t i = 0; i < (size_t)chunkNum[0] * chunkNum[1]; i++)
+	//	{
+	//		EXPECT_EQ(mmt.nodes_[0][i].max, expectedMax[i]);
+	//		EXPECT_EQ(mmt.nodes_[0][i].min, expectedMin[i]);
+	//	}
+	//}
 
-	TEST(caMMT, buildIntermediateMMT)
-	{
-		//////////////////////////////
-		// Build Dummy Data
-		std::vector<unsigned int> dim = { 8, 8 };
-		std::vector<unsigned int> chunkDim = { 2, 2 };
-		std::vector<unsigned int> chunkNum = { 4, 4 };
-		size_t maxLevel = 1;
-		mmt<unsigned int, int> myMMT(dim, chunkDim, maxLevel);
+	//TEST(caMMT, buildIntermediateMMT)
+	//{
+	//	//////////////////////////////
+	//	// Build Dummy Data
+	//	std::vector<unsigned int> dim = { 8, 8 };
+	//	std::vector<unsigned int> chunkDim = { 2, 2 };
+	//	std::vector<unsigned int> chunkNum = { 4, 4 };
+	//	size_t maxLevel = 1;
+	//	mmt<unsigned int, int> myMMT(dim, chunkDim, maxLevel);
 
-		using mmt_node_type = mmt<unsigned int, int>::mmtNode;
+	//	using mmt_node_type = mmt<unsigned int, int>::mmtNode;
 
 
-		std::vector<mmt_node_type> nodeL0(16);
-		for (int y = 0; y < 4; y++)
-		{
-			for (int x = 0; x < 4; x++)
-			{
-				size_t i = x + 4 * y;
-				nodeL0[i].max = 2 * x + y * 16 + 9;
-				nodeL0[i].min = 2 * x + y * 16;
-				nodeL0[i].bits = 0;
-			}
-		}
-		myMMT.nodes_.push_back(nodeL0);
+	//	std::vector<mmt_node_type> nodeL0(16);
+	//	for (int y = 0; y < 4; y++)
+	//	{
+	//		for (int x = 0; x < 4; x++)
+	//		{
+	//			size_t i = x + 4 * y;
+	//			nodeL0[i].max = 2 * x + y * 16 + 9;
+	//			nodeL0[i].min = 2 * x + y * 16;
+	//			nodeL0[i].bits = 0;
+	//		}
+	//	}
+	//	myMMT.nodes_.push_back(nodeL0);
 
-		std::vector<int> expectedMax = {
-			27, 31,
-			59, 63
-		};
-		std::vector<int> expectedMin = {
-			0, 4,
-			32, 36,
-		};
-		//////////////////////////////
+	//	std::vector<int> expectedMax = {
+	//		27, 31,
+	//		59, 63
+	//	};
+	//	std::vector<int> expectedMin = {
+	//		0, 4,
+	//		32, 36,
+	//	};
+	//	//////////////////////////////
 
-		myMMT.forwardBuildNonLeaf(maxLevel);
+	//	myMMT.forwardBuildNonLeaf(maxLevel);
 
-		for (size_t i = 0; i < (size_t)chunkNum[0] * chunkNum[1] / pow(2, 2); i++)
-		{
-			EXPECT_EQ(myMMT.nodes_[1][i].max, expectedMax[i]);
-			EXPECT_EQ(myMMT.nodes_[1][i].min, expectedMin[i]);
-		}
-	}
+	//	for (size_t i = 0; i < (size_t)chunkNum[0] * chunkNum[1] / pow(2, 2); i++)
+	//	{
+	//		EXPECT_EQ(myMMT.nodes_[1][i].max, expectedMax[i]);
+	//		EXPECT_EQ(myMMT.nodes_[1][i].min, expectedMin[i]);
+	//	}
+	//}
 
 	TEST(caMMT, buildMMT)
 	{
@@ -104,9 +109,10 @@ namespace msdb
 
 		myMMT.build(data, DATA_LENGTH_2D_DUMMY);
 
-		EXPECT_EQ(myMMT.nodes_.size(), maxLevel + 1);	// Level 0~2 (maxLevel)
-		EXPECT_EQ(myMMT.nodes_[2][0].min, 0);
-		EXPECT_EQ(myMMT.nodes_[2][0].max, 63);
+		//EXPECT_EQ(myMMT.nodes_.size(), maxLevel + 1);	// Level 0~2 (maxLevel)
+		auto nodes = myMMT.getNodes(2);
+		EXPECT_EQ(nodes[0].min, 0);
+		EXPECT_EQ(nodes[0].max, 63);
 	}
 
 	TEST(caMMT, msb)
@@ -188,9 +194,10 @@ namespace msdb
 
 				for (size_t l = 0; l <= maxLevel; l++)
 				{
-					mmt_type::mmtNode* nodes = myMMT.getNodes(l);
-					mmt_type::mmtNode* dNodes = dMmt.getNodes(l);
-					size_t chunkCnt = calcArrayCellNums(myMMT.chunksInDim_[l].data(), myMMT.chunksInDim_[l].size());
+					auto nodes = myMMT.getNodes(l);
+					auto dNodes = dMmt.getNodes(l);
+					auto chunkInDim = myMMT.getChunkInDim(l);
+					size_t chunkCnt = calcArrayCellNums(chunkInDim.data(), chunkInDim.size());
 
 					std::cout << "level: " << l << std::endl;
 					for (size_t i = 0; i < chunkCnt; i++)

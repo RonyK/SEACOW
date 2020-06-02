@@ -4,6 +4,7 @@
 #include <cmath>
 #include <vector>
 #include <util/coordinate.h>
+#include <util/waveletIterator.h>
 #include <wavelet/wavelet.h>
 #include <wavelet/haar.h>
 
@@ -88,7 +89,7 @@ namespace msdb
 		this->t_ = t;
 	}
 
-	int waveletEncode(const wavelet* w, double* data, double* output,
+	int waveletEncode(const wavelet* w, const double* data, double* output,
 						size_t length, std::vector<int>* dims, size_t level)
 	{
 		// copy input data
@@ -102,17 +103,17 @@ namespace msdb
 		coorRangeIterator<int, double> oit(output, eP.size(), dims->data(), sP.data(), eP.data());
 
 		size_t seq = 0;
-		size_t numbers = 1;
+		size_t levelDataLength = 1;
 		for (int i = 0; i < dims->size(); i++)
 		{
-			numbers *= (static_cast<size_t>(eP[i]) - static_cast<size_t>(sP[i]) + 1);
+			levelDataLength *= (static_cast<size_t>(eP[i]) - static_cast<size_t>(sP[i]) + 1);
 		}
 
-		for (int d = eP.size() - 1; d >= 0; d--)
+		for (int d = dims->size() - 1; d >= 0; d--)
 		{
 			std::cout << "[" << d << "] ------------------------------" << std::endl;
 			size_t half = eP[d] >> 1;
-			size_t rows = numbers / (static_cast<size_t>(eP[d]) - static_cast<size_t>(sP[d]) + 1);
+			size_t rows = levelDataLength / (static_cast<size_t>(eP[d]) - static_cast<size_t>(sP[d]) + 1);
 
 			iit.setBasisDim(d);
 			iit.moveToStart();
@@ -137,7 +138,7 @@ namespace msdb
 					iit += 2;
 					++oit;
 				}
-				oit += half;
+				oit += half;	// go to next row
 			}
 
 			memcpy(temp, output, sizeof(double) * length);
@@ -155,24 +156,8 @@ namespace msdb
 			std::cout << std::endl;
 		}
 
+		delete[] temp;
+
 		return 0;
 	}
-
-	int waveletDecode(const wavelet* w, double* data, double* output,
-						size_t length, std::vector<int>* dims)
-	{
-		return 0;
-	}
-
-	template <typename Dty_>
-	void getWaveletBandSize(std::vector<Dty_>& output, const std::vector<Dty_>& dims, const size_t level)
-	{
-		double factor = pow(1 / 2, level);
-		for (auto d : dims)
-		{
-			output.push_back(ceil(d * factor));
-		}
-	}
-
-
 }

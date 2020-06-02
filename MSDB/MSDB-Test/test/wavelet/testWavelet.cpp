@@ -36,23 +36,34 @@ namespace msdb
 	{
 		wavelet w("Haar");
 		double data[] = { 1,2,3,4,5,6,7,8 };
-
-		double* output = (double*)malloc(sizeof(data));
-		std::vector<int> dims = { sizeof(data) / sizeof(double) };
-
-		waveletEncode(&w, data, output, sizeof(data) / sizeof(double), &dims);
-
-		double expectedOutput[] = {
+		double expectedEncoding[] = {
 			2.12132034, 4.94974747, 7.77817459, 10.60660172,
 			-0.70710678, -0.70710678, -0.70710678, -0.70710678
 		};
+		std::vector<int> dims = { sizeof(data) / sizeof(double) };
 
+		//////////////////////////////
+		// Encoding
+		double* oEncoding = (double*)malloc(sizeof(data));
+		waveletEncode(&w, data, oEncoding, sizeof(data) / sizeof(double), &dims);
 		for (unsigned int i = 0; i < sizeof(data) / sizeof(double); i++)
 		{
-			EXPECT_EQ(ROUNDING(output[i], 6), ROUNDING(expectedOutput[i], 6));
+			EXPECT_EQ(ROUNDING(oEncoding[i], 6), ROUNDING(expectedEncoding[i], 6));
 		}
 
-		free(output);
+		//////////////////////////////
+		// Decoding
+		double* oDecoding = (double*)malloc(sizeof(data));
+		waveletDecode(oDecoding, oEncoding, &w, sizeof(data) / sizeof(double), dims, 0);
+		for (size_t i = 0; i < sizeof(data) / sizeof(double); i++)
+		{
+			std::cout << oDecoding[i] << " <-> " << data[i] << std::endl;
+			EXPECT_EQ(ROUNDING(oDecoding[i], 6), data[i]);
+		}
+
+
+		free(oEncoding);
+		free(oDecoding);
 	}
 
 	TEST(waveletEncode, waveletHaar_2D_Encode)
