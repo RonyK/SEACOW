@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 
-namespace caWavelet
+namespace msdb
 {
     class NotImplemented : public std::logic_error
     {

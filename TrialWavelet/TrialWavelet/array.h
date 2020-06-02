@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-namespace caWavelet
+namespace msdb
 {
 	template <typename Dty_>
 	size_t calcArrayCellNums(const Dty_* dims, const size_t dSize)

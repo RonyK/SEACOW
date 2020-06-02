@@ -33,13 +33,13 @@
     <ClCompile Include="mmt.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="bitstringstream.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="compact.h">
       <Filter>헤더 파일</Filter>
     </ClCompile>
     <ClCompile Include="array.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\io\bitstringstream.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -65,10 +65,10 @@
     <ClInclude Include="bitstream.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="bitstringstream.h">
+    <ClInclude Include="array.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="array.h">
+    <ClInclude Include="include\io\bitstringstream.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

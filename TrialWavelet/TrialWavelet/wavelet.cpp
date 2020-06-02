@@ -5,25 +5,25 @@
 #include "wavelet.h"
 #include "haar.h"
 
-namespace caWavelet
+namespace msdb
 {
-	caWavelet::caWavelet()
-		: h_0(NULL), g_0(NULL), h_1(NULL), g_1(NULL), c_(0), offset_(0), t_(caWaveletType::None)
+	wavelet::wavelet()
+		: h_0(NULL), g_0(NULL), h_1(NULL), g_1(NULL), c_(0), offset_(0), t_(waveletType::None)
 	{
 
 	}
 
-	caWavelet::caWavelet(const char* name, size_t k)
-		: caWavelet(this->getWaveletType(name), k)
+	wavelet::wavelet(const char* name, size_t k)
+		: wavelet(this->getWaveletType(name), k)
 	{
 
 	}
 
-	caWavelet::caWavelet(caWaveletType t, size_t k)
+	wavelet::wavelet(waveletType t, size_t k)
 	{
 		switch (t)
 		{
-		case caWaveletType::HaarSimple:
+		case waveletType::HaarSimple:
 		{
 			const double* h_0, * g_0, * h_1, * g_1;
 			size_t c, offset;
@@ -32,7 +32,7 @@ namespace caWavelet
 			this->init(h_0, g_0, h_1, g_1, c, offset, t);
 			break;
 		}
-		case caWaveletType::Haar:
+		case waveletType::Haar:
 		default:
 		{
 			const double* h_0, * g_0, * h_1, * g_1;
@@ -46,40 +46,40 @@ namespace caWavelet
 	}
 
 	//:h_0(h_0), g_0(g_0), h_1(h_1), g_1(g_1), c(c), offset(offset), t(t)
-	caWavelet::caWavelet(const double* h_0, const double* g_0, const double* h_1, const double* g_1,
-		size_t c, size_t offset, caWaveletType t)
+	wavelet::wavelet(const double* h_0, const double* g_0, const double* h_1, const double* g_1,
+		size_t c, size_t offset, waveletType t)
 	{
 		this->init(h_0, g_0, h_1, g_1, c, offset, t);
 	}
 
-	caWavelet::~caWavelet()
+	wavelet::~wavelet()
 	{
 
 	}
 
-	caWaveletType caWavelet::getWaveletType(const char* name)
+	waveletType wavelet::getWaveletType(const char* name)
 	{
-		caWaveletType t = caWaveletType::None;
+		waveletType t = waveletType::None;
 
 		if (strcmp(name, "Haar") == 0)
 		{
-			t = caWaveletType::Haar;
+			t = waveletType::Haar;
 		}
 		else if (strcmp(name, "HaarSimple") == 0)
 		{
-			t = caWaveletType::HaarSimple;
+			t = waveletType::HaarSimple;
 		}
 		else if (strcmp(name, "Daubechies") == 0)
 		{
-			t = caWaveletType::Daubechies;
+			t = waveletType::Daubechies;
 		}
 
 		return t;
 	}
 
-	void caWavelet::init(const double* h_0, const double* g_0, 
+	void wavelet::init(const double* h_0, const double* g_0, 
 		const double* h_1, const double* g_1, 
-		size_t c, size_t offset, caWaveletType t)
+		size_t c, size_t offset, waveletType t)
 	{
 		this->h_0 = h_0;
 		this->g_0 = g_0;
@@ -91,7 +91,7 @@ namespace caWavelet
 		this->t_ = t;
 	}
 
-	int caWaveletEncode(const caWavelet* w, double* data, double* output, 
+	int caWaveletEncode(const wavelet* w, double* data, double* output, 
 		size_t length, std::vector<int>* dims, size_t level)
 	{
 		// copy input data
@@ -101,8 +101,8 @@ namespace caWavelet
 		memset(output, 0, sizeof(double) * length);
 		std::vector<int> boundary(*dims), sP(dims->size(), 0), eP(*dims);
 
-		caCoorRangeIterator<int, double> iit(temp, eP.size(), dims->data(), sP.data(), eP.data());
-		caCoorRangeIterator<int, double> oit(output, eP.size(), dims->data(), sP.data(), eP.data());
+		coorRangeIterator<int, double> iit(temp, eP.size(), dims->data(), sP.data(), eP.data());
+		coorRangeIterator<int, double> oit(output, eP.size(), dims->data(), sP.data(), eP.data());
 
 		size_t seq = 0;
 		size_t numbers = 1;
@@ -161,14 +161,14 @@ namespace caWavelet
 		return 0;
 	}
 
-	int caWaveletDecode(const caWavelet* w, double* data, double* output,
+	int caWaveletDecode(const wavelet* w, double* data, double* output,
 		size_t length, std::vector<int>* dims)
 	{
 		return 0;
 	}
 
 	template <typename Dty_>
-	void getBandSize(std::vector<Dty_>& output, const std::vector<Dty_>& dims, const size_t level)
+	void getWaveletBandSize(std::vector<Dty_>& output, const std::vector<Dty_>& dims, const size_t level)
 	{
 		double factor = pow(1 / 2, level);
 		for (auto d : dims)

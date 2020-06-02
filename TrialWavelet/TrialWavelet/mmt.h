@@ -6,21 +6,15 @@
 #include <vector>
 #include <type_traits>
 #include "iterators.h"
-#include "bitstringstream.h"
+#include "include/io/bitstringstream.h"
 #include "array.h"
 
-namespace caWavelet
+namespace msdb
 {
 #define SIGN(val) ((val >= 0) ? 1 : -1)
-
-	namespace caDummy
-	{
-		namespace data2D_sc8x8
-		{
-			class caMMT_mmt_deserialize_sc8x8_Test;
-		}
-	}
-
+#ifdef GTEST_INCLUDE_GTEST_GTEST_H_
+	namespace caDummy::data2D_sc8x8 { class caMMT_mmt_deserialize_sc8x8_Test; }
+#endif
 	using bit_cnt_type = unsigned char;
 	using sig_bit_type = char;
 
@@ -206,13 +200,13 @@ namespace caWavelet
 			size_type chunkCnt = calcArrayCellNums(chunksInDim.data(), chunksInDim.size());
 			this->nodes_.push_back(std::vector<mmtNode>(chunkCnt));
 
-			caCoorIterator<Dty_, Ty_> it(data, this->dSize_, this->dim_.data());
-			caCoorIterator<Dty_, mmtNode> cit(this->nodes_[0].data(), this->dSize_, chunksInDim.data());
+			coorIterator<Dty_, Ty_> it(data, this->dSize_, this->dim_.data());
+			coorIterator<Dty_, mmtNode> cit(this->nodes_[0].data(), this->dSize_, chunksInDim.data());
 
 			for (size_type i = 0; i < length; i++)
 			{
 				// current iterator coordiate -> chunk coordinate
-				caCoor<Dty_> cur = it;
+				coordinate<Dty_> cur = it;
 				for (size_type d = 0; d < this->dSize_; d++)
 				{
 					cur[d] /= this->leafChunkDim_[d];
@@ -261,15 +255,15 @@ namespace caWavelet
 
 			////////////////////////////////////////
 			// Update min/max values
-			caCoorIterator<Dty_, mmtNode> pcit(this->nodes_[level - 1].data(), this->dSize_,
+			coorIterator<Dty_, mmtNode> pcit(this->nodes_[level - 1].data(), this->dSize_,
 											   pChunksInDim.data());
-			caCoorIterator<Dty_, mmtNode> cit(this->nodes_[level].data(), this->dSize_,
+			coorIterator<Dty_, mmtNode> cit(this->nodes_[level].data(), this->dSize_,
 											  chunksInDim.data());
 
 			for (size_type i = 0; i < this->nodes_[level - 1].size(); i++)
 			{
 				// current iterator coordiate -> parent coordinate
-				caCoor<Dty_> cur = pcit;
+				coordinate<Dty_> cur = pcit;
 				for (size_type d = 0; d < this->dSize_; d++)
 				{
 					cur[d] /= 2;
@@ -333,16 +327,16 @@ namespace caWavelet
 			////////////////////////////////////////
 			// Update bit order for chunks in current level
 			// Prev
-			caCoorIterator<Dty_, mmtNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
+			coorIterator<Dty_, mmtNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
 											   pChunksInDim.data());
 
 										   // Current
-			caCoorIterator<Dty_, mmtNode> cit(this->nodes_[level].data(), this->dSize_,
+			coorIterator<Dty_, mmtNode> cit(this->nodes_[level].data(), this->dSize_,
 											  chunksInDim.data());
 
 			for (size_type i = 0; i < this->nodes_[level + 1].size(); ++i, ++pcit)
 			{
-				caCoor<Dty_> childBase = pcit;
+				coordinate<Dty_> childBase = pcit;
 				for (size_type d = 0; d < this->dSize_; d++)
 				{
 					childBase[d] *= 2;
@@ -355,7 +349,7 @@ namespace caWavelet
 				for (size_type cID = 0; cID < siblings; cID++)
 				{
 					// Set child coordinate and move to it
-					caCoor<Dty_> cur = childBase;
+					coordinate<Dty_> cur = childBase;
 					for (size_type d = 0; d < this->dSize_; d++)
 					{
 						if (cID & ((size_type)0x1 << d))
@@ -459,10 +453,10 @@ namespace caWavelet
 			this->nodes_[level].resize(chunkCnt);
 
 			// Prev
-			caCoorIterator<Dty_, mmtNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
+			coorIterator<Dty_, mmtNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
 											   pChunksInDim.data());
 			// Current
-			caCoorIterator<Dty_, mmtNode> cit(this->nodes_[level].data(), this->dSize_,
+			coorIterator<Dty_, mmtNode> cit(this->nodes_[level].data(), this->dSize_,
 											  chunksInDim.data());
 
 			for (size_type i = 0; i < chunkCnt; i++)
@@ -544,9 +538,9 @@ namespace caWavelet
 			}
 		}
 
-		_NODISCARD caCoor<Dty_> getChildBaseCoor(caCoor<Dty_>& it)
+		_NODISCARD coordinate<Dty_> getChildBaseCoor(coordinate<Dty_>& it)
 		{
-			caCoor<Dty_> childBase = it;
+			coordinate<Dty_> childBase = it;
 			for (size_type d = 0; d < this->dSize_; d++)
 			{
 				childBase[d] *= 2;
@@ -554,9 +548,9 @@ namespace caWavelet
 			return childBase;
 		}
 
-		_NODISCARD caCoor<Dty_> getParentCoor(caCoor<Dty_>& it)
+		_NODISCARD coordinate<Dty_> getParentCoor(coordinate<Dty_>& it)
 		{
-			caCoor<Dty_> coorParent = it;
+			coordinate<Dty_> coorParent = it;
 			for (size_type d = 0; d < this->dSize_; d++)
 			{
 				coorParent[d] /= 2;
@@ -586,14 +580,13 @@ namespace caWavelet
 		*/
 
 	private:
+#ifdef GTEST_INCLUDE_GTEST_GTEST_H_
 		FRIEND_TEST(caMMT, buildLeafMMT);
 		FRIEND_TEST(caMMT, buildIntermediateMMT);
 		FRIEND_TEST(caMMT, buildMMT);
 		FRIEND_TEST(caMMT, mmt_deserialize_sc8x8);
-
-		//friend class caMMT_mmtserialize_sc8x8;
 		FRIEND_TEST(caDummy::data2D_sc8x8::caMMT, mmt_deserialize_sc8x8);
-		//friend class caDummy::data2D_sc8x8::caMMT_mmt_deserialize_sc8x8;
+#endif
 	};
 
 	// Return Max Limit value where num of bits is provided.

@@ -3,7 +3,7 @@
 #include "../TrialWavelet/bitstream.h"
 #include <bitset>
 
-namespace caWavelet
+namespace msdb
 {
 	TEST(caBitstream, b1Bitstream)
 	{

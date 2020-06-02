@@ -8,10 +8,10 @@
 #include <array>
 #include <iterator>
 
-namespace caWavelet
+namespace msdb
 {
 	// Wavelet Family
-	enum class caWaveletType
+	enum class waveletType
 	{
 		None,
 		Haar,
@@ -19,7 +19,7 @@ namespace caWavelet
 		Daubechies
 	};
 
-	class caWavelet
+	class wavelet
 	{
 	public:
 		const double* h_0;
@@ -27,22 +27,22 @@ namespace caWavelet
 		const double* g_1;
 		const double* h_1;
 		
-		caWaveletType t_;			// Wavelet Family
+		waveletType t_;			// Wavelet Family
 		size_t c_;					// Wavelet length
 		size_t offset_;
 
 	public:
-		caWavelet();
-		caWavelet(const char* name, size_t k = 0);
-		caWavelet(caWaveletType t, size_t k = 0);
-		caWavelet(const double* h_0, const double* g_0, const double* h_1, const double* g_1,
-			size_t c, size_t offset, caWaveletType t = caWaveletType::None);
-		~caWavelet();
+		wavelet();
+		wavelet(const char* name, size_t k = 0);
+		wavelet(waveletType t, size_t k = 0);
+		wavelet(const double* h_0, const double* g_0, const double* h_1, const double* g_1,
+			size_t c, size_t offset, waveletType t = waveletType::None);
+		~wavelet();
 
 	private:
-		static caWaveletType getWaveletType(const char* name);
+		static waveletType getWaveletType(const char* name);
 		void init(const double* h_0, const double* g_0, const double* h_1, const double* g_1,
-			size_t c, size_t offset, caWaveletType t);
+			size_t c, size_t offset, waveletType t);
 	};
 
 
@@ -104,12 +104,12 @@ namespace caWavelet
 	};
 
 	//int caWaveletTransform(const caWavelet* w, double* data, double* output, size_t length, std::vector<int>* dims);
-	int caWaveletEncode(const caWavelet* w, double* data, double* output,
+	int caWaveletEncode(const wavelet* w, double* data, double* output,
 		size_t length, std::vector<int>* dims, size_t level = 1);
-	int caWaveletDecode(const caWavelet* w, double* data, double* output,
+	int caWaveletDecode(const wavelet* w, double* data, double* output,
 		size_t length, std::vector<int>* dims);
 
-	void getBandSize(const std::vector<int>& dims, std::vector<int>&output, const size_t level);
+	void getWaveletBandSize(const std::vector<int>& dims, std::vector<int>&output, const size_t level);
 }
 
 #endif // _caWavelet_

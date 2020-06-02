@@ -13,7 +13,7 @@
 // Bitset size
 #define BS_SIZE_	64
 
-namespace caWavelet
+namespace msdb
 {
 	template <typename Dty_, typename Ty_>
 	class caSPIHT
@@ -42,7 +42,7 @@ namespace caWavelet
 		}
 		int decode(std::vector<std::bitset<BS_SIZE_>>& spData, double& output)
 		{
-			// to do: ∏µÁ coor¿« ∞™¿ª 0¿∏∑Œ √ ±‚»≠ 
+			// to do: Î™®Îì† coorÏùò Í∞íÏùÑ 0ÏúºÎ°ú Ï¥àÍ∏∞Ìôî 
 
 			enInit();
 
@@ -62,7 +62,7 @@ namespace caWavelet
 			LSP_.clear();
 
 			// Insert
-			caWTIterator<Dty_, Ty_> it(this->data, this->dims_.size(), this->dims_);
+			waveletIterator<Dty_, Ty_> it(this->data, this->dims_.size(), this->dims_);
 			it.setMaxLevel(this->wtLevel_);
 			it.moveToStart();
 
@@ -77,7 +77,7 @@ namespace caWavelet
 			for (size_t band = 0; band < pow(2, this->dims_.size()); band++)
 			{
 				size_t dSize = this->dims_.size();
-				caCoor<Dty_> coor(dSize);
+				coordinate<Dty_> coor(dSize);
 				
 				for (size_t d = this->dims_.size() - 1; d + 1 > 0; d++)
 				{
@@ -93,7 +93,7 @@ namespace caWavelet
 
 			size_t LSP_size = LSP_.size();
 
-			output = enSigPass(step);		// √•¿« æÀ∞Ì∏Æ¡Úø°º≠ ∏ª«œ¥¬ k∞™¿ª ∏≈∞≥∫Øºˆ∑Œ...
+			output = enSigPass(step);		// Ï±ÖÏùò ÏïåÍ≥†Î¶¨Ï¶òÏóêÏÑú ÎßêÌïòÎäî kÍ∞íÏùÑ Îß§Í∞úÎ≥ÄÏàòÎ°ú...
 			sig_output.push_back(output);
 
 			output = enRefinePass(step, LSP_size);
@@ -139,7 +139,7 @@ namespace caWavelet
 
 				if (list_data.type_ == cType::typeA_)
 				{
-					caWTIterator<Dty_, Ty_> child(this->data, this->dims_.size(), this->dims_);
+					waveletIterator<Dty_, Ty_> child(this->data, this->dims_.size(), this->dims_);
 					child.setCurCoor(list_data.coor_);
 					child.moveToChild();
 
@@ -201,8 +201,8 @@ namespace caWavelet
 				}
 				else   // typeB_
 				{
-					caWTIterator<Dty_, Ty_> child(this->data, this->dims_.size(), this->dims_);
-					caWTIterator<Dty_, Ty_> grand(this->data, this->dims_.size(), this->dims_);
+					waveletIterator<Dty_, Ty_> child(this->data, this->dims_.size(), this->dims_);
+					waveletIterator<Dty_, Ty_> grand(this->data, this->dims_.size(), this->dims_);
 					child.setCurCoor(list_data.coor_);
 					child.moveToChild();
 
@@ -294,7 +294,7 @@ namespace caWavelet
 
 		void deSigPass(size_t k, std::list<char> code)
 		{
-			caWTIterator<Dty_, Ty_> it(this->data, this->dims_.size(), this->dims_);
+			waveletIterator<Dty_, Ty_> it(this->data, this->dims_.size(), this->dims_);
 			std::bitset<BS_SIZE_> decode_value;
 			char code_data;
 
@@ -344,7 +344,7 @@ namespace caWavelet
 				{
 					if (list_data.type_ == cType::typeA_)
 					{
-						caWTIterator<Dty_, Ty_> child(this->data, this->dims_.size(), this->dims_);
+						waveletIterator<Dty_, Ty_> child(this->data, this->dims_.size(), this->dims_);
 						child.setCurCoor(list_data.coor_);
 						child.moveToChild();
 
@@ -384,7 +384,7 @@ namespace caWavelet
 					}
 					else  // typeB_
 					{
-						caWTIterator<Dty_, Ty_> child(this->data, this->dims_.size(), this->dims_);
+						waveletIterator<Dty_, Ty_> child(this->data, this->dims_.size(), this->dims_);
 						child.setCurCoor(list_data.coor_);
 						child.moveToChild();
 
@@ -409,7 +409,7 @@ namespace caWavelet
 		{
 			std::list<coorVal> TMP = LSP_;
 			std::bitset<BS_SIZE_> decode_value;
-			caWTIterator<Dty_, Ty_> it(this->data, this->dims_.size(), this->dims_);
+			waveletIterator<Dty_, Ty_> it(this->data, this->dims_.size(), this->dims_);
 			char code_data;
 
 			size_t code_size = code.size();
@@ -434,9 +434,9 @@ namespace caWavelet
 
 
 	private:
-		void adjustCoor(caCoor<Dty_> coor, std::vector<Dty_> sP, std::vector<Dty_> eP) 
+		void adjustCoor(coordinate<Dty_> coor, std::vector<Dty_> sP, std::vector<Dty_> eP) 
 			throw(std::out_of_range);
-		bool isExceed(caCoor<Dty_> coor, std::vector<Dty_> sP, std::vector<Dty_> eP)
+		bool isExceed(coordinate<Dty_> coor, std::vector<Dty_> sP, std::vector<Dty_> eP)
 			throw(std::out_of_range);
 		void getBandSize(const std::vector<int>& dims, std::vector<int>& output, const size_t level)
 		{
@@ -452,10 +452,10 @@ namespace caWavelet
 
 		typedef struct coorVal
 		{
-			caCoor<Dty_> coor_;		// Coordinate
+			coordinate<Dty_> coor_;		// Coordinate
 			Ty_ value_;			// Value
 
-			coorVal(caCoor<Dty_>& coor, Ty_ value) 
+			coorVal(coordinate<Dty_>& coor, Ty_ value) 
 			{
 				this->coor_ = coor;
 				this->value_ = value;
@@ -464,11 +464,11 @@ namespace caWavelet
 
 		typedef struct coorTy
 		{
-			caCoor<Dty_> coor_;		// Coordinate
+			coordinate<Dty_> coor_;		// Coordinate
 			//double value_;			// Value
 			cType type_;			// typeA_ or typeB_
 
-			coorTy(caCoor<Dty_>& coor, cType type)
+			coorTy(coordinate<Dty_>& coor, cType type)
 			{
 				this->coor_ = coor;
 				//this->value_ = value;

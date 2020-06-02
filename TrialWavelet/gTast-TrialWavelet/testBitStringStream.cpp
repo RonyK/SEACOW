@@ -1,8 +1,8 @@
 #include "pch.h"
-#include "../TrialWavelet/bitstringstream.h"
+#include "../TrialWavelet/include/io/bitstringstream.h"
 #include <bitset>
 
-namespace caWavelet
+namespace msdb
 {
 	TEST(caBitStringStream, bstream_bistset)
 	{

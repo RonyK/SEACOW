@@ -1,5 +1,5 @@
 
-namespace caWavelet 
+namespace msdb 
 {
     namespace daubechies
     {

@@ -4,12 +4,12 @@
 
 #include <iostream>
 #include <vector>
-#include "bitstringstream.h"
+#include "include/io/bitstringstream.h"
 #include "mmt.h"
 #include "array.h"
 #include "iterators.h"
 
-namespace caWavelet
+namespace msdb
 {
 	template <typename Dty_, typename Ty_>
 	class caCompact
@@ -56,7 +56,7 @@ namespace caWavelet
 			dim_vector chunkNum = this->chunkNums_[this->maxLevel_];	// size of approximate chunks are different 
 			dim_vector bandDims = this->bandDims_[this->maxLevel_];
 
-			caCoorIterator<Dty_, size_type> chunkIt(NULL, this->dSize_, chunkNum.data());
+			coorIterator<Dty_, size_type> chunkIt(NULL, this->dSize_, chunkNum.data());
 			size_type chunkLength = calcArrayCellNums(chunkNum.data(), chunkNum.size());
 			size_type dataLength = calcArrayCellNums(bandDims.data(), bandDims.size());
 
@@ -95,7 +95,7 @@ namespace caWavelet
 				dim_vector bandDims = this->bandDims_[level];
 
 				// Get chunk Iterator
-				caCoorIterator<Dty_, size_type> chunkIt(NULL, this->dSize_, chunkNum.data());
+				coorIterator<Dty_, size_type> chunkIt(NULL, this->dSize_, chunkNum.data());
 				size_type chunkLength = calcArrayCellNums(chunkNum.data(), chunkNum.size());
 				size_type dataLength = calcArrayCellNums(chunkDims.data(), chunkDims.size());
 
@@ -108,7 +108,7 @@ namespace caWavelet
 
 	private:
 		void enDetailChunk(bstream& output, value_pointer wtData, mmt_reference mmt, size_type level,
-			size_type chunk_id, caCoor<Dty_> chunkCoor, size_type length)
+			size_type chunk_id, coordinate<Dty_> chunkCoor, size_type length)
 		{
 			dim_vector cSp(this->dSize_);	// start point of chunk
 			dim_vector cEp(this->dSize_);	// end point of chunk
@@ -138,7 +138,7 @@ namespace caWavelet
 		void encodeChunk(bstream& output, value_pointer wtData, dim_const_pointer cSp, dim_const_pointer cEp,
 			const size_type length, const size_type bits)
 		{
-			caWTRangeIterator<Dty_, Ty_> it(wtData, this->dSize_, this->dims_.data(), cSp, cEp, this->maxLevel_);
+			waveletRangeIterator<Dty_, Ty_> it(wtData, this->dSize_, this->dims_.data(), cSp, cEp, this->maxLevel_);
 
 			output << setw(bits);
 			for (size_type i = 0; i < length; i++)

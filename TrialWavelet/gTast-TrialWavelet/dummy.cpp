@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "dummy.h"
 
-namespace caWavelet
+namespace msdb
 {
 	namespace caDummy
 	{

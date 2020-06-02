@@ -1,6 +1,6 @@
 #include <iostream>
 
-namespace caWavelet
+namespace msdb
 {
 
 }

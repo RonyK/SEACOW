@@ -3,7 +3,7 @@
 #include "../TrialWavelet/mmt.h"
 #include "../TrialWavelet/array.h"
 
-namespace caWavelet
+namespace msdb
 {
 #define DATA_LENGTH_2D_DUMMY	64
 

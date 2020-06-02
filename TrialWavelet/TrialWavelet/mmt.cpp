@@ -1,6 +1,6 @@
 #include "mmt.h"
 
-namespace caWavelet
+namespace msdb
 {
 	unsigned long long calcMaxLimit(bit_cnt_type bits)
 	{

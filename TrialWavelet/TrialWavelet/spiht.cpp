@@ -2,10 +2,10 @@
 #include "spiht.h"
 #include "iterators.h"
 
-namespace caWavelet
+namespace msdb
 {
 	//template<typename Dty_>
-	//void caSPIHT<Dty_>::adjustCoor(caCoor<Dty_> coor, 
+	//void caSPIHT<Dty_>::adjustCoor(coordinate<Dty_> coor, 
 	//	std::vector<Dty_> sP, std::vector<Dty_> eP)
 	//{
 	//	if (!isExceed(coor, sP, eP))
@@ -36,7 +36,7 @@ namespace caWavelet
 
 	// sP <= X < eP
 	//template<typename Dty_>
-	//bool caSPIHT<Dty_>::isExceed(caCoor<Dty_> coor, std::vector<Dty_> sP, std::vector<Dty_> eP)
+	//bool caSPIHT<Dty_>::isExceed(coordinate<Dty_> coor, std::vector<Dty_> sP, std::vector<Dty_> eP)
 	//{
 	//	if (sP.size() != eP.size())
 	//	{

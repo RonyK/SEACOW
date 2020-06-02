@@ -2,7 +2,7 @@
 #include "pch.h"
 #include <vector>
 
-namespace caWavelet
+namespace msdb
 {
 	namespace caDummy
 	{

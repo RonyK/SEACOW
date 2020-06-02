@@ -6,9 +6,9 @@
 #define ROUNDING(x, dig)	( floor((x) * pow(double(10), dig) + 0.5f) / pow(double(10), dig) )
 TEST(caWaveletEncode, caWaveletHaarInit)
 {
-	caWavelet::caWavelet w("Haar");
+	msdb::wavelet w("Haar");
 
-	EXPECT_EQ(w.t_, caWavelet::caWaveletType::Haar);
+	EXPECT_EQ(w.t_, msdb::waveletType::Haar);
 
 	EXPECT_EQ(w.c_, 2);
 	EXPECT_EQ(w.offset_, 1);
@@ -32,13 +32,13 @@ TEST(caWaveletEncode, caWaveletHaarInit)
 
 TEST(caWaveletEncode, caWaveletHaar_1D_Encode)
 {
-	caWavelet::caWavelet w("Haar");
+	msdb::wavelet w("Haar");
 	double data[] = {1,2,3,4,5,6,7,8};
 	
 	double* output = (double*)malloc(sizeof(data));
 	std::vector<int> dims = { sizeof(data) / sizeof(double) };
 	
-	caWavelet::caWaveletEncode(&w, data, output, sizeof(data) / sizeof(double), &dims);
+	msdb::caWaveletEncode(&w, data, output, sizeof(data) / sizeof(double), &dims);
 
 	double expectedOutput[] = { 
 		2.12132034, 4.94974747, 7.77817459, 10.60660172, 
@@ -56,13 +56,13 @@ TEST(caWaveletEncode, caWaveletHaar_1D_Encode)
 TEST(caWaveletEncode, caWaveletHaar_2D_Encode)
 {
 	EXPECT_TRUE(true);
-	caWavelet::caWavelet w("Haar");
+	msdb::wavelet w("Haar");
 	double data[][4] = {{9,7,6,2}, {5,3,4,4}, {8,2,4,0}, {6,0,2,2} };
 
 	double* output = (double*)malloc(sizeof(data));
 	std::vector<int> dims = { sizeof(data) / sizeof(double) / 4, 4 };
 
-	caWavelet::caWaveletEncode(&w, (double*)data, output, sizeof(data) / sizeof(double), &dims);
+	msdb::caWaveletEncode(&w, (double*)data, output, sizeof(data) / sizeof(double), &dims);
 
 	double expectedOutput[] = {
 		12, 8, 2, 2,  8, 4, 6, 2,  4, 0, 0, 2,  2, 0, 0, 2
@@ -79,13 +79,13 @@ TEST(caWaveletEncode, caWaveletHaar_2D_Encode)
 TEST(caWaveletEncode, caWaveletHaarSimple_2D_Encode)
 {
 	EXPECT_TRUE(true);
-	caWavelet::caWavelet w("HaarSimple");
+	msdb::wavelet w("HaarSimple");
 	double data[][4] = { {9,7,6,2}, {5,3,4,4}, {8,2,4,0}, {6,0,2,2} };
 
 	double* output = (double*)malloc(sizeof(data));
 	std::vector<int> dims = { sizeof(data) / sizeof(double) / 4, 4 };
 
-	caWavelet::caWaveletEncode(&w, (double*)data, output, sizeof(data) / sizeof(double), &dims);
+	msdb::caWaveletEncode(&w, (double*)data, output, sizeof(data) / sizeof(double), &dims);
 
 	double expectedOutput[] = {
 		6, 4, 1, 1,  4, 2, 3, 1,  2, 0, 0, 1,  1, 0, 0, 1

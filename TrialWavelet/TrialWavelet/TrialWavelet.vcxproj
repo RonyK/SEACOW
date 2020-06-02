@@ -100,6 +100,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,7 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="array.cpp" />
-    <ClCompile Include="bitstringstream.cpp" />
+    <ClCompile Include="src\io\bitstringstream.cpp" />
     <ClCompile Include="compact.h" />
     <ClCompile Include="daubechies.cpp" />
     <ClCompile Include="haar.cpp" />
@@ -155,7 +156,7 @@
   <ItemGroup>
     <ClInclude Include="array.h" />
     <ClInclude Include="bitstream.h" />
-    <ClInclude Include="bitstringstream.h" />
+    <ClInclude Include="include\io\bitstringstream.h" />
     <ClInclude Include="exceptions.h" />
     <ClInclude Include="haar.h" />
     <ClInclude Include="iterators.h" />

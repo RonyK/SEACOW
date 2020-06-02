@@ -2,7 +2,7 @@
 #include "dummy.h"
 #include "../TrialWavelet/compact.h"
 
-namespace caWavelet
+namespace msdb
 {
 	namespace caDummy
 	{
