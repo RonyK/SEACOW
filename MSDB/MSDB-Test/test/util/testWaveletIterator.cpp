@@ -24,8 +24,8 @@ namespace msdb
 
 		{
 			// Level 1, Band 0
-			it.setCurLevel(1);
-			it.setCurBand(0);
+			it.setCurLevel(1, false);
+			it.setCurBand(0, false);
 
 			size_t sP_l1b0[2] = { 0, 0 };
 			size_t eP_l1b0[2] = { 2, 2 };
@@ -39,8 +39,8 @@ namespace msdb
 
 		{
 			// Level 1, Band 1
-			it.setCurLevel(1);
-			it.setCurBand(1);
+			it.setCurLevel(1, false);
+			it.setCurBand(1, false);
 
 			size_t sP_l1b1[2] = { 0, 2 };
 			size_t eP_l1b1[2] = { 2, 4 };
@@ -54,8 +54,8 @@ namespace msdb
 
 		{
 			// Level 1, Band 2
-			it.setCurLevel(1);
-			it.setCurBand(2);
+			it.setCurLevel(1, false);
+			it.setCurBand(2, false);
 
 			size_t sP_l1b2[2] = { 2, 0 };
 			size_t eP_l1b2[2] = { 4, 2 };
@@ -69,8 +69,8 @@ namespace msdb
 
 		{
 			// Level 1, Band 3
-			it.setCurLevel(1);
-			it.setCurBand(3);
+			it.setCurLevel(1, false);
+			it.setCurBand(3, false);
 
 			size_t sP_l1b3[2] = { 2, 2 };
 			size_t eP_l1b3[2] = { 4, 4 };
@@ -84,8 +84,8 @@ namespace msdb
 
 		{
 			// Level 0, Band 1
-			it.setCurLevel(0);
-			it.setCurBand(1);
+			it.setCurLevel(0, false);
+			it.setCurBand(1, false);
 
 			size_t sP_l0b1[2] = { 0, 4 };
 			size_t eP_l0b1[2] = { 4, 8 };
@@ -99,8 +99,8 @@ namespace msdb
 
 		{
 			// Level 0, Band 2
-			it.setCurLevel(0);
-			it.setCurBand(2);
+			it.setCurLevel(0, false);
+			it.setCurBand(2, false);
 
 			size_t sP_l0b2[2] = { 4, 0 };
 			size_t eP_l0b2[2] = { 8, 4 };
@@ -114,8 +114,8 @@ namespace msdb
 
 		{
 			// Level 0, Band 3
-			it.setCurLevel(0);
-			it.setCurBand(3);
+			it.setCurLevel(0, false);
+			it.setCurBand(3, false);
 
 			size_t sP_l0b3[2] = { 4, 4 };
 			size_t eP_l0b3[2] = { 8, 8 };
@@ -143,8 +143,8 @@ namespace msdb
 		// Create WTIterator
 		waveletIterator<int, double> it(data, sizeof(d) / sizeof(int), d);
 		it.setMaxLevel(maxLevel);
-		it.setCurLevel(1);
-		it.setCurBand(0);
+		it.setCurLevel(1, false);
+		it.setCurBand(0, false);
 
 		int c[2] = { 3, 3 };
 
@@ -197,8 +197,8 @@ namespace msdb
 
 		// Create WTIterator
 		waveletIterator<int, double> it(data, sizeof(d) / sizeof(int), d, 1);
-		it.setCurLevel(1);
-		it.setCurBand(0);
+		it.setCurLevel(1, false);
+		it.setCurBand(0, false);
 
 		// Simple iterating test
 		//EXPECT_EQ(it[0], 0);

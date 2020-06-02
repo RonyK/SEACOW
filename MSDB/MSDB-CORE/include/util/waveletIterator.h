@@ -4,6 +4,7 @@
 
 #include <util/coordinate.h>
 #include <system/exceptions.h>
+#include <algorithm>
 
 namespace msdb
 {
@@ -81,7 +82,7 @@ namespace msdb
 		virtual void next(const size_type dim)
 		{
 			const Dty_ offset = static_cast<Dty_>(this->getDimOffset(dim));
-			if (this->coor_[dim] + 1 < std::min(this->beP_[dim], this->eP_[dim]))
+			if (this->coor_[dim] + 1 < std::min((dim_type)this->beP_[dim], (dim_type)this->eP_[dim]))
 			{
 				this->coor_[dim]++;
 				this->ptr_ += offset;
@@ -105,7 +106,7 @@ namespace msdb
 					this->next(static_cast<unsigned int>(this->dSize_ - 1));
 				}
 
-				this->moveDimCoor(dim, std::max(this->bsP_[dim], this->sP_[dim]), offset);
+				this->moveDimCoor(dim, std::max((dim_type)this->bsP_[dim], (dim_type)this->sP_[dim]), offset);
 
 				/////
 				//if ((dim > 0 && this->basisDim_ == dim - 1) || (dim == 0 && this->basisDim_ == this->dSize_ - 1))
@@ -140,8 +141,8 @@ namespace msdb
 			size_type band = this->findBand(coor, level);
 
 			// Set current level, band, ptr.
-			this->setCurLevel(level);
-			this->setCurBand(band);
+			this->setCurLevel(level, false);
+			this->setCurBand(band, false);
 			this->ptr_ = this->ptrBegin_;
 			this->ptr_ += this->getBandSize(level) * this->curBand_;
 			this->ptr_ += this->posToSeq(coor);
@@ -180,6 +181,7 @@ namespace msdb
 			}
 		}
 
+		// adjustCoor: make true if you want to move the coordinate it have.
 		void setCurBand(size_type band, bool adjustCoor = false)
 		{
 			assert(band != 0 || (band == 0 && this->curLevel_ == this->maxLevel_));
@@ -288,7 +290,7 @@ namespace msdb
 			assert(this->curBand_ != 0);
 			assert(this->curLevel_ > 0);
 
-			this->setCurLevel(this->curLevel_ - 1);
+			this->setCurLevel(this->curLevel_ - 1, false);
 			this->setCurBand(this->curBand_, true);
 		}
 
@@ -313,11 +315,11 @@ namespace msdb
 				}
 
 				// Except maxLevel, curBandNum starts from 1.
-				this->setCurLevel(this->curLevel_ - 1);
-				this->setCurBand(1);
+				this->setCurLevel(this->curLevel_ - 1, false);
+				this->setCurBand(1, false);
 			} else
 			{
-				this->setCurBand(this->curBand_ + 1);
+				this->setCurBand(this->curBand_ + 1, false);
 			}
 
 			this->moveTo(coordinate<Dty_>(this->dSize_, this->bsP_));

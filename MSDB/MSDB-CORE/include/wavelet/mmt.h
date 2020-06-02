@@ -179,10 +179,16 @@ namespace msdb
 			}
 		}
 
-		mmt<Dty_, Ty_>::mmtNode* getNodes(size_type level)
+		const mmt<Dty_, Ty_>::mmtNode* getNodes(size_type level)
 		{
 			assert(level < this->nodes_.size());
 			return this->nodes_[level].data();
+		}
+		
+		const std::vector<dim_vector>& getChunkInDim(size_type level)
+		{
+			assert(level <= this->chunksInDim_.size());
+			return this->chunksInDim_[level];
 		}
 
 	protected:
