@@ -8,7 +8,11 @@ namespace msdb
 	class singleton
 	{
 	public:
-		static _derived& instance();
+		static _derived* instance()
+		{
+			static _derived instance;
+			return &instance;
+		}
 
 		// Delete copy and move constructor
 		singleton(const singleton<_derived>&) = delete;
@@ -18,10 +22,17 @@ namespace msdb
 		singleton<_derived>& operator=(singleton<_derived>&&) = delete;
 
 	protected:
-		singleton() {}
+		virtual bool init() = 0;
+
+	protected:
+		singleton() : isInit(false) 
+		{
+			this->init();
+			this->isInit = true;
+		}
 		virtual ~singleton() {}
 
-	private:
+		bool isInit;
 	};
 }
 

@@ -2,8 +2,13 @@
 
 namespace msdb
 {
-	arrayBase::arrayBase(arrayDesc& desc)
-	{
-		this->_desc = desc;
-	}
+arrayBase::arrayBase()
+{
+
+}
+
+arrayBase::arrayBase(arrayDesc& desc)
+{
+	this->_desc = desc;
+}
 }

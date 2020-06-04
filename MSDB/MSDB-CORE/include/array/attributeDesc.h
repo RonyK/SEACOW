@@ -2,6 +2,7 @@
 #ifndef _MSDB_ATTRIBUTEDESC_H_
 #define _MSDB_ATTRIBUTEDESC_H_
 
+#include <array/attributeId.h>
 #include <string>
 #include <vector>
 
@@ -18,6 +19,7 @@ namespace msdb
 
 	class attributeDesc
 	{
+		attributeId _id;
 		std::string _name;
 		// type
 	};

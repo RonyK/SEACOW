@@ -185,7 +185,7 @@ namespace msdb
 			return this->nodes_[level].data();
 		}
 		
-		const std::vector<dim_vector>& getChunkInDim(size_type level)
+		const dim_vector& getChunkInDim(size_type level)
 		{
 			assert(level <= this->chunksInDim_.size());
 			return this->chunksInDim_[level];

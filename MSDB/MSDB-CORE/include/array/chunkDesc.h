@@ -2,19 +2,27 @@
 #ifndef _MSDB_CHUNKDESC_H_
 #define _MSDB_CHUNKDESC_H_
 
+#include <array/chunkId.h>
+#include <array/attributeId.h>
+
 namespace msdb
 {
-	class chunkDesc
+class chunkDesc
+{	
+	struct chunkHeader
 	{
-		using chunkId_type = unsigned int;
+		size_t bytes;
 
-		chunkId_type _id;
-
-	public:
-		chunkDesc();
-
-		chunkId_type getId();
 	};
+public:
+	chunkDesc();
+
+	chunkId getId();
+
+private:
+	attributeId aid_;
+	//coordinate coor_;
+};
 };
 
 #endif

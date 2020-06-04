@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include <array/arrayId.h>
 #include <array/attributeDesc.h>
 #include <array/dimensionDesc.h>
 
@@ -11,14 +12,16 @@ namespace msdb
 {
 	class arrayDesc
 	{
-		using arrayId = unsigned int;
+	public:
+		arrayDesc(arrayId aid, std::string arrayName, attributes attrs, dimensions dims);
+		~arrayDesc();
 
 	private:
-		arrayId aid;
-		std::string arrayName;
+		arrayId aid_;
+		std::string arrayName_;
 
-		attributes attrs;
-		dimensions dims;
+		attributes attrs_;
+		dimensions dims_;
 	};
 }
 

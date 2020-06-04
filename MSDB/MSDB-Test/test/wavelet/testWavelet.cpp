@@ -32,7 +32,7 @@ namespace msdb
 		EXPECT_EQ(w.g_1[1], -1 / sqrt(2));
 	}
 
-	TEST(waveletEncode, waveletHaar_1D_Encode)
+	TEST(waveletEncode, waveletHaar_1D)
 	{
 		wavelet w("Haar");
 		double data[] = { 1,2,3,4,5,6,7,8 };
@@ -61,55 +61,77 @@ namespace msdb
 			EXPECT_EQ(ROUNDING(oDecoding[i], 6), data[i]);
 		}
 
+		free(oEncoding);
+		free(oDecoding);
+	}
+
+	TEST(waveletEncode, waveletHaar_2D)
+	{
+		EXPECT_TRUE(true);
+		wavelet w("Haar");
+		double data[][4] = { {9,7,6,2}, {5,3,4,4}, {8,2,4,0}, {6,0,2,2} };
+		double expectedOutput[] = {
+					12, 8, 2, 2,  8, 4, 6, 2,  4, 0, 0, 2,  2, 0, 0, 2
+		};
+		std::vector<int> dims = { sizeof(data) / sizeof(double) / 4, 4 };
+
+		//////////////////////////////
+		// Encoding
+		double* oEncoding = (double*)malloc(sizeof(data));
+		waveletEncode(&w, (double*)data, oEncoding, sizeof(data) / sizeof(double), &dims);
+		for (int i = 0; i < sizeof(data) / sizeof(double); i++)
+		{
+			EXPECT_EQ(ROUNDING(oEncoding[i], 6), ROUNDING(expectedOutput[i], 6));
+		}
+
+		std::cout << "####################\nDecoding" << std::endl;
+		//////////////////////////////
+		// Decoding
+		double* oDecoding = (double*)malloc(sizeof(data));
+		double* seqData = (double*)(data);
+		waveletDecode(oDecoding, oEncoding, &w, sizeof(data) / sizeof(double), dims, 0);
+		for (int i = 0; i < sizeof(data) / sizeof(double); i++)
+		{
+			std::cout << oDecoding[i] << " <-> " << seqData[i] << std::endl;
+			EXPECT_EQ(ROUNDING(oDecoding[i], 6), seqData[i]);
+		}
 
 		free(oEncoding);
 		free(oDecoding);
 	}
 
-	TEST(waveletEncode, waveletHaar_2D_Encode)
-	{
-		EXPECT_TRUE(true);
-		wavelet w("Haar");
-		double data[][4] = { {9,7,6,2}, {5,3,4,4}, {8,2,4,0}, {6,0,2,2} };
-
-		double* output = (double*)malloc(sizeof(data));
-		std::vector<int> dims = { sizeof(data) / sizeof(double) / 4, 4 };
-
-		waveletEncode(&w, (double*)data, output, sizeof(data) / sizeof(double), &dims);
-
-		double expectedOutput[] = {
-			12, 8, 2, 2,  8, 4, 6, 2,  4, 0, 0, 2,  2, 0, 0, 2
-		};
-
-		for (int i = 0; i < sizeof(data) / sizeof(double); i++)
-		{
-			EXPECT_EQ(ROUNDING(output[i], 6), ROUNDING(expectedOutput[i], 6));
-		}
-
-		free(output);
-	}
-
-	TEST(waveletEncode, waveletHaarSimple_2D_Encode)
+	TEST(waveletEncode, waveletHaarSimple_2D)
 	{
 		EXPECT_TRUE(true);
 		wavelet w("HaarSimple");
 		double data[][4] = { {9,7,6,2}, {5,3,4,4}, {8,2,4,0}, {6,0,2,2} };
-
-		double* output = (double*)malloc(sizeof(data));
-		std::vector<int> dims = { sizeof(data) / sizeof(double) / 4, 4 };
-
-		waveletEncode(&w, (double*)data, output, sizeof(data) / sizeof(double), &dims);
-
 		double expectedOutput[] = {
 			6, 4, 1, 1,  4, 2, 3, 1,  2, 0, 0, 1,  1, 0, 0, 1
 		};
+		std::vector<int> dims = { sizeof(data) / sizeof(double) / 4, 4 };
 
+		//////////////////////////////
+		// Encoding
+		double* oEncoding = (double*)malloc(sizeof(data));
+		waveletEncode(&w, (double*)data, oEncoding, sizeof(data) / sizeof(double), &dims);
 		for (int i = 0; i < sizeof(data) / sizeof(double); i++)
 		{
-			EXPECT_EQ(ROUNDING(output[i], 6), ROUNDING(expectedOutput[i], 6));
+			EXPECT_EQ(ROUNDING(oEncoding[i], 6), ROUNDING(expectedOutput[i], 6));
 		}
 
-		free(output);
-	}
+		std::cout << "####################\nDecoding" << std::endl;
+		//////////////////////////////
+		// Decoding
+		double* oDecoding = (double*)malloc(sizeof(data));
+		double* seqData = (double*)(data);
+		waveletDecode(oDecoding, oEncoding, &w, sizeof(data) / sizeof(double), dims, 0);
+		for (int i = 0; i < sizeof(data) / sizeof(double); i++)
+		{
+			std::cout << oDecoding[i] << " <-> " << seqData[i] << std::endl;
+			EXPECT_EQ(ROUNDING(oDecoding[i], 6), seqData[i]);
+		}
 
+		free(oEncoding);
+		free(oDecoding);
+	}
 }

@@ -141,8 +141,6 @@ namespace msdb
 				oit += half;	// go to next row
 			}
 
-			memcpy(temp, output, sizeof(double) * length);
-
 			for (int i = 0; i < length; i++)
 			{
 				std::cout << output[i] << ", ";
@@ -152,8 +150,9 @@ namespace msdb
 					std::cout << "/";
 				}
 			}
-
 			std::cout << std::endl;
+
+			memcpy(temp, output, sizeof(double) * length);
 		}
 
 		delete[] temp;
