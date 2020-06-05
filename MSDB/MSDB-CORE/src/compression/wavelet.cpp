@@ -5,8 +5,8 @@
 #include <vector>
 #include <util/coordinate.h>
 #include <util/waveletIterator.h>
-#include <wavelet/wavelet.h>
-#include <wavelet/haar.h>
+#include <compression/wavelet.h>
+#include <compression/haar.h>
 
 namespace msdb
 {

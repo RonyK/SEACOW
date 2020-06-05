@@ -1,4 +1,4 @@
-#include <wavelet/mmt.h>
+#include <compression/mmt.h>
 
 namespace msdb
 {

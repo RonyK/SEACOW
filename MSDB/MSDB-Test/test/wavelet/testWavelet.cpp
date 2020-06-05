@@ -1,5 +1,5 @@
 #include <pch.h>
-#include <wavelet/wavelet.h>
+#include <compression/wavelet.h>
 #include <cmath>
 #include <vector>
 

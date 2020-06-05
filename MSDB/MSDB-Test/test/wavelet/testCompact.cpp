@@ -1,5 +1,5 @@
 #include <pch.h>
-#include <wavelet/compact.h>
+#include <compression/compact.h>
 
 namespace msdb
 {

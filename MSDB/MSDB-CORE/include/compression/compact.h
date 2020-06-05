@@ -4,7 +4,7 @@
 
 #include <array/array.h>
 #include <io/bitstream.h>
-#include <wavelet/mmt.h>
+#include <compression/mmt.h>
 #include <util/coordinate.h>
 #include <util/waveletIterator.h>
 #include <iostream>

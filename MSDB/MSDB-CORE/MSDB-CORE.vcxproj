@@ -145,6 +145,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.h" />
     <ClInclude Include="include\array\array.h" />
     <ClInclude Include="include\array\arrayDesc.h" />
     <ClInclude Include="include\array\arrayId.h" />
@@ -154,6 +155,7 @@
     <ClInclude Include="include\array\buffer.h" />
     <ClInclude Include="include\array\chunk.h" />
     <ClInclude Include="include\array\chunkDesc.h" />
+    <ClInclude Include="include\array\chunkId.h" />
     <ClInclude Include="include\array\chunkMgr.h" />
     <ClInclude Include="include\array\compBlock.h" />
     <ClInclude Include="include\array\compChunk.h" />
@@ -167,6 +169,7 @@
     <ClInclude Include="include\io\io.h" />
     <ClInclude Include="include\query\operator.h" />
     <ClInclude Include="include\query\query.h" />
+    <ClInclude Include="include\system\arrayMgr.h" />
     <ClInclude Include="include\system\errorCodes.h" />
     <ClInclude Include="include\system\exceptions.h" />
     <ClInclude Include="include\system\storageMgr.h" />
@@ -175,13 +178,16 @@
     <ClInclude Include="include\util\singleton.h" />
     <ClInclude Include="include\util\stringUtil.h" />
     <ClInclude Include="include\util\waveletIterator.h" />
-    <ClInclude Include="include\wavelet\compact.h" />
-    <ClInclude Include="include\wavelet\haar.h" />
-    <ClInclude Include="include\wavelet\mmt.h" />
-    <ClInclude Include="include\wavelet\wavelet.h" />
+    <ClInclude Include="include\compression\compact.h" />
+    <ClInclude Include="include\compression\haar.h" />
+    <ClInclude Include="include\compression\mmt.h" />
+    <ClInclude Include="include\compression\wavelet.h" />
+    <ClInclude Include="include\xml\tinyxml2.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="include\array\buffer.cpp" />
+    <ClCompile Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.cpp" />
+    <ClCompile Include="include\array\arrayDesc.cpp" />
+    <ClCompile Include="src\array\buffer.cpp" />
     <ClCompile Include="src\io\file.cpp" />
     <ClCompile Include="src\array\array.cpp" />
     <ClCompile Include="src\array\compChunk.cpp" />
@@ -193,11 +199,12 @@
     <ClCompile Include="src\system\exceptions.cpp" />
     <ClCompile Include="src\system\storageMgr.cpp" />
     <ClCompile Include="src\util\singleton.cpp" />
-    <ClCompile Include="src\wavelet\compact.cpp" />
-    <ClCompile Include="src\wavelet\daubechies.cpp" />
-    <ClCompile Include="src\wavelet\haar.cpp" />
-    <ClCompile Include="src\wavelet\mmt.cpp" />
-    <ClCompile Include="src\wavelet\wavelet.cpp" />
+    <ClCompile Include="src\compression\compact.cpp" />
+    <ClCompile Include="src\compression\daubechies.cpp" />
+    <ClCompile Include="src\compression\haar.cpp" />
+    <ClCompile Include="src\compression\mmt.cpp" />
+    <ClCompile Include="src\compression\wavelet.cpp" />
+    <ClCompile Include="src\xml\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\system\errorCategories.inc" />

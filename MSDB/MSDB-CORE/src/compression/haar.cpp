@@ -1,4 +1,4 @@
-#include <wavelet/haar.h>
+#include <compression/haar.h>
 #include <cmath>
 
 namespace msdb

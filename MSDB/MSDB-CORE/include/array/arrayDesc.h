@@ -13,6 +13,7 @@ namespace msdb
 	class arrayDesc
 	{
 	public:
+		arrayDesc();
 		arrayDesc(arrayId aid, std::string arrayName, attributes attrs, dimensions dims);
 		~arrayDesc();
 

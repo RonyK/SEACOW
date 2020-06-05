@@ -1,5 +1,5 @@
 #include <pch.h>
-#include <wavelet/mmt.h>
+#include <compression/mmt.h>
 #include <array/array.h>
 
 namespace msdb
