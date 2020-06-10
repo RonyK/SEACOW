@@ -154,22 +154,26 @@
     <ClInclude Include="include\array\block.h" />
     <ClInclude Include="include\array\buffer.h" />
     <ClInclude Include="include\array\chunk.h" />
+    <ClInclude Include="include\array\chunkBuffer.h" />
     <ClInclude Include="include\array\chunkDesc.h" />
     <ClInclude Include="include\array\chunkId.h" />
     <ClInclude Include="include\array\chunkMgr.h" />
     <ClInclude Include="include\array\compBlock.h" />
     <ClInclude Include="include\array\compChunk.h" />
+    <ClInclude Include="include\array\configArrays.h" />
     <ClInclude Include="include\array\dimensionDesc.h" />
     <ClInclude Include="include\array\dimensionId.h" />
     <ClInclude Include="include\array\memBlock.h" />
     <ClInclude Include="include\array\memChunk.h" />
+    <ClInclude Include="include\compression\compression.h" />
     <ClInclude Include="include\io\bitstream.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="include\io\io.h" />
     <ClInclude Include="include\query\operator.h" />
     <ClInclude Include="include\query\query.h" />
-    <ClInclude Include="include\system\arrayMgr.h" />
+    <ClInclude Include="include\array\arrayMgr.h" />
+    <ClInclude Include="include\system\config.h" />
     <ClInclude Include="include\system\errorCodes.h" />
     <ClInclude Include="include\system\exceptions.h" />
     <ClInclude Include="include\system\storageMgr.h" />
@@ -186,7 +190,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.cpp" />
-    <ClCompile Include="include\array\arrayDesc.cpp" />
+    <ClCompile Include="src\array\chunk.cpp" />
+    <ClCompile Include="src\array\chunkBuffer.cpp" />
+    <ClCompile Include="src\array\memChunk.cpp" />
+    <ClCompile Include="src\array\arrayDesc.cpp" />
+    <ClCompile Include="src\array\configArrays.cpp" />
+    <ClCompile Include="src\system\config.cpp" />
     <ClCompile Include="src\array\buffer.cpp" />
     <ClCompile Include="src\io\file.cpp" />
     <ClCompile Include="src\array\array.cpp" />

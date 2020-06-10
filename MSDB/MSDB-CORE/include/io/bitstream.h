@@ -78,7 +78,7 @@ namespace msdb
 			this->_container = mem;
 		}
 
-		vector_iobs() {};
+		vector_iobs() : _container(nullptr) {};
 	};
 
 	template <class _Block, class _Traits, size_t _BlockBytes = sizeof(_Block), size_t _BlockBits = sizeof(_Block)* CHAR_BIT>

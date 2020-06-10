@@ -10,18 +10,17 @@ namespace msdb
 {
 	class attributeDesc;
 
-	class attributes
+	class attributes : public std::vector<attributeDesc>
 	{
-		using container_type = std::vector<attributeDesc>;
 
-		container_type _attributes;
 	};
 
 	class attributeDesc
 	{
+	public:
 		attributeId _id;
 		std::string _name;
-		// type
+		// _type
 	};
 }
 

@@ -1,10 +1,34 @@
 #pragma once
-#ifndef _MSDB_MEMCHUNK_H_
-#define _MSDB_MEMCHUNK_H_
+#ifndef _MSDB_RAWCHUNK_H_
+#define _MSDB_RAWCHUNK_H_
 
-class memChunk
+#include <array/chunkBuffer.h>
+#include <util/coordinate.h>
+
+namespace msdb
 {
+class memChunk : public chunkBuffer
+{
+public:
+	memChunk();
 
+public:
+	virtual bool isCompressed() const;
 };
 
-#endif
+//class rawChunkIterator : public coorItr
+//{
+//public:
+//	rawChunkIterator(value_t* data, const size_t dSize, position_t* boundary);
+//
+//public:
+//	virtual void moveTo(const coordinate<coorItr::dim_type>& coor);
+//	coordinate<coorItr::dim_type> coor();
+//
+//private:
+//	coorItr::dim_pointer csP_;		// chunk start point
+//	coorItr::dim_pointer ceP_;		// chunk end point
+//};
+}
+
+#endif		// _MSDB_RAWCHUNK_H_

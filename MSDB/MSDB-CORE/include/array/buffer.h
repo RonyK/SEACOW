@@ -4,18 +4,27 @@
 
 namespace msdb
 {
+using bufferSize = unsigned long long;
+
+// abstrct class for binary data holding
 class buffer
 {
-	virtual void* getData() = 0;
+public:
+	buffer();
 
-	virtual void const* getReadData() const = 0;
+public:
+	virtual void* getData() = 0;								// writable data pointer
+	virtual void const* getReadData() const = 0;				// read-only data pointer
 
-	virtual size_t getSize() const = 0;
+	virtual bufferSize size() const = 0;						// buffer size
 
-	virtual void free();
+	virtual void alloc(bufferSize size) = 0;
+	virtual void realloc(bufferSize size) = 0;
+	virtual void copy(void* data, bufferSize size) = 0;			// copy input data
+	virtual void free();										// free binary data
 
-	virtual bool pin() const = 0;
-	virtual void unPin() const = 0;
+	//virtual bool pin() const = 0;
+	//virtual void unPin() const = 0;
 };
 }
 

@@ -4,9 +4,14 @@
 
 #include <array/chunkId.h>
 #include <array/attributeId.h>
+#include <compression/compression.h>
+#include <util/coordinate.h>
+#include <array/buffer.h>
 
 namespace msdb
 {
+using chunkSize = bufferSize;
+
 class chunkDesc
 {	
 	struct chunkHeader
@@ -17,12 +22,17 @@ class chunkDesc
 public:
 	chunkDesc();
 
-	chunkId getId();
+	chunkDesc(attributeId id, coor sp, coor ep, chunkSize mSize);
 
-private:
-	attributeId aid_;
-	//coordinate coor_;
-};
-};
+	chunkDesc(attributeId id, coor sp, coor ep, chunkSize mSize, chunkSize cSize, CompressionMethod cType);
 
-#endif
+	attributeId id_;		// attribute ID
+	chunkSize mSize_;		// materialized size
+	chunkSize cSize_;		// compressed size
+	bool useCompression_;	// can be compressed
+	CompressionMethod cType_;
+	coor sp_;				// start point
+	coor ep_;				// end point
+};
+}
+#endif		// _MSDB_CHUNKDESC_H_

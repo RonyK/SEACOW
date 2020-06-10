@@ -7,7 +7,7 @@
 #define _MSDB_TRY_IO_BEGIN	_MSDB_TRY_BEGIN
 #define _MSDB_CATCH_IO_END										\
 _MSDB_CATCH_ALL                                                 \
-	throw EXCEPTIONS(MSDB_EC_IO_ERROR, MSDB_ER_ALL_IO_ERROR);   \
+	throw _MSDB_EXCEPTIONS(MSDB_EC_IO_ERROR, MSDB_ER_ALL_IO_ERROR);   \
 _MSDB_CATCH_END
 
 #endif

@@ -457,7 +457,7 @@ namespace msdb
 		{
 			size_type seq = 0;
 
-			EXCEPTIONS(MSDB_EC_LOGIC_ERROR, MSDB_ER_NOT_IMPLEMENTED);
+			_MSDB_EXCEPTIONS(MSDB_EC_LOGIC_ERROR, MSDB_ER_NOT_IMPLEMENTED);
 
 			return seq;
 		}

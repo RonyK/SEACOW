@@ -22,6 +22,7 @@
     </ClCompile>
     <ClCompile Include="test\pch.cpp" />
     <ClCompile Include="test\xml\xmltest.cpp" />
+    <ClCompile Include="test\array\testRawChunk.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">

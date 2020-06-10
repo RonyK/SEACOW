@@ -2,9 +2,9 @@
 #ifndef _MSDB_STORAGEMGR_H_
 #define _MSDB_STORAGEMGR_H_
 #include <util/singleton.h>
+#include <system/config.h>
 #include <iostream>
 #include <string>
-#include <fstream>
 #include <filesystem>
 
 namespace msdb
@@ -26,10 +26,11 @@ class storageMgr : public singleton<storageMgr>
 	};
 
 public:
-	void getFile(std::string path);
+	config* loadConfigFile(ConfigType type);
+	void saveConfigFile(config* cFile);
 
 	//const filePath& getConfigPath();
-	const filePath& getArrayPath();
+	//const filePath& getArrayPath();
 protected:
 	bool init();
 
@@ -38,5 +39,4 @@ protected:
 	filePath arrayPath_;
 };
 }
-
 #endif	//_MSDB_STORAGEMGR_H_

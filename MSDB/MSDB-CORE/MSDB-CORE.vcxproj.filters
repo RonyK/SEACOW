@@ -78,9 +78,6 @@
     <ClInclude Include="include\array\memBlock.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="include\array\memChunk.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="include\system\storageMgr.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -102,9 +99,6 @@
     <ClInclude Include="include\array\chunkId.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="include\system\arrayMgr.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="include\compression\compact.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -121,6 +115,24 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="include\xml\tinyxml2.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\array\arrayMgr.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\array\configArrays.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\system\config.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\array\chunkBuffer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\compression\compression.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\array\memChunk.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -152,9 +164,6 @@
     <ClCompile Include="src\system\storageMgr.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="include\array\arrayDesc.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="src\array\buffer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -177,6 +186,24 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\xml\tinyxml2.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\array\arrayDesc.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\array\configArrays.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\system\config.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\array\chunkBuffer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\array\chunk.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\array\memChunk.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

@@ -17,12 +17,12 @@ namespace msdb
 		arrayDesc(arrayId aid, std::string arrayName, attributes attrs, dimensions dims);
 		~arrayDesc();
 
-	private:
-		arrayId aid_;
-		std::string arrayName_;
+	public:
+		arrayId _id;
+		std::string _name;
 
-		attributes attrs_;
-		dimensions dims_;
+		attributes _attrs;
+		dimensions _dims;
 	};
 }
 

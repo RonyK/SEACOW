@@ -41,6 +41,7 @@
     <ClInclude Include="test\pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="test\array\testRawChunk.cpp" />
     <ClCompile Include="test\dummy\dummy.cpp" />
     <ClCompile Include="test\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -72,7 +73,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="test\xml\xmltest.cpp" />
+    <ClCompile Include="test\xml\xmltest.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

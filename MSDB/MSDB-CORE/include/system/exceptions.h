@@ -2,6 +2,7 @@
 #ifndef _MSDB_EXCEPTIONS_H_
 #define _MSDB_EXCEPTIONS_H_
 
+#include <cassert>
 #include <system/errorCodes.h>
 
 constexpr char const* const __NAMESPACE = "msdb";
@@ -9,31 +10,30 @@ constexpr char const* const __NAMESPACE = "msdb";
 namespace msdb
 {
 // EXCEPTION MACROS
-#define _MSDB_TRY_BEGIN     try {
+#define _MSDB_TRY_BEGIN     try {;
 
 #define _MSDB_CATCH(x)      \
 }                           \
-catch (x) {                 \
+catch (x) {;
 
 #define _MSDB_CATCH_ALL     \
 }                           \
-catch (...) {               \
+catch (...) {;
 
-#define _MSDB_CATCH_END     }
+#define _MSDB_CATCH_END     };
 
 
-#define _MSDB_RAISE(x)  throw x
-#define _MSDB_RERAISE   throw
-#define _MSDB_THROW(x)  throw x
+#define _MSDB_RETHROW   throw;
+#define _MSDB_THROW(x)  throw x;
 
 // MSDB FORMAT EXCEPTION
-#define EXCEPTIONS(_error_category, _error_code)                \
+#define _MSDB_EXCEPTIONS(_error_category, _error_code)                \
     msdb::msdb_exception(__FILE__, __FUNCTION__, __LINE__,      \
                          __NAMESPACE,                           \
                          _error_category, _error_code,          \
                          #_error_category, #_error_code)
 
-#define EXCEPTIONS_MSG(_error_category, _error_code, _msg)      \
+#define _MSDB_EXCEPTIONS_MSG(_error_category, _error_code, _msg)      \
     msdb::msdb_exception(__FILE__, __FUNCTION__, __LINE__,      \
                          __NAMESPACE,                           \
                          _error_category, _error_code,          \

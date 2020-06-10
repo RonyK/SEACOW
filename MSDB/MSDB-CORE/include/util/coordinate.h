@@ -6,6 +6,9 @@
 
 namespace msdb
 {
+typedef int64_t		position_t;
+typedef int64_t		value_t;
+
 	template <typename Dty_>
 	class coordinate
 	{
@@ -342,7 +345,7 @@ namespace msdb
 
 			return ptr_[this->posToSeq(pos)];
 		}
-		_NODISCARD const coorIterator& operator[](size_type pos) const
+		_NODISCARD const self_type& operator[](size_type pos) const
 		{
 			if (pos < 0 || pos >= this->vSize_)
 			{
@@ -495,6 +498,10 @@ namespace msdb
 			return false;
 		}
 	};
+
+	using coor = coordinate<position_t>;
+	using coorItr = coorIterator<position_t, value_t>;
+	using coorRangeItr = coorRangeIterator<position_t, value_t>;
 }
 
 #endif

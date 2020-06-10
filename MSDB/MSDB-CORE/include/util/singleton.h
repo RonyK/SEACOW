@@ -18,7 +18,7 @@ namespace msdb
 		singleton(const singleton<_derived>&) = delete;
 		singleton(singleton&&) = delete;
 
-		singleton<_derived>& operator=(const singleton<_derived>) = delete;
+		singleton<_derived>& operator=(const singleton<_derived>&) = delete;
 		singleton<_derived>& operator=(singleton<_derived>&&) = delete;
 
 	protected:

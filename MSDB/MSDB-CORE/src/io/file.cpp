@@ -14,7 +14,7 @@ file::file(char const* path, int flags)
 	if (!this->fs_)
 	{
 		this->closed_ = false;
-		_MSDB_THROW(EXCEPTIONS(MSDB_EC_IO_ERROR, MSDB_ER_CANNOT_OPEN_FILE));
+		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_IO_ERROR, MSDB_ER_CANNOT_OPEN_FILE));
 	}
 
 	this->fm_ = fileManager::instance();
@@ -56,7 +56,7 @@ bool fileManager::openDir(char const* strPath)
 	{
 		if(!std::filesystem::create_directories(dirPath))
 		{
-			_MSDB_THROW(EXCEPTIONS(MSDB_EC_IO_ERROR, MSDB_ER_CANNOT_OPEN_DIR));
+			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_IO_ERROR, MSDB_ER_CANNOT_OPEN_DIR));
 		}
 	}
 	return false;
