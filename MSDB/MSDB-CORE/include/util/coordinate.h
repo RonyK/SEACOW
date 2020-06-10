@@ -3,6 +3,7 @@
 #define _MSDB_COORDINATE_H_
 
 #include <iostream>
+#include <cassert>
 
 namespace msdb
 {
@@ -67,7 +68,7 @@ typedef int64_t		value_t;
 
 		self_type& operator++()
 		{
-			this->coor_[this->dSize_ - 1];
+			this->coor_[this->dSize_ - 1]++;
 			return *this;
 		}
 		self_type operator++(int)
