@@ -11,7 +11,6 @@
 namespace msdb
 {
 typedef int64_t		position_t;
-typedef int64_t		value_t;
 
 	template <typename Dty_>
 	class coordinate
@@ -64,8 +63,15 @@ typedef int64_t		value_t;
 			delete[] this->coor_;
 			this->dSize_ = mit.dSize_;
 			this->coor_ = new dim_type[mit.dSize_];
-			memcpy(this->coor_, mit.coor_, mit.dSize_ * sizeof(dim_type));
+			this->memcpyCoor(this->coor_, mit.coor_);
 
+			return *this;
+		}
+
+		self_type& operator=(const dim_type* mit)
+		{
+			this->memcpyCoor(this->coor_, mit);
+			
 			return *this;
 		}
 
@@ -114,6 +120,12 @@ typedef int64_t		value_t;
 		}
 
 	protected:
+		void memcpyCoor(dim_type* dest, const dim_type* src)
+		{
+			memcpy(dest, src, this->dSize_ * sizeof(dim_type));
+		}
+
+	protected:
 		size_type dSize_;
 		dim_pointer coor_;
 	};
@@ -137,7 +149,7 @@ typedef int64_t		value_t;
 			: coor_(dSize), end_(false)
 		{
 			this->dims_ = new dim_type[this->dSize()];
-			memcpy(this->dims_, dims, this->dSize() * sizeof(dim_type));
+			this->memcpyDim(this->dims_, dims);
 
 			this->basisDim_ = this->dSize() - 1;
 			this->sP_ = new dim_type[this->dSize()]();
@@ -283,6 +295,12 @@ typedef int64_t		value_t;
 		}
 
 	protected:
+		void memcpyDim(dim_type* dest, const dim_type* src)
+		{
+			memcpy(dest, src, this->dSize() * sizeof(dim_type));
+		}
+
+	protected:
 		coordinate_type coor_;		// coordinate
 		dimensionId basisDim_;		// current dimension
 
@@ -335,7 +353,7 @@ typedef int64_t		value_t;
 			}
 		}
 
-		virtual void setBasisDim(const unsigned int dim)
+		virtual void setBasisDim(dimensionId dim)
 		{
 			this->basisDimOffset_ = this->getDimOffset(dim);
 			base_type::setBasisDim(dim);
@@ -487,9 +505,9 @@ typedef int64_t		value_t;
 						  dim_const_pointer sP, dim_const_pointer eP)
 			: base_type(ptr, eType, dSize, dim)
 		{
-			this->eP_ = new Dty_[dSize];
-			memcpy(this->sP_, sP, dSize * sizeof(dim_type));
-			memcpy(this->eP_, eP, dSize * sizeof(dim_type));
+			this->eP_ = new dim_type[dSize];
+			this->memcpyDim(this->sP_, sP);
+			this->memcpyDim(this->eP_, eP);
 
 			assert(this->initCheckSpEp());
 
@@ -498,7 +516,7 @@ typedef int64_t		value_t;
 
 		itemRangeIterator(const self_type& mit) : base_type(mit)
 		{
-			this->eP_ = new Dty_[mit.dSize()];
+			this->eP_ = new dim_type[mit.dSize()];
 			memcpy(this->eP_, mit.eP_, mit.dSize() * sizeof(dim_type));
 		}
 
@@ -686,7 +704,7 @@ typedef int64_t		value_t;
 			this->moveTo(coordinate<Dty_>(this->dSize_, this->sP_));
 		}
 
-		coordinate<Dty_> coor() { return static_cast<coordinate_type>(*this); }
+		coordinate_type coor() { return static_cast<coordinate_type>(*this); }
 
 		bool operator==(const self_type& rhs) const { return ptr_ == rhs.ptr_; }
 		bool operator!=(const self_type& rhs) const { return ptr_ != rhs.ptr_; }
@@ -900,8 +918,9 @@ typedef int64_t		value_t;
 	};
 
 	using coor = coordinate<position_t>;
-	using coorItr = coorIterator<position_t, value_t>;
-	using coorRangeItr = coorRangeIterator<position_t, value_t>;
+	using coorItr = coordinateIterator<position_t>;
+	using itemItr = itemIterator<position_t>;
+	using itemRangeItr = itemRangeIterator<position_t>;
 }
 
 #endif

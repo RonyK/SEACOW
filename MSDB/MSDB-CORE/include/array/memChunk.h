@@ -16,18 +16,34 @@ public:
 	virtual bool isCompressed() const;
 };
 
-class memChunkIterator : public coorItr
+class memChunkIterator : public itemItr
 {
 public:
-	memChunkIterator(value_t* data, const size_t dSize, position_t* boundary);
+	using self_type = memChunkIterator;
+	using base_type = itemItr;
+
+	using coordinate_type = base_type::coordinate_type;
+	using size_type = base_type::size_type;
+	using dim_type = base_type::dim_type;
+	using dim_pointer = base_type::dim_pointer;
+	using dim_const_pointer = base_type::dim_const_pointer;
+	using dim_reference = base_type::dim_reference;
+	using dim_const_reference = base_type::dim_const_reference;
+public:
+	memChunkIterator(void* data, eleType eType, const size_type dSize, position_t* dims,
+					 dim_pointer csP);
 
 public:
-	//virtual void moveTo(const coordinate<coorItr::dim_type>& coor);
-	//coordinate<coorItr::dim_type> coor();
+	coordinate_type coorOut2In(coordinate_type& out);
+	coordinate_type coorIn2Out(coordinate_type& in);
+	coordinate_type coorIn2Out();
+	coordinate_type ceP();
+
+	coordinate_type outCoor();
+	coordinate_type innerCoor();
 
 private:
-	coorItr::dim_pointer csP_;		// chunk start point
-	coorItr::dim_pointer ceP_;		// chunk end point
+	dim_pointer csP_;			// Chunk start point
 };
 }
 

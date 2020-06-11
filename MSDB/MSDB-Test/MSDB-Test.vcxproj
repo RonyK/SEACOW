@@ -41,7 +41,7 @@
     <ClInclude Include="test\pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="test\array\testRawChunk.cpp" />
+    <ClCompile Include="test\array\testMemChunk.cpp" />
     <ClCompile Include="test\dummy\dummy.cpp" />
     <ClCompile Include="test\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
