@@ -4,6 +4,7 @@
 
 #include <util/element.h>
 #include <system/exceptions.h>
+#include <array/dimensionId.h>
 #include <iostream>
 #include <cassert>
 
@@ -186,7 +187,7 @@ typedef int64_t		value_t;
 		{
 			if (this->end_)		return;
 
-			dim_type curDim = this->basisDim_;
+			dimensionId curDim = this->basisDim_;
 			do
 			{
 				if (this->coor_[curDim] + 1 < this->eP_[curDim])
@@ -206,12 +207,11 @@ typedef int64_t		value_t;
 
 			this->end_ = true;
 		}
-
 		virtual void prev()
 		{
 			if (this->front_)		return;
 
-			dim_type curDim = this->basisDim_;
+			dimensionId curDim = this->basisDim_;
 			do
 			{
 				if (this->coor_[curDim] > this->sP_[curDim])
@@ -229,78 +229,7 @@ typedef int64_t		value_t;
 
 			this->front_ = true;
 		}
-		//virtual void next(const size_type dim)
-		//{
-		//	if (this->coor_[dim] + 1 < this->eP_[dim])
-		//	{
-		//		this->coor_[dim]++;
-		//	} else
-		//	{
-		//		if (this->end())	return;
 
-		//		if (dim > 0)
-		//		{
-		//			if (this->basisDim_ == dim - 1)
-		//			{
-		//				// TODO
-		//				//throw std::out_of_range("caCoorIterator next error: out range");
-		//				//this->ptr_++;
-		//				//this->coor_[dim] += 1;
-		//				this->end_ = true;
-		//				return;
-		//			}
-		//			this->next(dim - 1);
-		//		} else
-		//		{
-		//			if (this->basisDim_ == this->dSize() - 1)
-		//			{
-		//				// TODO::Throw exception or forward next?
-		//				//
-		//				//throw std::out_of_range("caCoorIterator next error: out range");
-		//				//
-		//				// or
-		//				//
-		//				//this->ptr_++;
-		//				//this->coor_[dim] += 1;
-		//				this->end_ = true;
-		//				return;
-		//			}
-		//			this->next(this->dSize() - 1);
-		//		}
-
-		//		this->coor_[dim] = this->sP_[dim];
-		//	}
-		//}
-		//virtual void prev(const size_type dim)
-		//{
-		//	if (this->coor_[dim] > this->sP_[dim])
-		//	{
-		//		this->coor_[dim]--;
-		//	} else
-		//	{
-		//		if (dim + 1 < this->dSize())
-		//		{
-		//			if (this->basisDim_ == dim + 1)
-		//			{
-		//				// TODO::
-		//				// throw std::out_of_range("caCoorIterator prev error: out range");
-		//				return;
-		//			}
-		//			this->prev(dim + 1);
-		//		} else
-		//		{
-		//			if (this->basisDim_ == 0)
-		//			{
-		//				// TODO::
-		//				// throw std::out_of_range("caCoorIterator prev error: out range");
-		//				return;
-		//			}
-		//			this->prev(0);
-		//		}
-
-		//		this->coor_[dim] = this->eP_[dim];
-		//	}
-		//}
 		virtual void moveTo(const coordinate_type& coor)
 		{
 			assert(this->dSize() == coor.size());
@@ -355,7 +284,7 @@ typedef int64_t		value_t;
 
 	protected:
 		coordinate_type coor_;		// coordinate
-		unsigned int basisDim_;		// current dimension
+		dimensionId basisDim_;		// current dimension
 
 		dim_pointer dims_;		// original array dimension size
 		dim_pointer sP_;		// range start point
@@ -399,7 +328,7 @@ typedef int64_t		value_t;
 
 			//this->adjustPtr(coorOld, coor);
 			size_type offset = this->eSize_;
-			for (dim_type d = this->dSize() - 1; d != (dim_type)-1; d--)
+			for (dimensionId d = this->dSize() - 1; d != (dimensionId)-1; d--)
 			{
 				this->ptr_ += (coor[d] - coorOld[d]) * offset;
 				offset *= this->dims_[d];
@@ -422,16 +351,11 @@ typedef int64_t		value_t;
 		element operator->() { return element((void*)ptr_, this->eType_); }
 
 	protected:
-		//void adjustPtr(coordinate_type& coorOld, coordinate_type& coorNew)
-		//{
-
-		//}
-
 		virtual void next()
 		{
 			if(this->end_)		return;
 
-			dim_type curDim = this->basisDim_;
+			dimensionId curDim = this->basisDim_;
 			do
 			{
 				dim_type offset = this->getDimOffset(curDim);
@@ -454,12 +378,11 @@ typedef int64_t		value_t;
 
 			this->end_ = true;
 		}
-
 		virtual void prev()
 		{
 			if (this->front_)		return;
 
-			dim_type curDim = this->basisDim_;
+			dimensionId curDim = this->basisDim_;
 			do
 			{
 				dim_type offset = this->getDimOffset(curDim);
@@ -542,6 +465,62 @@ typedef int64_t		value_t;
 		size_type curSeqPos_;
 		size_type seqLimit_;
 		size_type basisDimOffset_;
+	};
+
+	template <typename Dty_>
+	class itemRangeIterator : public itemIterator<Dty_>
+	{
+	public:
+		using self_type = itemRangeIterator<Dty_>;
+		using base_type = itemIterator<Dty_>;
+
+		using coordinate_type = base_type::coordinate_type;
+		using size_type = base_type::size_type;
+		using dim_type = base_type::dim_type;
+		using dim_pointer = base_type::dim_pointer;
+		using dim_const_pointer = base_type::dim_const_pointer;
+		using dim_reference = base_type::dim_reference;
+		using dim_const_reference = base_type::dim_const_reference;
+
+	public:
+		itemRangeIterator(void* ptr, eleType eType, const size_type dSize, dim_const_pointer dim,
+						  dim_const_pointer sP, dim_const_pointer eP)
+			: base_type(ptr, eType, dSize, dim)
+		{
+			this->eP_ = new Dty_[dSize];
+			memcpy(this->sP_, sP, dSize * sizeof(dim_type));
+			memcpy(this->eP_, eP, dSize * sizeof(dim_type));
+
+			assert(this->initCheckSpEp());
+
+			this->moveToStart();
+		}
+
+		itemRangeIterator(const self_type& mit) : base_type(mit)
+		{
+			this->eP_ = new Dty_[mit.dSize()];
+			memcpy(this->eP_, mit.eP_, mit.dSize() * sizeof(dim_type));
+		}
+
+		~itemRangeIterator()
+		{
+			delete[] this->eP_;
+		}
+
+	protected:
+		// Check if sP_ and eP_ has proper coordinate.
+		bool initCheckSpEp()
+		{
+			for (dimensionId d = 0; d < this->dSize(); d++)
+			{
+				if (this->sP_[d] > this->eP_[d] || this->dims_[d] < this->eP_[d])
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
 	};
 
 	// TODO:: Do not inherit caCoor

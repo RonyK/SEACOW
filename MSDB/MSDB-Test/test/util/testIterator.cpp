@@ -276,4 +276,26 @@ namespace msdb
 		}
 	}
 
+	TEST(itemRangeIterator, itemRangeIterator1D)
+	{
+		double data[] = { 1,2,3,4,5,6,7,8 };
+		int b[] = { 8 };
+		int s[] = { 2 };
+		int e[] = { 5 };
+		itemRangeIterator<int> it((void*)data, eleType::DOUBLE, sizeof(b) / sizeof(int), b, s, e);
+		coordinate<int> cc = it.coor();
+
+		EXPECT_EQ(it.coor()[0], 2);
+		EXPECT_EQ((*it).getDouble(), data[2]);
+		++it;
+
+		EXPECT_EQ(it.coor()[0], 3);
+		EXPECT_EQ((*it).getDouble(), data[3]);
+		++it;
+
+		EXPECT_EQ(it.coor()[0], 4);
+		EXPECT_EQ((*it).getDouble(), data[4]);
+		++it;
+	}
+
 }
