@@ -85,12 +85,14 @@ bool chunkBuffer::isAllocated()
 		return true;
 	return false;
 }
-void chunkBuffer::compress()
-{
 
-}
-void chunkBuffer::uncompress()
-{
-
-}
+//void chunkBuffer::compress(CompressionMethod cm)
+//{
+//	_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_CHUNK_CANNOT_COMPRESS));
+//}
+//
+//void chunkBuffer::uncompress()
+//{
+//	_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_CHUNK_CANNOT_UNCOMPRESS));
+//}
 }

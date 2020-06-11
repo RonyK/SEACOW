@@ -3,15 +3,17 @@
 #define _MSDB_COMPCHUNK_H_
 
 #include <array/chunk.h>
-#include <array/chunkBuffer.h>
 
 namespace msdb
 {
 	class compChunk : public chunkBuffer
 	{
 	public:
+		compChunk();
+
+	public:
 		bool isCompressed() const;
 	};
 };
 
-#endif
+#endif		// _MSDB_COMPCHUNK_H_

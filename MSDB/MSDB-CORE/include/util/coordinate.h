@@ -2,6 +2,8 @@
 #ifndef _MSDB_COORDINATE_H_
 #define _MSDB_COORDINATE_H_
 
+#include <util/element.h>
+#include <system/exceptions.h>
 #include <iostream>
 #include <cassert>
 
@@ -78,7 +80,7 @@ typedef int64_t		value_t;
 			return tmp;
 		}
 
-		_NODISCARD constexpr size_type size() const noexcept
+		_NODISCARD inline constexpr size_type size() const noexcept
 		{
 			return this->dSize_;
 		}
@@ -110,19 +112,436 @@ typedef int64_t		value_t;
 			return this->coor_[pos];
 		}
 
-		_NODISCARD _CONSTEXPR17 dim_pointer data() noexcept
-		{
-			return this->coor_;
-		}
-
-		_NODISCARD _CONSTEXPR17 const dim_pointer data() const noexcept
-		{
-			return this->coor_;
-		}
-
 	protected:
 		size_type dSize_;
 		dim_pointer coor_;
+	};
+
+	template <typename Dty_>
+	class coordinateIterator
+	{
+	public:
+		using self_type = coordinateIterator<Dty_>;
+		using size_type = size_t;
+		using dim_type = Dty_;
+		using dim_pointer = Dty_*;
+		using dim_const_pointer = const Dty_*;
+		using dim_reference = Dty_&;
+		using dim_const_reference = const Dty_&;
+
+		using coordinate_type = coordinate<Dty_>;
+
+	public:
+		coordinateIterator(const size_type dSize, dim_const_pointer dims)
+			: coor_(dSize), end_(false)
+		{
+			this->dims_ = new dim_type[this->dSize()];
+			memcpy(this->dims_, dims, this->dSize() * sizeof(dim_type));
+
+			this->basisDim_ = this->dSize() - 1;
+			this->sP_ = new dim_type[this->dSize()]();
+			this->eP_ = this->dims_;
+		}
+		
+		coordinateIterator(const self_type& mit)
+			: coor_(mit), basisDim_(mit.basisDim_), end_(mit.end_)
+		{
+			this->dims_ = new dim_type[mit.dSize()];
+			memcpy(this->dims_, mit.dims_, mit.dSize() * sizeof(dim_type));
+
+			this->sP_ = new dim_type[mit.dSize()];
+			memcpy(this->sP_, mit.sP_, mit.dSize() * sizeof(dim_type));
+
+			this->eP_ = this->dims_;
+		}
+
+		~coordinateIterator()
+		{
+			delete[] this->dims_;
+			delete[] this->sP_;
+		}
+
+	public:
+		virtual void setBasisDim(_In_range_(0, dSize() - 1) const unsigned int dim)
+		{
+			if (this->dSize() <= dim)
+			{
+				_MSDB_THROW(_MSDB_EXCEPTIONS_MSG(MSDB_EC_LOGIC_ERROR, MSDB_ER_OUT_OF_RANGE, "setBasisDim - too large dim"));
+			}
+
+			this->basisDim_ = dim;
+		}
+
+		_NODISCARD inline size_type dSize()
+		{
+			return this->coor_.size();
+		}
+
+		_NODISCARD inline coordinate_type coor() { return this->coor_; }
+
+		_NODISCARD inline bool end() { return this->end_; }
+		_NODISCARD inline bool front() { return this->front_; }
+
+		virtual void next()
+		{
+			if (this->end_)		return;
+
+			dim_type curDim = this->basisDim_;
+			do
+			{
+				if (this->coor_[curDim] + 1 < this->eP_[curDim])
+				{
+					// move next and return
+					this->coor_[curDim]++;
+					return;
+				}
+
+				// move current dimension coordinate to sP_
+				this->coor_[curDim] = this->sP_[curDim];
+
+				if (curDim != 0)		--curDim;
+				else				curDim = this->dSize() - 1;
+
+			} while (curDim != this->basisDim_);
+
+			this->end_ = true;
+		}
+
+		virtual void prev()
+		{
+			if (this->front_)		return;
+
+			dim_type curDim = this->basisDim_;
+			do
+			{
+				if (this->coor_[curDim] > this->sP_[curDim])
+				{
+					// move next and return
+					this->coor_[curDim]--;
+					return;
+				}
+
+				// move current dimension coordinate to sP_
+				this->coor_[curDim] = this->eP_[curDim] - 1;
+
+				curDim = (++curDim) % this->dSize();
+			} while (curDim != this->basisDim_);
+
+			this->front_ = true;
+		}
+		//virtual void next(const size_type dim)
+		//{
+		//	if (this->coor_[dim] + 1 < this->eP_[dim])
+		//	{
+		//		this->coor_[dim]++;
+		//	} else
+		//	{
+		//		if (this->end())	return;
+
+		//		if (dim > 0)
+		//		{
+		//			if (this->basisDim_ == dim - 1)
+		//			{
+		//				// TODO
+		//				//throw std::out_of_range("caCoorIterator next error: out range");
+		//				//this->ptr_++;
+		//				//this->coor_[dim] += 1;
+		//				this->end_ = true;
+		//				return;
+		//			}
+		//			this->next(dim - 1);
+		//		} else
+		//		{
+		//			if (this->basisDim_ == this->dSize() - 1)
+		//			{
+		//				// TODO::Throw exception or forward next?
+		//				//
+		//				//throw std::out_of_range("caCoorIterator next error: out range");
+		//				//
+		//				// or
+		//				//
+		//				//this->ptr_++;
+		//				//this->coor_[dim] += 1;
+		//				this->end_ = true;
+		//				return;
+		//			}
+		//			this->next(this->dSize() - 1);
+		//		}
+
+		//		this->coor_[dim] = this->sP_[dim];
+		//	}
+		//}
+		//virtual void prev(const size_type dim)
+		//{
+		//	if (this->coor_[dim] > this->sP_[dim])
+		//	{
+		//		this->coor_[dim]--;
+		//	} else
+		//	{
+		//		if (dim + 1 < this->dSize())
+		//		{
+		//			if (this->basisDim_ == dim + 1)
+		//			{
+		//				// TODO::
+		//				// throw std::out_of_range("caCoorIterator prev error: out range");
+		//				return;
+		//			}
+		//			this->prev(dim + 1);
+		//		} else
+		//		{
+		//			if (this->basisDim_ == 0)
+		//			{
+		//				// TODO::
+		//				// throw std::out_of_range("caCoorIterator prev error: out range");
+		//				return;
+		//			}
+		//			this->prev(0);
+		//		}
+
+		//		this->coor_[dim] = this->eP_[dim];
+		//	}
+		//}
+		virtual void moveTo(const coordinate_type& coor)
+		{
+			assert(this->dSize() == coor.size());
+			this->coor_ = coor;
+		}
+		virtual void moveToStart()
+		{
+			this->moveTo(coordinate<Dty_>(this->dSize(), this->sP_));
+		}
+
+		// forward
+		self_type& operator++()
+		{
+			this->next();
+			return *this;
+		}
+		self_type operator++(int)
+		{
+			self_type tmp(*this);
+			operator++();
+			return tmp;
+		}
+		self_type& operator+=(const int& rhs)
+		{
+			for (int i = 0; i < rhs; i++)
+			{
+				operator++();
+			}
+			return *this;
+		}
+
+		// backward
+		self_type& operator--()
+		{
+			this->prev();
+			return +this;
+		}
+		self_type operator--(int)
+		{
+			self_type tmp(*this);
+			operator--();
+			return tmp;
+		}
+		self_type& operator-=(const int& rhs)
+		{
+			for (int i = 0; i < rhs; i++)
+			{
+				operator--();
+			}
+			return *this;
+		}
+
+	protected:
+		coordinate_type coor_;		// coordinate
+		unsigned int basisDim_;		// current dimension
+
+		dim_pointer dims_;		// original array dimension size
+		dim_pointer sP_;		// range start point
+		dim_pointer eP_;		// range end point
+
+		bool end_;				// is iterator at the end
+		bool front_;			// is iterator at the front
+
+		// TODO:: replace sP_ to zero
+		// static std::vector<dim_type> zeroP_;
+	};
+
+	template <typename Dty_>
+	class itemIterator : public coordinateIterator<Dty_>
+	{
+	public:
+		using self_type = itemIterator<Dty_>;
+		using base_type = coordinateIterator<Dty_>;
+		using coordinate_type = coordinate<Dty_>;
+		using size_type = size_t;
+		using dim_type = Dty_;
+		using dim_pointer = Dty_*;
+		using dim_const_pointer = const Dty_*;
+		using dim_reference = Dty_&;
+		using dim_const_reference = const Dty_&;
+
+	public:
+		itemIterator(void* ptr, eleType eType, const size_type dSize, dim_const_pointer dims)
+			: base_type(dSize, dims), curSeqPos_(0),
+			eType_(eType), eSize_(getEleSize(eType))
+		{
+			this->basisDimOffset_ = this->eSize_;
+			this->ptr_ = reinterpret_cast<char*>(ptr);
+			this->initSeqLimit();
+		}
+
+		virtual void moveTo(const coordinate_type& coor)
+		{
+			coordinate_type coorOld = this->coor_;
+			base_type::moveTo(coor);
+
+			//this->adjustPtr(coorOld, coor);
+			size_type offset = this->eSize_;
+			for (dim_type d = this->dSize() - 1; d != (dim_type)-1; d--)
+			{
+				this->ptr_ += (coor[d] - coorOld[d]) * offset;
+				offset *= this->dims_[d];
+			}
+		}
+
+		virtual void setBasisDim(const unsigned int dim)
+		{
+			this->basisDimOffset_ = this->getDimOffset(dim);
+			base_type::setBasisDim(dim);
+		}
+
+	public:
+		coordinate_type coor() { return coordinate_type(this->coor_); }
+
+		bool operator==(const self_type& rhs) const { return ptr_ == rhs.ptr_; }
+		bool operator!=(const self_type& rhs) const { return ptr_ != rhs.ptr_; }
+
+		element operator*() { return element((void*)ptr_, this->eType_); }
+		element operator->() { return element((void*)ptr_, this->eType_); }
+
+	protected:
+		//void adjustPtr(coordinate_type& coorOld, coordinate_type& coorNew)
+		//{
+
+		//}
+
+		virtual void next()
+		{
+			if(this->end_)		return;
+
+			dim_type curDim = this->basisDim_;
+			do
+			{
+				dim_type offset = this->getDimOffset(curDim);
+				if(this->coor_[curDim] + 1 < this->eP_[curDim])
+				{
+					// move next and return
+					this->coor_[curDim]++;
+					this->ptr_ += offset;
+					return;
+				}
+
+				// move current dimension coordinate to sP_
+				this->ptr_ -= ((dim_type)this->coor_[curDim] - (dim_type)this->sP_[curDim]) * offset;
+				this->coor_[curDim] = this->sP_[curDim];
+
+				if(curDim != 0)		--curDim;
+				else				curDim = this->dSize() - 1;
+
+			} while (curDim != this->basisDim_);
+
+			this->end_ = true;
+		}
+
+		virtual void prev()
+		{
+			if (this->front_)		return;
+
+			dim_type curDim = this->basisDim_;
+			do
+			{
+				dim_type offset = this->getDimOffset(curDim);
+				if (this->coor_[curDim] > this->sP_[curDim])
+				{
+					// move next and return
+					this->coor_[curDim]--;
+					this->ptr_ += offset;
+					return;
+				}
+
+				// move current dimension coordinate to sP_
+				this->ptr_ += ((dim_type)this->eP_[curDim] - (dim_type)1 - (dim_type)this->coor_[curDim]) * offset;
+				this->coor_[curDim] = this->eP_[curDim] - 1;
+
+				curDim = (++curDim) % this->dSize();
+			} while (curDim != this->basisDim_);
+
+			this->front_ = true;
+		}
+
+		// call this function before you change a basisDim
+		size_t getDimOffset(const unsigned int dim)
+		{
+			if (dim == this->basisDim_)
+			{
+				return this->basisDimOffset_;
+			}
+
+			size_t offset = this->eSize_;
+			for (size_type i = this->dSize() - 1; i > dim; i--)
+			{
+				offset *= this->dims_[i];
+			}
+
+			//std::cout << "dim : " << dim << ", getOffset: " << offset << std::endl;
+			return offset;
+		}
+
+		// basis dim pos
+		virtual size_t posToSeq(const size_type pos)
+		{
+			size_type left = pos * this->basisDimOffset_;
+			size_type seq = 0;
+			size_type offset = this->eSize_;
+			for (int d = this->basisDim_; d >= 0; d--)
+			{
+				seq += (left % this->dims_[d]) * offset;
+				left = left / this->dims_[d];
+				offset *= this->dims_[d];
+			}
+
+			for (int d = this->dSize() - 1; d > this->basisDim_; d--)
+			{
+				seq += (left % this->dims_[d]) * offset;
+				left = left / this->dims_[d];
+				offset *= this->dims_[d];
+			}
+
+			return seq;
+		}
+
+	private:
+		size_type initSeqLimit()
+		{
+			this->seqLimit_ = this->dims_[0];
+			for (int i = 1; i < this->dSize(); i++)
+			{
+				this->seqLimit_ *= this->dims_[i];
+			}
+			return this->seqLimit_;
+		}
+
+	protected:
+		char* ptr_;					// pointer to element
+		eleType eType_;				// element type
+		size_type eSize_;			// element size in byte
+		
+		// sequencial pos
+		size_type curSeqPos_;
+		size_type seqLimit_;
+		size_type basisDimOffset_;
 	};
 
 	// TODO:: Do not inherit caCoor
@@ -131,6 +550,7 @@ typedef int64_t		value_t;
 	{
 	public:
 		using self_type = coorIterator<Dty_, Ty_>;
+		using coordinate_type = coordinate<Dty_>;
 		using size_type = size_t;
 		using dim_type = Dty_;
 		using dim_pointer = Dty_*;
@@ -260,22 +680,22 @@ typedef int64_t		value_t;
 			}
 		}
 
-		virtual void moveTo(const coordinate<Dty_>& coor)
+		virtual void moveTo(const coordinate_type& coor)
 		{
 			assert(this->dSize_ == coor.size());
 
 			size_type offset = 1;
 			for (Dty_ d = this->dSize_ - 1; d != (Dty_)-1; d--)
 			{
-				//if (coor[i] >= this->coor_[i])
-				//{
-				//	this->ptr_ += (coor[i] - this->coor_[i]) * offset;
-				//}
-				//else 
-				//{
-				//	this->ptr_ -= (this->coor_[i] - coor[i]) * offset;
-				//}
-				//this->coor_[i] = coor[i];
+				if (coor[d] >= this->coor_[d])
+				{
+					this->ptr_ += (coor[d] - this->coor_[d]) * offset;
+				}
+				else 
+				{
+					this->ptr_ -= (this->coor_[d] - coor[d]) * offset;
+				}
+				this->coor_[d] = coor[d];
 
 				this->moveDimCoor(d, coor[d], offset);
 				offset *= this->dims_[d];
@@ -287,7 +707,7 @@ typedef int64_t		value_t;
 			this->moveTo(coordinate<Dty_>(this->dSize_, this->sP_));
 		}
 
-		coordinate<Dty_> coor() { return coordinate<Dty_>(*this); }
+		coordinate<Dty_> coor() { return static_cast<coordinate_type>(*this); }
 
 		bool operator==(const self_type& rhs) const { return ptr_ == rhs.ptr_; }
 		bool operator!=(const self_type& rhs) const { return ptr_ != rhs.ptr_; }

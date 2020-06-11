@@ -135,6 +135,9 @@
     <ClInclude Include="include\array\memChunk.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="include\util\element.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">
@@ -204,6 +207,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\array\memChunk.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\element.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

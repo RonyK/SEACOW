@@ -3,6 +3,7 @@
 #define _MSDB_CHUNKBUFFER_H_
 
 #include <array/buffer.h>
+#include <compression/compression.h>
 
 namespace msdb
 {
@@ -23,9 +24,6 @@ public:
 	virtual void free();
 	
 	bool isAllocated();
-
-	virtual void compress();
-	virtual void uncompress();
 
 private:
 	bufferSize size_;
