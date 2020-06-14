@@ -34,7 +34,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)MSDB-CORE\include;$(ProjectDir)test;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)MSDB-CORE\include;$(ProjectDir)test;$(SolutionDir)MSDB-CORE\src\query;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h" />

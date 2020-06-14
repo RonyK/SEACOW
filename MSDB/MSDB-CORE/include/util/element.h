@@ -31,6 +31,8 @@ class element
 public:
 	element(void* ptr, eleType type = eleType::UINT64);
 
+	element& operator=(const element& mit);
+
 public:
 	bool		getBool()	const { return get<bool>(); }
 	char		getChar()	const { return get<char>(); }
@@ -59,10 +61,8 @@ public:
 	void		setFloat(float v)		{ set<float>(v); }
 	void		setDouble(double v)		{ set<double>(v); }
 
-	void getData(void* output)
-	{
-		(this->*getFunc)(output);
-	}
+	void getData(void* output);
+
 public:
 	template<class Ty_>
 	inline Ty_& get()
@@ -110,13 +110,39 @@ public:
 		*(uint64_t*)output = this->getUint64();
 	}
 
-private:
+protected:
 	typedef void(element::* gFunc)(void*);
 	gFunc findGetFunc(eleType type);
 	void (element::* getFunc)(void*);
 
-private:
+protected:
+	const size_t getCurrentTypeSize() const
+	{
+		if (this->getFunc == nullptr)	return 0;
+		if (this->getFunc == &element::getData_Bool)		return sizeof(bool);
+		if (this->getFunc == &element::getData_1Byte)		return sizeof(int8_t);
+		if (this->getFunc == &element::getData_2Byte)		return sizeof(int16_t);
+		if (this->getFunc == &element::getData_4Byte)		return sizeof(int32_t);
+		if (this->getFunc == &element::getData_8Byte)		return sizeof(int64_t);
+
+	}
+
+protected:
 	void* ptr_;
+};
+
+// hold element in new assigned storage space
+class stableElement : public element
+{
+public:
+	stableElement(void* ptr, eleType type = eleType::UINT64);
+
+	stableElement(const stableElement& mit);
+
+	~stableElement();
+
+public:
+	stableElement& operator=(const stableElement& mit);
 };
 
 eleSize getEleSize(eleType type);

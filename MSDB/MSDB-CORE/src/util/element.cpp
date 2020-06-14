@@ -9,6 +9,8 @@ eleSize getEleSize(eleType type)
 	{
 	case eleType::EMPTY:
 		return 0;
+	case eleType::BOOL:
+		return sizeof(bool);
 	case eleType::CHAR:
 		return sizeof(char);
 	case eleType::INT8:
@@ -41,11 +43,23 @@ element::element(void* ptr, eleType type)
 	this->getFunc = this->findGetFunc(type);
 }
 
+element& element::operator=(const element& mit)
+{
+	this->ptr_ = mit.ptr_;
+	this->getFunc = mit.getFunc;
+
+	return (*this);
+}
+
+void element::getData(void* output)
+{
+	(this->*getFunc)(output);
+}
 element::gFunc element::findGetFunc(eleType type)
 {
 	static void(element:: * eleGetDataFPointer[13])(void*) = {
-		nullptr,		// empty
-		&element::getData_Bool,	// bool
+		nullptr,					// empty
+		&element::getData_Bool,		// bool
 		&element::getData_1Byte,	// char
 		&element::getData_1Byte,	// int8
 		&element::getData_2Byte,	// int16
@@ -60,5 +74,39 @@ element::gFunc element::findGetFunc(eleType type)
 	};
 
 	return eleGetDataFPointer[static_cast<int>(type)];
+}
+
+stableElement::stableElement(void* ptr, eleType type)
+	: element(ptr, type)
+{
+	size_t size = getEleSize(type);
+	this->ptr_ = static_cast<void*>(new char[size]);
+}
+
+stableElement::stableElement(const stableElement& mit)
+	: element(mit)
+{
+	this->ptr_ = new char[mit.getCurrentTypeSize()];
+	memcpy(this->ptr_, mit.ptr_, mit.getCurrentTypeSize());
+}
+
+
+stableElement& stableElement::operator=(const stableElement& mit)
+{
+	if (this->getCurrentTypeSize() != mit.getCurrentTypeSize())
+	{
+		delete[] this->ptr_;
+		this->ptr_ = new char[mit.getCurrentTypeSize()];
+	}
+
+	memcpy(this->ptr_, mit.ptr_, mit.getCurrentTypeSize());
+	this->getFunc = mit.getFunc;
+	
+	return (*this);
+}
+
+stableElement::~stableElement()
+{
+	delete[] this->ptr_;
 }
 }

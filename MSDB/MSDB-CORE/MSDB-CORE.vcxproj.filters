@@ -138,6 +138,24 @@
     <ClInclude Include="include\util\element.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="include\query\opAction.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\query\opPlan.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\query\opParam.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\query\opParamSet.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_plan.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_action.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">
@@ -210,6 +228,18 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\util\element.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\opParam.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\opPlan.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\opParamSet.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_plan.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
