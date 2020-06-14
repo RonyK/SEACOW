@@ -10,9 +10,9 @@ namespace msdb
 {
 class opParamSet;
 
-using paramSet = std::shared_ptr<opParamSet>;
+using pParamSet = std::shared_ptr<opParamSet>;
 
-class opParamSet
+class opParamSet : public std::enable_shared_from_this <opParamSet>
 {
 public:
 	opParamSet();

@@ -3,6 +3,7 @@
 #define _MSDB_ARRAY_H_
 
 #include <array/arrayDesc.h>
+#include <memory>
 
 namespace msdb
 {
@@ -55,6 +56,9 @@ namespace msdb
 
 		return output;
 	}
+
+	class arrayBase;
+	using pArray = std::shared_ptr<arrayBase>;
 
 	class arrayBase
 	{

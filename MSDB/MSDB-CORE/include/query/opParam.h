@@ -12,8 +12,8 @@ namespace msdb
 {
 class opParam;
 
-using parameter = std::shared_ptr<opParam>;
-using parameters = std::vector<parameter>;
+using pParameter = std::shared_ptr<opParam>;
+using parameters = std::vector<pParameter>;
 
 using paramSetId = size_t;
 
@@ -26,7 +26,7 @@ enum class opParamType
 	CONST
 };
 
-class opParam
+class opParam : public std::enable_shared_from_this<opParam>
 {
 public:
 	opParam();

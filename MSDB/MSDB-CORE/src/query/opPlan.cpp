@@ -6,11 +6,11 @@ opPlan::opPlan()
 {
 	this->initParamSets();
 }
-arrayDesc opPlan::inferSchema(paramSet oppSet)
+arrayDesc opPlan::inferSchema(pParamSet oppSet)
 {
 	return oppSet->inferSchema();
 }
-void opPlan::addParamSet(paramSet pSet)
+void opPlan::addParamSet(pParamSet pSet)
 {
 	this->paramSets_.push_back(pSet);
 }

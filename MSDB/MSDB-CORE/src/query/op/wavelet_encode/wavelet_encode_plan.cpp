@@ -13,9 +13,11 @@ const char* msdb::wavelet_encode_plan::name()
 
 void msdb::wavelet_encode_plan::initParamSets()
 {
-	this->addParamSet(paramSet(new wavelet_encode_pset()));
+	this->addParamSet(pParamSet(new wavelet_encode_pset()));
 }
 
+//////////////////////////////
+// pset
 void msdb::wavelet_encode_pset::initParams()
 {
 	this->parameters_.push_back(_MSDB_MAKE_PARAM(opParamArrayPlaceholder));

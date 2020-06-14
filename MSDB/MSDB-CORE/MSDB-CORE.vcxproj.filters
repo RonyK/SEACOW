@@ -242,6 +242,12 @@
     <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_plan.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="src\query\opAction.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_action.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\system\errorCategories.inc">

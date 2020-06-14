@@ -9,7 +9,7 @@
 
 namespace msdb
 {
-class opPlan
+class opPlan : public std::enable_shared_from_this<opPlan>
 {
 public:
 	opPlan();
@@ -17,11 +17,11 @@ public:
 public:
 	virtual const char* name() = 0;
 	virtual void initParamSets() = 0;
-	virtual arrayDesc inferSchema(paramSet oppSet);
-	void addParamSet(paramSet pSet);
+	virtual arrayDesc inferSchema(pParamSet oppSet);
+	void addParamSet(pParamSet pSet);
 
 private:
-	std::vector<paramSet> paramSets_;
+	std::vector<pParamSet> paramSets_;
 };
 }
 
