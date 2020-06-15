@@ -7,6 +7,7 @@
 #include <array/arrayId.h>
 #include <array/attributeDesc.h>
 #include <array/dimensionDesc.h>
+#include <memory>
 
 namespace msdb
 {
@@ -18,11 +19,11 @@ namespace msdb
 		~arrayDesc();
 
 	public:
-		arrayId _id;
-		std::string _name;
+		arrayId id_;
+		std::string name_;
 
-		attributes _attrs;
-		dimensions _dims;
+		attributes attrs_;
+		dimensions dims_;
 	};
 }
 

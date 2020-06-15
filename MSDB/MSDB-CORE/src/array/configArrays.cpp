@@ -11,13 +11,13 @@ ConfigType configDiemnsion::getType()
 void configDiemnsion::getDimensionDesc(dimensionDesc* desc)
 {
 	auto eleId = this->_root->FirstChildElement(_MSDB_XML_ELE_ID);
-	desc->_id = atoi(eleId->ToText()->Value());
+	desc->id_ = atoi(eleId->ToText()->Value());
 	auto eleName = this->_root->FirstChildElement(_MSDB_XML_ELE_NAME);
-	desc->_name = eleName->ToText()->Value();
+	desc->name_ = eleName->ToText()->Value();
 	auto eleStart = this->_root->FirstChildElement(_MSDB_XML_ELE_START);
-	desc->_start = atoi(eleId->ToText()->Value());
+	desc->start_ = atoi(eleId->ToText()->Value());
 	auto eleEnd = this->_root->FirstChildElement(_MSDB_XML_ELE_END);
-	desc->_end = atoi(eleId->ToText()->Value());
+	desc->end_ = atoi(eleId->ToText()->Value());
 }
 
 ConfigType configAttribute::getType()
@@ -43,10 +43,10 @@ ConfigType configArray::getType()
 void configArray::getArrayDesc(arrayDesc* aDesc)
 {
 	auto dimDesc = this->_root->FirstChildElement(_MSDB_XML_DIMENSIONDESC);
-	this->xmlChildExplore(dimDesc, reinterpret_cast<void*>(&(aDesc->_dims)), &configjobs::getDimensionDescList);
+	this->xmlChildExplore(dimDesc, reinterpret_cast<void*>(&(aDesc->dims_)), &configjobs::getDimensionDescList);
 
 	auto attrDesc = this->_root->FirstChildElement(_MSDB_XML_ATTRIBUTEDESC);
-	this->xmlChildExplore(attrDesc, reinterpret_cast<void*>(&(aDesc->_attrs)), &configjobs::getAttributeDescList);
+	this->xmlChildExplore(attrDesc, reinterpret_cast<void*>(&(aDesc->attrs_)), &configjobs::getAttributeDescList);
 }
 
 ConfigType configArrayList::getType()

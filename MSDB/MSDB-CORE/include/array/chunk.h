@@ -4,10 +4,14 @@
 
 #include <array/chunkBuffer.h>
 #include <array/chunkDesc.h>
+#include <memory>
 
 namespace msdb
 {
-class chunk
+class chunk;
+using pChunk = std::shared_ptr<chunk>;
+
+class chunk : public std::enable_shared_from_this<chunk>
 {
 public:
 	chunk(chunkDesc* desc);
