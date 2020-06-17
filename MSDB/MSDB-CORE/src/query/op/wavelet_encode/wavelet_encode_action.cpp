@@ -17,28 +17,26 @@ pArray wavelet_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 	auto dSize = cItr.dSize();
 	auto cSize = cItr.getSeqEnd();
 
-	//// Get parameters
-	//pStableElement ele = std::dynamic_pointer_cast<stableElement>(this->params_[1]->getParam());
-	//eleDefault maxLevel;
-	//ele->getData(&maxLevel);
-	//pWavelet w = std::make_shared<wavelet>("Haar");
+	// Get parameters
+	pStableElement ele = std::static_pointer_cast<stableElement>(this->params_[1]->getParam());
+	eleDefault maxLevel;
+	ele->getData(&maxLevel);
+	pWavelet w = std::make_shared<wavelet>("Haar");
 
-	//// Build wavelet_encode_array
-	//auto wArray = std::shared_ptr<wavelet_encode_array>(new wavelet_encode_array(this->getArrayDesc()));
-	//for(chunkId id = 0; id < cSize; id++)
-	//{
-	//	// --------------------
-	//	// TODO::PARALLEL
-	//	auto l = this->chunkEncode(wArray, (*cItr), q, w, maxLevel);
-	//	// --------------------
-	//	wArray->insertChunk(l.begin(), l.end());
-	//	
-	//	++cItr;
-	//}
+	// Build wavelet_encode_array
+	auto wArray = std::make_shared<wavelet_encode_array>(this->getArrayDesc());
+	for(chunkId id = 0; id < cSize; id++)
+	{
+		// --------------------
+		// TODO::PARALLEL
+		auto l = this->chunkEncode(wArray, (*cItr), q, w, maxLevel);
+		// --------------------
+		wArray->insertChunk(l.begin(), l.end());
+		
+		++cItr;
+	}
 
-	//return wArray;
-
-	return inputArrays[0];
+	return wArray;
 }
 
 std::list<pChunk> wavelet_encode_action::chunkEncode(pArray wArray, pChunk targetChunk,
