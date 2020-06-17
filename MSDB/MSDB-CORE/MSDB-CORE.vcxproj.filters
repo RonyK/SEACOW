@@ -156,6 +156,9 @@
     <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_action.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="include\util\math.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">
@@ -246,6 +249,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_action.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\math.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

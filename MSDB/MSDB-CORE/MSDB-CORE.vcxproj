@@ -184,6 +184,7 @@
     <ClInclude Include="include\util\coordinate.h" />
     <ClInclude Include="include\io\file.h" />
     <ClInclude Include="include\util\element.h" />
+    <ClInclude Include="include\util\math.h" />
     <ClInclude Include="include\util\singleton.h" />
     <ClInclude Include="include\util\stringUtil.h" />
     <ClInclude Include="include\util\waveletIterator.h" />
@@ -197,6 +198,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.cpp" />
+    <ClCompile Include="src\util\math.cpp" />
     <ClCompile Include="src\query\opAction.cpp" />
     <ClCompile Include="src\query\opParamSet.cpp" />
     <ClCompile Include="src\query\opPlan.cpp" />
