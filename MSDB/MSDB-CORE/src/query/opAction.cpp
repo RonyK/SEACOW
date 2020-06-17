@@ -2,9 +2,9 @@
 
 namespace msdb
 {
-const arrayDesc& msdb::opAction::getSchema()
+const pArrayDesc msdb::opAction::getArrayDesc()
 {
-	return this->schema_;
+	return this->aDesc_;
 }
 void opAction::setParams(const parameters& params)
 {

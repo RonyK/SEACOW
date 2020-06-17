@@ -194,16 +194,19 @@
     <ClInclude Include="include\compression\wavelet.h" />
     <ClInclude Include="include\xml\tinyxml2.h" />
     <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_action.h" />
+    <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_array.h" />
     <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_plan.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.cpp" />
     <ClCompile Include="src\util\math.cpp" />
+    <ClCompile Include="src\array\dimensionDesc.cpp" />
     <ClCompile Include="src\query\opAction.cpp" />
     <ClCompile Include="src\query\opParamSet.cpp" />
     <ClCompile Include="src\query\opPlan.cpp" />
     <ClCompile Include="src\query\opParam.cpp" />
     <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_action.cpp" />
+    <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_array.cpp" />
     <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_plan.cpp" />
     <ClCompile Include="src\util\element.cpp" />
     <ClCompile Include="src\array\chunk.cpp" />

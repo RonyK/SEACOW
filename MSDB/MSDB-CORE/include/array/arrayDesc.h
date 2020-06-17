@@ -7,23 +7,28 @@
 #include <array/arrayId.h>
 #include <array/attributeDesc.h>
 #include <array/dimensionDesc.h>
+#include <memory>
 
 namespace msdb
 {
-	class arrayDesc
-	{
-	public:
-		arrayDesc();
-		arrayDesc(arrayId aid, std::string arrayName, attributes attrs, dimensions dims);
-		~arrayDesc();
+class arrayDesc;
 
-	public:
-		arrayId _id;
-		std::string _name;
+using pArrayDesc = std::shared_ptr<arrayDesc>;
 
-		attributes _attrs;
-		dimensions _dims;
-	};
+class arrayDesc : public std::enable_shared_from_this<arrayDesc>
+{
+public:
+	arrayDesc();
+	arrayDesc(arrayId aid, std::string arrayName, attributeDescs& attrDescs, dimensionDescs& dimDescs);
+	~arrayDesc();
+
+public:
+	arrayId id_;
+	std::string name_;
+
+	attributeDescs attrDescs_;
+	dimensionDescs dimDescs_;
+};
 }
 
 #endif

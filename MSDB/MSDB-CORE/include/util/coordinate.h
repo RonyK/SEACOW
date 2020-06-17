@@ -119,6 +119,11 @@ typedef int64_t		position_t;
 			return this->coor_[pos];
 		}
 
+		dim_pointer data()
+		{
+			return this->coor_;
+		}
+
 	protected:
 		void memcpyCoor(dim_type* dest, const dim_type* src)
 		{
@@ -146,7 +151,7 @@ typedef int64_t		position_t;
 
 	public:
 		coordinateIterator(const size_type dSize, dim_const_pointer dims)
-			: coor_(dSize), end_(false)
+			: coor_(dSize), end_(false), basisDimOffset_(1), seqPos_(0)
 		{
 			this->dims_ = new dim_type[this->dSize()];
 			this->memcpyDim(this->dims_, dims);
@@ -154,16 +159,18 @@ typedef int64_t		position_t;
 			this->basisDim_ = this->dSize() - 1;
 			this->sP_ = new dim_type[this->dSize()]();
 			this->eP_ = this->dims_;
+
+			this->initSeqCapacity();
 		}
 		
 		coordinateIterator(const self_type& mit)
-			: coor_(mit), basisDim_(mit.basisDim_), end_(mit.end_)
+			: coor_(mit.coor_), basisDim_(mit.basisDim_), end_(mit.end_), basisDimOffset_(mit.basisDimOffset_), seqPos_(mit.seqPos_), seqCapacity_(mit.seqCapacity_)
 		{
-			this->dims_ = new dim_type[mit.dSize()];
-			memcpy(this->dims_, mit.dims_, mit.dSize() * sizeof(dim_type));
+			this->dims_ = new dim_type[this->dSize()];
+			memcpy(this->dims_, mit.dims_, this->dSize() * sizeof(dim_type));
 
-			this->sP_ = new dim_type[mit.dSize()];
-			memcpy(this->sP_, mit.sP_, mit.dSize() * sizeof(dim_type));
+			this->sP_ = new dim_type[this->dSize()];
+			memcpy(this->sP_, mit.sP_, this->dSize() * sizeof(dim_type));
 
 			this->eP_ = this->dims_;
 		}
@@ -175,13 +182,14 @@ typedef int64_t		position_t;
 		}
 
 	public:
-		virtual void setBasisDim(_In_range_(0, dSize() - 1) const unsigned int dim)
+		virtual void setBasisDim(const unsigned int dim)
 		{
 			if (this->dSize() <= dim)
 			{
 				_MSDB_THROW(_MSDB_EXCEPTIONS_MSG(MSDB_EC_LOGIC_ERROR, MSDB_ER_OUT_OF_RANGE, "setBasisDim - too large dim"));
 			}
 
+			this->basisDimOffset_ = this->getDimOffset(dim);
 			this->basisDim_ = dim;
 		}
 
@@ -202,14 +210,17 @@ typedef int64_t		position_t;
 			dimensionId curDim = this->basisDim_;
 			do
 			{
+				dim_type offset = this->getDimOffset(curDim);
 				if (this->coor_[curDim] + 1 < this->eP_[curDim])
 				{
 					// move next and return
 					this->coor_[curDim]++;
+					this->seqPos_ += offset;
 					return;
 				}
 
 				// move current dimension coordinate to sP_
+				this->seqPos_ -= ((dim_type)this->coor_[curDim] - (dim_type)this->sP_[curDim]) * offset;
 				this->coor_[curDim] = this->sP_[curDim];
 
 				if (curDim != 0)		--curDim;
@@ -226,14 +237,17 @@ typedef int64_t		position_t;
 			dimensionId curDim = this->basisDim_;
 			do
 			{
+				dim_type offset = this->getDimOffset(curDim);
 				if (this->coor_[curDim] > this->sP_[curDim])
 				{
 					// move next and return
 					this->coor_[curDim]--;
+					this->seqPos_ += offset;
 					return;
 				}
 
 				// move current dimension coordinate to sP_
+				this->seqPos_ += ((dim_type)this->eP_[curDim] - (dim_type)1 - (dim_type)this->coor_[curDim]) * offset;
 				this->coor_[curDim] = this->eP_[curDim] - 1;
 
 				curDim = (++curDim) % this->dSize();
@@ -245,7 +259,14 @@ typedef int64_t		position_t;
 		virtual void moveTo(const coordinate_type& coor)
 		{
 			assert(this->dSize() == coor.size());
-			this->coor_ = coor;
+
+			size_type offset = 1;
+			for (dimensionId d = this->dSize() - 1; d != (dimensionId)-1; d--)
+			{
+				this->seqPos_ += (coor[d] - this->coor_[d]) * offset;
+				this->coor_[d] = coor[d];
+				offset *= this->dims_[d];
+			}
 		}
 		virtual void moveToStart()
 		{
@@ -294,10 +315,62 @@ typedef int64_t		position_t;
 			return *this;
 		}
 
+
+		// pos: basis dim pos
+		virtual size_type posToSeq(const size_type pos)
+		{
+			size_type left = pos * this->basisDimOffset_;
+			size_type seq = 0;
+			size_type offset = 1;
+			for (int d = this->basisDim_; d >= 0; d--)
+			{
+				seq += (left % this->dims_[d]) * offset;
+				left = left / this->dims_[d];
+				offset *= this->dims_[d];
+			}
+
+			for (int d = this->dSize() - 1; d > this->basisDim_; d--)
+			{
+				seq += (left % this->dims_[d]) * offset;
+				left = left / this->dims_[d];
+				offset *= this->dims_[d];
+			}
+
+			return seq;
+		}
+
 	protected:
 		void memcpyDim(dim_type* dest, const dim_type* src)
 		{
 			memcpy(dest, src, this->dSize() * sizeof(dim_type));
+		}
+
+		size_type initSeqCapacity()
+		{
+			this->seqCapacity_ = this->dims_[0];
+			for (int i = 1; i < this->dSize(); i++)
+			{
+				this->seqCapacity_ *= this->dims_[i];
+			}
+			return this->seqCapacity_;
+		}
+
+		// call this function before you change a basisDim
+		size_t getDimOffset(const unsigned int dim)
+		{
+			if (dim == this->basisDim_)
+			{
+				return this->basisDimOffset_;
+			}
+
+			size_t offset = 1;
+			for (size_type i = this->dSize() - 1; i > dim; i--)
+			{
+				offset *= this->dims_[i];
+			}
+
+			//std::cout << "dim : " << dim << ", getOffset: " << offset << std::endl;
+			return offset;
 		}
 
 	protected:
@@ -310,6 +383,10 @@ typedef int64_t		position_t;
 
 		bool end_;				// is iterator at the end
 		bool front_;			// is iterator at the front
+
+		size_type seqPos_;
+		size_type seqCapacity_;
+		size_type basisDimOffset_;
 
 		// TODO:: replace sP_ to zero
 		// static std::vector<dim_type> zeroP_;
@@ -331,158 +408,31 @@ typedef int64_t		position_t;
 
 	public:
 		itemIterator(void* ptr, eleType eType, const size_type dSize, dim_const_pointer dims)
-			: base_type(dSize, dims), curSeqPos_(0),
-			eType_(eType), eSize_(getEleSize(eType))
+			: base_type(dSize, dims), eType_(eType), eSize_(getEleSize(eType))
 		{
-			this->basisDimOffset_ = this->eSize_;
 			this->ptr_ = reinterpret_cast<char*>(ptr);
-			this->initSeqLimit();
 		}
 
-		virtual void moveTo(const coordinate_type& coor)
+		itemIterator(const self_type& mit)
+			: base_type(mit), ptr_(mit.ptr_), eType_(mit.eType_), eSize_(mit.eSize_)
 		{
-			coordinate_type coorOld = this->coor_;
-			base_type::moveTo(coor);
-
-			//this->adjustPtr(coorOld, coor);
-			size_type offset = this->eSize_;
-			for (dimensionId d = this->dSize() - 1; d != (dimensionId)-1; d--)
-			{
-				this->ptr_ += (coor[d] - coorOld[d]) * offset;
-				offset *= this->dims_[d];
-			}
+		
 		}
 
-		virtual void setBasisDim(dimensionId dim)
-		{
-			this->basisDimOffset_ = this->getDimOffset(dim);
-			base_type::setBasisDim(dim);
-		}
 
 	public:
 		coordinate_type coor() { return coordinate_type(this->coor_); }
 
-		bool operator==(const self_type& rhs) const { return ptr_ == rhs.ptr_; }
-		bool operator!=(const self_type& rhs) const { return ptr_ != rhs.ptr_; }
+		bool operator==(const self_type& rhs) const { return ptr_ == rhs.ptr_ && this->seqPos_ == rhs.seqPos_; }
+		bool operator!=(const self_type& rhs) const { return ptr_ != rhs.ptr_ || this->seqPos_ != rhs.seqPos_; }
 
-		element operator*() { return element((void*)ptr_, this->eType_); }
-		element operator->() { return element((void*)ptr_, this->eType_); }
-
-	protected:
-		virtual void next()
-		{
-			if(this->end_)		return;
-
-			dimensionId curDim = this->basisDim_;
-			do
-			{
-				dim_type offset = this->getDimOffset(curDim);
-				if(this->coor_[curDim] + 1 < this->eP_[curDim])
-				{
-					// move next and return
-					this->coor_[curDim]++;
-					this->ptr_ += offset;
-					return;
-				}
-
-				// move current dimension coordinate to sP_
-				this->ptr_ -= ((dim_type)this->coor_[curDim] - (dim_type)this->sP_[curDim]) * offset;
-				this->coor_[curDim] = this->sP_[curDim];
-
-				if(curDim != 0)		--curDim;
-				else				curDim = this->dSize() - 1;
-
-			} while (curDim != this->basisDim_);
-
-			this->end_ = true;
-		}
-		virtual void prev()
-		{
-			if (this->front_)		return;
-
-			dimensionId curDim = this->basisDim_;
-			do
-			{
-				dim_type offset = this->getDimOffset(curDim);
-				if (this->coor_[curDim] > this->sP_[curDim])
-				{
-					// move next and return
-					this->coor_[curDim]--;
-					this->ptr_ += offset;
-					return;
-				}
-
-				// move current dimension coordinate to sP_
-				this->ptr_ += ((dim_type)this->eP_[curDim] - (dim_type)1 - (dim_type)this->coor_[curDim]) * offset;
-				this->coor_[curDim] = this->eP_[curDim] - 1;
-
-				curDim = (++curDim) % this->dSize();
-			} while (curDim != this->basisDim_);
-
-			this->front_ = true;
-		}
-
-		// call this function before you change a basisDim
-		size_t getDimOffset(const unsigned int dim)
-		{
-			if (dim == this->basisDim_)
-			{
-				return this->basisDimOffset_;
-			}
-
-			size_t offset = this->eSize_;
-			for (size_type i = this->dSize() - 1; i > dim; i--)
-			{
-				offset *= this->dims_[i];
-			}
-
-			//std::cout << "dim : " << dim << ", getOffset: " << offset << std::endl;
-			return offset;
-		}
-
-		// basis dim pos
-		virtual size_t posToSeq(const size_type pos)
-		{
-			size_type left = pos * this->basisDimOffset_;
-			size_type seq = 0;
-			size_type offset = this->eSize_;
-			for (int d = this->basisDim_; d >= 0; d--)
-			{
-				seq += (left % this->dims_[d]) * offset;
-				left = left / this->dims_[d];
-				offset *= this->dims_[d];
-			}
-
-			for (int d = this->dSize() - 1; d > this->basisDim_; d--)
-			{
-				seq += (left % this->dims_[d]) * offset;
-				left = left / this->dims_[d];
-				offset *= this->dims_[d];
-			}
-
-			return seq;
-		}
-
-	private:
-		size_type initSeqLimit()
-		{
-			this->seqLimit_ = this->dims_[0];
-			for (int i = 1; i < this->dSize(); i++)
-			{
-				this->seqLimit_ *= this->dims_[i];
-			}
-			return this->seqLimit_;
-		}
+		element operator*() { return element((void*)(ptr_ + this->seqPos_ * this->eSize_), this->eType_); }
+		element operator->() { return element((void*)(ptr_ + this->seqPos_ * this->eSize_), this->eType_); }
 
 	protected:
 		char* ptr_;					// pointer to element
 		eleType eType_;				// element type
 		size_type eSize_;			// element size in byte
-		
-		// sequencial pos
-		size_type curSeqPos_;
-		size_type seqLimit_;
-		size_type basisDimOffset_;
 	};
 
 	template <typename Dty_>

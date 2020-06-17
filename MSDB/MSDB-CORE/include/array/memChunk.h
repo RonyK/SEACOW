@@ -11,16 +11,17 @@ class memChunk : public chunkBuffer
 {
 public:
 	memChunk();
+	virtual ~memChunk();
 
 public:
 	virtual bool isCompressed() const;
 };
 
-class memChunkIterator : public itemItr
+class memChunkItemIterator : public chunkItemIterator
 {
 public:
-	using self_type = memChunkIterator;
-	using base_type = itemItr;
+	using self_type = memChunkItemIterator;
+	using base_type = chunkItemIterator;
 
 	using coordinate_type = base_type::coordinate_type;
 	using size_type = base_type::size_type;
@@ -30,20 +31,8 @@ public:
 	using dim_reference = base_type::dim_reference;
 	using dim_const_reference = base_type::dim_const_reference;
 public:
-	memChunkIterator(void* data, eleType eType, const size_type dSize, position_t* dims,
+	memChunkItemIterator(void* data, eleType eType, const size_type dSize, position_t* dims,
 					 dim_pointer csP);
-
-public:
-	coordinate_type coorOut2In(coordinate_type& out);
-	coordinate_type coorIn2Out(coordinate_type& in);
-	coordinate_type coorIn2Out();
-	coordinate_type ceP();
-
-	coordinate_type outCoor();
-	coordinate_type innerCoor();
-
-private:
-	dim_pointer csP_;			// Chunk start point
 };
 }
 

@@ -29,92 +29,124 @@ enum class opParamType
 class opParam : public std::enable_shared_from_this<opParam>
 {
 public:
+	using void_pointer = std::shared_ptr<void>;
+
+public:
 	opParam();
 
 public:
-	virtual void getParam(void* output) = 0;
+	virtual void_pointer getParam() = 0;
 	virtual opParamType type() = 0;
 };
 
 class opParamArray : public opParam
 {
-	opParamArray(arrayDesc& desc);
+public:
+	using paramType = arrayDesc;
 
 public:
-	virtual void getParam(void* output);
+	opParamArray(pArrayDesc desc);
+
+public:
+	virtual opParam::void_pointer getParam();
 	virtual opParamType type();
 
+
 private:
-	arrayDesc desc_;
+	pArrayDesc desc_;
 };
 
 class opParamAttr : public opParam
 {
 public:
-	opParamAttr(attributeDesc& desc);
+	using paramType = attributeDesc;
 
 public:
-	virtual void getParam(void* output);
+	opParamAttr(pAttributeDesc desc);
+
+public:
+	virtual opParam::void_pointer getParam();
 	virtual opParamType type();
 
 private:
-	attributeDesc desc_;
+	pAttributeDesc desc_;
 };
 
 class opParamDim : public opParam
 {
 public:
-	opParamDim(dimensionDesc& desc);
+	using paramType = dimensionDesc;
 
 public:
-	virtual void getParam(void* output);
+	opParamDim(pDimensionDesc desc);
+
+public:
+	virtual opParam::void_pointer getParam();
 	virtual opParamType type();
 
 private:
-	dimensionDesc desc_;
+	pDimensionDesc desc_;
 };
 
 class opParamConst : public opParam
 {
 public:
-	opParamConst(stableElement& ele);
+	using paramType = stableElement;
 
 public:
-	virtual void getParam(void* output);
+	opParamConst(pStableElement ele);
+
+public:
+	virtual opParam::void_pointer getParam();
 	virtual opParamType type();
 
 private:
-	stableElement ele_;
+	pStableElement ele_;
 };
 
 //////////////////////////////
 // Placeholder classes
-class opParamPlaceholder : public opParam
+class opParamPlaceholder
 {
 public:
-	void getParam(void* output);
+	opParamPlaceholder() = default;
+
+public:
+	virtual opParam::void_pointer getParam();
 };
 
-class opParamArrayPlaceholder : public opParamPlaceholder
+class opParamArrayPlaceholder : public opParamPlaceholder, public opParamArray
 {
 public:
-	virtual opParamType type();
-};
+	opParamArrayPlaceholder();
 
-class opParamAttrPlaceholder : public opParamPlaceholder
-{
-public:
-	virtual opParamType type();
-};
-
-class opParamDimPlaceholder : public opParamPlaceholder
-{
 public:
 	virtual opParamType type();
 };
 
-class opParamConstPlaceholder : public opParamPlaceholder
+class opParamAttrPlaceholder : public opParamPlaceholder, public opParamAttr
 {
+public:
+	opParamAttrPlaceholder();
+
+public:
+	virtual opParamType type();
+};
+
+class opParamDimPlaceholder : public opParamPlaceholder, public opParamDim
+{
+public:
+	opParamDimPlaceholder();
+
+public:
+	virtual opParamType type();
+};
+
+class opParamConstPlaceholder : public opParamPlaceholder, public opParamConst
+{
+public:
+	opParamConstPlaceholder();
+
 public:
 	virtual opParamType type();
 };

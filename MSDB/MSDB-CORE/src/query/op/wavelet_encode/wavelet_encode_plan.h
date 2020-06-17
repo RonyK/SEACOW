@@ -22,7 +22,7 @@ public:
 class wavelet_encode_pset : public opParamSet
 {
 	virtual void initParams() override;
-	virtual arrayDesc inferSchema() override;
+	virtual pArrayDesc inferSchema() override;
 };
 
 }

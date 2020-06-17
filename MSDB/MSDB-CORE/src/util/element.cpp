@@ -43,6 +43,11 @@ element::element(void* ptr, eleType type)
 	this->getFunc = this->findGetFunc(type);
 }
 
+element::element(const element& mit)
+	: ptr_(mit.ptr_), getFunc(mit.getFunc)
+{
+}
+
 element& element::operator=(const element& mit)
 {
 	this->ptr_ = mit.ptr_;
@@ -55,6 +60,7 @@ void element::getData(void* output)
 {
 	(this->*getFunc)(output);
 }
+
 element::gFunc element::findGetFunc(eleType type)
 {
 	static void(element:: * eleGetDataFPointer[13])(void*) = {
@@ -77,14 +83,14 @@ element::gFunc element::findGetFunc(eleType type)
 }
 
 stableElement::stableElement(void* ptr, eleType type)
-	: element(ptr, type)
+	: element(ptr, type), type_(type)
 {
 	size_t size = getEleSize(type);
 	this->ptr_ = static_cast<void*>(new char[size]);
 }
 
 stableElement::stableElement(const stableElement& mit)
-	: element(mit)
+	: element(mit), type_(mit.type_)
 {
 	this->ptr_ = new char[mit.getCurrentTypeSize()];
 	memcpy(this->ptr_, mit.ptr_, mit.getCurrentTypeSize());
@@ -108,5 +114,25 @@ stableElement& stableElement::operator=(const stableElement& mit)
 stableElement::~stableElement()
 {
 	delete[] this->ptr_;
+}
+eleType stableElement::getEleType()
+{
+	return this->type_;
+}
+bool stableElement::isInt()
+{
+	switch (this->type_)
+	{
+	case eleType::INT8:
+	case eleType::INT16:
+	case eleType::INT32:
+	case eleType::INT64:
+	case eleType::UINT8:
+	case eleType::UINT16:
+	case eleType::UINT32:
+	case eleType::UINT64:
+		return true;
+	}
+	return false;
 }
 }

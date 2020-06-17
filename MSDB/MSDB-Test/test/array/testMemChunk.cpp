@@ -26,15 +26,15 @@ TEST(memChunk, initRawChunk_sc8x8)
 }
 }
 
-TEST(memChunkIterator, initRawChunk_sc8x8)
+TEST(memChunkItemIterator, initRawChunk_sc8x8)
 {
 	double data[] = { 1,2,3,4, 11,12,13,14, 21,22,23,24, 31,32,33,34, 41,42,43,44, 51,52,53,54 };
 	position_t dim[] = { 2,3,4 };
 	position_t csP[] = { 4,5,0 };
-	msdb::memChunkIterator it((void*)data, eleType::DOUBLE, sizeof(dim) / sizeof(int), dim, csP);
+	msdb::memChunkItemIterator it((void*)data, eleType::DOUBLE, sizeof(dim) / sizeof(int), dim, csP);
 
-	memChunkIterator::coordinate_type ceP = it.ceP();
-	memChunkIterator::coordinate_type sP = it.coorIn2Out();
+	memChunkItemIterator::coordinate_type ceP = it.ceP();
+	memChunkItemIterator::coordinate_type sP = it.coorIn2Out();
 
 	for(dimensionId d = 0; d < it.dSize(); d++)
 	{

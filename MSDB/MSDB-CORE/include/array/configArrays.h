@@ -39,7 +39,7 @@ namespace msdb
 #define _MSDB_XML_ATTRIBUTEDESC		"attribute_desc"
 #define _MSDB_XML_ATTRIBUTES		"attributes"
 
-using arrayDescList = std::vector<arrayDesc>;
+using arrayDescs = std::vector<pArrayDesc>;
 
 namespace configjobs
 {
@@ -60,8 +60,8 @@ public:
 	configDiemnsion(tinyxml2::XMLNode* root) : config(root) {}
 	ConfigType getType();
 
-	void getDimensionDesc(dimensionDesc* desc);
-	void setDimensionDesc(dimensionDesc* desc);
+	void getDimensionDesc(pDimensionDesc desc);
+	void setDimensionDesc(pDimensionDesc desc);
 };
 
 class configAttribute : public config
@@ -70,8 +70,8 @@ public:
 	configAttribute(tinyxml2::XMLNode* root) : config(root) {}
 	ConfigType getType();
 
-	void getAttributeDesc(attributeDesc* desc);
-	void setAttributeDesc(attributeDesc* desc);
+	void getAttributeDesc(pAttributeDesc desc);
+	void setAttributeDesc(pAttributeDesc desc);
 };
 
 
@@ -81,8 +81,8 @@ public:
 	configArray(tinyxml2::XMLNode* root) : config(root) {}
 	ConfigType getType();
 	
-	void getArrayDesc(arrayDesc* desc);
-	void setArrayDesc(arrayDesc* desc);
+	void getArrayDesc(pArrayDesc desc);
+	void setArrayDesc(pArrayDesc desc);
 };
 
 class configArrayList : public config
@@ -91,8 +91,8 @@ public:
 	configArrayList(tinyxml2::XMLNode* root) : config(root) {}
 	ConfigType getType();
 
-	void getArrayDescList(arrayDescList* list);
-	void setArrayDescList(arrayDescList* list);
+	void getArrayDescList(arrayDescs* list);
+	void setArrayDescList(arrayDescs* list);
 };
 }
 #endif		// _MSDB_CONFIGARRAYS_H_
