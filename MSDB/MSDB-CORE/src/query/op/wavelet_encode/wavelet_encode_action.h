@@ -57,6 +57,7 @@ private:
 
 		for (size_t r = 0; r < rows; r++)
 		{
+			std::cout << "[row : " << r << "]-----" << std::endl;
 			for (size_t i = 0; i < length; i += 2)
 			{
 				Ty_ h = 0, g = 0;
@@ -68,10 +69,14 @@ private:
 
 					h += w->h_0[j] * iit.getAt(j).get<Ty_>();
 					g += w->g_0[j] * iit.getAt(j).get<Ty_>();
+
+					std::cout << in << " / " << ap << " / " << de << " / " << w->h_0[j] << " / " << w->g_0[j] << std::endl;
 				}
 
 				(*ait).set<Ty_>(h);
 				(*dit).set<Ty_>(g);
+
+				std::cout << "h: " << h << " / g: " << g << std::endl;
 
 				++ait;
 				++dit;
@@ -84,6 +89,8 @@ private:
 
 public:
 	virtual const char* name() override;
+	std::string waveletName_;		// Do not delete this variable.
+									// This for the testing various wavelet functions.
 };
 }
 

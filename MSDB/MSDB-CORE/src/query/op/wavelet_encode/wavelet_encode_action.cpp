@@ -9,6 +9,7 @@ namespace msdb
 {
 msdb::wavelet_encode_action::wavelet_encode_action()
 {
+	this->waveletName_ = "HaarSimple";
 }
 
 wavelet_encode_action::~wavelet_encode_action()
@@ -26,7 +27,7 @@ pArray wavelet_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 	pStableElement ele = std::static_pointer_cast<stableElement>(this->params_[1]->getParam());
 	eleDefault maxLevel;
 	ele->getData(&maxLevel);
-	pWavelet w = std::make_shared<wavelet>("Haar");
+	pWavelet w = std::make_shared<wavelet>(this->waveletName_.c_str());
 
 	// Build wavelet_encode_array
 	auto wArray = std::make_shared<wavelet_encode_array>(this->getArrayDesc(), maxLevel);
@@ -79,7 +80,7 @@ std::list<pChunk> wavelet_encode_action::waveletLevelEncode(pChunk wChunk, pWave
 	levelChunks.push_back(wChunk);
 	size_t numOfLevelChunks = 1;
 
-	for(dimensionId d = this->aDesc_->dimDescs_.size() - 1; d != INVALID_DIMENSION_ID; d--)
+	for(dimensionId d = 0; d < this->aDesc_->dimDescs_.size(); ++d)
 	{
 		for(size_t i = 0; i < numOfLevelChunks; i++)
 		{

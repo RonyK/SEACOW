@@ -16,6 +16,7 @@ public:
 	virtual const char* name() override;
 	//virtual void initParamSets() override;
 	virtual pAction getAction() override;
+
 };
 
 class wavelet_encode_pset : public opParamSet
