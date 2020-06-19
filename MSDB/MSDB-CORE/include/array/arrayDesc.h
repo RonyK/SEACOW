@@ -11,20 +11,24 @@
 
 namespace msdb
 {
-	class arrayDesc
-	{
-	public:
-		arrayDesc();
-		arrayDesc(arrayId aid, std::string arrayName, attributes attrs, dimensions dims);
-		~arrayDesc();
+class arrayDesc;
 
-	public:
-		arrayId id_;
-		std::string name_;
+using pArrayDesc = std::shared_ptr<arrayDesc>;
 
-		attributes attrs_;
-		dimensions dims_;
-	};
+class arrayDesc : public std::enable_shared_from_this<arrayDesc>
+{
+public:
+	arrayDesc();
+	arrayDesc(const arrayId aid, const std::string arrayName, const dimensionDescs* dimDescs, const attributeDescs* attrDescs);
+	~arrayDesc();
+
+public:
+	arrayId id_;
+	std::string name_;
+
+	dimensionDescs dimDescs_;
+	attributeDescs attrDescs_;
+};
 }
 
 #endif

@@ -70,6 +70,13 @@ void chunkBuffer::copy(void* data, bufferSize size)
 	this->size_ = size;
 }
 
+void chunkBuffer::assign(void* data, bufferSize size)
+{
+	this->free();
+	this->data_ = data;
+	this->size_ = size;
+}
+
 void chunkBuffer::free()
 {
 	if(this->data_ != nullptr && this->size_ != 0)

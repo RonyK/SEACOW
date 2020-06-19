@@ -22,9 +22,8 @@ public:
 class wavelet_encode_pset : public opParamSet
 {
 	virtual void initParams() override;
-	virtual arrayDesc inferSchema() override;
+	virtual pArrayDesc inferSchema() override;
 };
-
 }
 
 #endif		// _MSDB_OP_WAVELET_ENCODE_PLAN_H_

@@ -6,9 +6,13 @@
 #include <util/waveletIterator.h>
 #include <iostream>
 #include <vector>
+#include <memory>
 
 namespace msdb
 {
+class wavelet;
+using pWavelet = std::shared_ptr<wavelet>;
+
 	// Wavelet Family
 	enum class waveletType
 	{

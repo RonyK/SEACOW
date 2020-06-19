@@ -6,7 +6,7 @@ opPlan::opPlan()
 {
 	this->initParamSets();
 }
-arrayDesc opPlan::inferSchema(pParamSet oppSet)
+pArrayDesc opPlan::inferSchema(pParamSet oppSet)
 {
 	return oppSet->inferSchema();
 }

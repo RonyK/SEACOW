@@ -16,14 +16,14 @@ using action = std::shared_ptr<opAction>;
 class opAction : public std::enable_shared_from_this<opAction>
 {
 public:
-	const arrayDesc& getSchema();
+	const pArrayDesc getArrayDesc();
 	void setParams(const parameters& params);
 	virtual const char* name() = 0;
 
-	virtual pArray execute(std::vector<pArray>&inputArrays, std::shared_ptr<query> q) = 0;
+	virtual pArray execute(std::vector<pArray>&inputArrays, pQuery q) = 0;
 
-private:
-	arrayDesc schema_;
+protected:
+	pArrayDesc aDesc_;
 	std::vector<action> sources_;
 	parameters params_;
 };

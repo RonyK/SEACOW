@@ -3,14 +3,17 @@
 #define _MSDB_ATTRIBUTEDESC_H_
 
 #include <array/attributeId.h>
+#include <util/element.h>
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace msdb
 {
 	class attributeDesc;
+	using pAttributeDesc = std::shared_ptr<attributeDesc>;
 
-	class attributes : public std::vector<attributeDesc>
+	class attributeDescs : public std::vector<pAttributeDesc>, public std::enable_shared_from_this<attributeDescs>
 	{
 
 	};
@@ -18,9 +21,9 @@ namespace msdb
 	class attributeDesc
 	{
 	public:
-		attributeId _id;
-		std::string _name;
-		// _type
+		attributeId id_;
+		std::string name_;
+		eleType type_;
 	};
 }
 

@@ -17,7 +17,7 @@ public:
 public:
 	virtual const char* name() = 0;
 	virtual void initParamSets() = 0;
-	virtual arrayDesc inferSchema(pParamSet oppSet);
+	virtual pArrayDesc inferSchema(pParamSet oppSet);
 	void addParamSet(pParamSet pSet);
 
 private:

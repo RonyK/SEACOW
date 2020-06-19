@@ -9,27 +9,31 @@
 
 namespace msdb
 {
-	class dimensionDesc;
+class dimensionDesc;
+using pDimensionDesc = std::shared_ptr<dimensionDesc>;
+using dimension = coordinate<position_t>;
 
-	class dimensions : public std::vector<dimensionDesc>
-	{
-	public:
-		std::vector<position_t> getDims();
-	};
+class dimensionDescs : public std::vector<pDimensionDesc>, public std::enable_shared_from_this<dimensionDescs>
+{
+public:
+	std::vector<position_t> getDims();
+};
 
-	class dimensionDesc
-	{
-	public:
-		position_t getLength();
+class dimensionDesc
+{
+public:
+	position_t getLength();
+	size_t getChunkNum();
 
-	public:
-		using dimension_type = position_t;
+public:
+	using dimension_type = position_t;
 
-		dimensionId id_;
-		std::string name_;
-		dimension_type start_;
-		dimension_type end_;
-	};
+	dimensionId id_;
+	std::string name_;
+	dimension_type start_;
+	dimension_type end_;
+	position_t chunkSize_;
+};
 }
 
 #endif

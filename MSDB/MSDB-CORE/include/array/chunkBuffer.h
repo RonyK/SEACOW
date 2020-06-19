@@ -11,7 +11,7 @@ class chunkBuffer : public buffer
 {
 public:
 	chunkBuffer();
-	~chunkBuffer();
+	virtual ~chunkBuffer();
 
 	virtual void* getData();
 	virtual void const* getReadData() const;
@@ -21,6 +21,7 @@ public:
 	virtual void alloc(bufferSize size);
 	virtual void realloc(bufferSize size);
 	virtual void copy(void* data, bufferSize size);
+	virtual void assign(void* data, bufferSize size);
 	virtual void free();
 	
 	bool isAllocated();

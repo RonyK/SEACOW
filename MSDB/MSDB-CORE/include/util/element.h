@@ -3,10 +3,12 @@
 #define _MSDB_ELEMENT_H_
 
 #include <cstdint>
+#include <memory>
 
 namespace msdb
 {
-
+#define _ELE_DEFAULT_TYPE		eleType::INT64
+using eleDefault = int64_t;
 using eleSize = size_t;
 
 enum class eleType
@@ -29,7 +31,9 @@ enum class eleType
 class element
 {
 public:
-	element(void* ptr, eleType type = eleType::UINT64);
+	element(void* ptr, eleType type = _ELE_DEFAULT_TYPE);
+
+	element(const element& mit);
 
 	element& operator=(const element& mit);
 
@@ -62,6 +66,7 @@ public:
 	void		setDouble(double v)		{ set<double>(v); }
 
 	void getData(void* output);
+	//void* getData();
 
 public:
 	template<class Ty_>
@@ -124,18 +129,20 @@ protected:
 		if (this->getFunc == &element::getData_2Byte)		return sizeof(int16_t);
 		if (this->getFunc == &element::getData_4Byte)		return sizeof(int32_t);
 		if (this->getFunc == &element::getData_8Byte)		return sizeof(int64_t);
-
 	}
 
 protected:
 	void* ptr_;
 };
 
+class stableElement;
+using pStableElement = std::shared_ptr<stableElement>;
+
 // hold element in new assigned storage space
-class stableElement : public element
+class stableElement : public element, public std::enable_shared_from_this<stableElement>
 {
 public:
-	stableElement(void* ptr, eleType type = eleType::UINT64);
+	stableElement(void* ptr, eleType type = _ELE_DEFAULT_TYPE);
 
 	stableElement(const stableElement& mit);
 
@@ -143,6 +150,14 @@ public:
 
 public:
 	stableElement& operator=(const stableElement& mit);
+
+	eleType getEleType();
+
+	bool isInt();		// all integer from int8_t to int64_t
+	bool isFloat();		// float, double
+
+private:
+	eleType type_;
 };
 
 eleSize getEleSize(eleType type);

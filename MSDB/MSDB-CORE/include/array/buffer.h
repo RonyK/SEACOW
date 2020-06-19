@@ -5,6 +5,7 @@
 namespace msdb
 {
 using bufferSize = unsigned long long;
+extern const bufferSize INVALID_BUFFER_SIZE;
 
 // abstrct class for binary data holding
 class buffer

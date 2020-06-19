@@ -21,10 +21,10 @@ public:
 public:
 	bool isMatch(parameters pSet);
 	virtual void initParams() = 0;
-	virtual arrayDesc inferSchema() = 0;
+	virtual pArrayDesc inferSchema() = 0;
 
 protected:
-	parameters parameters_;
+	parameters params_;
 };
 }
 

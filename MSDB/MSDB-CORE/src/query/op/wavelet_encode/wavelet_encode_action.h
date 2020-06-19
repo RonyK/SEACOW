@@ -2,7 +2,11 @@
 #ifndef _MSDB_OP_WAVELET_ENCODE_ACTION_H_
 #define _MSDB_OP_WAVELET_ENCODE_ACTION_H_
 
+#include <compression/wavelet.h>
 #include <query/opAction.h>
+#include <util/math.h>
+#include <vector>
+#include <list>
 
 namespace msdb
 {
@@ -10,6 +14,64 @@ class wavelet_encode_action : public opAction
 {
 public:
 	wavelet_encode_action();
+
+public:
+	pArray execute(std::vector<pArray>& inputArrays, pQuery q);
+
+private:
+	std::list<pChunk> chunkEncode(pArray wArray, pChunk targetChunk, 
+								  pWavelet w, size_t maxLevel, pQuery q);
+	std::list<pChunk> waveletLevelEncode(pChunk wChunk, pWavelet w, pQuery q);
+	template<class Ty_>
+	std::list<pChunk> waveletTransform(pChunk inChunk, pWavelet w, dimensionId basisDim, pQuery q)
+	{
+// Setting chunkDesc for band chunk
+		auto bandDesc = std::make_shared<chunkDesc>(*inChunk->getDesc());
+		bandDesc->setDim(basisDim, intDivCeil(bandDesc->dims_[basisDim], 2));
+
+		// Make chunk
+		pChunk approximateChunk = std::make_shared<chunk>(bandDesc);
+		pChunk detailChunk = std::make_shared<chunk>(bandDesc);
+
+		approximateChunk->materialize();
+		detailChunk->materialize();
+
+		// Get Iterator for each chunk
+		auto iit = inChunk->getItemIterator();
+		auto ait = approximateChunk->getItemIterator();
+		auto dit = detailChunk->getItemIterator();
+
+		iit.setBasisDim(basisDim);
+		ait.setBasisDim(basisDim);
+		dit.setBasisDim(basisDim);
+
+		iit.moveToStart();
+		ait.moveToStart();
+		dit.moveToStart();
+
+		// Iterate data
+		size_t length = inChunk->getDesc()->dims_[basisDim];
+		size_t rows = intDivCeil(inChunk->numCells(), length);
+
+		for (size_t r = 0; r < rows; r++)
+		{
+			for (size_t i = 0; i < length; i += 2)
+			{
+				for (size_t j = 0; (j < w->c_) && (i + j < length); j++)
+				{
+					auto ele = (*ait);
+					(*ait).set<Ty_>((*ait).get<Ty_>() + w->h_0[j] * iit.getAt(j).get<Ty_>());
+					(*dit).set<Ty_>((*dit).get<Ty_>() + w->g_0[j] * iit.getAt(j).get<Ty_>());
+					//*dit += w->g_0[j] * iit.getAt(j).get<Ty_>();
+				}
+
+				++ait;
+				++dit;
+			}
+		}
+
+		return std::list<pChunk>({ approximateChunk, detailChunk });
+	}
 
 public:
 	virtual const char* name() override;

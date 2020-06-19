@@ -119,6 +119,11 @@ typedef int64_t		position_t;
 			return this->coor_[pos];
 		}
 
+		dim_pointer data()
+		{
+			return this->coor_;
+		}
+
 	protected:
 		void memcpyCoor(dim_type* dest, const dim_type* src)
 		{
@@ -155,11 +160,11 @@ typedef int64_t		position_t;
 			this->sP_ = new dim_type[this->dSize()]();
 			this->eP_ = this->dims_;
 
-			this->initSeqLimit();
+			this->initSeqCapacity();
 		}
 		
 		coordinateIterator(const self_type& mit)
-			: coor_(mit.coor_), basisDim_(mit.basisDim_), end_(mit.end_), basisDimOffset_(mit.basisDimOffset_), seqPos_(mit.seqPos_), seqLimit_(mit.seqLimit_)
+			: coor_(mit.coor_), basisDim_(mit.basisDim_), end_(mit.end_), basisDimOffset_(mit.basisDimOffset_), seqPos_(mit.seqPos_), seqCapacity_(mit.seqCapacity_)
 		{
 			this->dims_ = new dim_type[this->dSize()];
 			memcpy(this->dims_, mit.dims_, this->dSize() * sizeof(dim_type));
@@ -177,7 +182,7 @@ typedef int64_t		position_t;
 		}
 
 	public:
-		virtual void setBasisDim(_In_range_(0, dSize() - 1) const unsigned int dim)
+		virtual void setBasisDim(const unsigned int dim)
 		{
 			if (this->dSize() <= dim)
 			{
@@ -340,14 +345,14 @@ typedef int64_t		position_t;
 			memcpy(dest, src, this->dSize() * sizeof(dim_type));
 		}
 
-		size_type initSeqLimit()
+		size_type initSeqCapacity()
 		{
-			this->seqLimit_ = this->dims_[0];
+			this->seqCapacity_ = this->dims_[0];
 			for (int i = 1; i < this->dSize(); i++)
 			{
-				this->seqLimit_ *= this->dims_[i];
+				this->seqCapacity_ *= this->dims_[i];
 			}
-			return this->seqLimit_;
+			return this->seqCapacity_;
 		}
 
 		// call this function before you change a basisDim
@@ -380,7 +385,7 @@ typedef int64_t		position_t;
 		bool front_;			// is iterator at the front
 
 		size_type seqPos_;
-		size_type seqLimit_;
+		size_type seqCapacity_;
 		size_type basisDimOffset_;
 
 		// TODO:: replace sP_ to zero
@@ -422,6 +427,16 @@ typedef int64_t		position_t;
 
 		element operator*() { return element((void*)(ptr_ + this->seqPos_ * this->eSize_), this->eType_); }
 		element operator->() { return element((void*)(ptr_ + this->seqPos_ * this->eSize_), this->eType_); }
+
+		element getAt(position_t pos)
+		{
+			if (this->coor_[this->basisDim_] + pos < this->sP_[this->basisDim_] ||
+				this->eP_[this->basisDim_] <= this->coor_[this->basisDim_] + pos)
+			{
+				_MSDB_THROW(_MSDB_EXCEPTIONS_MSG(MSDB_EC_LOGIC_ERROR, MSDB_ER_OUT_OF_RANGE, "itemIterator getAt out of range"));
+			}
+			return element((void*)(ptr_ + this->posToSeq(pos) * this->eSize_), this->eType_);
+		}
 
 	protected:
 		char* ptr_;					// pointer to element

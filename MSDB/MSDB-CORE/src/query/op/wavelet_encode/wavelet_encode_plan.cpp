@@ -1,4 +1,5 @@
 #include <op/wavelet_encode/wavelet_encode_plan.h>
+#include <util/math.h>
 #include <cassert>
 
 namespace msdb
@@ -20,18 +21,31 @@ void msdb::wavelet_encode_plan::initParamSets()
 // pset
 void msdb::wavelet_encode_pset::initParams()
 {
-	this->parameters_.push_back(_MSDB_MAKE_PARAM(opParamArrayPlaceholder));
+	auto a = new opParamArrayPlaceholder();
+	this->params_.push_back(_MSDB_MAKE_PARAM(opParamArrayPlaceholder));		// Source array
+	this->params_.push_back(_MSDB_MAKE_PARAM(opParamConstPlaceholder));		// Target level
 }
 
-arrayDesc msdb::wavelet_encode_pset::inferSchema()
+pArrayDesc msdb::wavelet_encode_pset::inferSchema()
 {
-	assert(this->parameters_.size() == 1);
-	assert(this->parameters_[0]->type() == opParamType::ARRAY);
+	assert(this->params_.size() == 2);
+	assert(this->params_[0]->type() == opParamType::ARRAY);		// Source array
+	assert(this->params_[1]->type() == opParamType::CONST);		// Target level
 
-	//std::shared_ptr<opParamArray> pA = std::dynamic_pointer_cast<opParamArray>(this->parameters_[0]);
-	arrayDesc aDesc;
-	this->parameters_[0]->getParam(&aDesc);
-	return aDesc;
+	pArrayDesc aSourceDesc = std::static_pointer_cast<opParamArray::paramType>(this->params_[0]->getParam());
+	pArrayDesc aInferDesc = std::make_shared<opParamArray::paramType>(*aSourceDesc);
+	eleDefault level;
+	std::static_pointer_cast<opParamConst::paramType>(this->params_[1]->getParam())->getData(&level);
+	
+	size_t ratio = std::pow(2, level);
+	
+	for(dimensionId d = 0; d < aInferDesc->dimDescs_.size(); d++)
+	{
+		auto dDesc = aInferDesc->dimDescs_[d];
+		dDesc->chunkSize_ = intDivCeil(dDesc->chunkSize_, ratio);
+	}
+
+	return aInferDesc;
 }
 }
 

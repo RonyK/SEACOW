@@ -3,9 +3,13 @@
 
 namespace msdb
 {
-void opParamArray::getParam(void* output)
+opParamArray::opParamArray(pArrayDesc desc)
+	: desc_(desc)
 {
-	*reinterpret_cast<arrayDesc*>(output) = this->desc_;
+}
+opParam::void_pointer opParamArray::getParam()
+{
+	return this->desc_;
 }
 
 opParamType opParamArray::type()
@@ -13,14 +17,14 @@ opParamType opParamArray::type()
 	return opParamType::ARRAY;
 }
 
-opParamAttr::opParamAttr(attributeDesc& desc)
+opParamAttr::opParamAttr(pAttributeDesc desc)
+	: desc_(desc)
 {
-	this->desc_ = desc;
 }
 
-void opParamAttr::getParam(void* output)
+opParam::void_pointer opParamAttr::getParam()
 {
-	*reinterpret_cast<attributeDesc*>(output) = this->desc_;
+	return this->desc_;
 }
 
 opParamType opParamAttr::type()
@@ -28,14 +32,14 @@ opParamType opParamAttr::type()
 	return opParamType::ATTRIBUTE;
 }
 
-opParamDim::opParamDim(dimensionDesc& desc)
+opParamDim::opParamDim(pDimensionDesc desc)
+	: desc_(desc)
 {
-	this->desc_ = desc;
 }
 
-void opParamDim::getParam(void* output)
+opParam::void_pointer opParamDim::getParam()
 {
-	*reinterpret_cast<dimensionDesc*>(output) = this->desc_;
+	return this->desc_;
 }
 
 opParamType opParamDim::type()
@@ -43,15 +47,14 @@ opParamType opParamDim::type()
 	return opParamType::DIMENSION;
 }
 
-opParamConst::opParamConst(stableElement& ele)
+opParamConst::opParamConst(pStableElement ele)
 	: opParam(), ele_(ele)
 {
-
 }
 
-void opParamConst::getParam(void* output)
+opParam::void_pointer opParamConst::getParam()
 {
-	*reinterpret_cast<stableElement*>(output) = this->ele_;
+	return this->ele_;
 }
 opParamType opParamConst::type()
 {
@@ -60,21 +63,38 @@ opParamType opParamConst::type()
 opParam::opParam()
 {
 }
-void opParamPlaceholder::getParam(void* output)
+opParam::void_pointer opParamPlaceholder::getParam()
 {
 	_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_LOGIC_ERROR, MSDB_ER_DO_NOT_USE));
+	return nullptr;
+}
+opParamConstPlaceholder::opParamConstPlaceholder()
+	: opParamPlaceholder(), opParamConst(nullptr)
+{
 }
 opParamType opParamConstPlaceholder::type()
 {
 	return opParamType::CONST;
 }
+opParamDimPlaceholder::opParamDimPlaceholder()
+	: opParamPlaceholder(), opParamDim(nullptr)
+{
+}
 opParamType opParamDimPlaceholder::type()
 {
 	return opParamType::DIMENSION;
 }
+opParamAttrPlaceholder::opParamAttrPlaceholder()
+	: opParamPlaceholder(), opParamAttr(nullptr)
+{
+}
 opParamType opParamAttrPlaceholder::type()
 {
 	return opParamType::ATTRIBUTE;
+}
+opParamArrayPlaceholder::opParamArrayPlaceholder()
+	: opParamPlaceholder(), opParamArray(nullptr)
+{
 }
 opParamType opParamArrayPlaceholder::type()
 {
