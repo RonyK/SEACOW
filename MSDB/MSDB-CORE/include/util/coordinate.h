@@ -7,6 +7,7 @@
 #include <array/dimensionId.h>
 #include <iostream>
 #include <cassert>
+#include <initializer_list>
 
 namespace msdb
 {
@@ -41,6 +42,18 @@ typedef int64_t		position_t;
 		{
 			this->coor_ = new dim_type[this->dSize_];
 			memcpy(this->coor_, mit.coor_, mit.dSize_ * sizeof(dim_type));
+		}
+
+		coordinate(std::initializer_list<dim_type> lst)
+		{
+			this->dSize_ = lst.size();
+			this->coor_ = new dim_type[this->dSize_];
+			
+			auto it = lst.begin();
+			for(size_type d = 0; d < this->dSize_; d++, it++)
+			{
+				this->coor_[d] = *it;
+			}
 		}
 
 		~coordinate()
