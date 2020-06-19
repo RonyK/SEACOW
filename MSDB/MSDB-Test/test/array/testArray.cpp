@@ -24,7 +24,7 @@ TEST(arrayBase, arrayCreate)
 	//attributeDescs attrDescs;
 	//attrDescs.push_back(attrDesc);
 
-	//pArrayDesc arrDesc = std::make_shared<arrayDesc>(0, "wavelet_test", &attrDescs, &dimDescs);
+	//pArrayDesc arrDesc = std::make_shared<arrayDesc>(0, "wavelet_test", dimDescs, attrDescs);
 
 	//pArray sourceArr = std::make_shared<arrayBase>(arrDesc);
 }

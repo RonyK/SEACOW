@@ -1,4 +1,5 @@
 #include <op/wavelet_encode/wavelet_encode_plan.h>
+#include <op/wavelet_encode/wavelet_encode_action.h>
 #include <util/math.h>
 #include <cassert>
 
@@ -7,26 +8,44 @@ namespace msdb
 wavelet_encode_plan::wavelet_encode_plan()
 {
 }
+
 const char* msdb::wavelet_encode_plan::name()
 {
 	return "wavelet_encode";
 }
 
-void msdb::wavelet_encode_plan::initParamSets()
+//void wavelet_encode_plan::initParamSets()
+//{
+//	this->addParamSet(std::make_shared<wavelet_encode_pset>());
+//}
+
+pAction wavelet_encode_plan::getAction()
 {
-	this->addParamSet(pParamSet(new wavelet_encode_pset()));
+	auto weAction = std::make_shared<wavelet_encode_action>();
+
+	return weAction;
 }
 
 //////////////////////////////
 // pset
-void msdb::wavelet_encode_pset::initParams()
+wavelet_encode_pset::wavelet_encode_pset()
+	: opParamSet()
 {
-	auto a = new opParamArrayPlaceholder();
-	this->params_.push_back(_MSDB_MAKE_PARAM(opParamArrayPlaceholder));		// Source array
-	this->params_.push_back(_MSDB_MAKE_PARAM(opParamConstPlaceholder));		// Target level
 }
 
-pArrayDesc msdb::wavelet_encode_pset::inferSchema()
+wavelet_encode_pset::wavelet_encode_pset(parameters& pSet)
+	: opParamSet(pSet)
+{
+}
+
+//void wavelet_encode_pset::initParams()
+//{
+//	auto a = new opParamArrayPlaceholder();
+//	this->params_.push_back(_MSDB_MAKE_PARAM(opParamArrayPlaceholder));		// Source array
+//	this->params_.push_back(_MSDB_MAKE_PARAM(opParamConstPlaceholder));		// Target level
+//}
+
+pArrayDesc wavelet_encode_pset::inferSchema()
 {
 	assert(this->params_.size() == 2);
 	assert(this->params_[0]->type() == opParamType::ARRAY);		// Source array
@@ -47,5 +66,5 @@ pArrayDesc msdb::wavelet_encode_pset::inferSchema()
 
 	return aInferDesc;
 }
-}
 
+}

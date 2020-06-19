@@ -16,12 +16,13 @@ class opParamSet : public std::enable_shared_from_this <opParamSet>
 {
 public:
 	opParamSet();
-	opParamSet(parameters pSet);
+	opParamSet(parameters& pSet);
 
 public:
 	bool isMatch(parameters pSet);
-	virtual void initParams() = 0;
+	//virtual void initParams() = 0;
 	virtual pArrayDesc inferSchema() = 0;
+	parameters getParam();
 
 protected:
 	parameters params_;

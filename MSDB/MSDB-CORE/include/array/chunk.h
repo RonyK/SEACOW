@@ -30,6 +30,8 @@ public:
 
 	chunkItemIterator getItemIterator();
 	chunkId getId() const;
+	// chunk id can be chnaged in query processing
+	void setId(chunkId id);
 	const pChunkDesc getDesc() const;
 	size_type numCells();
 	

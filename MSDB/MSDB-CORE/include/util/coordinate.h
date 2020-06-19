@@ -352,6 +352,11 @@ typedef int64_t		position_t;
 			return seq;
 		}
 
+		size_type getCapacity()
+		{
+			return this->seqCapacity_;
+		}
+
 	protected:
 		void memcpyDim(dim_type* dest, const dim_type* src)
 		{
@@ -443,12 +448,12 @@ typedef int64_t		position_t;
 
 		element getAt(position_t pos)
 		{
-			if (this->coor_[this->basisDim_] + pos < this->sP_[this->basisDim_] ||
-				this->eP_[this->basisDim_] <= this->coor_[this->basisDim_] + pos)
-			{
-				_MSDB_THROW(_MSDB_EXCEPTIONS_MSG(MSDB_EC_LOGIC_ERROR, MSDB_ER_OUT_OF_RANGE, "itemIterator getAt out of range"));
-			}
-			return element((void*)(ptr_ + this->posToSeq(pos) * this->eSize_), this->eType_);
+			//if (this->coor_[this->basisDim_] + pos < this->sP_[this->basisDim_] ||
+			//	this->eP_[this->basisDim_] <= this->coor_[this->basisDim_] + pos)
+			//{
+			//	_MSDB_THROW(_MSDB_EXCEPTIONS_MSG(MSDB_EC_LOGIC_ERROR, MSDB_ER_OUT_OF_RANGE, "itemIterator getAt out of range"));
+			//}
+			return element((void*)(ptr_ + (this->seqPos_ + this->posToSeq(pos)) * this->eSize_), this->eType_);
 		}
 
 	protected:

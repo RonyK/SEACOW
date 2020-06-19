@@ -4,9 +4,9 @@ namespace msdb
 {
 opParamSet::opParamSet()
 {
-	this->initParams();
+	//this->initParams();
 }
-opParamSet::opParamSet(parameters pSet)
+opParamSet::opParamSet(parameters& pSet)
 {
 	for(auto it = pSet.begin(); it != pSet.end(); it++)
 	{
@@ -25,5 +25,9 @@ bool opParamSet::isMatch(parameters pSet)
 	{
 		
 	}
+}
+parameters opParamSet::getParam()
+{
+	return this->params_;
 }
 }

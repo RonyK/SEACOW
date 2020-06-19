@@ -47,37 +47,6 @@ using pWavelet = std::shared_ptr<wavelet>;
 				  size_t c, size_t offset, waveletType t);
 	};
 
-	template <typename _Dty, typename _Ty>
-	class waveletTransform
-	{
-		using size_type = size_t;
-
-		using dim_type = _Dty;
-		using dims_type = std::vector<_Dty>;
-
-		using value_type = _Ty;
-		using value_point = _Ty*;
-		using value_const_pointer = const _Ty*;
-
-	public:
-		waveletTransform(wavelet w);
-
-		void setDims(const dims_type& dims)
-		{
-			this->_dims = dims;
-			this->_bandSize.clear();
-		}
-
-		//int encode(const );
-
-		int decode();
-
-	protected:
-		wavelet _w;
-		dims_type _dims;
-		std::vector<dims_type> _bandSize;
-	};
-
 	int waveletEncode(const wavelet* w, const double* data, double* output,
 						size_t length, std::vector<int>* dims, size_t level = 1);
 

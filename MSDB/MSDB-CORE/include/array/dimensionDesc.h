@@ -22,11 +22,17 @@ public:
 class dimensionDesc
 {
 public:
+	using dimension_type = position_t;
+
+public:
+	dimensionDesc(dimensionId id, std::string name, 
+				  dimension_type start, dimension_type end,
+				  position_t chunkSize);
+
+public:
 	position_t getLength();
 	size_t getChunkNum();
 
-public:
-	using dimension_type = position_t;
 
 	dimensionId id_;
 	std::string name_;

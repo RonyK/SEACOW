@@ -1,4 +1,5 @@
 #include <array/array.h>
+#include <util/math.h>
 #include <cmath>
 
 namespace msdb
@@ -34,21 +35,26 @@ void arrayBase::insertChunk(pChunk inputChunk)
 	this->chunks_.insert(chunkPair(inputChunk->getId(), inputChunk));
 }
 
-//void arrayBase::insertChunk(std::vector<pChunk>* cContainer)
-//{
-//	for(auto it = cContainer->begin(); it != cContainer->end(); it++)
-//	{
-//		this->insertChunk(*it);
-//	}
-//}
 pChunk arrayBase::getChunk(chunkId cId)
 {
 	return this->chunks_[cId];
 }
+
+chunkId arrayBase::getChunkId(pChunkDesc cDesc)
+{
+	return this->getChunkIdFromItemCoor(cDesc->sp_);
+}
+
 chunkId arrayBase::getChunkIdFromItemCoor(coor& itemCoor)
 {
-	return chunkId();
+	coor chunkCoor = itemCoor;
+	for (dimensionId d = this->desc_->dimDescs_.size() - 1; d != -1; d--)
+	{
+		chunkCoor[d] /= this->desc_->dimDescs_[d]->chunkSize_;
+	}
+	return this->getChunkIdFromChunkCoor(chunkCoor);
 }
+
 chunkId arrayBase::getChunkIdFromChunkCoor(coor& chunkCoor)
 {
 	chunkId id = 0;
@@ -60,6 +66,7 @@ chunkId arrayBase::getChunkIdFromChunkCoor(coor& chunkCoor)
 	}
 	return id;
 }
+
 chunkIterator::chunkIterator(const size_type dSize, dim_const_pointer dims, 
 							 chunkIterator::chunkContainer* chunks)
 	: coorItr(dSize, dims), chunks_(chunks)

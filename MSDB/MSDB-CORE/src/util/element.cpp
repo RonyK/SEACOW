@@ -92,6 +92,7 @@ stableElement::stableElement(void* ptr, eleType type)
 {
 	size_t size = getEleSize(type);
 	this->ptr_ = static_cast<void*>(new char[size]);
+	memcpy(this->ptr_, ptr, size);
 }
 
 stableElement::stableElement(const stableElement& mit)

@@ -4,11 +4,15 @@
 
 #include <array/arrayDesc.h>
 #include <query/opParamSet.h>
+#include <query/opAction.h>
 #include <vector>
 #include <memory>
 
 namespace msdb
 {
+class opPlan;
+using pPlan = std::shared_ptr<opPlan>;
+
 class opPlan : public std::enable_shared_from_this<opPlan>
 {
 public:
@@ -16,12 +20,16 @@ public:
 
 public:
 	virtual const char* name() = 0;
-	virtual void initParamSets() = 0;
-	virtual pArrayDesc inferSchema(pParamSet oppSet);
-	void addParamSet(pParamSet pSet);
+	void setParamSet(pParamSet paramSet);
+	//virtual void initParamSets() = 0;
+	virtual pArrayDesc inferSchema();
+	//void addParamSet(pParamSet pSet);
+	virtual pAction getAction() = 0;
+	parameters getParam();
 
 private:
-	std::vector<pParamSet> paramSets_;
+	pParamSet myParamSet_;
+	//std::vector<pParamSet> paramSets_;
 };
 }
 

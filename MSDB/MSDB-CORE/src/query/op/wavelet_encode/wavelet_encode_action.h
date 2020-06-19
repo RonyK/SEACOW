@@ -14,24 +14,26 @@ class wavelet_encode_action : public opAction
 {
 public:
 	wavelet_encode_action();
+	virtual ~wavelet_encode_action();
 
 public:
 	pArray execute(std::vector<pArray>& inputArrays, pQuery q);
 
 private:
-	std::list<pChunk> chunkEncode(pArray wArray, pChunk targetChunk, 
+	std::list<pChunk> chunkEncode(pArray wArray, pChunk sourceChunk, 
 								  pWavelet w, size_t maxLevel, pQuery q);
 	std::list<pChunk> waveletLevelEncode(pChunk wChunk, pWavelet w, pQuery q);
 	template<class Ty_>
 	std::list<pChunk> waveletTransform(pChunk inChunk, pWavelet w, dimensionId basisDim, pQuery q)
 	{
-// Setting chunkDesc for band chunk
-		auto bandDesc = std::make_shared<chunkDesc>(*inChunk->getDesc());
+		// Setting chunkDesc for band chunk
+		auto inChunkDesc = *inChunk->getDesc();
+		auto bandDesc = std::make_shared<chunkDesc>(inChunkDesc);
 		bandDesc->setDim(basisDim, intDivCeil(bandDesc->dims_[basisDim], 2));
 
 		// Make chunk
-		pChunk approximateChunk = std::make_shared<chunk>(bandDesc);
-		pChunk detailChunk = std::make_shared<chunk>(bandDesc);
+		pChunk approximateChunk = std::make_shared<chunk>(std::make_shared<chunkDesc>(*bandDesc));
+		pChunk detailChunk = std::make_shared<chunk>(std::make_shared<chunkDesc>(*bandDesc));
 
 		approximateChunk->materialize();
 		detailChunk->materialize();
@@ -57,16 +59,23 @@ private:
 		{
 			for (size_t i = 0; i < length; i += 2)
 			{
+				Ty_ h = 0, g = 0;
 				for (size_t j = 0; (j < w->c_) && (i + j < length); j++)
 				{
-					auto ele = (*ait);
-					(*ait).set<Ty_>((*ait).get<Ty_>() + w->h_0[j] * iit.getAt(j).get<Ty_>());
-					(*dit).set<Ty_>((*dit).get<Ty_>() + w->g_0[j] * iit.getAt(j).get<Ty_>());
-					//*dit += w->g_0[j] * iit.getAt(j).get<Ty_>();
+					auto in = iit.getAt(j).get<Ty_>();
+					auto ap = (*ait).get<Ty_>();
+					auto de = (*dit).get<Ty_>();
+
+					h += w->h_0[j] * iit.getAt(j).get<Ty_>();
+					g += w->g_0[j] * iit.getAt(j).get<Ty_>();
 				}
+
+				(*ait).set<Ty_>(h);
+				(*dit).set<Ty_>(g);
 
 				++ait;
 				++dit;
+				iit += 2;
 			}
 		}
 

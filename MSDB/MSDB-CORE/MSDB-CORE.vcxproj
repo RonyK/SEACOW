@@ -199,6 +199,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.cpp" />
+    <ClCompile Include="src\array\attributeDesc.cpp" />
     <ClCompile Include="src\util\math.cpp" />
     <ClCompile Include="src\array\dimensionDesc.cpp" />
     <ClCompile Include="src\query\opAction.cpp" />
@@ -207,7 +208,9 @@
     <ClCompile Include="src\query\opParam.cpp" />
     <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_action.cpp" />
     <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_array.cpp" />
-    <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_plan.cpp" />
+    <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_plan.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\util\element.cpp" />
     <ClCompile Include="src\array\chunk.cpp" />
     <ClCompile Include="src\array\chunkBuffer.cpp" />

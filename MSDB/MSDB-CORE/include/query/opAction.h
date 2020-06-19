@@ -11,20 +11,25 @@
 namespace msdb
 {
 class opAction;
-using action = std::shared_ptr<opAction>;
+using pAction = std::shared_ptr<opAction>;
 
 class opAction : public std::enable_shared_from_this<opAction>
 {
 public:
+	opAction();
+	virtual ~opAction();
+
+public:
 	const pArrayDesc getArrayDesc();
 	void setParams(const parameters& params);
+	void setArrayDesc(pArrayDesc aDesc);
 	virtual const char* name() = 0;
 
 	virtual pArray execute(std::vector<pArray>&inputArrays, pQuery q) = 0;
 
 protected:
 	pArrayDesc aDesc_;
-	std::vector<action> sources_;
+	//std::vector<action> sources_;
 	parameters params_;
 };
 }

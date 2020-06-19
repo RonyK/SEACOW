@@ -4,14 +4,22 @@ namespace msdb
 {
 opPlan::opPlan()
 {
-	this->initParamSets();
+	//this->initParamSets();
 }
-pArrayDesc opPlan::inferSchema(pParamSet oppSet)
+void opPlan::setParamSet(pParamSet paramSet)
 {
-	return oppSet->inferSchema();
+	this->myParamSet_ = paramSet;
 }
-void opPlan::addParamSet(pParamSet pSet)
+pArrayDesc opPlan::inferSchema()
 {
-	this->paramSets_.push_back(pSet);
+	return this->myParamSet_->inferSchema();
 }
+parameters opPlan::getParam()
+{
+	return this->myParamSet_->getParam();
+}
+//void opPlan::addParamSet(pParamSet pSet)
+//{
+//	this->paramSets_.push_back(pSet);
+//}
 }

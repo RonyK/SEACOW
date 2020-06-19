@@ -6,6 +6,7 @@ chunk::chunk(pChunkDesc desc) : cached_(nullptr), desc_(desc)
 {
 
 }
+
 chunk::~chunk()
 {
 	this->free();
@@ -63,6 +64,12 @@ chunkId chunk::getId() const
 {
 	return this->desc_->id_;
 }
+
+void chunk::setId(chunkId id)
+{
+	this->desc_->id_ = id;
+}
+
 const pChunkDesc chunk::getDesc() const
 {
 	return this->desc_;

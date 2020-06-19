@@ -35,6 +35,13 @@ chunkDesc::chunkDesc(const chunkId id,
 	}
 }
 
+chunkDesc::chunkDesc(const chunkDesc& mit)
+	: id_(mit.id_), attrDesc_(std::make_shared<attributeDesc>(*(mit.attrDesc_))),
+	mSize_(mit.mSize_), cSize_(mit.cSize_), useCompression_(mit.useCompression_),
+	cType_(mit.cType_), dims_(mit.dims_), sp_(mit.sp_), ep_(mit.ep_)
+{
+}
+
 void chunkDesc::setDim(dimensionId dId, position_t value)
 {
 	this->dims_[dId] = value;
@@ -43,7 +50,7 @@ void chunkDesc::setDim(dimensionId dId, position_t value)
 
 void chunkDesc::initPhysicalChunkSizeFromDims()
 {
-	this->mSize_ = 1;
+	this->mSize_ = this->attrDesc_->typeSize_;
 	for(dimensionId d = 0; d < this->dims_.size(); d++)
 	{
 		this->mSize_ *= this->dims_[d];

@@ -2,6 +2,14 @@
 
 namespace msdb
 {
+dimensionDesc::dimensionDesc(dimensionId id, std::string name,
+							 dimension_type start, dimension_type end, 
+							 position_t chunkSize)
+	: id_(id), name_(name), start_(start), end_(end), chunkSize_(chunkSize)
+{
+
+}
+
 position_t msdb::dimensionDesc::getLength()
 {
 	return this->end_ - this->start_;

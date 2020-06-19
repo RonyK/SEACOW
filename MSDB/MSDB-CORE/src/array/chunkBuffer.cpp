@@ -70,6 +70,7 @@ void chunkBuffer::copy(void* data, bufferSize size)
 	this->size_ = size;
 }
 
+// WARNING:: data is deleted when the chunkBuffer is disappear in a destructor.
 void chunkBuffer::assign(void* data, bufferSize size)
 {
 	this->free();

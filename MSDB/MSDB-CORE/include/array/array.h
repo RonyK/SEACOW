@@ -81,6 +81,13 @@ public:
 
 	virtual coor itemCoorToChunkCoor(coor& itemCoor);
 	void insertChunk(pChunk inputChunk);
+
+	pChunk getChunk(chunkId cId);
+
+	chunkId getChunkId(pChunkDesc cDesc);
+	chunkId getChunkIdFromItemCoor(coor& itemCoor);
+	chunkId getChunkIdFromChunkCoor(coor& chunkCoor);
+
 	template <class _Iter>
 	void insertChunk(_Iter begin, _Iter end)
 	{
@@ -89,10 +96,6 @@ public:
 			this->chunks_.insert(chunkPair((*begin)->getId(), *begin));
 		}
 	}
-	pChunk getChunk(chunkId cId);
-
-	virtual chunkId getChunkIdFromItemCoor(coor& itemCoor);
-	virtual chunkId getChunkIdFromChunkCoor(coor& chunkCoor);
 
 protected:
 	pArrayDesc desc_;

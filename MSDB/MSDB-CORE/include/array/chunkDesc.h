@@ -38,6 +38,8 @@ public:
 			  const chunkSize mSize, const chunkSize cSize,
 			  const CompressionMethod cType);
 
+	chunkDesc(const chunkDesc& mit);
+
 public:
 	void setDim(dimensionId dId, position_t value);
 

@@ -10,21 +10,25 @@
 
 namespace msdb
 {
-	class attributeDesc;
-	using pAttributeDesc = std::shared_ptr<attributeDesc>;
+class attributeDesc;
+using pAttributeDesc = std::shared_ptr<attributeDesc>;
 
-	class attributeDescs : public std::vector<pAttributeDesc>, public std::enable_shared_from_this<attributeDescs>
-	{
+class attributeDescs : public std::vector<pAttributeDesc>, public std::enable_shared_from_this<attributeDescs>
+{
 
-	};
+};
 
-	class attributeDesc
-	{
-	public:
-		attributeId id_;
-		std::string name_;
-		eleType type_;
-	};
+class attributeDesc
+{
+public:
+	attributeDesc(attributeId id, std::string name, eleType type);
+
+public:
+	attributeId id_;
+	std::string name_;
+	eleType type_;
+	size_t typeSize_;
+};
 }
 
 #endif

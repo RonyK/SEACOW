@@ -19,7 +19,9 @@ class arrayDesc : public std::enable_shared_from_this<arrayDesc>
 {
 public:
 	arrayDesc();
-	arrayDesc(const arrayId aid, const std::string arrayName, const dimensionDescs* dimDescs, const attributeDescs* attrDescs);
+	arrayDesc(const arrayId aid, const std::string arrayName, 
+			  const dimensionDescs& dimDescs, const attributeDescs& attrDescs);
+	arrayDesc(const arrayDesc& mit);
 	~arrayDesc();
 
 public:

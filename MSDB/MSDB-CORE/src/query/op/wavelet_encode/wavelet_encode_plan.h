@@ -14,14 +14,18 @@ public:
 
 public:
 	virtual const char* name() override;
-
-	virtual void initParamSets() override;
-
+	//virtual void initParamSets() override;
+	virtual pAction getAction() override;
 };
 
 class wavelet_encode_pset : public opParamSet
 {
-	virtual void initParams() override;
+public:
+	wavelet_encode_pset();
+	wavelet_encode_pset(parameters& pSet);
+
+public:
+	//virtual void initParams() override;
 	virtual pArrayDesc inferSchema() override;
 };
 }
