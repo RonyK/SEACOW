@@ -4,16 +4,16 @@
 
 namespace msdb
 {
-memChunk::memChunk()
+memChunkBuffer::memChunkBuffer()
 {
 
 }
 
-memChunk::~memChunk()
+memChunkBuffer::~memChunkBuffer()
 {
 }
 
-bool memChunk::isCompressed() const
+bool memChunkBuffer::isCompressed() const
 {
 	return false;
 }

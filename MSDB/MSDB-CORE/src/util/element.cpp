@@ -61,6 +61,11 @@ void element::getData(void* output)
 	(this->*getFunc)(output);
 }
 
+//void* element::getData()
+//{
+//	return this->ptr_;
+//}
+
 element::gFunc element::findGetFunc(eleType type)
 {
 	static void(element:: * eleGetDataFPointer[13])(void*) = {
@@ -133,6 +138,17 @@ bool stableElement::isInt()
 	case eleType::UINT64:
 		return true;
 	}
+	return false;
+}
+bool stableElement::isFloat()
+{
+	switch(this->type_)
+	{
+	case eleType::FLOAT:
+	case eleType::DOUBLE:
+		return true;
+	}
+
 	return false;
 }
 }

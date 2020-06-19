@@ -7,11 +7,11 @@
 
 namespace msdb
 {
-class memChunk : public chunkBuffer
+class memChunkBuffer : public chunkBuffer
 {
 public:
-	memChunk();
-	virtual ~memChunk();
+	memChunkBuffer();
+	virtual ~memChunkBuffer();
 
 public:
 	virtual bool isCompressed() const;
@@ -31,6 +31,7 @@ public:
 	using dim_reference = base_type::dim_reference;
 	using dim_const_reference = base_type::dim_const_reference;
 public:
+	// csP : chunk start point
 	memChunkItemIterator(void* data, eleType eType, const size_type dSize, position_t* dims,
 					 dim_pointer csP);
 };

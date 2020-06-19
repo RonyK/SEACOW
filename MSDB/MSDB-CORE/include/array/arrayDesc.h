@@ -19,15 +19,15 @@ class arrayDesc : public std::enable_shared_from_this<arrayDesc>
 {
 public:
 	arrayDesc();
-	arrayDesc(arrayId aid, std::string arrayName, attributeDescs& attrDescs, dimensionDescs& dimDescs);
+	arrayDesc(arrayId aid, std::string arrayName, dimensionDescs& dimDescs, attributeDescs& attrDescs);
 	~arrayDesc();
 
 public:
 	arrayId id_;
 	std::string name_;
 
-	attributeDescs attrDescs_;
 	dimensionDescs dimDescs_;
+	attributeDescs attrDescs_;
 };
 }
 

@@ -14,17 +14,15 @@ chunk::~chunk()
 void chunk::materialize()
 {
 	this->free();
-	this->cached_ = new chunkBuffer();
-	
-	this->desc_->mSize_ = 0;
+	this->makeBuffer();
+	this->cached_->alloc(this->desc_->mSize_);
 }
 
 void chunk::materialize(bufferSize size)
 {
 	this->free();
-	this->cached_ = new chunkBuffer();
+	this->makeBuffer();
 	this->cached_->alloc(size);
-
 	this->desc_->mSize_ = size;
 }
 
@@ -33,12 +31,15 @@ void chunk::materializeCopy(void* data, bufferSize size)
 	this->free();
 	this->materialize(size);
 	this->cached_->copy(data, size);
+	this->desc_->mSize_ = size;
 }
 
 void chunk::materializeAssign(void* data, bufferSize size)
 {
-	this->materialize();
+	this->free();
+	this->makeBuffer();
 	this->cached_->assign(data, size);
+	this->desc_->mSize_ = size;
 }
 
 bool chunk::isMaterialized() const
@@ -66,12 +67,25 @@ const pChunkDesc chunk::getDesc() const
 {
 	return this->desc_;
 }
+chunk::size_type chunk::numCells()
+{
+	size_type output = 1;
+	for(dimensionId d = 0; d < this->desc_->dims_.size(); d++)
+	{
+		output *= this->desc_->dims_[d];
+	}
+	return output;
+}
 void chunk::free()
 {
 	if (this->isMaterialized())
 	{
 		delete this->cached_;
 	}
+}
+void chunk::makeBuffer()
+{
+	this->cached_ = new chunkBuffer();
 }
 chunkItemIterator::chunkItemIterator(void* data, eleType eType, const size_type dSize, position_t* dims, dim_pointer csP)
 	: itemItr(data, eType, dSize, dims)

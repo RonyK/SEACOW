@@ -15,6 +15,9 @@ using pChunk = std::shared_ptr<chunk>;
 class chunk : public std::enable_shared_from_this<chunk>
 {
 public:
+	using size_type = size_t;
+
+public:
 	chunk(pChunkDesc desc);
 	virtual ~chunk();
 
@@ -28,9 +31,11 @@ public:
 	chunkItemIterator getItemIterator();
 	chunkId getId() const;
 	const pChunkDesc getDesc() const;
-
+	size_type numCells();
+	
 protected:
 	void free();
+	void makeBuffer();
 
 protected:
 	chunkBuffer* cached_;	// hold materialized chunk

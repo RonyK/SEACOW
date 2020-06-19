@@ -9,14 +9,14 @@ namespace caDummy
 {
 namespace data2D_sc8x8
 {
-TEST(memChunk, initRawChunk_sc8x8)
+TEST(memChunkBuffer, initRawChunk_sc8x8)
 {
 	//////////////////////////////
 	// Build Dummy Data
 	value_type data[dataLength];
 	getDummy(data, dataLength);
 
-	memChunk chunk;
+	memChunkBuffer chunk;
 	chunk.alloc(dataLength);
 	chunk.copy(data, dataLength);
 
@@ -31,7 +31,7 @@ TEST(memChunkItemIterator, initRawChunk_sc8x8)
 	double data[] = { 1,2,3,4, 11,12,13,14, 21,22,23,24, 31,32,33,34, 41,42,43,44, 51,52,53,54 };
 	position_t dim[] = { 2,3,4 };
 	position_t csP[] = { 4,5,0 };
-	msdb::memChunkItemIterator it((void*)data, eleType::DOUBLE, sizeof(dim) / sizeof(int), dim, csP);
+	memChunkItemIterator it((void*)data, eleType::DOUBLE, sizeof(dim) / sizeof(int), dim, csP);
 
 	memChunkItemIterator::coordinate_type ceP = it.ceP();
 	memChunkItemIterator::coordinate_type sP = it.coorIn2Out();

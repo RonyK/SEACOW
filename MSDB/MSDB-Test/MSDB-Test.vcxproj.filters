@@ -23,6 +23,8 @@
     <ClCompile Include="test\pch.cpp" />
     <ClCompile Include="test\xml\xmltest.cpp" />
     <ClCompile Include="test\array\testMemChunk.cpp" />
+    <ClCompile Include="test\query\op\wavelet_encode\test_wavelet_encode_action.cpp" />
+    <ClCompile Include="test\array\testArray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">

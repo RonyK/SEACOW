@@ -6,8 +6,8 @@ msdb::arrayDesc::arrayDesc()
 }
 
 msdb::arrayDesc::arrayDesc(arrayId aid, std::string arrayName,
-						   attributeDescs& attrDescs, dimensionDescs& dimDescs)
-	: id_(aid), name_(arrayName), attrDescs_(attrDescs), dimDescs_(dimDescs)
+						   dimensionDescs& dimDescs, attributeDescs& attrDescs)
+	: id_(aid), name_(arrayName), dimDescs_(dimDescs), attrDescs_(attrDescs)
 {
 }
 

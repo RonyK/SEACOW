@@ -15,8 +15,8 @@ namespace msdb
 class chunkDesc;
 
 using pChunkDesc = std::shared_ptr<chunkDesc>;
-
 using chunkSize = bufferSize;
+extern const chunkSize INVALID_CHUNK_SIZE;
 
 class chunkDesc : std::enable_shared_from_this<chunkDesc>
 {	
@@ -30,7 +30,7 @@ public:
 
 	chunkDesc(const chunkId id,
 			  pAttributeDesc attrDesc, const dimension& dims, 
-			  const coor sp, const coor ep, const chunkSize mSize);
+			  const coor sp, const coor ep, const chunkSize mSize = INVALID_CHUNK_SIZE);
 
 	chunkDesc(const chunkId id, 
 			  pAttributeDesc attrDesc, const dimension& dims,
@@ -39,13 +39,21 @@ public:
 			  const CompressionMethod cType);
 
 public:
+	void setDim(dimensionId dId, position_t value);
+
+public:
+	void initPhysicalChunkSizeFromDims();
+
+public:
 	chunkId id_;				// chunk id
 	pAttributeDesc attrDesc_;	// attribute desc
 
 	chunkSize mSize_;			// materialized size
-	chunkSize cSize_;			// compressed size
+	chunkSize cSize_;			// compressed size,
+								// if not: cSize == mSize or INVALID_CHUNK_SIZE
 	bool useCompression_;		// can be compressed
 	CompressionMethod cType_;	// compressed method type
+								// if not: CompressionMethod::NONE
 
 	dimension dims_;			// dimensions
 	coor sp_;					// start point

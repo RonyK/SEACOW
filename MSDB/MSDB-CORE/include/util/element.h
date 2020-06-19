@@ -28,8 +28,6 @@ enum class eleType
 	DOUBLE
 };
 
-
-
 class element
 {
 public:
@@ -68,6 +66,7 @@ public:
 	void		setDouble(double v)		{ set<double>(v); }
 
 	void getData(void* output);
+	//void* getData();
 
 public:
 	template<class Ty_>
@@ -154,7 +153,8 @@ public:
 
 	eleType getEleType();
 
-	bool isInt();
+	bool isInt();		// all integer from int8_t to int64_t
+	bool isFloat();		// float, double
 
 private:
 	eleType type_;
