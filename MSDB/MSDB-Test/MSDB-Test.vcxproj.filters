@@ -25,12 +25,14 @@
     <ClCompile Include="test\array\testMemChunk.cpp" />
     <ClCompile Include="test\query\op\wavelet_encode\test_wavelet_encode_action.cpp" />
     <ClCompile Include="test\array\testArray.cpp" />
+    <ClCompile Include="test\dummy\opDummy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">
       <Filter>test\dummy</Filter>
     </ClInclude>
     <ClInclude Include="test\pch.h" />
+    <ClInclude Include="test\dummy\opDummy.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="test">

@@ -159,4 +159,46 @@ TEST(wavelet_encode_action, waveletHaarSimple_2D)
 		++cId;
 	}
 }
+
+namespace caDummy
+{
+namespace data2D_sc4x4
+{
+TEST(wavelet_encode_action, waveletHaarSimple_sc4x4)
+{
+
+	std::vector<pArray> sourceArr = getSourceArray();
+	
+	eleDefault level = 0;
+	std::shared_ptr<wavelet_encode_plan> wePlan;
+	std::shared_ptr<wavelet_encode_action> weAction;
+	pQuery weQuery;
+	getWaveletEncode(sourceArr[0]->getDesc(), level, wePlan, weAction, weQuery);
+
+	auto weArray = weAction->execute(sourceArr, weQuery);
+
+	//////////////////////////////
+	// Check Encoded Result
+	value_type expected[dataLength] = { 0 };
+	getWTDummy(expected, dataLength);
+	size_t cId = 0;
+	for (size_t i = 0; i < sizeof(dataLength) / sizeof(double); )
+	{
+		auto it = weArray->getChunk(cId)->getItemIterator();
+		if (it.getCapacity() == 0)
+		{
+			throw std::exception();
+		}
+		for (size_t j = 0; j < it.getCapacity(); ++j, ++i)
+		{
+			std::cout << (*it).getDouble() << " <> " << expected[i] << std::endl;
+			EXPECT_EQ(ROUNDING((*it).getDouble(), 6), ROUNDING(expected[i], 6));
+			++it;
+		}
+		++cId;
+	}
+}
+
+}
+}
 }

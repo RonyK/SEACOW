@@ -152,20 +152,20 @@ namespace msdb
 			{
 				//////////////////////////////
 				// Build Dummy Data
-				value_type data[DATA_LENGTH_2D_DUMMY];
-				mmt<unsigned char, char> myMMT(dims, chunkDims, maxLevel);
+				value_type data[dataLength];
+				mmt<dim_type, value_type> myMMT(dims, chunkDims, maxLevel);
 				bstream bs;
 
-				getDummy(data, DATA_LENGTH_2D_DUMMY);
+				getDummy(data, dataLength);
 				//////////////////////////////
 
-				myMMT.build(data, DATA_LENGTH_2D_DUMMY);
+				myMMT.build(data, dataLength);
 				myMMT.serialize(bs);
 
 				//////////////////////////////
 				const unsigned char* converted = bs.data();
-				char expected[DATA_LENGTH_2D_DUMMY] = { 0 };
-				getExMMT(expected, DATA_LENGTH_2D_DUMMY);
+				char expected[dataLength] = { 0 };
+				getExMMT(expected, dataLength);
 				for (size_t i = 0; i < (bs.size() + CHAR_BIT - 1) / CHAR_BIT; i++)
 				{
 					EXPECT_EQ(converted[i], (unsigned char)expected[i]);
@@ -176,17 +176,17 @@ namespace msdb
 
 			TEST(caMMT, mmt_deserialize_sc8x8)
 			{
-				using mmt_type = mmt<unsigned char, char>;
+				using mmt_type = mmt<dim_type, value_type>;
 				//////////////////////////////
 				// Build Dummy Data
-				value_type data[DATA_LENGTH_2D_DUMMY];
+				value_type data[dataLength];
 				mmt_type myMMT(dims, chunkDims, maxLevel);
 				bstream bs;
 
-				getDummy(data, DATA_LENGTH_2D_DUMMY);
+				getDummy(data, dataLength);
 				//////////////////////////////
 
-				myMMT.build(data, DATA_LENGTH_2D_DUMMY);
+				myMMT.build(data, dataLength);
 				myMMT.serialize(bs);
 
 				mmt_type dMmt(dims, chunkDims, maxLevel);

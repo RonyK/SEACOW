@@ -70,6 +70,55 @@ namespace msdb
 				}
 			}
 
+			std::vector<pArray> getSourceArray()
+			{
+				// Get Dummy data
+				value_type data[dataLength];
+				getDummy(data, dataLength);
+
+				// Build Array
+				dimensionDescs dimDescs;
+				dimDescs.push_back(std::make_shared<dimensionDesc>(0, "X", 0, dims[1], chunkDims[1]));
+				dimDescs.push_back(std::make_shared<dimensionDesc>(0, "Y", 0, dims[0], chunkDims[0]));
+
+				attributeDescs attrDescs;
+				attrDescs.push_back(std::make_shared<attributeDesc>(0, "ATTR_1", eleType::CHAR));		// SIGNED CHAR
+
+				pArrayDesc arrDesc = std::make_shared<arrayDesc>(0, "data2D_sc4x4", dimDescs, attrDescs);
+				pArray sourceArr = std::make_shared<arrayBase>(arrDesc);
+
+				// Build Chunk
+				auto a = chunkDims.data();
+				auto s = chunkDims.size();
+				dimension dimChunk(s, a);
+				for (int y = 0; y < dims[1] / chunkDims[0]; y++)
+				{
+					for (int x = 0; x < dims[0] / chunkDims[1]; x++)
+					{
+						coor sP = { y * chunkDims[0], x * chunkDims[1] };
+						coor eP = { sP[0] + chunkDims[0], sP[1] + chunkDims[1] };
+
+						pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dimChunk, sP, eP);
+						pChunk sourceChunk = std::make_shared<chunk>(cDesc);
+						sourceChunk->materialize();
+
+						// Insert data into chunk
+						auto it = sourceChunk->getItemIterator();
+						for (int iy = 0; iy < chunkDims[0]; iy++)
+						{
+							for (int ix = 0; ix < chunkDims[1]; ix++)
+							{
+								(*it).setChar(data[(y * chunkDims[0] + iy) * dimX + (x * chunkDims[1] + ix)]);
+							}
+						}
+						sourceArr->insertChunk(sourceChunk);
+					}
+				}
+
+				// Build source array
+				std::vector<pArray> arrs = { sourceArr };
+				return arrs;
+			}
 		}
 
 		namespace data2D_sc8x8
@@ -140,6 +189,54 @@ namespace msdb
 				{
 					output[i] = arr[i];
 				}
+			}
+
+			std::vector<pArray> getSourceArray()
+			{
+				// Get Dummy data
+				value_type data[dataLength];
+				getDummy(data, dataLength);
+
+				// Build Array
+				dimensionDescs dimDescs;
+				dimDescs.push_back(std::make_shared<dimensionDesc>(0, "X", 0, dims[1], chunkDims[1]));
+				dimDescs.push_back(std::make_shared<dimensionDesc>(0, "Y", 0, dims[0], chunkDims[0]));
+
+				attributeDescs attrDescs;
+				attrDescs.push_back(std::make_shared<attributeDesc>(0, "ATTR_1", eleType::CHAR));		// SIGNED CHAR
+
+				pArrayDesc arrDesc = std::make_shared<arrayDesc>(0, "data2D_sc8x8", dimDescs, attrDescs);
+				pArray sourceArr = std::make_shared<arrayBase>(arrDesc);
+				
+				// Build Chunk
+				dimension chunkDims = chunkDims;
+				for(int y = 0; y < dims[1] / chunkDims[0]; y++)
+				{
+					for(int x = 0; x < dims[0] / chunkDims[1]; x++)
+					{
+						coor sP = { y * chunkDims[0], x * chunkDims[1] };
+						coor eP = { sP[0] + chunkDims[0], sP[1] + chunkDims[1] };
+
+						pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], chunkDims, sP, eP);
+						pChunk sourceChunk = std::make_shared<chunk>(cDesc);
+						sourceChunk->materialize();
+						
+						// Insert data into chunk
+						auto it = sourceChunk->getItemIterator();
+						for(int iy = 0; iy < chunkDims[0]; iy++)
+						{
+							for(int ix = 0; ix < chunkDims[1]; ix++)
+							{
+								(*it).setChar(data[(y * chunkDims[0] + iy) * dimX + (x * chunkDims[1] + ix)]);
+							}
+						}
+						sourceArr->insertChunk(sourceChunk);
+					}
+				}
+
+				// Build source array
+				std::vector<pArray> arrs = { sourceArr };
+				return arrs;
 			}
 
 			void getExDummy(value_type* output, size_t length)

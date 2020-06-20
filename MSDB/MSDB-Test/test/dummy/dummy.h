@@ -3,17 +3,17 @@
 #define _MSDB_DUMMY_H_
 
 #include <pch.h>
+#include <array/array.h>
 #include <vector>
-
 
 namespace msdb
 {
 	namespace caDummy
 	{
+		using dim_type = position_t;
 		// signed char
 		namespace data2D_sc4x4
 		{
-			using dim_type = unsigned char;
 			using value_type = char;
 
 			static const size_t dataLength = 16;
@@ -28,13 +28,12 @@ namespace msdb
 			void getDummy(value_type* output, size_t length);
 			void getWTDummy(value_type* output, size_t length);
 			void getExDummy(value_type* output, size_t length);
-#undef dummyDataLength
+			std::vector<pArray> getSourceArray();
 		}
 
 		// signed char
 		namespace data2D_sc8x8
 		{
-			using dim_type = unsigned char;
 			using value_type = char;
 
 			static const size_t dataLength = 64;
@@ -51,13 +50,12 @@ namespace msdb
 			void getWTDummy(value_type* output, size_t length);
 			void getExDummy(value_type* output, size_t length);
 			void getExMMT(value_type* output, size_t length);
+			std::vector<pArray> getSourceArray();
 		}
 
 		// signed integer
 		namespace data2D_si8x8
 		{
-#define dummyDataLength 64
-			using dim_type = unsigned int;
 			using value_type = int;
 
 			static const size_t dataLength = 64;
