@@ -5,7 +5,7 @@ namespace msdb
 {
 namespace caDummy
 {
-void getWaveletEncode(pArrayDesc sourceArrDesc, eleDefault level, std::shared_ptr<wavelet_encode_plan> plan, std::shared_ptr<wavelet_encode_action> action, pQuery qry)
+void getWaveletEncode(pArrayDesc sourceArrDesc, eleDefault level, std::shared_ptr<wavelet_encode_plan>& plan, std::shared_ptr<wavelet_encode_action>& action, pQuery& qry)
 {
 	pQuery weQuery_ = std::make_shared<query>();
 	auto wePlan_ = std::make_shared<wavelet_encode_plan>();
@@ -18,6 +18,7 @@ void getWaveletEncode(pArrayDesc sourceArrDesc, eleDefault level, std::shared_pt
 
 	wePlan_->setParamSet(pSet);
 	weAction_->setArrayDesc(wePlan_->inferSchema());
+	weAction_->setParams(params);
 
 	plan = wePlan_;
 	action = weAction_;

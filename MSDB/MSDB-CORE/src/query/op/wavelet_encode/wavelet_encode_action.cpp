@@ -99,9 +99,12 @@ std::list<pChunk> wavelet_encode_action::waveletLevelEncode(pChunk wChunk, pWave
 			case eleType::DOUBLE:
 				newChunkBands = waveletTransform<double>(chunkBands, w, d, q);
 				break;
+			case eleType::CHAR:
+				newChunkBands = waveletTransform<char>(chunkBands, w, d, q);
+				break;
+			default:
+				_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 			}
-
-			//std::list<pChunk> newChunkBands = this->waveletTransform(chunkBands, w, q);
 
 			levelChunks.insert(
 				levelChunks.end(), newChunkBands.begin(), newChunkBands.end());

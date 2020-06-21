@@ -166,9 +166,32 @@ namespace data2D_sc4x4
 {
 TEST(wavelet_encode_action, waveletHaarSimple_sc4x4)
 {
-
 	std::vector<pArray> sourceArr = getSourceArray();
 	
+	//////////////////////////////
+	// source array value test
+	//auto aDesc = sourceArr[0]->getDesc();
+	//for(int y = 0; y < aDesc->dimDescs_[0]->getChunkNum(); y++)
+	//{
+	//	for(int x = 0; x < aDesc->dimDescs_[1]->getChunkNum(); x++)
+	//	{
+	//		size_t cId = x + y * aDesc->dimDescs_[1]->getChunkNum();
+	//		std::cout << "chunk " << cId << " (" << x << ", " << y << ")" << std::endl;
+	//		auto it = sourceArr[0]->getChunk(cId)->getItemIterator();
+	//		
+	//		for(int iy = 0; iy < aDesc->dimDescs_[0]->chunkSize_; iy++)
+	//		{
+	//			for (int ix = 0; ix < aDesc->dimDescs_[1]->chunkSize_; ix++)
+	//			{
+	//				std::cout << static_cast<int>((*it).getChar()) << ", ";
+	//				++it;
+	//			}
+	//			std::cout << std::endl;
+	//		}
+	//	}
+	//}
+	//std::cout << "=====" << std::endl;
+
 	eleDefault level = 0;
 	std::shared_ptr<wavelet_encode_plan> wePlan;
 	std::shared_ptr<wavelet_encode_action> weAction;
@@ -191,14 +214,13 @@ TEST(wavelet_encode_action, waveletHaarSimple_sc4x4)
 		}
 		for (size_t j = 0; j < it.getCapacity(); ++j, ++i)
 		{
-			std::cout << (*it).getDouble() << " <> " << expected[i] << std::endl;
-			EXPECT_EQ(ROUNDING((*it).getDouble(), 6), ROUNDING(expected[i], 6));
+			std::cout << static_cast<int>((*it).getChar()) << " <> " << static_cast<int>(expected[i]) << std::endl;
+			EXPECT_EQ(ROUNDING((*it).getChar(), 6), ROUNDING(expected[i], 6));
 			++it;
 		}
 		++cId;
 	}
 }
-
-}
-}
-}
+}	// data2D_sc4x4
+}	// caDummy
+}	// msdb
