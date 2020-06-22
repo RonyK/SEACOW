@@ -29,6 +29,24 @@ namespace msdb
 				}
 			}
 
+			void getChunkDummy(value_type* output, size_t length)
+			{
+				const static value_type arr[][4] = {
+					{9,7,5,3},
+					{6,2,4,4},
+					{8,2,6,0},
+					{4,0,2,2}
+				};
+
+				for (int y = 0; y < 4; y++)
+				{
+					for (int x = 0; x < 4; x++)
+					{
+						output[y * 4 + x] = arr[y][x];
+					}
+				}
+			}
+
 			void getWTDummy(value_type* output, size_t length)
 			{
 				assert(length >= 4 * 4);
@@ -38,6 +56,30 @@ namespace msdb
 					{ {1, 1}, {3, 1}},
 					{ {2, 0}, {1, 0}},
 					{ {0, 1}, {0, 1}}
+				};
+
+				// In multi-dimensional fashion
+				//{
+				//	{6, 4, 1, 1 },
+				//	{4, 2, 3, 1 },
+				//	{2, 0, 0, 1 },
+				//	{1, 0, 0, 1 }
+				//};
+
+				const value_type* seqArr = (value_type*)arr;
+
+				for (int i = 0; i < 4 * 4; i++)
+				{
+					output[i] = seqArr[i];
+				}
+			}
+
+			void getWTChunkDummy(value_type* output, size_t length)
+			{
+				assert(length >= 4 * 4);
+				// Wavelet represent array as a band-wise fashion
+				const static value_type arr[dataLength] = {
+					6, 1, 2, 0, 4, 1, 0, 1, 4, 3, 1, 0, 2, 1, 0, 1
 				};
 
 				// In multi-dimensional fashion

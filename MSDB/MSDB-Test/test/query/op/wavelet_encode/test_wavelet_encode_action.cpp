@@ -167,30 +167,6 @@ namespace data2D_sc4x4
 TEST(wavelet_encode_action, waveletHaarSimple_sc4x4)
 {
 	std::vector<pArray> sourceArr = getSourceArray();
-	
-	//////////////////////////////
-	// source array value test
-	//auto aDesc = sourceArr[0]->getDesc();
-	//for(int y = 0; y < aDesc->dimDescs_[0]->getChunkNum(); y++)
-	//{
-	//	for(int x = 0; x < aDesc->dimDescs_[1]->getChunkNum(); x++)
-	//	{
-	//		size_t cId = x + y * aDesc->dimDescs_[1]->getChunkNum();
-	//		std::cout << "chunk " << cId << " (" << x << ", " << y << ")" << std::endl;
-	//		auto it = sourceArr[0]->getChunk(cId)->getItemIterator();
-	//		
-	//		for(int iy = 0; iy < aDesc->dimDescs_[0]->chunkSize_; iy++)
-	//		{
-	//			for (int ix = 0; ix < aDesc->dimDescs_[1]->chunkSize_; ix++)
-	//			{
-	//				std::cout << static_cast<int>((*it).getChar()) << ", ";
-	//				++it;
-	//			}
-	//			std::cout << std::endl;
-	//		}
-	//	}
-	//}
-	//std::cout << "=====" << std::endl;
 
 	eleDefault level = 0;
 	std::shared_ptr<wavelet_encode_plan> wePlan;
@@ -202,23 +178,57 @@ TEST(wavelet_encode_action, waveletHaarSimple_sc4x4)
 
 	//////////////////////////////
 	// Check Encoded Result
-	value_type expected[dataLength] = { 0 };
-	getWTDummy(expected, dataLength);
-	size_t cId = 0;
-	for (size_t i = 0; i < sizeof(dataLength) / sizeof(double); )
 	{
-		auto it = weArray->getChunk(cId)->getItemIterator();
-		if (it.getCapacity() == 0)
+		std::cout << "##############################" << std::endl;
+		std::cout << "Check Encoded Result" << std::endl;
+		value_type expected[dataLength] = { 0 };
+		getWTChunkDummy(expected, dataLength);
+		size_t cId = 0;
+		for (size_t i = 0; i < dataLength; )
 		{
-			throw std::exception();
+			auto it = weArray->getChunk(cId)->getItemIterator();
+			if (it.getCapacity() == 0)
+			{
+				throw std::exception();
+			}
+			for (size_t j = 0; j < it.getCapacity(); ++j, ++i, ++it)
+			{
+				std::cout << static_cast<int>((*it).getChar()) << " <> " << static_cast<int>(expected[i]) << std::endl;
+				EXPECT_EQ(ROUNDING((*it).getChar(), 6), ROUNDING(expected[i], 6));
+			}
+			++cId;
 		}
-		for (size_t j = 0; j < it.getCapacity(); ++j, ++i)
+	}
+
+	//////////////////////////////
+	// Decoding
+	std::shared_ptr<wavelet_decode_plan> wdPlan;
+	std::shared_ptr<wavelet_decode_action> wdAction;
+	pQuery wdQuery;
+	getWaveletDecode(weArray->getDesc(), level, wdPlan, wdAction, wdQuery);
+
+	auto wdArray = wdAction->execute(std::vector({ weArray }), wdQuery);
+
+	////////////////////////////
+	// Check Decoded Result
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "Check Decoded Result" << std::endl;
+		value_type deExpected[dataLength] = { 0 };
+		getChunkDummy(deExpected, dataLength);
+		size_t cId = 0;
+		for(size_t i = 0; i < dataLength;)
 		{
-			std::cout << static_cast<int>((*it).getChar()) << " <> " << static_cast<int>(expected[i]) << std::endl;
-			EXPECT_EQ(ROUNDING((*it).getChar(), 6), ROUNDING(expected[i], 6));
-			++it;
+			auto it = wdArray->getChunk(cId)->getItemIterator();
+			assert(it.getCapacity() == chunkDims[0] * chunkDims[1]);
+
+			for(size_t j = 0; j < it.getCapacity(); ++j, ++i, ++it)
+			{
+				std::cout << static_cast<int>((*it).getChar()) << " <> " << static_cast<int>(deExpected[i]) << std::endl;
+				EXPECT_EQ(ROUNDING((*it).getChar(), 6), ROUNDING(deExpected[i], 6));
+			}
+			++cId;
 		}
-		++cId;
 	}
 }
 }	// data2D_sc4x4

@@ -34,6 +34,20 @@ public:
 	void setId(chunkId id);
 	const pChunkDesc getDesc() const;
 	size_type numCells();
+
+	void print();
+
+	template <class Ty_>
+	void printImp()
+	{
+		auto it = this->getItemIterator();
+		std::cout << "==============================" << std::endl;
+		for (size_t i = 0; i < it.getCapacity() && !it.end(); ++i, ++it)
+		{
+			std::cout << static_cast<double>((*it).get<Ty_>()) << ", ";
+		}
+		std::cout << std::endl << "==============================" << std::endl;
+	}
 	
 protected:
 	void free();

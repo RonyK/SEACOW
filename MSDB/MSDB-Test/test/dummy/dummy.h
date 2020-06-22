@@ -26,7 +26,9 @@ namespace msdb
 			extern std::vector<dim_type> chunkNums;
 
 			void getDummy(value_type* output, size_t length);
+			void getChunkDummy(value_type* output, size_t length);
 			void getWTDummy(value_type* output, size_t length);
+			void getWTChunkDummy(value_type* output, size_t length);
 			void getExDummy(value_type* output, size_t length);
 			std::vector<pArray> getSourceArray();
 		}

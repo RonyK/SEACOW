@@ -3,7 +3,7 @@
 namespace msdb
 {
 wavelet_encode_array::wavelet_encode_array(pArrayDesc desc, const size_t maxLevel)
-	: arrayBase(desc)
+	: base_type(desc)
 {
 	this->maxLevel_ = this->isMaxLevelAvailable(maxLevel);
 	for(pDimensionDesc desc : this->desc_->dimDescs_)

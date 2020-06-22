@@ -37,10 +37,17 @@ pArray wavelet_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 
 	for(chunkId id = 0; id < cSize; id++)
 	{
+		auto cChunk = (*cItr);
 		// --------------------
 		// TODO::PARALLEL
 		auto convertedChunkList = this->chunkEncode(wArray, (*cItr), w, maxLevel, q);
 		// --------------------
+		//for(auto c : convertedChunkList)
+		//{
+		//	c->print();
+		//}
+		//std::cout << "-----" << std::endl;
+
 		wArray->insertChunk(convertedChunkList.begin(), convertedChunkList.end());
 		
 		++cItr;
@@ -63,7 +70,7 @@ std::list<pChunk> wavelet_encode_action::chunkEncode(pArray wArray, pChunk sourc
 	}
 
 	// Set new chunk ID
-	chunkId newId = sourceChunk->getId() * pow(pow(2, maxLevel), wArray->getDesc()->dimDescs_.size());
+	chunkId newId = sourceChunk->getId() * pow(pow(2, maxLevel + 1), wArray->getDesc()->dimDescs_.size());
 	chunkId band = 0;
 	for (auto c : chunks)
 	{

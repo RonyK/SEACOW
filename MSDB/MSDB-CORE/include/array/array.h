@@ -99,7 +99,7 @@ public:
 
 protected:
 	pArrayDesc desc_;
-	chunkContainer chunks_;
+	chunkContainer chunks_;		// TODO::Seperate chunk container by attributeId
 };
 
 class chunkIterator : public coorItr
