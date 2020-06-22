@@ -1,4 +1,5 @@
 #include <array/chunk.h>
+#include <array/memChunkBuffer.h>
 
 namespace msdb
 {
@@ -54,11 +55,11 @@ bool chunk::isMaterialized() const
 }
 chunkItemIterator chunk::getItemIterator()
 {
-	return chunkItemIterator(this->cached_->getData(),
-							 this->desc_->attrDesc_->type_,
-							 this->desc_->dims_.size(),
-							 this->desc_->dims_.data(),
-							 this->desc_->sp_.data());
+	return memChunkItemIterator(this->cached_->getData(),
+								this->desc_->attrDesc_->type_,
+								this->desc_->dims_.size(),
+								this->desc_->dims_.data(),
+								this->desc_->sp_.data());
 }
 chunkId chunk::getId() const
 {
@@ -124,7 +125,7 @@ void chunk::free()
 }
 void chunk::makeBuffer()
 {
-	this->cached_ = new chunkBuffer();
+	this->cached_ = new memChunkBuffer();
 }
 chunkItemIterator::chunkItemIterator(void* data, eleType eType, const size_type dSize, position_t* dims, dim_pointer csP)
 	: itemItr(data, eType, dSize, dims)

@@ -1,7 +1,7 @@
 #include <pch.h>
 #include <array/chunk.h>
 #include <array/chunkBuffer.h>
-#include <array/memChunk.h>
+#include <array/memChunkBuffer.h>
 
 namespace msdb
 {

@@ -1,4 +1,4 @@
-#include <array/memChunk.h>
+#include <array/memChunkBuffer.h>
 #include <system/exceptions.h>
 #include <cassert>
 

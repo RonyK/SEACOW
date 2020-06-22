@@ -43,16 +43,8 @@ pArray wavelet_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 		{
 			pChunk pc = source->getChunk(id + iid);
 			chunkBundle.push_back(pc);
-			//try
-			//{
-
-			//} catch (std::out_of_range)
-			//{
-			//	std::cout << "has no chunk id: " << id << std::endl;
-			//}
 		}
 
-		
 		switch(chunkBundle.front()->getDesc()->attrDesc_->type_)
 		{
 		case eleType::INT32:

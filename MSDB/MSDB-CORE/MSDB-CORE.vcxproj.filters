@@ -132,9 +132,6 @@
     <ClInclude Include="include\compression\compression.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="include\array\memChunk.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="include\util\element.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -169,6 +166,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_array.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\array\memChunkBuffer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -239,9 +239,6 @@
     <ClCompile Include="src\array\chunk.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="src\array\memChunk.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="src\util\element.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -282,6 +279,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_array.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\array\memChunkBuffer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
