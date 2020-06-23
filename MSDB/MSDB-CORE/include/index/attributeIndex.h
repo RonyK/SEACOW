@@ -9,9 +9,18 @@ namespace msdb
 class attributeIndex;
 using pAttributeIndex = std::shared_ptr<attributeIndex>;
 
+enum class attributeIndexType
+{
+	MMT
+};
+
 class attributeIndex
 {
+public:
+	attributeIndex();
 
+public:
+	attributeIndexType aiType_;
 };
 }
 

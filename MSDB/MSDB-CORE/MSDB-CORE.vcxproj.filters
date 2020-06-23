@@ -183,13 +183,13 @@
     <ClInclude Include="include\compression\mmt_old.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="include\compression\mmt.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="include\index\attributeIndex.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="include\index\dimensionIndex.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\index\mmt.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -314,10 +314,13 @@
     <ClCompile Include="src\compression\mmt_old.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="src\compression\mmt.cpp">
+    <ClCompile Include="src\array\arrayMgr.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="src\array\arrayMgr.cpp">
+    <ClCompile Include="src\index\mmt.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\index\attributeIndex.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

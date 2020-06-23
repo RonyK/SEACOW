@@ -40,6 +40,11 @@ pChunk arrayBase::getChunk(chunkId cId)
 	return this->chunks_[cId];
 }
 
+arrayId arrayBase::getArrayId()
+{
+	return this->desc_->id_;
+}
+
 chunkId arrayBase::getChunkId(pChunkDesc cDesc)
 {
 	return this->getChunkIdFromItemCoor(cDesc->sp_);

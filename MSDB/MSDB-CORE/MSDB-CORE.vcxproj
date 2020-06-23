@@ -167,7 +167,7 @@
     <ClInclude Include="include\array\memChunkBuffer.h" />
     <ClInclude Include="include\array\mmtArray.h" />
     <ClInclude Include="include\compression\compression.h" />
-    <ClInclude Include="include\compression\mmt.h" />
+    <ClInclude Include="include\index\mmt.h" />
     <ClInclude Include="include\index\attributeIndex.h" />
     <ClInclude Include="include\index\dimensionIndex.h" />
     <ClInclude Include="include\io\bitstream.h">
@@ -192,9 +192,13 @@
     <ClInclude Include="include\util\singleton.h" />
     <ClInclude Include="include\util\stringUtil.h" />
     <ClInclude Include="include\util\waveletIterator.h" />
-    <ClInclude Include="include\compression\compact.h" />
+    <ClInclude Include="include\compression\compact.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="include\compression\haar.h" />
-    <ClInclude Include="include\compression\mmt_old.h" />
+    <ClInclude Include="include\compression\mmt_old.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="include\compression\wavelet.h" />
     <ClInclude Include="include\xml\tinyxml2.h" />
     <ClInclude Include="src\query\op\mmt_encode\mmt_encode_action.h" />
@@ -209,9 +213,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.cpp" />
+    <ClCompile Include="src\index\attributeIndex.cpp" />
     <ClCompile Include="src\array\arrayMgr.cpp" />
     <ClCompile Include="src\array\attributeDesc.cpp" />
-    <ClCompile Include="src\compression\mmt.cpp" />
+    <ClCompile Include="src\index\mmt.cpp" />
     <ClCompile Include="src\query\op\mmt_encode\mmt_encode_action.cpp" />
     <ClCompile Include="src\query\op\mmt_encode\mmt_encode_array.cpp" />
     <ClCompile Include="src\query\op\mmt_encode\mmt_encode_plan.cpp" />
@@ -248,10 +253,14 @@
     <ClCompile Include="src\system\exceptions.cpp" />
     <ClCompile Include="src\system\storageMgr.cpp" />
     <ClCompile Include="src\util\singleton.cpp" />
-    <ClCompile Include="src\compression\compact.cpp" />
+    <ClCompile Include="src\compression\compact.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\compression\daubechies.cpp" />
     <ClCompile Include="src\compression\haar.cpp" />
-    <ClCompile Include="src\compression\mmt_old.cpp" />
+    <ClCompile Include="src\compression\mmt_old.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\compression\wavelet.cpp" />
     <ClCompile Include="src\xml\tinyxml2.cpp" />
   </ItemGroup>

@@ -84,9 +84,11 @@ public:
 
 	pChunk getChunk(chunkId cId);
 
+	arrayId getArrayId();
 	chunkId getChunkId(pChunkDesc cDesc);
 	chunkId getChunkIdFromItemCoor(coor& itemCoor);
 	chunkId getChunkIdFromChunkCoor(coor& chunkCoor);
+
 
 	template <class _Iter>
 	void insertChunk(_Iter begin, _Iter end)

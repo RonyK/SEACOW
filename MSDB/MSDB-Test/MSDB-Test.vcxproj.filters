@@ -14,9 +14,6 @@
     <ClCompile Include="test\wavelet\testCompact.cpp">
       <Filter>test</Filter>
     </ClCompile>
-    <ClCompile Include="test\wavelet\testMMT.cpp">
-      <Filter>test\wavelet</Filter>
-    </ClCompile>
     <ClCompile Include="test\wavelet\testWavelet.cpp">
       <Filter>test\wavelet</Filter>
     </ClCompile>
@@ -26,6 +23,9 @@
     <ClCompile Include="test\query\op\wavelet_encode\test_wavelet_encode_action.cpp" />
     <ClCompile Include="test\array\testArray.cpp" />
     <ClCompile Include="test\dummy\opDummy.cpp" />
+    <ClCompile Include="test\wavelet\testMMT_OLD.cpp">
+      <Filter>test\wavelet</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">
