@@ -20,7 +20,7 @@ public:
 	pArray execute(std::vector<pArray>& inputArrays, pQuery q);
 	virtual const char* name() override;
 
-public:
+private:
 	template <class Ty_>
 	pChunk chunkDecode(pArray wArray, std::list<pChunk>& sourceChunks,
 								  pWavelet w, size_t maxLevel, pQuery q)

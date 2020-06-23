@@ -21,9 +21,7 @@ const char* msdb::wavelet_encode_plan::name()
 
 pAction wavelet_encode_plan::getAction()
 {
-	auto weAction = std::make_shared<wavelet_encode_action>();
-
-	return weAction;
+	return std::make_shared<wavelet_encode_action>();
 }
 
 //////////////////////////////

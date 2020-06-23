@@ -1,5 +1,5 @@
 #include <pch.h>
-#include <compression/mmt.h>
+#include <compression/mmt_old.h>
 #include <array/array.h>
 
 namespace msdb
@@ -104,7 +104,7 @@ namespace msdb
 		size_t maxLevel = 2;
 
 		build2DDummy(data, DATA_LENGTH_2D_DUMMY);
-		mmt<unsigned int, int> myMMT(dim, chunkDim, maxLevel);
+		mmt_old<unsigned int, int> myMMT(dim, chunkDim, maxLevel);
 		//////////////////////////////
 
 		myMMT.build(data, DATA_LENGTH_2D_DUMMY);
@@ -153,7 +153,7 @@ namespace msdb
 				//////////////////////////////
 				// Build Dummy Data
 				value_type data[dataLength];
-				mmt<dim_type, value_type> myMMT(dims, chunkDims, maxLevel);
+				mmt_old<dim_type, value_type> myMMT(dims, chunkDims, maxLevel);
 				bstream bs;
 
 				getDummy(data, dataLength);
@@ -176,7 +176,7 @@ namespace msdb
 
 			TEST(caMMT, mmt_deserialize_sc8x8)
 			{
-				using mmt_type = mmt<dim_type, value_type>;
+				using mmt_type = mmt_old<dim_type, value_type>;
 				//////////////////////////////
 				// Build Dummy Data
 				value_type data[dataLength];

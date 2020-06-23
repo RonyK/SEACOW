@@ -105,9 +105,6 @@
     <ClInclude Include="include\compression\haar.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="include\compression\mmt.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="include\compression\wavelet.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -171,6 +168,30 @@
     <ClInclude Include="include\array\memChunkBuffer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="src\query\op\mmt_encode\mmt_encode_action.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\query\op\mmt_encode\mmt_encode_plan.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\query\op\mmt_encode\mmt_encode_array.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\array\mmtArray.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\compression\mmt_old.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\compression\mmt.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\index\attributeIndex.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\index\dimensionIndex.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">
@@ -210,9 +231,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\compression\haar.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\compression\mmt.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\compression\wavelet.cpp">
@@ -282,6 +300,24 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\array\memChunkBuffer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\op\mmt_encode\mmt_encode_action.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\op\mmt_encode\mmt_encode_plan.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\op\mmt_encode\mmt_encode_array.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\compression\mmt_old.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\compression\mmt.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\array\arrayMgr.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

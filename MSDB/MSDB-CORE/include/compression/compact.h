@@ -4,7 +4,7 @@
 
 #include <array/array.h>
 #include <io/bitstream.h>
-#include <compression/mmt.h>
+#include <compression/mmt_old.h>
 #include <util/coordinate.h>
 #include <util/waveletIterator.h>
 #include <iostream>
@@ -32,7 +32,7 @@ namespace msdb
 		using value_reference = Ty_&;
 		using value_const_reference = const Ty_&;
 
-		using mmt_type = mmt<Dty_, Ty_>;
+		using mmt_type = mmt_old<Dty_, Ty_>;
 		using mmt_reference = mmt_type&;
 
 

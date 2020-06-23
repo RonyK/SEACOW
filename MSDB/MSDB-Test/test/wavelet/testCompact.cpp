@@ -20,7 +20,7 @@ namespace msdb
 				getExDummy(expected, dataLength);
 				//////////////////////////////
 
-				mmt<dim_type, value_type> mmt(dims, chunkDims, maxLevel);
+				mmt_old<dim_type, value_type> mmt(dims, chunkDims, maxLevel);
 				mmt.build(data, dataLength);
 
 				bstream bs;
