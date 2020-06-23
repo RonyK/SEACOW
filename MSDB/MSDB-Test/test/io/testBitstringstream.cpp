@@ -13,7 +13,7 @@ namespace msdb
 		std::bitset<3> b3 = 0x1;		// 001
 		std::bitset<8> b8 = 0x36;		// 0011 0110
 
-		unsigned char expected[2] = {
+		char expected[2] = {
 			0x36, // 0011 0110
 			0xD2  // 1101 0010
 		};
@@ -23,10 +23,10 @@ namespace msdb
 		//////////////////////////////
 		// Output test				//
 		//////////////////////////////
-		const unsigned char* str = bs.data();
+		const char* str = bs.data();
 		for (int i = 0; i < (bs.size() + 7) / 8; i++)
 		{
-			EXPECT_EQ(static_cast<unsigned char>(str[i]), expected[i]);
+			EXPECT_EQ(static_cast<char>(str[i]), expected[i]);
 		}
 	}
 
@@ -39,7 +39,7 @@ namespace msdb
 		std::bitset<16> b16 = 0x8421;	// 1000 0100 0010 0001;
 		std::bitset<21> b21 = 0x1E1861;	// 1111 0000 1100 0011 0000 1
 
-		unsigned char cExpected[6] = {
+		char cExpected[6] = {
 			0x26,	// 0010 0110 
 			0xD0,	// 1101 0000
 			0x84,	// 1000 0100
@@ -72,7 +72,7 @@ namespace msdb
 		unsigned int i3 = 3;		// (~) 0000 0011
 		unsigned int i175 = 175;	// (~) 1010 1111
 
-		unsigned char expected[8] = {
+		char expected[8] = {
 			0x00, 0x00, 0x00, 0x03, // 0000 0011
 			0x00, 0x00, 0x00, 0xAF  // 1010 1111
 		};
@@ -82,10 +82,10 @@ namespace msdb
 		//////////////////////////////
 		// Output test				//
 		//////////////////////////////
-		const unsigned char* str = bs.data();
+		const char* str = bs.data();
 		for (int i = 0; i < (bs.size() + 7) / 8; i++)
 		{
-			EXPECT_EQ(static_cast<unsigned char>(str[i]), expected[i]);
+			EXPECT_EQ(static_cast<char>(str[i]), expected[i]);
 		}
 	}
 
@@ -97,7 +97,7 @@ namespace msdb
 		unsigned int i3 = 3;		// (~) 0000 0011
 		unsigned int i175 = 175;	// (~) 1010 1111
 
-		unsigned char expected[9] = {
+		char expected[9] = {
 			0x20, 0x00, 0x00, 0x00, // 0010 0000
 			0x60, 0x00, 0x00, 0x15, // 0110 0000 (~) 0001 0101
 			0xE0 // 111_
@@ -108,10 +108,10 @@ namespace msdb
 		//////////////////////////////
 		// Output test				//
 		//////////////////////////////
-		const unsigned char* str = bs.data();
+		const char* str = bs.data();
 		for (int i = 0; i < (bs.size() + 7) / 8; i++)
 		{
-			EXPECT_EQ(static_cast<unsigned char>(str[i]), expected[i]);
+			EXPECT_EQ(static_cast<char>(str[i]), expected[i]);
 		}
 	}
 
@@ -125,7 +125,7 @@ namespace msdb
 		std::bitset<7> b7 = 0x01;		//  000 0001
 		std::bitset<8> b8 = 0x36;		// 0011 0110
 
-		unsigned char expected[3] = {
+		char expected[3] = {
 			0x08,	// 0000 1000
 			0x43,	// 0100 0011
 			0x36	// 0011 0110
@@ -136,10 +136,10 @@ namespace msdb
 		//////////////////////////////
 		// Output test				//
 		//////////////////////////////
-		const unsigned char* str = bs.data();
+		const char* str = bs.data();
 		for (int i = 0; i < (bs.size() + 7) / 8; i++)
 		{
-			EXPECT_EQ(static_cast<unsigned char>(str[i]), expected[i]);
+			EXPECT_EQ(static_cast<char>(str[i]), expected[i]);
 		}
 	}
 
@@ -152,7 +152,7 @@ namespace msdb
 		std::bitset<3> b3 = 0x1;		// 001
 		std::bitset<8> b8 = 0x36;		// 0011 0110
 
-		unsigned char expected[2] = {
+		char expected[2] = {
 			0x36, // 0011 0110
 			0xD2  // 1101 0010
 		};
@@ -163,14 +163,14 @@ namespace msdb
 		// Output test				//
 		//////////////////////////////
 		std::cout << "output" << std::endl;
-		const unsigned char* str = bs.data();
+		const char* str = bs.data();
 		for (int i = 0; i < (bs.size() + 7) / 8; i++)
 		{
 
-			EXPECT_EQ(static_cast<unsigned char>(str[i]), expected[i]);
+			EXPECT_EQ(static_cast<char>(str[i]), expected[i]);
 		}
 
-		unsigned char result[2];
+		char result[2];
 		bs >> result[0] >> result[1];
 
 		std::cout << "input" << std::endl;

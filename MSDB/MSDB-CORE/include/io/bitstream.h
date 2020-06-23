@@ -154,6 +154,27 @@ namespace msdb
 			return length - remain;
 		}
 
+		// Return total number of used bits
+		_NODISCARD size_type size() const noexcept
+		{
+			if (this->bitPos)
+			{
+				return (this->_container->size() - 1) * _BlockBits + this->bitPos;
+			}
+			return this->_container->size() * _BlockBits;
+		}
+
+		// Return total number of bits capacity
+		_NODISCARD size_type capacity() const noexcept
+		{
+			return this->_container->size() * _BlockBits;
+		}
+
+		_NODISCARD const _Block* data() const noexcept
+		{
+			return this->_container->data();
+		}
+
 	protected:
 		/*
 		* Here is an example of a bitstream with 4 bits block.
@@ -303,6 +324,17 @@ namespace msdb
 			return false;
 		}
 
+		// Return total number of bits capacity
+		_NODISCARD size_type capacity() const noexcept
+		{
+			return this->_container->size() * _BlockBits;
+		}
+
+		_NODISCARD const _Block* data() const noexcept
+		{
+			return this->_container->data();
+		}
+
 	protected:
 		pos_type get(unsigned char& out, const pos_type length = CHAR_BIT)
 		{
@@ -394,58 +426,25 @@ namespace msdb
 		using int_type = typename _Traits::int_type;
 		using pos_type = typename _Traits::pos_type;
 
-		vector_iobitstream(container_type* myContainer)
-			: _myIs(myContainer), _myOs(myContainer)
+		vector_iobitstream()
+			: _myIs(_STD addressof(this->_concreateContainer)), _myOs(_STD addressof(this->_concreateContainer))
 		{
 		}
-	};
-
-	template <class _Block, class _Traits, size_t _BlockBytes = sizeof(_Block), size_t _BlockBits = sizeof(_Block)* CHAR_BIT>
-	class vector_bitstringstream : public vector_iobitstream<_Block, _Traits>
-	{
-	public:
-		using _myBase = vector_iobitstream<_Block, _Traits>;
-
-		using container_type = std::vector<_Block>;
-		using block_bitset_type = std::bitset<sizeof(_Block) * CHAR_BIT>;
-		using size_type = size_t;
-		using block_type = _Block;
-
-		using traits_type = _Traits;
-		using int_type = typename _Traits::int_type;
-		using pos_type = typename _Traits::pos_type;
 
 	public:
-		vector_bitstringstream()
-			: _myBase(_STD addressof(this->_container))
-		{
-		}
-
-		//: _myBase(_STD addressof(_container)) {}
-
-		// Return total number of used bits
-		_NODISCARD size_type size() const noexcept
-		{
-			if (vector_obitstream<_Block, _Traits>::bitPos)
-			{
-				return (this->_container.size() - 1) * _BlockBits + vector_obitstream<_Block, _Traits>::bitPos;
-			}
-			return this->_container.size() * _BlockBits;
-		}
-
 		// Return total number of bits capacity
 		_NODISCARD size_type capacity() const noexcept
 		{
-			return this->_container.size() * _BlockBits;
+			return this->_concreateContainer.size() * _BlockBits;
 		}
 
 		_NODISCARD const _Block* data() const noexcept
 		{
-			return this->_container.data();
+			return this->_concreateContainer.data();
 		}
 
 	protected:
-		container_type _container;
+		container_type _concreateContainer;
 	};
 
 	// STRUCT TEMPLATE _BitSmanip
@@ -596,7 +595,7 @@ namespace msdb
 	};
 
 	template <>
-	struct _charBlockTraits<unsigned char> : _BlockTraits<unsigned char, unsigned char> {};
+	struct _charBlockTraits<char> : _BlockTraits<char, unsigned char> {};
 
 	template <>
 	struct _charBlockTraits<char16_t> : _BlockTraits<char, unsigned long> {};
@@ -605,9 +604,9 @@ namespace msdb
 	struct _charBlockTraits<char32_t> : _BlockTraits<char, unsigned int> {};
 
 	_MRTIMP2 _BitSmanip<std::streamsize> __cdecl setw(std::streamsize);
-	using bstream = vector_bitstringstream<unsigned char, _charBlockTraits<unsigned char>>;
-	using u16bstream = vector_bitstringstream<char16_t, _charBlockTraits<char16_t>>;
-	using u32bstream = vector_bitstringstream<char32_t, _charBlockTraits<char32_t>>;
+	using bstream = vector_iobitstream<char, _charBlockTraits<char>>;
+	using u16bstream = vector_iobitstream<char16_t, _charBlockTraits<char16_t>>;
+	using u32bstream = vector_iobitstream<char32_t, _charBlockTraits<char32_t>>;
 
 	using pBstream = std::shared_ptr<bstream>;
 
