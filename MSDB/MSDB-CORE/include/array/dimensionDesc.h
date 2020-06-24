@@ -17,6 +17,7 @@ class dimensionDescs : public std::vector<pDimensionDesc>, public std::enable_sh
 {
 public:
 	std::vector<position_t> getDims();
+	std::vector<position_t> getChunkDims();
 };
 
 class dimensionDesc
@@ -33,7 +34,7 @@ public:
 	position_t getLength();
 	size_t getChunkNum();
 
-
+public:
 	dimensionId id_;
 	std::string name_;
 	dimension_type start_;

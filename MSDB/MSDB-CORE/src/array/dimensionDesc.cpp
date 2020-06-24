@@ -32,4 +32,14 @@ std::vector<position_t> dimensionDescs::getDims()
 
 	return dims;
 }
+std::vector<position_t> dimensionDescs::getChunkDims()
+{
+	std::vector<position_t> dims;
+	for (auto it = this->begin(); it != this->end(); it++)
+	{
+		dims.push_back((*it)->chunkSize_);
+	}
+
+	return dims;
 }
+}	// msdb

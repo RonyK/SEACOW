@@ -25,6 +25,10 @@ public:
 	~arrayDesc();
 
 public:
+	dimensionDescs& getDimDescs();
+	attributeDescs& getAttrDescs();
+
+public:
 	arrayId id_;
 	std::string name_;
 

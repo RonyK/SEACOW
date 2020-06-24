@@ -50,7 +50,7 @@ void storageMgr::saveConfigFile(config* cFile)
 	}
 }
 
-void storageMgr::loadAttrIndex(arrayId arrId, attributeId attrId, bstream& bs, pSerializable serialObj)
+void storageMgr::loadAttrIndex(arrayId arrId, attributeId attrId,pSerializable serialObj)
 {
 	filePath fpIndex = this->getArrayIndexPath(arrId) / std::to_string(attrId);
 	std::ifstream fs;
@@ -64,7 +64,7 @@ void storageMgr::loadAttrIndex(arrayId arrId, attributeId attrId, bstream& bs, p
 	fs.close();
 }
 
-void storageMgr::saveAttrIndex(arrayId arrId, attributeId attrId, bstream& bs, pSerializable serialObj)
+void storageMgr::saveAttrIndex(arrayId arrId, attributeId attrId, pSerializable serialObj)
 {
 	filePath fpIndex = this->getArrayIndexPath(arrId) / std::to_string(attrId);
 	std::ofstream fs;

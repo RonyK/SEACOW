@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _MSDB_OP_mmt_save_ACTION_H_
-#define _MSDB_OP_mmt_save_ACTION_H_
+#ifndef _MSDB_OP_MMT_SAVE_ACTION_H_
+#define _MSDB_OP_MMT_SAVE_ACTION_H_
 
 #include <query/opAction.h>
 
@@ -13,11 +13,9 @@ public:
 	virtual ~mmt_save_action();
 
 public:
-	pArray execute(std::vector<pArray>& inputArrays, pQuery qry);
-
 	virtual const char* name() override;
-
+	virtual pArray execute(std::vector<pArray>& inputArrays, pQuery qry);
 };
 }	// msdb
 
-#endif		// _MSDB_OP_mmt_save_ACTION_H_
+#endif		// _MSDB_OP_MMT_SAVE_ACTION_H_

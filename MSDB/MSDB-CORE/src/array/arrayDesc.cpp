@@ -1,21 +1,23 @@
 #include <array/arrayDesc.h>
 
-msdb::arrayDesc::arrayDesc()
+namespace msdb
+{
+arrayDesc::arrayDesc()
 {
 	// TODO::
 }
 
-msdb::arrayDesc::arrayDesc(const arrayId aid, const std::string arrayName,
-						   const dimensionDescs& dimDescs, 
-						   const attributeDescs& attrDescs)
+arrayDesc::arrayDesc(const arrayId aid, const std::string arrayName,
+					 const dimensionDescs& dimDescs,
+					 const attributeDescs& attrDescs)
 	: id_(aid), name_(arrayName), dimDescs_(dimDescs), attrDescs_(attrDescs)
 {
 }
 
-msdb::arrayDesc::arrayDesc(const arrayDesc& mit)
+arrayDesc::arrayDesc(const arrayDesc& mit)
 	: id_(mit.id_), name_(mit.name_)
 {
-	for(size_t i = 0; i < mit.dimDescs_.size(); i++)
+	for (size_t i = 0; i < mit.dimDescs_.size(); i++)
 	{
 		this->dimDescs_.push_back(std::make_shared<dimensionDesc>(*mit.dimDescs_[i]));
 	}
@@ -26,7 +28,19 @@ msdb::arrayDesc::arrayDesc(const arrayDesc& mit)
 	}
 }
 
-msdb::arrayDesc::~arrayDesc()
+arrayDesc::~arrayDesc()
 {
 	// TODO::
 }
+
+dimensionDescs& arrayDesc::getDimDescs()
+{
+	return this->dimDescs_;
+}
+
+attributeDescs& arrayDesc::getAttrDescs()
+{
+	return this->attrDescs_;
+}
+}	// msdb
+

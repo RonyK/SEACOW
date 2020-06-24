@@ -29,8 +29,8 @@ public:
 	config* loadConfigFile(ConfigType type);
 	void saveConfigFile(config* cFile);
 
-	void loadAttrIndex(arrayId arrId, attributeId attrId, bstream& bs, pSerializable serialObj);
-	void saveAttrIndex(arrayId arrId, attributeId attrId, bstream& bs, pSerializable serialObj);
+	void loadAttrIndex(arrayId arrId, attributeId attrId, pSerializable serialObj);
+	void saveAttrIndex(arrayId arrId, attributeId attrId, pSerializable serialObj);
 
 protected:
 	filePath getArrayPath(arrayId arrId);

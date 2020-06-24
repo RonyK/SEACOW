@@ -14,6 +14,11 @@ mmt_save_action::~mmt_save_action()
 {
 }
 
+const char* mmt_save_action::name()
+{
+	return "mmt_save_action";
+}
+
 pArray mmt_save_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 {
 	assert(inputArrays.size() == 1);
@@ -28,21 +33,11 @@ pArray mmt_save_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 		{
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_USER_QUERY_ERROR, MSDB_ER_ATTR_INDEX_TYPE_DIFF));
 		}
-		pMMT mmtIndex = std::static_pointer_cast<MinMaxTree<position_t>>(arrIndex);
+		pMMT mmtIndex = std::static_pointer_cast<mmt>(arrIndex);
 		// dynamic_pointer_cast / C2683
-
-		bstream bs;
-		mmtIndex->serialize(bs);
-
-		storageMgr::instance()->saveAttrIndex(arrId, attr->id_, bs, mmtIndex);
+		storageMgr::instance()->saveAttrIndex(arrId, attr->id_, mmtIndex);
 	}
 
 	return arr;
 }
-
-const char* mmt_save_action::name()
-{
-	return "mmt_save_action";
-}
-
 }

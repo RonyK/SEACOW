@@ -58,20 +58,21 @@ public:
 		mmtNode() : bMax_(0), bMin_(0), bits_(0x80), order_(1), bMaxDelta_(0), bMinDelta_(0) {}
 
 	public:
-		virtual void copyMaxFrom(pNode _right);
-		virtual void copyMinFrom(pNode _right);
+		virtual void copyMaxFrom(pNode _right) = 0;
+		virtual void copyMinFrom(pNode _right) = 0;
 
 		virtual void setMax(const void* max) = 0;
 		virtual void setMax(element& max) = 0;
 		virtual void setMin(const void* min) = 0;
 		virtual void setMin(element& min) = 0;
+		
 		virtual void* getMax() = 0;
 		virtual void* getMin() = 0;
 
-		virtual void setMaxBoundary(sig_bit_type bMax_) = 0;
-		virtual void setMinBoundary(sig_bit_type bMin_) = 0;
-		virtual void getMaxBoundary(pNode prevNode) = 0;
-		virtual void getMinBoundary(pNode prevNode) = 0;
+		virtual void setMaxToLimit(sig_bit_type bMax_) = 0;
+		virtual void setMinToLimit(sig_bit_type bMax_) = 0;
+		virtual void setMaxToLimitFrom(pNode prevNode) = 0;
+		virtual void setMinToLimitFrom(pNode prevNode) = 0;
 
 		virtual void initBits() = 0;
 		virtual void initBMax() = 0;
@@ -99,12 +100,12 @@ public:
 	public:
 		virtual void copyMaxFrom(pNode _right)
 		{
-			this->max = *((Ty_*)_right->getMax());
+			memcpy(&this->max_, _right->getMax(), sizeof(Ty_));
 			this->bMax_ = _right->bMax_;
 		}
 		virtual void copyMinFrom(pNode _right)
 		{
-			this->min_ = *((Ty_*)_right->getMin());
+			memcpy(&this->min_, _right->getMin(), sizeof(Ty_));
 			this->bMin_ = _right->bMin_;
 		}
 
@@ -120,42 +121,42 @@ public:
 
 		virtual void setMax(const void* max)
 		{
-			this->max_ = *reinterpret_cast<Ty_*>(max);
-			this->bMax_ = msb<Ty_>(std::abs(max)) * SIGN(max);
+			memcpy(&this->max_, max, sizeof(Ty_));
+			this->bMax_ = msb<Ty_>(abs_(this->max_)) * SIGN(max);
 		}
 
 		virtual void setMax(element& max)
 		{
 			max.getData(&this->max_);
-			this->bMax_ = msdb<Ty_>(std::abs(this->max_)) * SIGN(max_);
+			this->bMax_ = msb<Ty_>(abs_(this->max_)) * SIGN(max_);
 		}
 
 		virtual void setMin(const void* min)
 		{
-			this->min_ = *reinterpret_cast<Ty_*>(min);
-			this->bMin_ = msb<Ty_>(std::abs(min)) * SIGN(min);
+			memcpy(&this->min_, min, sizeof(Ty_));
+			this->bMin_ = msb<Ty_>(abs_(this->min_)) * SIGN(min);
 		}
 
 		virtual void setMin(element& min)
 		{
 			min.getData(&this->min_);
-			this->bMin_ = msb<Ty_>(std::abs(this->min_)) * SIGN(min_);
+			this->bMin_ = msb<Ty_>(abs_(this->min_)) * SIGN(min_);
 		}
 
-		virtual void getMaxBoundary(sig_bit_type bMax_)
+		virtual void setMaxToLimit(sig_bit_type bMax_)
 		{
 			this->max_ = getMaxBoundary<Ty_>(bMax_);
 		}
-		virtual void getMinBoundary(sig_bit_type bMin_)
+		virtual void setMinToLimit(sig_bit_type bMin_)
 		{
-			this->min_ = getMaxBoundary<Ty_>(bMin_);
+			this->min_ = getMinBoundary<Ty_>(bMin_);
 		}
-		virtual void getMaxBoundary(pNode prevNode)
+		virtual void setMaxToLimitFrom(pNode prevNode)
 		{
 			Ty_ prevMax = *((Ty_*)prevNode->getMax());
 			this->max_ = getMaxBoundary<Ty_>(prevMax, this->order_, this->bMax_);
 		}
-		virtual void getMinBoundary(pNode prevNode)
+		virtual void setMinToLimitFrom(pNode prevNode)
 		{
 			Ty_ prevMin = *((Ty_*)prevNode->getMin());
 			this->min_ = getMinBoundary<Ty_>(prevMin, this->order_, this->bMin_);
@@ -163,18 +164,24 @@ public:
 
 		virtual void inMinMax(bstream& bs)
 		{
-			bs >> setw(TyBits_) >> this->max_ >> this->min_;
+			bs >> setw(sizeof(Ty_) * CHAR_BIT) >> this->max_ >> this->min_;
 			this->bits_ = msb<Ty_>(max_ - min_);
 		}
 
 		virtual void outMinMax(bstream& bs)
 		{
-			bs << setw(TyBits_) << this->max_ << this->min_;
+			bs << setw(sizeof(Ty_) * CHAR_BIT);
+			//bs << (Ty_)this->max_ << this->min_;
+			bs << (Ty_)this->max_;
+			bs << (Ty_)this->min_;
 		}
 
 		virtual void inDelta(bstream& bs)
 		{
+			// TODO::
 			bs >> setw(this->bits_) >> this->bMaxDelta_ >> this->bMinDelta_;
+			//bs >> setw(this->bits_);
+			//bs + setw(1)
 		}
 
 		virtual void initBits()
@@ -183,11 +190,11 @@ public:
 		}
 		virtual void initBMax()
 		{
-			this->bMax_ = msb<Ty_>(std::abs(this->max_), this->order_) * SIGN(this->max_);
+			this->bMax_ = msb<Ty_>(abs_(this->max_), this->order_) * SIGN(this->max_);
 		}
 		virtual void initBMin()
 		{
-			this->bMin_ = msb<Ty_>(std::abs(this->min_), this->order_) * SIGN(this->min_);
+			this->bMin_ = msb<Ty_>(abs_(this->min_), this->order_) * SIGN(this->min_);
 		}
 
 		virtual char compareMax(pNode right)
@@ -263,6 +270,9 @@ public:
 		return (this->*makeNodeFunc)();
 	}
 
+	//////////////////////////////
+	// MMT Constructor			//
+	//////////////////////////////
 public:
 	MinMaxTree(eleType eType, dim_vector_reference dim, dim_vector_reference chunkDim, size_const maxLevel = 0)
 		: dim_(dim), dSize_(dim.size()), leafChunkDim_(chunkDim), maxLevel_(maxLevel), serializedSize_(0),
@@ -536,7 +546,7 @@ protected:
 
 			pNode prevNode = (*pcit);
 			bool sameOrder = (bool)(prevNode->bMax_ - prevNode->bMin_);	// if bMax_ == bMin_, move on to the next most significant bit
-			bit_cnt_type bits = sameOrder ? msb<sig_bit_type>(prevNode->bMax_ - prevNode->bMin_) : msb<sig_bit_type>(std::abs(prevNode->bMax_) - 1);
+			bit_cnt_type bits = sameOrder ? msb<sig_bit_type>(prevNode->bMax_ - prevNode->bMin_) : msb<sig_bit_type>(abs_(prevNode->bMax_) - 1);
 
 			for (size_type cID = 0; cID < siblings; cID++)
 			{
@@ -573,8 +583,8 @@ protected:
 						//cNode->bMax_ = msb<Ty_>(std::abs(cNode->max), cNode->order_) * SIGN(cNode->max);
 						//cNode->bMin_ = msb<Ty_>(std::abs(cNode->min), cNode->order_) * SIGN(cNode->min);
 
-						cNode->bMaxDelta_ = std::max(std::abs(prevNode->bMax_ - cNode->bMax_) - 1, 0);
-						cNode->bMinDelta_ = std::max(std::abs(cNode->bMin_ - prevNode->bMin_) - 1, 0);
+						cNode->bMaxDelta_ = std::max(abs_(prevNode->bMax_ - cNode->bMax_) - 1, 0);
+						cNode->bMinDelta_ = std::max(abs_(cNode->bMin_ - prevNode->bMin_) - 1, 0);
 					} else
 					{
 						// The last bit. Has no more next significant bit
@@ -665,7 +675,7 @@ protected:
 			pNode prevNode = (*pcit);
 
 			bool sameOrder = prevNode->bMax_ != prevNode->bMin_;	// if bMax_ == bMin_, move on to the next most significant bit
-			cNode->bits_ = sameOrder ? msb<sig_bit_type>(prevNode->bMax_ - prevNode->bMin_) : msb<sig_bit_type>(std::abs(prevNode->bMax_) - 1);
+			cNode->bits_ = sameOrder ? msb<sig_bit_type>(prevNode->bMax_ - prevNode->bMin_) : msb<sig_bit_type>(abs_(prevNode->bMax_) - 1);
 			cNode->inDelta(bs);
 
 			if (sameOrder)
@@ -676,14 +686,14 @@ protected:
 
 				if (cNode->order_ == 1)
 				{
-					cNode->setMaxBoundary(cNode->bMax_);
-					cNode->setMinBoundary(cNode->bMin_);
+					cNode->setMaxToLimit(cNode->bMax_);
+					cNode->setMinToLimit(cNode->bMin_);
 					//cNode->max = getMaxBoundary<Ty_>(cNode->bMax_);
 					//cNode->min = getMinBoundary<Ty_>(cNode->bMin_);
 				} else
 				{
-					cNode->getMaxBoundary(prevNode);
-					cNode->getMinBoundary(prevNode);
+					cNode->setMaxToLimitFrom(prevNode);
+					cNode->setMinToLimitFrom(prevNode);
 					//cNode->max = getMaxBoundary(prevNode->max, cNode->order_, cNode->bMax_);
 					//cNode->min = getMinBoundary(prevNode->min, cNode->order_, cNode->bMin_);
 				}
@@ -696,8 +706,8 @@ protected:
 					cNode->bMax_ = prevNode->bMax_ - cNode->bMaxDelta_ - 1;
 					cNode->bMin_ = prevNode->bMin_ - cNode->bMinDelta_ - 1;
 
-					cNode->getMaxBoundary(prevNode);
-					cNode->getMinBoundary(prevNode);
+					cNode->setMaxToLimitFrom(prevNode);
+					cNode->setMinToLimitFrom(prevNode);
 					//cNode->max = getMaxBoundary(prevNode->max, cNode->order_, cNode->bMax_);
 					//cNode->min = getMinBoundary(prevNode->min, cNode->order_, cNode->bMin_);
 				} else
@@ -712,16 +722,16 @@ protected:
 			// Fill out min, max values.
 			if (cNode->order_ == 1)
 			{
-				cNode->setMaxBoundary(cNode->bMax_);
-				cNode->setMinBoundary(cNode->bMin_);
+				cNode->setMaxToLimit(cNode->bMax_);
+				cNode->setMinToLimit(cNode->bMin_);
 				//cNode->max = getMaxBoundary<Ty_>(cNode->bMax_);
 				//cNode->min = getMinBoundary<Ty_>(cNode->bMin_);
 			} else
 			{
 				if (cNode->bits_)
 				{
-					cNode->getMaxBoundary(prevNode);
-					cNode->getMinBoundary(prevNode);
+					cNode->setMaxToLimitFrom(prevNode);
+					cNode->setMinToLimitFrom(prevNode);
 					//cNode->max = getMaxBoundary(prevNode->max, cNode->order_, cNode->bMax_);
 					//cNode->min = getMinBoundary(prevNode->min, cNode->order_, cNode->bMin_);
 				}
@@ -769,42 +779,45 @@ private:
 	{
 		switch (eType)
 		{
-		case eleType::BOOL:
-			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<bool>;
-			break;
-		case eleType::CHAR:
-			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<char>;
-			break;
+
+		//case eleType::CHAR:
+		//	this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<char>;
+		//	break;
 		case eleType::INT8:
-			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<int8_t>;
+			this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<int8_t>;
 			break;
 		case eleType::INT16:
-			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<int16_t>;
+			this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<int16_t>;
 			break;
 		case eleType::INT32:
-			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<int32_t>;
+			this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<int32_t>;
 			break;
 		case eleType::INT64:
-			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<int64_t>;
+			this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<int64_t>;
 			break;
 		case eleType::UINT8:
-			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<uint8_t>;
+			this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<uint8_t>;
 			break;
 		case eleType::UINT16:
-			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<uint16_t>;
+			this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<uint16_t>;
 			break;
 		case eleType::UINT32:
-			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<uint32_t>;
+			this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<uint32_t>;
 			break;
 		case eleType::UINT64:
-			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<uint64_t>;
+			this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<uint64_t>;
 			break;
-		case eleType::FLOAT:
-			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<float>;
-			break;
-		case eleType::DOUBLE:
-			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<double>;
-			break;
+
+		// NOT SUPPORTS
+		//case eleType::BOOL:
+		//	this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<bool>;
+		//	break;
+		//case eleType::FLOAT:
+		//	this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<float>;
+		//	break;
+		//case eleType::DOUBLE:
+		//	this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<double>;
+		//	break;
 		}
 	}
 
@@ -865,44 +878,6 @@ public:
 protected:
 	pBstream bs_;
 };
-
-template <typename Ty_>
-bit_cnt_type getPrefixPosForPrevLimit(Ty_ prevLimit, bit_cnt_type order)
-{
-	/*
-	*  Here is an example:
-	*
-	*  Suppose prevLimit (1001 1111), order (3), significantBit (3)
-	*  ┌──┬──┬──┬──┬──┬──┬──┬──┐
-	*  │ 1│ 0│ 0│ 1│ 1│ 1│ 1│ 1│
-	*  └──┴──┴──┴──┴──┴──┴──┴──┘
-	*               ▲      ▲
-	*               pL     sB
-	*  ==================================
-	*  Result:
-	*  ┌──┬──┬──┬──┬──┬──┬──┬──┐
-	*  │ 1│ 0│ 0│ 1│ 0│ 0│ 1│ 1│
-	*  ├──┴──┴──┴──┼──┴──┼──┴──┤
-	*  │prefix_copy│ 0's │ 1's │
-	*  └───────────┴─────┴─────┘
-	*               ▲      ▲
-	*               pL     sB
-	*/
-	assert(order > 0);
-
-	Ty_ absPrevLimit = std::abs(prevLimit);
-	sig_bit_type bits = msb<Ty_>(absPrevLimit);
-	Ty_ mask = (unsigned long long)1 << (bits - 1);
-	size_t prefixPos = bits;
-
-	while (prefixPos > 0 && order > 1)
-	{
-		(absPrevLimit & mask) && --order;
-		--prefixPos;
-		mask >>= 1;
-	}
-	return prefixPos;
-}
 }
 
 #endif		// _MSDB_MMT_H_

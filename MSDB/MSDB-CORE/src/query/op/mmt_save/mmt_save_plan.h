@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _MSDB_OP_ENCODE_PLAN_H_
-#define _MSDB_OP_ENCODE_PLAN_H_
+#ifndef _MSDB_OP_MMT_SAVE_PLAN_H_
+#define _MSDB_OP_MMT_SAVE_PLAN_H_
 
 #include <query/opPlan.h>
 #include <query/opParamSet.h>
@@ -28,4 +28,4 @@ public:
 };
 }	// msdb
 
-#endif		// _MSDB_OP_ENCODE_PLAN_H_
+#endif		// _MSDB_OP_MMT_SAVE_PLAN_H_

@@ -490,34 +490,6 @@ namespace msdb
 	}
 
 	template <class _Block, class _Traits>
-	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const long long _val)
-	{
-		_Ostr.fillLongLong(static_cast<const unsigned long long>(_val), sizeof(int)* CHAR_BIT);
-		return _Ostr;
-	}
-
-	template <class _Block, class _Traits>
-	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const unsigned long long _val)
-	{
-		_Ostr.fillLongLong(_val, sizeof(int) * CHAR_BIT);
-		return _Ostr;
-	}
-
-	template <class _Block, class _Traits>
-	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const int _val)
-	{
-		_Ostr.fillLongLong(static_cast<const unsigned long long>(_val), sizeof(int)* CHAR_BIT);
-		return _Ostr;
-	}
-
-	template <class _Block, class _Traits>
-	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const unsigned int _val)
-	{
-		_Ostr.fillLongLong(static_cast<const unsigned long long>(_val), sizeof(int)* CHAR_BIT);
-		return _Ostr;
-	}
-
-	template <class _Block, class _Traits>
 	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const char _val)
 	{
 		_Ostr.fillChar(static_cast<const unsigned char>(_val), CHAR_BIT);
@@ -525,9 +497,72 @@ namespace msdb
 	}
 
 	template <class _Block, class _Traits>
-	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const unsigned char _val)
+	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const int8_t _val)
+	{
+		_Ostr.fillChar(static_cast<const unsigned char>(_val), CHAR_BIT);
+		return _Ostr;
+	}
+
+	template <class _Block, class _Traits>
+	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const uint8_t _val)
 	{
 		_Ostr.fillChar(_val, CHAR_BIT);
+		return _Ostr;
+	}
+
+	template <class _Block, class _Traits>
+	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const int16_t _val)
+	{
+		_Ostr.fillLongLong(static_cast<const unsigned long long>(_val), sizeof(uint16_t)* CHAR_BIT);
+		return _Ostr;
+	}
+
+	template <class _Block, class _Traits>
+	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const uint16_t _val)
+	{
+		_Ostr.fillLongLong(static_cast<const unsigned long long>(_val), sizeof(uint16_t)* CHAR_BIT);
+		return _Ostr;
+	}
+
+	template <class _Block, class _Traits>
+	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const int32_t _val)
+	{
+		_Ostr.fillLongLong(static_cast<const unsigned long long>(_val), sizeof(int32_t)* CHAR_BIT);
+		return _Ostr;
+	}
+
+	template <class _Block, class _Traits>
+	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const uint32_t _val)
+	{
+		_Ostr.fillLongLong(static_cast<const unsigned long long>(_val), sizeof(uint32_t)* CHAR_BIT);
+		return _Ostr;
+	}
+
+	template <class _Block, class _Traits>
+	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const int64_t _val)
+	{
+		_Ostr.fillLongLong(static_cast<const unsigned long long>(_val), sizeof(int64_t) * CHAR_BIT);
+		return _Ostr;
+	}
+
+	template <class _Block, class _Traits>
+	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const uint64_t _val)
+	{
+		_Ostr.fillLongLong(_val, sizeof(int) * CHAR_BIT);
+		return _Ostr;
+	}
+
+	template <class _Block, class _Traits>
+	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const double _val)
+	{
+		_Ostr.fillLongLong(static_cast<const unsigned long long>(_val), sizeof(double)* CHAR_BIT);
+		return _Ostr;
+	}
+
+	template <class _Block, class _Traits>
+	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const float _val)
+	{
+		_Ostr.fillLongLong(static_cast<const unsigned long long>(_val), sizeof(float) * CHAR_BIT);
 		return _Ostr;
 	}
 
@@ -547,14 +582,80 @@ namespace msdb
 	}
 
 	template <class _Block, class _Traits>
-	vector_ibitstream<_Block, _Traits>& operator>>(vector_ibitstream<_Block, _Traits>& _is, unsigned char& _val)
+	vector_ibitstream<_Block, _Traits>& operator>>(vector_ibitstream<_Block, _Traits>& _is, int8_t& _val)
 	{
 		_val = (char)_is.getChar();
 		return _is;
 	}
 
+	template <class _Block, class _Traits>
+	vector_ibitstream<_Block, _Traits>& operator>>(vector_ibitstream<_Block, _Traits>& _is, unsigned char& _val)
+	{
+		_val = (unsigned char)_is.getChar();
+		return _is;
+	}
+
+	template <class _Block, class _Traits>
+	vector_ibitstream<_Block, _Traits>& operator>>(vector_ibitstream<_Block, _Traits>& _is, int16_t& _val)
+	{
+		_val = (int16_t)_is.getLongLong(sizeof(int16_t) * CHAR_BIT);
+		return _is;
+	}
+
+	template <class _Block, class _Traits>
+	vector_ibitstream<_Block, _Traits>& operator>>(vector_ibitstream<_Block, _Traits>& _is, uint16_t& _val)
+	{
+		_val = (uint16_t)_is.getLongLong(sizeof(uint16_t) * CHAR_BIT);
+		return _is;
+	}
+
+	template <class _Block, class _Traits>
+	vector_ibitstream<_Block, _Traits>& operator>>(vector_ibitstream<_Block, _Traits>& _is, int32_t& _val)
+	{
+		_val = (int32_t)_is.getLongLong(sizeof(int32_t) * CHAR_BIT);
+		return _is;
+	}
+
+	template <class _Block, class _Traits>
+	vector_ibitstream<_Block, _Traits>& operator>>(vector_ibitstream<_Block, _Traits>& _is, uint32_t& _val)
+	{
+		_val = (uint32_t)_is.getLongLong(sizeof(uint32_t) * CHAR_BIT);
+		return _is;
+	}
+
+	template <class _Block, class _Traits>
+	vector_ibitstream<_Block, _Traits>& operator>>(vector_ibitstream<_Block, _Traits>& _is, int64_t& _val)
+	{
+		_val = (int64_t)_is.getLongLong(sizeof(int64_t) * CHAR_BIT);
+		return _is;
+	}
+
+	template <class _Block, class _Traits>
+	vector_ibitstream<_Block, _Traits>& operator>>(vector_ibitstream<_Block, _Traits>& _is, uint64_t& _val)
+	{
+		_val = (uint64_t)_is.getLongLong(sizeof(uint64_t) * CHAR_BIT);
+		return _is;
+	}
+
+	template <class _Block, class _Traits>
+	vector_ibitstream<_Block, _Traits>& operator>>(vector_ibitstream<_Block, _Traits>& _is, float& _val)
+	{
+		_val = (float)_is.getLongLong(sizeof(float) * CHAR_BIT);
+		return _is;
+	}
+
+	template <class _Block, class _Traits>
+	vector_ibitstream<_Block, _Traits>& operator>>(vector_ibitstream<_Block, _Traits>& _is, double& _val)
+	{
+		_val = (double)_is.getLongLong(sizeof(double) * CHAR_BIT);
+		return _is;
+	}
+
+	// Change parameter 2
+	// _BitSmanip<_Arg>& _BitManip -> _BitSmanip<_Arg> _BitManip
+	// Compile error
 	template <class _Block, class _Traits, class _Arg>
-	vector_ibitstream<_Block, _Traits>& operator>>(vector_ibitstream<_Block, _Traits>& _is, _BitSmanip<_Arg>& _BitManip)
+	vector_ibitstream<_Block, _Traits>& operator>>(vector_ibitstream<_Block, _Traits>& _is, _BitSmanip<_Arg> _BitManip)
 	{
 		(*_BitManip._Pfun)(_is, _BitManip._Manarg);
 		return _is;
