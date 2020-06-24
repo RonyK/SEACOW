@@ -202,6 +202,8 @@
     </ClInclude>
     <ClInclude Include="include\compression\wavelet.h" />
     <ClInclude Include="include\xml\tinyxml2.h" />
+    <ClInclude Include="src\query\op\mmt_load\mmt_load_action.h" />
+    <ClInclude Include="src\query\op\mmt_load\mmt_load_plan.h" />
     <ClInclude Include="src\query\op\mmt_save\mmt_save_action.h" />
     <ClInclude Include="src\query\op\mmt_save\mmt_save_plan.h" />
     <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_action.h" />
@@ -218,6 +220,8 @@
     <ClCompile Include="src\array\attributeDesc.cpp" />
     <ClCompile Include="src\index\mmt.cpp" />
     <ClCompile Include="src\io\serializable.cpp" />
+    <ClCompile Include="src\query\op\mmt_load\mmt_load_action.cpp" />
+    <ClCompile Include="src\query\op\mmt_load\mmt_load_plan.cpp" />
     <ClCompile Include="src\query\op\mmt_save\mmt_save_action.cpp" />
     <ClCompile Include="src\query\op\mmt_save\mmt_save_plan.cpp" />
     <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_action.cpp" />
