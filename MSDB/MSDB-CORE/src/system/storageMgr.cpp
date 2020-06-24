@@ -6,9 +6,11 @@
 
 namespace msdb
 {
-const char* strBasePath = "./storage/";
-const char* strConfigPath = "./storage/config/";
-const char* strArrayPath = "./storage/array/";
+const char* strBasePath =	"../storage/";
+const char* strConfigPath = "../storage/config/";
+const char* strArrayPath =	"../storage/array/";
+
+const char* strIndexFolder = "indies";
 
 const char* strArrayConfigFile = "arrays.xml";
 
@@ -48,11 +50,84 @@ void storageMgr::saveConfigFile(config* cFile)
 	}
 }
 
+void storageMgr::loadAttrIndex(arrayId arrId, attributeId attrId, bstream& bs, pSerializable serialObj)
+{
+	filePath fpIndex = this->getArrayIndexPath(arrId) / std::to_string(attrId);
+	std::ifstream fs;
+	fs.open(fpIndex, std::fstream::out | std::fstream::trunc | std::fstream::binary);
+	if(!fs.is_open())
+	{
+		_MSDB_THROW(_MSDB_EXCEPTIONS_MSG(MSDB_EC_IO_ERROR, MSDB_ER_CANNOT_OPEN_FILE, fpIndex.generic_string().c_str()));
+	}
+
+	serialObj->deserialize(fs);
+	fs.close();
+}
+
+void storageMgr::saveAttrIndex(arrayId arrId, attributeId attrId, bstream& bs, pSerializable serialObj)
+{
+	filePath fpIndex = this->getArrayIndexPath(arrId) / std::to_string(attrId);
+	std::ofstream fs;
+	fs.open(fpIndex, std::fstream::in | std::fstream::trunc | std::fstream::binary);
+	if(!fs.is_open())
+	{
+		_MSDB_THROW(_MSDB_EXCEPTIONS_MSG(MSDB_EC_IO_ERROR, MSDB_ER_CANNOT_OPEN_FILE, fpIndex.generic_string().c_str()));
+	}
+
+	serialObj->serialize(fs);
+	
+	fs.close();
+}
+
+filePath storageMgr::getArrayPath(arrayId arrId)
+{
+	return this->arrayPath_ / this->getArrayFolder(arrId);
+}
+
+filePath storageMgr::getArrayFolder(arrayId arrId)
+{
+	return filePath(std::to_string(arrId));
+}
+
+filePath storageMgr::getArrayIndexPath(arrayId arrId)
+{
+	return this->getArrayPath(arrId) / this->indexFolder_;
+}
+
+bool storageMgr::createDirs(filePath& fp)
+{
+	return std::filesystem::create_directories(fp);
+}
+
+bool storageMgr::removeFile(filePath& fp)
+{
+	return std::filesystem::remove(fp);
+}
+
+bool storageMgr::isFile(filePath& fp)
+{
+	return std::filesystem::is_regular_file(fp);
+}
+
+bool storageMgr::isDir(filePath& fp)
+{
+	return std::filesystem::is_directory(fp);
+}
+
+bool storageMgr::isExists(filePath& fp)
+{
+	return std::filesystem::exists(fp);
+}
+
 bool storageMgr::init()
 {
+	std::cout << "current dir: " << std::filesystem::current_path() << std::endl;
+
 	this->basePath_ = filePath(strBasePath);
 	this->configPath_ = filePath(strConfigPath);
 	this->arrayPath_ = filePath(strArrayPath);
+
+	this->indexFolder_ = filePath(strIndexFolder);
 
 	return true;
 }

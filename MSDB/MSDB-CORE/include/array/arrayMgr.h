@@ -13,18 +13,20 @@ namespace msdb
 class arrayMgr : public singleton<arrayMgr>
 {
 public:
-	pArrayDesc getArrayDesc(arrayId id);
-	pAttributeIndex getAttributeIndex(arrayId id);
-	pDimensionIndex getDimensionIndex(arrayId id);
+	pArrayDesc getArrayDesc(arrayId arrId);
+	pAttrIndex getAttributeIndex(arrayId arrId, attributeId attrId);
+	pDimensionIndex getDimensionIndex(arrayId arrId, dimensionId dimId);
 
-	void setArrayDesc(arrayId id, pArrayDesc desc);
-	void setAttributeIndex(arrayId id, pAttributeIndex aIndex);
-	void setDimensionIndex(arrayId id, pDimensionIndex dIndex);
+	void setArrayDesc(arrayId arrId, pArrayDesc desc);
+	void setAttributeIndex(arrayId arrId, attributeId attrId, pAttrIndex aIndex);
+	void setDimensionIndex(arrayId arrId, dimensionId dimId, pDimensionIndex dIndex);
 
 public:
-	std::map<arrayId, pArrayDesc> arrayDescs_;
-	std::map<arrayId, pAttributeIndex> attributeIndies_;
-	std::map<arrayId, pDimensionIndex> dimensionIndies_;
+	std::map<arrayId, pArrayDesc> arrDescs_;
+	std::map<arrayId, std::map<attributeId, pAttrIndex>> attrIndies_;
+	std::map<arrayId, std::map<dimensionId, pDimensionIndex>> dimIndies_;
+
+	virtual bool init() override;
 };
 }
 

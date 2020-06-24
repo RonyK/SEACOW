@@ -335,6 +335,8 @@ typedef int64_t		position_t;
 			size_type left = pos * this->basisDimOffset_;
 			size_type seq = 0;
 			size_type offset = 1;
+			// Do not change int -> dimensionId, 
+			// Error happened when d == -1
 			for (int d = this->basisDim_; d >= 0; d--)
 			{
 				seq += (left % this->dims_[d]) * offset;
@@ -817,7 +819,7 @@ typedef int64_t		position_t;
 		Ty_* ptr_;				// current pointer
 		size_type offset_;		// offset in sequence pointer for current dimension
 		size_type vSize_;		// number of elements
-		unsigned int basisDim_;	// current dimension
+		dimensionId basisDim_;	// current dimension
 		dim_pointer dims_;		// original array dimension size
 		dim_pointer sP_;		// range start point
 		dim_pointer eP_;		// range end point

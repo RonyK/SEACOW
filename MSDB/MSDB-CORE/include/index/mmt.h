@@ -4,6 +4,7 @@
 
 #include <index/attributeIndex.h>
 #include <io/bitstream.h>
+#include <io/serializable.h>
 #include <util/coordinate.h>
 #include <util/math.h>
 #include <memory>
@@ -11,14 +12,15 @@
 namespace msdb
 {
 template<typename Dty_>
-class mmt;
-using pMMT = std::shared_ptr<mmt<position_t>>;
+class MinMaxTree;
+using mmt = MinMaxTree<position_t>;
+using pMMT = std::shared_ptr<mmt>;
 
 template <typename Ty_>
 bit_cnt_type getPrefixPosForPrevLimit(Ty_, bit_cnt_type);
 
 template <typename Dty_>
-class mmt
+class MinMaxTree : public attributeIndex, public serializable
 {
 public:
 	using size_type = size_t;
@@ -47,43 +49,41 @@ public:
 	public:
 		sig_bit_type bMax_;			// significant bit of max value
 		sig_bit_type bMin_;			// significant bit of min value
-		bit_cnt_type bMaxDelta_;		// bMax delta from a parent node
-		bit_cnt_type bMinDelta_;		// bMin delta from a parent node
+		bit_cnt_type bMaxDelta_;		// bMax_ delta from a parent node
+		bit_cnt_type bMinDelta_;		// bMin_ delta from a parent node
 		bit_cnt_type order_;			// n th significant bit
 		bit_cnt_type bits_;			// required bits to represent min/max value
 
 	public:
 		mmtNode() : bMax_(0), bMin_(0), bits_(0x80), order_(1), bMaxDelta_(0), bMinDelta_(0) {}
 
-		inline void copyMaxFrom(mmtNode* _right)
-		{
-			this->max = _right->max;
-			this->bMax_ = _right->bMax_;
-		}
-		inline void copyMinFrom(mmtNode* _right)
-		{
-			this->min = _right->min;
-			this->bMin_ = _right->bMin_;
-		}
+	public:
+		virtual void copyMaxFrom(pNode _right);
+		virtual void copyMinFrom(pNode _right);
 
-		void setMax(const void* max) = 0;
-		void setMax(element& max) = 0;
-		void setMin(const void* min) = 0;
-		void setMin(element& min) = 0;
-		void* getMax() = 0;
-		void* getMin() = 0;
+		virtual void setMax(const void* max) = 0;
+		virtual void setMax(element& max) = 0;
+		virtual void setMin(const void* min) = 0;
+		virtual void setMin(element& min) = 0;
+		virtual void* getMax() = 0;
+		virtual void* getMin() = 0;
 
-		void setMaxBoundary(sig_bit_type bMax) = 0;
-		void setMinBoundary(sig_bit_type bMin) = 0;
+		virtual void setMaxBoundary(sig_bit_type bMax_) = 0;
+		virtual void setMinBoundary(sig_bit_type bMin_) = 0;
+		virtual void getMaxBoundary(pNode prevNode) = 0;
+		virtual void getMinBoundary(pNode prevNode) = 0;
 
-		void initBits() = 0;
-		void initBMax() = 0;
-		void initBMin() = 0;
+		virtual void initBits() = 0;
+		virtual void initBMax() = 0;
+		virtual void initBMin() = 0;
 
-		void setMinMaxFromBitstream(bstream& bs) = 0;
+		virtual void inMinMax(bstream& bs) = 0;
+		virtual void outMinMax(bstream& bs) = 0;
 
-		char compareMax(pNode right) = 0;
-		char compareMin(pNode right) = 0;
+		virtual void inDelta(bstream& bs) = 0;
+
+		virtual char compareMax(pNode right) = 0;
+		virtual char compareMin(pNode right) = 0;
 	};
 
 	template<typename Ty_>
@@ -97,76 +97,107 @@ public:
 		mmtNodeImpl() : mmtNode(), max_(0), min_(0) {}
 
 	public:
-		void* getMax()
+		virtual void copyMaxFrom(pNode _right)
+		{
+			this->max = *((Ty_*)_right->getMax());
+			this->bMax_ = _right->bMax_;
+		}
+		virtual void copyMinFrom(pNode _right)
+		{
+			this->min_ = *((Ty_*)_right->getMin());
+			this->bMin_ = _right->bMin_;
+		}
+
+		virtual void* getMax()
 		{
 			return &this->max_;
 		}
 
-		void* getMin()
+		virtual void* getMin()
 		{
 			return &this->min_;
 		}
 
-		void setMax(const void* max)
+		virtual void setMax(const void* max)
 		{
 			this->max_ = *reinterpret_cast<Ty_*>(max);
-			this->bMax = msb<Ty_>(std::abs(max)) * SIGN(max);
+			this->bMax_ = msb<Ty_>(std::abs(max)) * SIGN(max);
 		}
 
-		void setMax(element& max)
+		virtual void setMax(element& max)
 		{
 			max.getData(&this->max_);
-			this->bMax = msdb<Ty_>(std::abs(this->max_)) * SIGN(max_);
+			this->bMax_ = msdb<Ty_>(std::abs(this->max_)) * SIGN(max_);
 		}
 
-		void setMin(const void* min)
+		virtual void setMin(const void* min)
 		{
 			this->min_ = *reinterpret_cast<Ty_*>(min);
-			this->bMin = msb<Ty_>(std::abs(min)) * SIGN(min);
+			this->bMin_ = msb<Ty_>(std::abs(min)) * SIGN(min);
 		}
 
-		void setMin(element& min)
+		virtual void setMin(element& min)
 		{
 			min.getData(&this->min_);
-			this->bMin = msb<Ty_>(std::abs(this->min_)) * SIGN(min_);
+			this->bMin_ = msb<Ty_>(std::abs(this->min_)) * SIGN(min_);
 		}
 
-		void setMaxBoundary(sig_bit_type bMax)
+		virtual void getMaxBoundary(sig_bit_type bMax_)
 		{
-			this->max_ = getMaxBoundary<Ty_>(bMax);
+			this->max_ = getMaxBoundary<Ty_>(bMax_);
 		}
-		void setMinBoundary(sig_bit_type bMin)
+		virtual void getMinBoundary(sig_bit_type bMin_)
 		{
-			this->min_ = getMaxBoundary<Ty_>(bMin);
+			this->min_ = getMaxBoundary<Ty_>(bMin_);
+		}
+		virtual void getMaxBoundary(pNode prevNode)
+		{
+			Ty_ prevMax = *((Ty_*)prevNode->getMax());
+			this->max_ = getMaxBoundary<Ty_>(prevMax, this->order_, this->bMax_);
+		}
+		virtual void getMinBoundary(pNode prevNode)
+		{
+			Ty_ prevMin = *((Ty_*)prevNode->getMin());
+			this->min_ = getMinBoundary<Ty_>(prevMin, this->order_, this->bMin_);
 		}
 
-		void setMinMaxFromBitstream(bstream& bs)
+		virtual void inMinMax(bstream& bs)
 		{
 			bs >> setw(TyBits_) >> this->max_ >> this->min_;
-			this->bits = msb<Ty_>(max_ - min_);
+			this->bits_ = msb<Ty_>(max_ - min_);
 		}
 
-		void initBits()
+		virtual void outMinMax(bstream& bs)
 		{
-			this->bits = msb<Ty_>(max_ - min_);
-		}
-		void initBMax()
-		{
-			this->bMax = msb<Ty_>(std::abs(this->max_), this->order) * SIGN(this->max_);
-		}
-		void initBMin()
-		{
-			this->bMin = msb<Ty_>(std::abs(this->min_), this->order) * SIGN(this->min_);
+			bs << setw(TyBits_) << this->max_ << this->min_;
 		}
 
-		char compareMax(pNode right)
+		virtual void inDelta(bstream& bs)
+		{
+			bs >> setw(this->bits_) >> this->bMaxDelta_ >> this->bMinDelta_;
+		}
+
+		virtual void initBits()
+		{
+			this->bits_ = msb<Ty_>(max_ - min_);
+		}
+		virtual void initBMax()
+		{
+			this->bMax_ = msb<Ty_>(std::abs(this->max_), this->order_) * SIGN(this->max_);
+		}
+		virtual void initBMin()
+		{
+			this->bMin_ = msb<Ty_>(std::abs(this->min_), this->order_) * SIGN(this->min_);
+		}
+
+		virtual char compareMax(pNode right)
 		{
 			Ty_ rightMax = *((Ty_*)right->getMax());
 			if (this->max_ < rightMax)	return -1;
 			if (this->max_ > rightMax) return 1;
 			return 0;
 		}
-		char compareMin(pNode right)
+		virtual char compareMin(pNode right)
 		{
 			Ty_ rightMax = *((Ty_*)right->getMax());
 			if (this->min_ < rightMax)	return -1;
@@ -175,8 +206,51 @@ public:
 		}
 	};
 
+	class mmtHeader : public serialHeader
+	{
+	public:
+		static const char mmt_header_version = 1;
+
+	public:
+		virtual void serialize(std::ostream& os) override
+		{
+			os << this->version_ << this->size_ << static_cast<int>(this->eType_) << maxLevel_;
+		}
+		virtual void deserialize(std::istream& is) override
+		{
+			int ieType;
+			is >> this->version_ >> this->size_ >> ieType >> maxLevel_;
+
+			this->eType_ = static_cast<eleType>(ieType);
+		}
+
+	public:
+		//eleType dType_;	// dimension type, not used, fixed now.
+		eleType eType_;		// element type
+		size_type maxLevel_;
+	};
+
+protected:
+	// inherit from serializable
+	virtual void updateToHeader() override
+	{
+		auto curHeader = std::static_pointer_cast<mmtHeader>(this->getHeader());
+		curHeader->version_ = MinMaxTree<Dty_>::mmtHeader::mmt_header_version;
+		curHeader->size_ = this->serializedSize_;
+		curHeader->maxLevel_ = this->maxLevel_;
+		curHeader->eType_ = this->eType_;
+	}
+
+	// inherit from serializable
+	virtual void updateFromHeader() override
+	{
+		auto curHeader = std::static_pointer_cast<mmtHeader>(this->getHeader());
+		this->maxLevel_ = curHeader->maxLevel_;
+		this->eType_ = curHeader->eType_;
+	}
+
 public:
-	pNode(mmt::* makeNodeFunc)();
+	pNode(MinMaxTree::* makeNodeFunc)();
 
 	template<typename Ty_>
 	pNode makeNodeImpl()
@@ -190,14 +264,16 @@ public:
 	}
 
 public:
-	mmt(eleType eType, dim_vector_reference dim, dim_vector_reference chunkDim, size_const maxLevel)
-		: dim_(dim), dSize_(dim.size()), leafChunkDim_(chunkDim), maxLevel_(maxLevel), eType_(eType_), TySize_(getEleSize(eType)), TyBits_(getEleSize(eType)* CHAR_BIT)
+	MinMaxTree(eleType eType, dim_vector_reference dim, dim_vector_reference chunkDim, size_const maxLevel = 0)
+		: dim_(dim), dSize_(dim.size()), leafChunkDim_(chunkDim), maxLevel_(maxLevel), serializedSize_(0),
+		eType_(eType_), TySize_(getEleSize(eType)), TyBits_(getEleSize(eType)* CHAR_BIT), 
+		serializable(std::make_shared<mmtHeader>())
 	{
 		this->initChunkInDim(dim, chunkDim, maxLevel);
 		this->setMakeNodeFunc(eType);
 	}
 
-	~mmt() {}
+	~MinMaxTree() {}
 
 public:
 	void build(const void* data, size_const length)
@@ -223,18 +299,20 @@ public:
 		//////////////////////////////
 	}
 
-	void serialize(void* output, size_const length)
-	{
-		bstream bs;
-		this->serialize(bs);
+	// ********************
+	// * Not used
+	//void serialize(void* output, size_const length)
+	//{
+	//	bstream bs;
+	//	this->serialize(bs);
 
-		if (length < (bs.size() + CHAR_BIT - 1) / CHAR_BIT)
-		{
-			throw std::length_error();
-		}
+	//	if (length < (bs.size() + CHAR_BIT - 1) / CHAR_BIT)
+	//	{
+	//		throw std::length_error();
+	//	}
 
-		memcpy(output, bs.data(), (bs.size() + CHAR_BIT - 1) / CHAR_BIT);
-	}
+	//	memcpy(output, bs.data(), (bs.size() + CHAR_BIT - 1) / CHAR_BIT);
+	//}
 
 	void serialize(bstream& bs)
 	{
@@ -251,6 +329,17 @@ public:
 		{
 			this->serializeNonRoot(bs, l);
 		}
+
+		this->serializedSize_ = bs.capacity();
+	}
+
+	virtual void serialize(std::ostream& os)
+	{
+		bstream bs;
+		this->serialize(bs);
+
+		this->getOutHeader()->serialize(os);
+		os.write(bs.data(), bs.capacity());
 	}
 
 	// build MMT from bstream
@@ -262,6 +351,15 @@ public:
 		{
 			this->deserializeNonRoot(bs, l);
 		}
+	}
+
+	virtual void deserialize(std::istream& is)
+	{
+		this->getInHeader()->deserialize(is);
+		bstream bs;
+		bs.resize(this->serializedSize_);
+		is.read(bs.data(), this->serializedSize_);
+		this->deserialize(bs);
 	}
 
 	const pNode getNodes(size_type level)
@@ -305,13 +403,13 @@ protected:
 			pNode node = (*cit);
 
 			// init min, max value
-			if (node->bits == 0x80)
+			if (node->bits_ == 0x80)
 			{
 				node->setMax((*it));
 				node->setMin((*it));
 				//node->setMax(&(*it));
 				//node->setMin(&(*it));
-				node->bits = (bit_cnt_type)TyBits_;
+				node->bits_ = (bit_cnt_type)TyBits_;
 			} else
 			{
 				// compare min max value
@@ -367,11 +465,11 @@ protected:
 			(*cit) = node;
 
 			// init min, max value
-			if (node->bits == 0x80)
+			if (node->bits_ == 0x80)
 			{
 				node->copyMaxFrom((*pcit));
 				node->copyMinFrom((*pcit));
-				node->bits = (bit_cnt_type)TyBits_;
+				node->bits_ = (bit_cnt_type)TyBits_;
 			} else
 			{
 				// compare min max value
@@ -437,8 +535,8 @@ protected:
 			}
 
 			pNode prevNode = (*pcit);
-			bool sameOrder = (bool)(prevNode->bMax - prevNode->bMin);	// if bMax == bMin, move on to the next most significant bit
-			bit_cnt_type bits = sameOrder ? msb<sig_bit_type>(prevNode->bMax - prevNode->bMin) : msb<sig_bit_type>(std::abs(prevNode->bMax) - 1);
+			bool sameOrder = (bool)(prevNode->bMax_ - prevNode->bMin_);	// if bMax_ == bMin_, move on to the next most significant bit
+			bit_cnt_type bits = sameOrder ? msb<sig_bit_type>(prevNode->bMax_ - prevNode->bMin_) : msb<sig_bit_type>(std::abs(prevNode->bMax_) - 1);
 
 			for (size_type cID = 0; cID < siblings; cID++)
 			{
@@ -457,31 +555,31 @@ protected:
 				pNode cNode = (*cit);
 				if (sameOrder)
 				{
-					cNode->bits = bits;
-					cNode->order = prevNode->order;
+					cNode->bits_ = bits;
+					cNode->order_ = prevNode->order_;
 
-					cNode->bMaxDelta = static_cast<bit_cnt_type>(prevNode->bMax - cNode->bMax);	// max: prev >= cur
-					cNode->bMinDelta = static_cast<bit_cnt_type>(cNode->bMin - prevNode->bMin);	// min: prev <= cur
+					cNode->bMaxDelta_ = static_cast<bit_cnt_type>(prevNode->bMax_ - cNode->bMax_);	// max: prev >= cur
+					cNode->bMinDelta_ = static_cast<bit_cnt_type>(cNode->bMin_ - prevNode->bMin_);	// min: prev <= cur
 				} else
 				{
-					if ((bit_cnt_type)prevNode->order + 1 < TyBits_)
+					if ((bit_cnt_type)prevNode->order_ + 1 < TyBits_)
 					{
 						// Move to next significant bit
-						cNode->bits = bits;
-						cNode->order = prevNode->order + 1;
+						cNode->bits_ = bits;
+						cNode->order_ = prevNode->order_ + 1;
 
 						cNode->initBMax();
 						cNode->initBMin();
-						//cNode->bMax = msb<Ty_>(std::abs(cNode->max), cNode->order) * SIGN(cNode->max);
-						//cNode->bMin = msb<Ty_>(std::abs(cNode->min), cNode->order) * SIGN(cNode->min);
+						//cNode->bMax_ = msb<Ty_>(std::abs(cNode->max), cNode->order_) * SIGN(cNode->max);
+						//cNode->bMin_ = msb<Ty_>(std::abs(cNode->min), cNode->order_) * SIGN(cNode->min);
 
-						cNode->bMaxDelta = std::max(std::abs(prevNode->bMax - cNode->bMax) - 1, 0);
-						cNode->bMinDelta = std::max(std::abs(cNode->bMin - prevNode->bMin) - 1, 0);
+						cNode->bMaxDelta_ = std::max(std::abs(prevNode->bMax_ - cNode->bMax_) - 1, 0);
+						cNode->bMinDelta_ = std::max(std::abs(cNode->bMin_ - prevNode->bMin_) - 1, 0);
 					} else
 					{
 						// The last bit. Has no more next significant bit
-						cNode->bits = 0;
-						cNode->order = prevNode->order;
+						cNode->bits_ = 0;
+						cNode->order_ = prevNode->order_;
 					}
 				}
 			}
@@ -496,7 +594,8 @@ protected:
 
 		for (size_type i = 0; i < this->nodes_.back().size(); i++)
 		{
-			bs << setw(TyBits_) << curLevelNodes[i].max << curLevelNodes[i].min;
+			curLevelNodes[i]->outMinMax(bs);
+			//bs << setw(TyBits_) << curLevelNodes[i]->max << curLevelNodes[i]->min;
 		}
 	}
 
@@ -505,7 +604,7 @@ protected:
 		pNode* cNodes = this->nodes_[level].data();
 		for (size_type i = 0; i < this->nodes_[level].size(); i++)
 		{
-			bs << setw(cNodes[i].bits) << cNodes[i].bMaxDelta << cNodes[i].bMinDelta;
+			bs << setw(cNodes[i]->bits_) << cNodes[i]->bMaxDelta_ << cNodes[i]->bMinDelta_;
 		}
 	}
 
@@ -533,7 +632,7 @@ protected:
 		for (size_type i = 0; i < chunkCnt; i++)
 		{
 			rootNodes[i] = makeNode();
-			rootNodes[i]->setMinMaxFromBitstream(bs);
+			rootNodes[i]->inMinMax(bs);
 
 			//Ty_ max, min;
 			//bs >> setw(TyBits_) >> max >> min;
@@ -565,61 +664,66 @@ protected:
 			pcit.moveTo(this->getParentCoor(cit));
 			pNode prevNode = (*pcit);
 
-			bool sameOrder = prevNode->bMax != prevNode->bMin;	// if bMax == bMin, move on to the next most significant bit
-			cNode->bits = sameOrder ? msb<sig_bit_type>(prevNode->bMax - prevNode->bMin) : msb<sig_bit_type>(std::abs(prevNode->bMax) - 1);
-
-			bs >> setw(cNode->bits) >> cNode->bMaxDelta >> cNode->bMinDelta;
+			bool sameOrder = prevNode->bMax_ != prevNode->bMin_;	// if bMax_ == bMin_, move on to the next most significant bit
+			cNode->bits_ = sameOrder ? msb<sig_bit_type>(prevNode->bMax_ - prevNode->bMin_) : msb<sig_bit_type>(std::abs(prevNode->bMax_) - 1);
+			cNode->inDelta(bs);
 
 			if (sameOrder)
 			{
-				cNode->order = prevNode->order;
-				cNode->bMax = prevNode->bMax - cNode->bMaxDelta;
-				cNode->bMin = prevNode->bMin + cNode->bMinDelta;
+				cNode->order_ = prevNode->order_;
+				cNode->bMax_ = prevNode->bMax_ - cNode->bMaxDelta_;
+				cNode->bMin_ = prevNode->bMin_ + cNode->bMinDelta_;
 
-				if (cNode->order == 1)
+				if (cNode->order_ == 1)
 				{
-					cNode->setMaxBoundary(cNode->bMax);
-					cNode->setMinBoundary(cNode->bMin);
-					//cNode->max = getMaxBoundary<Ty_>(cNode->bMax);
-					//cNode->min = getMinBoundary<Ty_>(cNode->bMin);
+					cNode->setMaxBoundary(cNode->bMax_);
+					cNode->setMinBoundary(cNode->bMin_);
+					//cNode->max = getMaxBoundary<Ty_>(cNode->bMax_);
+					//cNode->min = getMinBoundary<Ty_>(cNode->bMin_);
 				} else
 				{
-					cNode->max = getMaxBoundary(prevNode->max, cNode->order, cNode->bMax);
-					cNode->min = getMinBoundary(prevNode->min, cNode->order, cNode->bMin);
+					cNode->getMaxBoundary(prevNode);
+					cNode->getMinBoundary(prevNode);
+					//cNode->max = getMaxBoundary(prevNode->max, cNode->order_, cNode->bMax_);
+					//cNode->min = getMinBoundary(prevNode->min, cNode->order_, cNode->bMin_);
 				}
 			} else
 			{
-				if ((size_type)prevNode->order + 1 < TyBits_)
+				if ((size_type)prevNode->order_ + 1 < TyBits_)
 				{
 					// Move to next significant bit
-					cNode->order = prevNode->order + 1;
-					cNode->bMax = prevNode->bMax - cNode->bMaxDelta - 1;
-					cNode->bMin = prevNode->bMin - cNode->bMinDelta - 1;
+					cNode->order_ = prevNode->order_ + 1;
+					cNode->bMax_ = prevNode->bMax_ - cNode->bMaxDelta_ - 1;
+					cNode->bMin_ = prevNode->bMin_ - cNode->bMinDelta_ - 1;
 
-					cNode->max = getMaxBoundary(prevNode->max, cNode->order, cNode->bMax);
-					cNode->min = getMinBoundary(prevNode->min, cNode->order, cNode->bMin);
+					cNode->getMaxBoundary(prevNode);
+					cNode->getMinBoundary(prevNode);
+					//cNode->max = getMaxBoundary(prevNode->max, cNode->order_, cNode->bMax_);
+					//cNode->min = getMinBoundary(prevNode->min, cNode->order_, cNode->bMin_);
 				} else
 				{
-					cNode->bits = 0;
-					cNode->order = prevNode->order;
+					cNode->bits_ = 0;
+					cNode->order_ = prevNode->order_;
 					cNode->copyMaxFrom(prevNode);
 					cNode->copyMinFrom(prevNode);
 				}
 			}
 
 			// Fill out min, max values.
-			if (cNode->order == 1)
+			if (cNode->order_ == 1)
 			{
-				cNode->setMaxBoundary(cNode->bMax);
-				cNode->setMinBoundary(cNode->bMin);
-				//cNode->max = getMaxBoundary<Ty_>(cNode->bMax);
-				//cNode->min = getMinBoundary<Ty_>(cNode->bMin);
+				cNode->setMaxBoundary(cNode->bMax_);
+				cNode->setMinBoundary(cNode->bMin_);
+				//cNode->max = getMaxBoundary<Ty_>(cNode->bMax_);
+				//cNode->min = getMinBoundary<Ty_>(cNode->bMin_);
 			} else
 			{
-				if (cNode->bits)
+				if (cNode->bits_)
 				{
-					cNode->max = getMaxBoundary(prevNode->max, cNode->order, cNode->bMax);
-					cNode->min = getMinBoundary(prevNode->min, cNode->order, cNode->bMin);
+					cNode->getMaxBoundary(prevNode);
+					cNode->getMinBoundary(prevNode);
+					//cNode->max = getMaxBoundary(prevNode->max, cNode->order_, cNode->bMax_);
+					//cNode->min = getMinBoundary(prevNode->min, cNode->order_, cNode->bMin_);
 				}
 			}
 
@@ -666,40 +770,40 @@ private:
 		switch (eType)
 		{
 		case eleType::BOOL:
-			this->makeNodeFunc = mmt<Dty_>::makeNodeImpl<bool>;
+			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<bool>;
 			break;
 		case eleType::CHAR:
-			this->makeNodeFunc = mmt<Dty_>::makeNodeImpl<char>;
+			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<char>;
 			break;
 		case eleType::INT8:
-			this->makeNodeFunc = mmt<Dty_>::makeNodeImpl<int8_t>;
+			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<int8_t>;
 			break;
 		case eleType::INT16:
-			this->makeNodeFunc = mmt<Dty_>::makeNodeImpl<int16_t>;
+			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<int16_t>;
 			break;
 		case eleType::INT32:
-			this->makeNodeFunc = mmt<Dty_>::makeNodeImpl<int32_t>;
+			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<int32_t>;
 			break;
 		case eleType::INT64:
-			this->makeNodeFunc = mmt<Dty_>::makeNodeImpl<int64_t>;
+			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<int64_t>;
 			break;
 		case eleType::UINT8:
-			this->makeNodeFunc = mmt<Dty_>::makeNodeImpl<uint8_t>;
+			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<uint8_t>;
 			break;
 		case eleType::UINT16:
-			this->makeNodeFunc = mmt<Dty_>::makeNodeImpl<uint16_t>;
+			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<uint16_t>;
 			break;
 		case eleType::UINT32:
-			this->makeNodeFunc = mmt<Dty_>::makeNodeImpl<uint32_t>;
+			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<uint32_t>;
 			break;
 		case eleType::UINT64:
-			this->makeNodeFunc = mmt<Dty_>::makeNodeImpl<uint64_t>;
+			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<uint64_t>;
 			break;
 		case eleType::FLOAT:
-			this->makeNodeFunc = mmt<Dty_>::makeNodeImpl<float>;
+			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<float>;
 			break;
 		case eleType::DOUBLE:
-			this->makeNodeFunc = mmt<Dty_>::makeNodeImpl<double>;
+			this->makeNodeFunc = MinMaxTree<Dty_>::makeNodeImpl<double>;
 			break;
 		}
 	}
@@ -711,6 +815,7 @@ private:
 
 private:
 	size_type dSize_;
+	size_type serializedSize_;
 	size_type maxLevel_;
 	dim_vector dim_;		// dimensions
 	dim_vector leafChunkDim_;

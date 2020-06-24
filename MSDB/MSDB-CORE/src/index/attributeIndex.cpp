@@ -3,7 +3,11 @@
 namespace msdb
 {
 attributeIndex::attributeIndex()
-	: aiType_(attributeIndexType::MMT)
+	: aiType_(attrIndexType::MMT)
 {
+}
+attrIndexType attributeIndex::getType()
+{
+	return this->aiType_;
 }
 }	// msdb

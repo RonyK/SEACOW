@@ -7,21 +7,21 @@
 
 namespace msdb
 {
-class mmt_encode_plan : public opPlan
+class mmt_save_plan : public opPlan
 {
 public:
-	mmt_encode_plan();
+	mmt_save_plan();
 
 public:
 	virtual const char* name() override;
 	virtual pAction getAction() override;
 };
 
-class mmt_encode_pset : public opParamSet
+class mmt_save_pset : public opParamSet
 {
 public:
-	mmt_encode_pset();
-	mmt_encode_pset(parameters& pSet);
+	mmt_save_pset();
+	mmt_save_pset(parameters& pSet);
 
 public:
 	virtual pArrayDesc inferSchema() override;

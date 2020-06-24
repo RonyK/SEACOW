@@ -1,30 +1,30 @@
-#include <op/mmt_encode/mmt_encode_plan.h>
-#include <op/mmt_encode/mmt_encode_action.h>
+#include <op/mmt_save/mmt_save_plan.h>
+#include <op/mmt_save/mmt_save_action.h>
 #include <cassert>
 
 namespace msdb
 {
-mmt_encode_plan::mmt_encode_plan()
+mmt_save_plan::mmt_save_plan()
 {
 }
 
-const char* mmt_encode_plan::name()
+const char* mmt_save_plan::name()
 {
-	return "mmt_encode_plan";
+	return "mmt_save_plan";
 }
-pAction mmt_encode_plan::getAction()
+pAction mmt_save_plan::getAction()
 {
-	return std::make_shared<mmt_encode_action>();
+	return std::make_shared<mmt_save_action>();
 }
-mmt_encode_pset::mmt_encode_pset()
+mmt_save_pset::mmt_save_pset()
 	: opParamSet()
 {
 }
-mmt_encode_pset::mmt_encode_pset(parameters& pSet)
+mmt_save_pset::mmt_save_pset(parameters& pSet)
 	: opParamSet(pSet)
 {
 }
-pArrayDesc mmt_encode_pset::inferSchema()
+pArrayDesc mmt_save_pset::inferSchema()
 {
 	assert(this->params_.size() == 1);
 	assert(this->params_[0]->type() == opParamType::ARRAY);		// source array
