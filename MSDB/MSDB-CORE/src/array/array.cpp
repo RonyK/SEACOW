@@ -12,7 +12,7 @@ pArrayDesc arrayBase::getDesc()
 {
 	return this->desc_;
 }
-chunkIterator arrayBase::getIterator()
+chunkIterator arrayBase::getChunkIterator()
 {
 	return chunkIterator(this->desc_->dimDescs_.size(), 
 						 this->desc_->dimDescs_.getDims().data(), &this->chunks_);
@@ -38,6 +38,16 @@ void arrayBase::insertChunk(pChunk inputChunk)
 pChunk arrayBase::getChunk(chunkId cId)
 {
 	return this->chunks_[cId];
+}
+
+arrayBase::chunkContainer::iterator arrayBase::getExistChunkIterator()
+{
+	return this->chunks_.begin();
+}
+
+arrayBase::chunkContainer::iterator arrayBase::getExistChunkItrEnd()
+{
+	return this->chunks_.end();
 }
 
 arrayId arrayBase::getArrayId()

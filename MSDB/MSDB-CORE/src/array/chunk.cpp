@@ -5,7 +5,6 @@ namespace msdb
 {
 chunk::chunk(pChunkDesc desc) : cached_(nullptr), desc_(desc)
 {
-
 }
 
 chunk::~chunk()
@@ -60,6 +59,16 @@ chunkItemIterator chunk::getItemIterator()
 								this->desc_->dims_.size(),
 								this->desc_->dims_.data(),
 								this->desc_->sp_.data());
+}
+chunkItemRangeIterator chunk::getItemRangeIterator(chunkItemRangeIterator::dim_const_pointer sP, 
+												   chunkItemRangeIterator::dim_const_pointer eP)
+{
+	return chunkItemRangeIterator(this->cached_->getData(),
+								  this->desc_->attrDesc_->type_,
+								  this->desc_->dims_.size(),
+								  this->desc_->dims_.data(),
+								  sP, eP,
+								  this->desc_->sp_.data());
 }
 chunkId chunk::getId() const
 {
@@ -128,62 +137,15 @@ void chunk::makeBuffer()
 {
 	this->cached_ = new memChunkBuffer();
 }
+
 chunkItemIterator::chunkItemIterator(void* data, eleType eType, const size_type dSize, position_t* dims, dim_pointer csP)
-	: itemItr(data, eType, dSize, dims)
+	: itemItr(data, eType, dSize, dims), chunkItemItrBase(data, eType, dSize, dims, csP), coorItr(dSize, dims)
 {
-	this->csP_ = new dim_type[dSize];
-	this->memcpyDim(this->csP_, csP);
 }
-
-chunkItemIterator::coordinate_type chunkItemIterator::coorOut2In(coordinate_type& out)
+chunkItemRangeIterator::chunkItemRangeIterator(void* data, eleType eType, const size_type dSize,
+											   position_t* dims, dim_const_pointer sP, dim_const_pointer eP,
+											   dim_pointer csP)
+	: itemRangeItr(data, eType, dSize, dims, sP, eP), chunkItemItrBase(data, eType, dSize, dims, csP), coorItr(dSize, dims)
 {
-	coordinate_type in(this->dSize());
-	for (dimensionId d = 0; d < this->dSize(); d++)
-	{
-		in[d] = out[d] - this->csP_[d];
-	}
-
-	return in;
-}
-
-chunkItemIterator::coordinate_type chunkItemIterator::coorIn2Out(coordinate_type& in)
-{
-	coordinate_type out(this->dSize());
-	for (dimensionId d = 0; d < this->dSize(); d++)
-	{
-		out[d] = in[d] + this->csP_[d];
-	}
-	return out;
-}
-
-chunkItemIterator::coordinate_type chunkItemIterator::coorIn2Out()
-{
-	return this->coorIn2Out(this->coor_);
-}
-
-chunkItemIterator::coordinate_type chunkItemIterator::ceP()
-{
-	coordinate_type ceP(this->dSize());
-	for (dimensionId d = 0; d < this->dSize(); d++)
-	{
-		ceP[d] = this->csP_[d] + this->dims_[d];
-	}
-
-	return ceP;
-}
-
-chunkItemIterator::coordinate_type chunkItemIterator::outCoor()
-{
-	coordinate_type out(this->dSize());
-	for (dimensionId d = 0; d < this->dSize(); d++)
-	{
-		out[d] = this->coor_[d] + this->csP_[d];
-	}
-	return out;
-}
-
-chunkItemIterator::coordinate_type chunkItemIterator::innerCoor()
-{
-	return this->coor_;
 }
 }

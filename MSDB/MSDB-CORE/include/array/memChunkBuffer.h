@@ -35,6 +35,15 @@ public:
 	memChunkItemIterator(void* data, eleType eType, const size_type dSize, position_t* dims,
 					 dim_pointer csP);
 };
+
+class memChunkItemRangeIterator : public chunkItemRangeIterator
+{
+public:
+
+	memChunkItemRangeIterator(void* data, eleType eType, const size_type dSize,
+							  dim_const_pointer sP, dim_const_pointer eP,
+							  position_t* dims, dim_pointer csP);
+};
 }
 
 #endif		// _MSDB_RAWCHUNK_H_

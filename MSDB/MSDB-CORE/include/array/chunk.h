@@ -12,7 +12,88 @@ class chunk;
 class chunkItemIterator;
 using pChunk = std::shared_ptr<chunk>;
 
-class chunkItemIterator : public itemItr
+template <typename Dty_>
+class chunkItemIteratorBase : virtual public coordinateIterator<Dty_>
+{
+public:
+	using base_type = coordinateIterator<Dty_>;
+	using coordinate_type = base_type::coordinate_type;
+	using size_type = base_type::size_type;
+	using dim_type = base_type::dim_type;
+	using dim_pointer = base_type::dim_pointer;
+	using dim_const_pointer = base_type::dim_const_pointer;
+	using dim_reference = base_type::dim_reference;
+	using dim_const_reference = base_type::dim_const_reference;
+
+public:
+	chunkItemIteratorBase(void* data, eleType eType, const size_type dSize,
+						  position_t* dims, dim_pointer csP)
+		: base_type(dSize, dims)
+	{
+		this->csP_ = new dim_type[dSize];
+		this->memcpyDim(this->csP_, csP);
+	}
+
+public:
+	coordinate_type coorOut2In(coordinate_type& out)
+	{
+		coordinate_type in(this->dSize());
+		for (dimensionId d = 0; d < this->dSize(); d++)
+		{
+			in[d] = out[d] - this->csP_[d];
+		}
+
+		return in;
+	}
+
+	coordinate_type coorIn2Out(coordinate_type& in)
+	{
+		coordinate_type out(this->dSize());
+		for (dimensionId d = 0; d < this->dSize(); d++)
+		{
+			out[d] = in[d] + this->csP_[d];
+		}
+		return out;
+	}
+
+	coordinate_type coorIn2Out()
+	{
+		return this->coorIn2Out(this->coor_);
+	}
+
+	coordinate_type ceP()
+	{
+		coordinate_type ceP(this->dSize());
+		for (dimensionId d = 0; d < this->dSize(); d++)
+		{
+			ceP[d] = this->csP_[d] + this->dims_[d];
+		}
+
+		return ceP;
+	}
+
+	coordinate_type outCoor()
+	{
+		coordinate_type out(this->dSize());
+		for (dimensionId d = 0; d < this->dSize(); d++)
+		{
+			out[d] = this->coor_[d] + this->csP_[d];
+		}
+		return out;
+	}
+
+	coordinate_type innerCoor()
+	{
+		return this->coor_;
+	}
+
+protected:
+	dim_pointer csP_;			// Chunk start point
+};
+
+using chunkItemItrBase = chunkItemIteratorBase<position_t>;
+
+class chunkItemIterator : public itemItr, public chunkItemItrBase
 {
 public:
 	using self_type = chunkItemIterator;
@@ -29,18 +110,26 @@ public:
 public:
 	chunkItemIterator(void* data, eleType eType, const size_type dSize,
 					  position_t* dims, dim_pointer csP);
+};
+
+class chunkItemRangeIterator : public itemRangeItr, public chunkItemItrBase
+{
+public:
+	using base_type = itemRangeItr;
+
+	using coordinate_type = base_type::coordinate_type;
+	using size_type = base_type::size_type;
+	using dim_type = base_type::dim_type;
+	using dim_pointer = base_type::dim_pointer;
+	using dim_const_pointer = base_type::dim_const_pointer;
+	using dim_reference = base_type::dim_reference;
+	using dim_const_reference = base_type::dim_const_reference;
+
 
 public:
-	coordinate_type coorOut2In(coordinate_type& out);
-	coordinate_type coorIn2Out(coordinate_type& in);
-	coordinate_type coorIn2Out();
-	coordinate_type ceP();
-
-	coordinate_type outCoor();
-	coordinate_type innerCoor();
-
-private:
-	dim_pointer csP_;			// Chunk start point
+	chunkItemRangeIterator(void* data, eleType eType, const size_type dSize,
+						   position_t* dims, dim_const_pointer sP, dim_const_pointer eP,
+						   dim_pointer csP);
 };
 
 class chunk : public std::enable_shared_from_this<chunk>
@@ -60,6 +149,9 @@ public:
 	bool isMaterialized() const;
 
 	chunkItemIterator getItemIterator();
+	chunkItemRangeIterator getItemRangeIterator(chunkItemRangeIterator::dim_const_pointer sP,
+												chunkItemRangeIterator::dim_const_pointer eP);
+	
 	chunkId getId() const;
 	// chunk id can be chnaged in query processing
 	void setId(chunkId id);
@@ -67,6 +159,8 @@ public:
 	size_type numCells();
 
 	void print();
+
+	coor getChunkCoor();
 
 	template <class Ty_>
 	void printImp()

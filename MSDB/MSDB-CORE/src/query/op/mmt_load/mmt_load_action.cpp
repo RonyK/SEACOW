@@ -2,7 +2,6 @@
 #include <array/arrayMgr.h>
 #include <index/mmt.h>
 #include <system/storageMgr.h>
-#include <memory>
 
 namespace msdb
 {

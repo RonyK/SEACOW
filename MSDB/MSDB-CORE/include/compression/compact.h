@@ -58,8 +58,8 @@ namespace msdb
 			dim_vector bandDims = this->bandDims_[this->maxLevel_];
 
 			coorIterator<Dty_, size_type> chunkIt(NULL, this->dSize_, chunkNum.data());
-			size_type chunkLength = calcArrayCellNums(chunkNum.data(), chunkNum.size());
-			size_type dataLength = calcArrayCellNums(bandDims.data(), bandDims.size());
+			size_type chunkLength = calcNumItems(chunkNum.data(), chunkNum.size());
+			size_type dataLength = calcNumItems(bandDims.data(), bandDims.size());
 
 			dim_vector cSp(this->dSize_);	// start point of chunk
 			dim_vector cEp(this->dSize_);	// end point of chunk
@@ -97,8 +97,8 @@ namespace msdb
 
 				// Get chunk Iterator
 				coorIterator<Dty_, size_type> chunkIt(NULL, this->dSize_, chunkNum.data());
-				size_type chunkLength = calcArrayCellNums(chunkNum.data(), chunkNum.size());
-				size_type dataLength = calcArrayCellNums(chunkDims.data(), chunkDims.size());
+				size_type chunkLength = calcNumItems(chunkNum.data(), chunkNum.size());
+				size_type dataLength = calcNumItems(chunkDims.data(), chunkDims.size());
 
 				for (size_type chunk_id = 0; chunk_id < chunkLength; ++chunk_id, ++chunkIt)
 				{

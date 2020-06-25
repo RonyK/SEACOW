@@ -197,7 +197,7 @@ namespace msdb
 					auto nodes = myMMT.getNodes(l);
 					auto dNodes = dMmt.getNodes(l);
 					auto chunkInDim = myMMT.getChunkInDim(l);
-					size_t chunkCnt = calcArrayCellNums(chunkInDim.data(), chunkInDim.size());
+					size_t chunkCnt = calcNumItems(chunkInDim.data(), chunkInDim.size());
 
 					std::cout << "level: " << l << std::endl;
 					for (size_t i = 0; i < chunkCnt; i++)

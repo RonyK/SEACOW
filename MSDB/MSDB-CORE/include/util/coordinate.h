@@ -7,6 +7,7 @@
 #include <array/dimensionId.h>
 #include <iostream>
 #include <cassert>
+#include <vector>
 #include <initializer_list>
 
 namespace msdb
@@ -36,6 +37,12 @@ typedef int64_t		position_t;
 		{
 			this->coor_ = new dim_type[this->dSize_];
 			memcpy(this->coor_, coor, this->dSize_ * sizeof(dim_type));
+		}
+
+		coordinate(const std::vector<dim_type>& coorVec)
+		{
+			this->coor_ = new dim_type[coorVec.size()];
+			memcpy(this->coor_, coorVec.data(), coorVec.size() * sizeof(dim_type));
 		}
 
 		coordinate(const self_type& mit) : dSize_(mit.dSize_)
@@ -413,7 +420,7 @@ typedef int64_t		position_t;
 	};
 
 	template <typename Dty_>
-	class itemIterator : public coordinateIterator<Dty_>
+	class itemIterator : virtual public coordinateIterator<Dty_>
 	{
 	public:
 		using self_type = itemIterator<Dty_>;
@@ -482,7 +489,7 @@ typedef int64_t		position_t;
 	public:
 		itemRangeIterator(void* ptr, eleType eType, const size_type dSize, dim_const_pointer dim,
 						  dim_const_pointer sP, dim_const_pointer eP)
-			: base_type(ptr, eType, dSize, dim)
+			: base_type(ptr, eType, dSize, dim), coordinateIterator<Dty_>(dSize, dim)
 		{
 			this->eP_ = new dim_type[dSize];
 			this->memcpyDim(this->sP_, sP);

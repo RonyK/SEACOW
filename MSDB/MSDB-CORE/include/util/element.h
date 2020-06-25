@@ -72,9 +72,7 @@ public:
 	template<class Ty_>
 	inline Ty_& get()
 	{
-		Ty_* p = reinterpret_cast<Ty_*>(this->ptr_);
-		Ty_ v = *p;
-		return v;
+		return *(reinterpret_cast<Ty_*>(this->ptr_));
 	}
 
 	template<class Ty_>

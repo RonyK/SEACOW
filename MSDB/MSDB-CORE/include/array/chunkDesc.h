@@ -42,9 +42,13 @@ public:
 
 public:
 	void setDim(dimensionId dId, position_t value);
+	size_t getDimSize();
 
 public:
 	void initPhysicalChunkSizeFromDims();
+
+private:
+	void initChunkCoor();
 
 public:
 	chunkId id_;				// chunk id
@@ -60,6 +64,7 @@ public:
 	dimension dims_;			// dimensions
 	coor sp_;					// start point
 	coor ep_;					// end point
+	coor chunkCoor_;			// chunk coordinate
 };
 }
 #endif		// _MSDB_CHUNKDESC_H_

@@ -11,7 +11,7 @@
 namespace msdb
 {
 template <typename Dty_>
-size_t calcArrayCellNums(const Dty_* dims, const size_t dSize)
+size_t calcNumItems(const Dty_* dims, const size_t dSize)
 {
 	size_t length = 1;
 	for (size_t d = 0; d < dSize; d++)
@@ -75,20 +75,19 @@ public:
 	arrayBase(pArrayDesc desc);
 
 public:
-	pArrayDesc getDesc();
-	virtual chunkIterator getIterator();
-	size_type getNumChunks();
-
-	virtual coor itemCoorToChunkCoor(coor& itemCoor);
-	void insertChunk(pChunk inputChunk);
-
-	pChunk getChunk(chunkId cId);
-
 	arrayId getArrayId();
+	pArrayDesc getDesc();
+	size_type getNumChunks();
+	
 	chunkId getChunkId(pChunkDesc cDesc);
 	chunkId getChunkIdFromItemCoor(coor& itemCoor);
 	chunkId getChunkIdFromChunkCoor(coor& chunkCoor);
-
+	virtual coor itemCoorToChunkCoor(coor& itemCoor);
+	void insertChunk(pChunk inputChunk);
+	pChunk getChunk(chunkId cId);
+	virtual chunkIterator getChunkIterator();			// It iterates all chunk coordinate
+	chunkContainer::iterator getExistChunkIterator();	// It only iterates exsits chunks
+	chunkContainer::iterator getExistChunkItrEnd();	
 
 	template <class _Iter>
 	void insertChunk(_Iter begin, _Iter end)

@@ -21,7 +21,7 @@ pArray wavelet_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 	assert(inputArrays.size() == 1);
 
 	pArray source = inputArrays[0];
-	auto cItr = source->getIterator();
+	auto cItr = source->getChunkIterator();
 	auto dSize = cItr.dSize();
 	auto cSize = cItr.getSeqEnd();
 

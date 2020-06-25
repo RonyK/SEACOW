@@ -19,7 +19,7 @@ wavelet_encode_action::~wavelet_encode_action()
 pArray wavelet_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 {
 	pArray source = inputArrays[0];
-	auto cItr = source->getIterator();
+	auto cItr = source->getChunkIterator();
 	auto dSize = cItr.dSize();
 	auto cSize = cItr.getSeqEnd();
 

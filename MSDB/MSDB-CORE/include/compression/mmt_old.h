@@ -108,7 +108,7 @@
 //		{
 //			this->dim_ = dim;
 //			this->dSize_ = dim.size();
-//			this->leafChunkDim_ = chunkDim;
+//			this->leafBlockDim_ = chunkDim;
 //			this->maxLevel_ = maxLevel;
 //			this->initChunkInDim(dim, chunkDim, maxLevel);
 //		}
@@ -187,8 +187,8 @@
 //		
 //		const dim_vector& getChunkInDim(size_type level)
 //		{
-//			assert(level <= this->chunksInDim_.size());
-//			return this->chunksInDim_[level];
+//			assert(level <= this->levelBlockDims_.size());
+//			return this->levelBlockDims_[level];
 //		}
 //
 //	protected:
@@ -199,8 +199,8 @@
 //		{
 //			////////////////////////////////////////
 //			// Create new mmtNodes
-//			auto chunksInDim = this->chunksInDim_[0];
-//			size_type chunkCnt = calcArrayCellNums(chunksInDim.data(), chunksInDim.size());
+//			auto chunksInDim = this->levelBlockDims_[0];
+//			size_type chunkCnt = calcNumItems(chunksInDim.data(), chunksInDim.size());
 //			this->nodes_.push_back(std::vector<mmtNode>(chunkCnt));
 //
 //			coorIterator<Dty_, Ty_> it(data, this->dSize_, this->dim_.data());
@@ -212,7 +212,7 @@
 //				coordinate<Dty_> cur = it;
 //				for (size_type d = 0; d < this->dSize_; d++)
 //				{
-//					cur[d] /= this->leafChunkDim_[d];
+//					cur[d] /= this->leafBlockDim_[d];
 //				}
 //
 //				// get target chunk
@@ -251,9 +251,9 @@
 //
 //			////////////////////////////////////////
 //			// Create new mmtNodes
-//			dim_vector pChunksInDim = this->chunksInDim_[level - 1];
-//			dim_vector chunksInDim = this->chunksInDim_[level];
-//			const size_type chunkCnt = calcArrayCellNums(chunksInDim.data(), chunksInDim.size());
+//			dim_vector pChunksInDim = this->levelBlockDims_[level - 1];
+//			dim_vector chunksInDim = this->levelBlockDims_[level];
+//			const size_type chunkCnt = calcNumItems(chunksInDim.data(), chunksInDim.size());
 //			this->nodes_.push_back(std::vector<mmtNode>(chunkCnt));
 //
 //			////////////////////////////////////////
@@ -324,8 +324,8 @@
 //			// Calc chunk num of prev and current level
 //			//
 //			// Notes: In this method, prev is a upper level nodes (coarse)
-//			dim_vector pChunksInDim = this->chunksInDim_[level + 1];
-//			dim_vector chunksInDim = this->chunksInDim_[level];
+//			dim_vector pChunksInDim = this->levelBlockDims_[level + 1];
+//			dim_vector chunksInDim = this->levelBlockDims_[level];
 //
 //			////////////////////////////////////////
 //			// Update bit order for chunks in current level
@@ -432,8 +432,8 @@
 //
 //			////////////////////////////////////////
 //			// Create new mmtNodes
-//			auto chunksInDim = this->chunksInDim_[this->maxLevel_];
-//			size_type chunkCnt = calcArrayCellNums(chunksInDim.data(), chunksInDim.size());
+//			auto chunksInDim = this->levelBlockDims_[this->maxLevel_];
+//			size_type chunkCnt = calcNumItems(chunksInDim.data(), chunksInDim.size());
 //			this->nodes_[this->maxLevel_].resize(chunkCnt);	// TODO::If generating Nodes are complete, remove this line.
 //			mmtNode* rootNodes = this->nodes_[this->maxLevel_].data();
 //
@@ -450,9 +450,9 @@
 //		void deserializeNonRoot(bstream& bs, size_type level)
 //		{
 //			// Calc chunk num of prev and current level
-//			dim_vector pChunksInDim = this->chunksInDim_[level + 1];
-//			dim_vector chunksInDim = this->chunksInDim_[level];
-//			size_type chunkCnt = calcArrayCellNums(chunksInDim.data(), chunksInDim.size());
+//			dim_vector pChunksInDim = this->levelBlockDims_[level + 1];
+//			dim_vector chunksInDim = this->levelBlockDims_[level];
+//			size_type chunkCnt = calcNumItems(chunksInDim.data(), chunksInDim.size());
 //			this->nodes_[level].resize(chunkCnt);
 //
 //			// Prev
@@ -537,7 +537,7 @@
 //		{
 //			for (size_type level = 0; level <= maxLevel; level++)
 //			{
-//				this->chunksInDim_.push_back(calcChunkNums(dims.data(), chunkDim.data(), dims.size(), level));
+//				this->levelBlockDims_.push_back(calcChunkNums(dims.data(), chunkDim.data(), dims.size(), level));
 //			}
 //		}
 //
@@ -565,8 +565,8 @@
 //		size_type dSize_;
 //		size_type maxLevel_;
 //		dim_vector dim_;		// dimensions
-//		dim_vector leafChunkDim_;
-//		std::vector<dim_vector> chunksInDim_;
+//		dim_vector leafBlockDim_;
+//		std::vector<dim_vector> levelBlockDims_;
 //		std::vector<std::vector<mmtNode>> nodes_;	// mmt
 //		/*
 //		* Here is an example of a 'nodes_' with size 4 (has 0~3 levels).
