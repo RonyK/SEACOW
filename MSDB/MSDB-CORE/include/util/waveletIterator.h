@@ -190,7 +190,7 @@ namespace msdb
 			this->curBand_ = band;
 			this->calcBandBoundary();
 
-			if (adjustCoor && !isInside(*this, this->bsP_, this->beP_))
+			if (adjustCoor && !isInside(this->coor(), this->bsP_, this->beP_))
 			{
 				this->moveTo(coordinate<Dty_>(this->dSize_, this->bsP_));
 			}

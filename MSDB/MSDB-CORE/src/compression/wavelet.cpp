@@ -4,7 +4,6 @@
 #include <cmath>
 #include <vector>
 #include <util/coordinate.h>
-#include <util/waveletIterator.h>
 #include <compression/wavelet.h>
 #include <compression/haar.h>
 

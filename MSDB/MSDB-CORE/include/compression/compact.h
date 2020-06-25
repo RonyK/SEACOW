@@ -6,7 +6,6 @@
 #include <io/bitstream.h>
 #include <compression/mmt_old.h>
 #include <util/coordinate.h>
-#include <util/waveletIterator.h>
 #include <iostream>
 #include <vector>
 

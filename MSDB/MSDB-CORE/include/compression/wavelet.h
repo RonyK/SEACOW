@@ -3,7 +3,6 @@
 #define _MSDB_WAVELET_H_
 
 #include <util/coordinate.h>
-#include <util/waveletIterator.h>
 #include <iostream>
 #include <vector>
 #include <memory>

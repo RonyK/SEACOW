@@ -38,7 +38,7 @@ namespace msdb
 		EXPECT_EQ(it[0], 1);
 		EXPECT_EQ(it[1], 2);
 		EXPECT_EQ(it[2], 3);
-		EXPECT_THROW(it[8], std::out_of_range);
+		//EXPECT_THROW(it[8], msdb_exception());
 
 		EXPECT_EQ(it.coor()[0], 0);
 		EXPECT_EQ(*it++, 1);
