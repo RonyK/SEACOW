@@ -54,21 +54,23 @@ bool chunk::isMaterialized() const
 }
 chunkItemIterator chunk::getItemIterator()
 {
-	return memChunkItemIterator(this->cached_->getData(),
-								this->desc_->attrDesc_->type_,
-								this->desc_->dims_.size(),
-								this->desc_->dims_.data(),
-								this->desc_->sp_.data());
+	memChunkItemIterator it(this->cached_->getData(),
+						 this->desc_->attrDesc_->type_,
+						 this->desc_->dims_.size(),
+						 this->desc_->dims_.data(),
+						 this->desc_->sp_.data());
+	return it;
 }
 chunkItemRangeIterator chunk::getItemRangeIterator(chunkItemRangeIterator::dim_const_pointer sP, 
 												   chunkItemRangeIterator::dim_const_pointer eP)
 {
-	return chunkItemRangeIterator(this->cached_->getData(),
-								  this->desc_->attrDesc_->type_,
-								  this->desc_->dims_.size(),
-								  this->desc_->dims_.data(),
-								  sP, eP,
-								  this->desc_->sp_.data());
+	chunkItemRangeIterator it(this->cached_->getData(),
+						   this->desc_->attrDesc_->type_,
+						   this->desc_->dims_.size(),
+						   this->desc_->dims_.data(),
+						   sP, eP,
+						   this->desc_->sp_.data());
+	return it;
 }
 chunkId chunk::getId() const
 {

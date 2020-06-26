@@ -26,6 +26,7 @@
     <ClCompile Include="test\wavelet\testMMT_OLD.cpp">
       <Filter>test\wavelet</Filter>
     </ClCompile>
+    <ClCompile Include="test\index\testMMT.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">

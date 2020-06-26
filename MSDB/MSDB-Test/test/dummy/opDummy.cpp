@@ -7,7 +7,7 @@ namespace caDummy
 {
 void getWaveletEncode(pArrayDesc sourceArrDesc, eleDefault level,
 					  std::shared_ptr<wavelet_encode_plan>& plan,
-					  std::shared_ptr<wavelet_encode_action>& action, 
+					  std::shared_ptr<wavelet_encode_action>& action,
 					  pQuery& qry)
 {
 	pQuery weQuery_ = std::make_shared<query>();
@@ -49,6 +49,29 @@ void getWaveletDecode(pArrayDesc sourceArrDesc, eleDefault level,
 	plan = wdPlan_;
 	action = wdAction_;
 	qry = wdQuery_;
+}
+
+void getMMTBuild(pArrayDesc sourceArrDesc, eleDefault level,
+				 std::shared_ptr<mmt_build_plan>& plan,
+				 std::shared_ptr<mmt_build_action>& action,
+				 pQuery& qry)
+{
+	pQuery weQuery_ = std::make_shared<query>();
+	auto mmtPlan_ = std::make_shared<mmt_build_plan>();
+	auto mmtAction_ = std::make_shared<mmt_build_action>();
+	parameters params = {
+		std::make_shared<opParamArray>(sourceArrDesc),
+		std::make_shared<opParamConst>(std::make_shared<stableElement>(&level, _ELE_DEFAULT_TYPE))
+	};
+	auto pSet = std::make_shared<wavelet_encode_pset>(params);
+
+	mmtPlan_->setParamSet(pSet);
+	mmtAction_->setArrayDesc(mmtPlan_->inferSchema());
+	mmtAction_->setParams(params);
+
+	plan = mmtPlan_;
+	action = mmtAction_;
+	qry = weQuery_;
 }
 
 }	// caDummy

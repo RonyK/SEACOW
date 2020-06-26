@@ -14,6 +14,12 @@ namespace msdb
 {
 typedef int64_t		position_t;
 
+enum class iterateMode
+{
+	ALL,		// Iterate all possible coordinate
+	EXIST		// Only exist items
+};
+
 template <typename Dty_>
 class coordinate
 {
@@ -75,7 +81,6 @@ public:
 	{
 		return this->dSize_;
 	}
-
 	dim_pointer data()
 	{
 		return this->coor_;
@@ -244,18 +249,21 @@ public:
 
 	//////////////////////////////
 	// Getter
+	//////////////////////////////
 	_NODISCARD inline size_type seqPos()
 	{
 		return this->seqPos_;
 	}
-	_NODISCARD inline size_type dSize()
+	_NODISCARD inline size_type dSize() const
 	{
 		// this->coor_.size();
 		return this->dSize_;
 	}
+	_NODISCARD inline dim_pointer data() { return this->coor_; }
 	_NODISCARD inline coordinate_type& coor() { return this->coor_; }
-	_NODISCARD inline bool end() { return this->end_; }
-	_NODISCARD inline bool front() { return this->front_; }
+	_NODISCARD inline coordinate_type dims() const { return coordinate_type(dSize, this->dims_); }
+	_NODISCARD inline bool isEnd() const { return this->end_; }
+	_NODISCARD inline bool isFront() const { return this->front_; }
 	size_type getCapacity()
 	{
 		return this->seqCapacity_;
@@ -263,7 +271,8 @@ public:
 	//////////////////////////////
 
 	//////////////////////////////
-	// Convertor
+	// Converting
+	//////////////////////////////
 	// pos: basis dim pos
 	virtual size_type posToSeq(const size_type pos)
 	{
@@ -294,10 +303,21 @@ public:
 
 		return seq;
 	}
+	size_type coorToSeq(const coordinate_type coor)
+	{
+		size_type seq = 0, offset = 1;
+		for (dimensionId d = this->dSize() - 1; d != (dimensionId)-1; d--)
+		{
+			seq += coor[d] * offset;
+			offset *= this->dims_[d];
+		}
+		return seq;
+	}
 	//////////////////////////////
 
 	//////////////////////////////
-	// Move
+	// Iterating
+	//////////////////////////////
 	virtual void next()
 	{
 		if (this->end_)		return;
@@ -375,6 +395,7 @@ public:
 
 	//////////////////////////////
 	// Operators
+	//////////////////////////////
 	// forward
 	self_type& operator++()
 	{
@@ -521,6 +542,7 @@ public:
 public:
 	//////////////////////////////
 	// Getter
+	//////////////////////////////
 	element getAt(position_t pos)
 	{
 		return element((void*)(ptr_ + (this->seqPos_ + this->posToSeq(pos)) * this->eSize_), this->eType_);
@@ -529,6 +551,7 @@ public:
 
 	//////////////////////////////
 	// Operators
+	//////////////////////////////
 	// Comparison
 	bool operator==(const self_type& rhs) const { return ptr_ == rhs.ptr_ && this->seqPos_ == rhs.seqPos_; }
 	bool operator!=(const self_type& rhs) const { return ptr_ != rhs.ptr_ || this->seqPos_ != rhs.seqPos_; }
@@ -574,10 +597,11 @@ public:
 		this->moveToStart();
 	}
 
-	itemRangeIterator(const self_type& mit) : base_type(mit)
+	itemRangeIterator(const self_type& mit) : base_type(mit), coordinateIterator<Dty_>(mit)
 	{
 		this->eP_ = new dim_type[mit.dSize()];
-		memcpy(this->eP_, mit.eP_, mit.dSize() * sizeof(dim_type));
+		this->memcpyDim(this->eP_, mit.eP_);
+		//memcpy(this->eP_, mit.eP_, mit.dSize() * sizeof(dim_type));
 	}
 
 	~itemRangeIterator()
@@ -643,6 +667,7 @@ public:
 public:
 	//////////////////////////////
 	// Getter
+	//////////////////////////////
 	Ty_ getAt(position_t pos)
 	{
 		return ptr_[this->seqPos_ + this->posToSeq(pos)];
@@ -651,6 +676,7 @@ public:
 
 	//////////////////////////////
 	// Operators
+	//////////////////////////////
 	// Comparison
 	bool operator==(const self_type& rhs) const { return ptr_ == rhs.ptr_ && this->seqPos_ == rhs.seqPos_; }
 	bool operator!=(const self_type& rhs) const { return ptr_ != rhs.ptr_ || this->seqPos_ != rhs.seqPos_; }
@@ -682,27 +708,19 @@ public:
 		operator--();
 		return tmp;
 	}
-	//////////////////////////////
 
 	// random access
 	_NODISCARD value_reference operator[](size_type pos)
 	{
-		//if (pos < 0 || pos >= this->vSize_)
-		//{
-		//	throw std::out_of_range("caCoorIterator [] out of range");
-		//}
-
+		// TODO:: out of range check
 		return ptr_[this->seqPos_ + this->posToSeq(pos)];
 	}
 	_NODISCARD const value_reference operator[](size_type pos) const
 	{
-		//if (pos < 0 || pos >= this->vSize_)
-		//{
-		//	throw std::out_of_range("caCoorIterator [] out of range");
-		//}
-
+		// TODO:: out of range check
 		return ptr_[this->seqPos_ + this->posToSeq(pos)];
 	}
+	//////////////////////////////
 
 protected:
 	Ty_* ptr_;				// pointer to element
@@ -734,8 +752,6 @@ public:
 		this->eP_ = new Dty_[dSize];
 		this->memcpyDim(this->sP_, sP);
 		this->memcpyDim(this->eP_, eP);
-		//memcpy(this->sP_, sP, dSize * sizeof(dim_type));
-		//memcpy(this->eP_, eP, dSize * sizeof(dim_type));
 
 		this->moveToStart();
 	}
@@ -743,8 +759,7 @@ public:
 	coorRangeIterator(const coorRangeIterator& mit) : coorIterator<Dty_, Ty_>(mit)
 	{
 		this->eP_ = new Dty_[mit.dSize_];
-		this->memcpyDim(this->eP_, mit.eP);
-		//memcpy(this->eP_, mit.eP_, mit.dSize_ * sizeof(dim_type));
+		this->memcpyDim(this->eP_, mit.eP_);
 	}
 
 	~coorRangeIterator()

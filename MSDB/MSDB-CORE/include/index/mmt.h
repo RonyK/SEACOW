@@ -50,11 +50,11 @@ public:
 	class mmtNode : public attributeIndex
 	{
 	public:
-		sig_bit_type bMax_;			// significant bit of max value
-		sig_bit_type bMin_;			// significant bit of min value
+		sig_bit_type bMax_;			// significant nit of max value
+		sig_bit_type bMin_;			// significant nit of min value
 		bit_cnt_type bMaxDelta_;		// bMax_ delta from a parent node
 		bit_cnt_type bMinDelta_;		// bMin_ delta from a parent node
-		bit_cnt_type order_;			// n th significant bit
+		bit_cnt_type order_;			// n th significant nit
 		bit_cnt_type bits_;			// required bits to represent min/max value
 
 	public:
@@ -88,12 +88,16 @@ public:
 
 		virtual char compareMax(pNode right) = 0;
 		virtual char compareMin(pNode right) = 0;
+
+		virtual char compareMax(element right) = 0;
+		virtual char compareMin(element right) = 0;
 	};
 
 	template<typename Ty_>
 	class mmtNodeImpl : public mmtNode
 	{
 	public:
+		// TODO :: Change to element
 		Ty_ max_;
 		Ty_ min_;
 
@@ -209,9 +213,26 @@ public:
 		}
 		virtual char compareMin(pNode right)
 		{
-			Ty_ rightMax = *((Ty_*)right->getMax());
-			if (this->min_ < rightMax)	return -1;
-			if (this->min_ > rightMax) return 1;
+			Ty_ rightMin = *((Ty_*)right->getMax());
+			if (this->min_ < rightMin)	return -1;
+			if (this->min_ > rightMin) return 1;
+			return 0;
+		}
+		virtual char compareMax(element right)
+		{
+			Ty_ rightMax;
+			right.getData(&rightMax);
+			if (this->max_ < rightMax) return -1;
+			if (this->max_ > rightMax) return 1;
+			return 0;
+
+		}
+		virtual char compareMin(element right)
+		{
+			Ty_ rightMin;
+			right.getData(&rightMin);
+			if (this->min_ < rightMin) return -1;
+			if (this->min_ > rightMin) return 1;
 			return 0;
 		}
 	};
@@ -293,6 +314,8 @@ public:
 	// forwardBuildLeaft -> insertLeaf
 	void build(chunkIterator& it)
 	{
+		assert(it.getIterateMode() == iterateMode::EXIST);
+
 		this->nodes_.clear();
 
 		//////////////////////////////
@@ -392,6 +415,16 @@ public:
 	}
 
 protected:
+	coor chunkCoorToBlockCoor(const coor& chunkCoor, const dimension& chunkDimForBlock)
+	{
+		coor blockCoor(this->dSize_);
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			blockCoor[d] = chunkCoor[d] * chunkDimForBlock[d];
+		}
+		return blockCoor;
+	}
+
 	//////////////////////////////
 	// MMT Build Functions
 	// For level 0
@@ -399,94 +432,74 @@ protected:
 	{
 		////////////////////////////////////////
 		// Create new mmtNodes
-		auto blockDims = this->levelBlockDims_[0];	// get Level 0 block dims
-		size_type nodeCnt = calcNumItems(blockDims.data(), blockDims.size());	// block numbers
-		this->nodes_.push_back(std::vector<pNode>(nodeCnt));					// make new node
+		auto blockDims = this->levelBlockDims_[0];					// get Level 0 block dims
+		size_type blockCnt = calcNumItems(blockDims.data(), blockDims.size());	// block numbers
+		this->nodes_.push_back(std::vector<pNode>(blockCnt));					// make new node
 
-		nodeItr nit(this->nodes_[0].data(), this->dSize_, blockDims.data());
-		coor nitEnd(blockDims);
-
-		do
+		auto chunkDim = (*it)->getDesc()->dims_;			// get chunk dimension
+		dimension chunkDimForBlock(this->dSize_);			// block container dimension in chunk
+		for (dimensionId d = 0; d < this->dSize_; ++d)
 		{
-			coor nitCoor = nit.coor(), nitSp, nitEp;
+			chunkDimForBlock[d] = chunkDim[d] / blockDims[d];
+		}
 
-			for(dimensionId d = 0; d < this->dSize_; ++d)
+		// Node iterator for all level 0 nodes
+		// Use to convert block coordinate to seqencial node index
+		nodeItr nit(this->nodes_[0].data(), this->dSize_, blockDims.data());
+
+		while(!it.isEnd())
+		{
+			// Setup a start point of blockCoor for blocks in a chunk
+			coor blockCoorSp = this->chunkCoorToBlockCoor(it.coor(), chunkDimForBlock);
+			coorItr bit(this->dSize_, chunkDimForBlock.data());
+			while(!bit.isEnd())
 			{
-				nitSp[d] = blockDims[d] * nitCoor[d];
-				nitEp[d] = blockDims[d] * (nitCoor[d] + 1) - 1;
+				// Set iterator range according the block size
+				coor inBlockCoor = bit.coor(), inBlockDimSp, inBlockDimEp;
+				for (dimensionId d = 0; d < this->dSize_; ++d)
+				{
+					inBlockDimSp[d] = blockDims[d] * inBlockCoor[d];
+					inBlockDimEp[d] = blockDims[d] * (inBlockCoor[d] + 1) - 1;
+				}
+
+				// TODO :: Reduce in one line
+				auto iit = (*it)->getItemRangeIterator(inBlockDimSp.data(), inBlockDimEp.data());
+				auto lNode = this->forwardBuildLeafNode(iit);
+
+				coor blockCoor(this->dSize_, blockCoorSp.data());
+				for (dimensionId d = 0; d < this->dSize_; ++d)
+				{
+					blockCoor[d] += inBlockCoor[d];
+				}
+
+				this->nodes_[0][nit.coorToSeq(blockCoor)] = lNode;
+				++bit;	// Move on a next block in the chunk
 			}
 
-
-
-			auto iit = (*it)->getItemIterator();
-			this->forwardBuildLeafNode(iit);
-
-			auto cChunk = (*it);
-			cChunk->getDesc();
-
-			++nit;
-		} while (nit.coor() != nitEnd);
-
-		
-		//for (size_type i = 0; i < length; i++)
-		//{
-		//	// current iterator coordiate -> chunk coordinate
-		//	coordinate<Dty_> cur = iit;
-		//	for (size_type d = 0; d < this->dSize_; d++)
-		//	{
-		//		cur[d] /= this->leafBlockDim_[d];
-		//	}
-
-		//	// get target chunk
-		//	cit.moveTo(cur);
-		//	pNode node = (*cit);
-
-		//	// init min, max value
-		//	if (node->bits_ == 0x80)
-		//	{
-		//		node->setMax((*iit));
-		//		node->setMin((*iit));
-		//		//node->setMax(&(*iit));
-		//		//node->setMin(&(*iit));
-		//		node->bits_ = (bit_cnt_type)TyBits_;
-		//	} else
-		//	{
-		//		// compare min max value
-		//		if (*iit > node->max)
-		//		{
-		//			node->setMax((*iit));
-		//			//node->setMax(&(*iit));
-		//		}
-		//		if (*iit < node->min)
-		//		{
-		//			node->setMin((*iit));
-		//			//node->setMin(&(*iit));
-		//		}
-		//	}
-
-		//	// move to next value
-		//	++iit;
-		//}
+			++it;	// Move on a next chunk
+		}
 	}
 
 	pNode forwardBuildLeafNode(itemItr& iit)
 	{
 		pNode node = this->makeNode();
 
-		node->setMax(*iit);
-		node->setMin(*iit);
+		auto value = *iit;
+		node->setMax(value);
+		node->setMin(value);
 		node->bits_ = (bit_cnt_type)TyBits_;
 		++iit;
 
-		while(!iit.end())
+		while(!iit.isEnd())
 		{
-			if (*iit > node->max)
+			auto v = *iit;
+			if(node->compareMax(v) < 0)
 			{
-				node->setMax((*iit));
+				node->setMax(v);
 			}
-			if (*iit < node->min)
+			if(node->compareMin(v) > 0)
 			{
-				node->setMin((*iit));
+				node->setMin(v);
 			}
 			++iit;
 		}
@@ -517,7 +530,7 @@ protected:
 		for (size_type i = 0; i < this->nodes_[level - 1].size(); i++)
 		{
 			// current iterator coordiate -> parent coordinate
-			coordinate<Dty_> cur = pcit;
+			coordinate<Dty_> cur = pcit.coor();
 			for (size_type d = 0; d < this->dSize_; d++)
 			{
 				cur[d] /= 2;
@@ -537,11 +550,11 @@ protected:
 			} else
 			{
 				// compare min max value
-				if ((*pcit).max > node->max)
+				if(node->compareMax(*pcit) < 0)
 				{
 					node->copyMaxFrom((*pcit));
 				}
-				if ((*pcit).min < node->min)
+				if(node->compareMin(*pcit) > 0)
 				{
 					node->copyMinFrom((*pcit));
 				}
@@ -581,7 +594,7 @@ protected:
 		dim_vector chunksInDim = this->levelBlockDims_[level];
 
 		////////////////////////////////////////
-		// Update bit order for chunks in current level
+		// Update nit order for chunks in current level
 		// Prev
 		coorIterator<Dty_, pNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
 									   pChunksInDim.data());
@@ -592,14 +605,14 @@ protected:
 
 		for (size_type i = 0; i < this->nodes_[level + 1].size(); ++i, ++pcit)
 		{
-			coordinate<Dty_> childBase = pcit;
+			coordinate<Dty_> childBase = pcit.coor();
 			for (size_type d = 0; d < this->dSize_; d++)
 			{
 				childBase[d] *= 2;
 			}
 
 			pNode prevNode = (*pcit);
-			bool sameOrder = (bool)(prevNode->bMax_ - prevNode->bMin_);	// if bMax_ == bMin_, move on to the next most significant bit
+			bool sameOrder = (bool)(prevNode->bMax_ - prevNode->bMin_);	// if bMax_ == bMin_, move on to the next most significant nit
 			bit_cnt_type bits = sameOrder ? msb<sig_bit_type>(prevNode->bMax_ - prevNode->bMin_) : msb<sig_bit_type>(abs_(prevNode->bMax_) - 1);
 
 			for (size_type cID = 0; cID < siblings; cID++)
@@ -628,7 +641,7 @@ protected:
 				{
 					if ((bit_cnt_type)prevNode->order_ + 1 < TyBits_)
 					{
-						// Move to next significant bit
+						// Move to next significant nit
 						cNode->bits_ = bits;
 						cNode->order_ = prevNode->order_ + 1;
 
@@ -641,7 +654,7 @@ protected:
 						cNode->bMinDelta_ = std::max(abs_(cNode->bMin_ - prevNode->bMin_) - 1, 0);
 					} else
 					{
-						// The last bit. Has no more next significant bit
+						// The last nit. Has no more next significant nit
 						cNode->bits_ = 0;
 						cNode->order_ = prevNode->order_;
 					}
@@ -682,7 +695,7 @@ protected:
 		this->nodes_.clear();
 		for (size_type l = 0; l < this->maxLevel_ + 1; l++)
 		{
-			// TODO:: Calc nodeCnt on each level
+			// TODO:: Calc blockCnt on each level
 			this->nodes_.push_back(std::vector<pNode>());
 		}
 
@@ -725,10 +738,10 @@ protected:
 		for (size_type i = 0; i < chunkCnt; i++)
 		{
 			pNode cNode = (*cit);
-			pcit.moveTo(this->getParentCoor(cit));
+			pcit.moveTo(this->getParentCoor(cit.coor()));
 			pNode prevNode = (*pcit);
 
-			bool sameOrder = prevNode->bMax_ != prevNode->bMin_;	// if bMax_ == bMin_, move on to the next most significant bit
+			bool sameOrder = prevNode->bMax_ != prevNode->bMin_;	// if bMax_ == bMin_, move on to the next most significant nit
 			cNode->bits_ = sameOrder ? msb<sig_bit_type>(prevNode->bMax_ - prevNode->bMin_) : msb<sig_bit_type>(abs_(prevNode->bMax_) - 1);
 			cNode->inDelta(bs);
 
@@ -755,7 +768,7 @@ protected:
 			{
 				if ((size_type)prevNode->order_ + 1 < TyBits_)
 				{
-					// Move to next significant bit
+					// Move to next significant nit
 					cNode->order_ = prevNode->order_ + 1;
 					cNode->bMax_ = prevNode->bMax_ - cNode->bMaxDelta_ - 1;
 					cNode->bMin_ = prevNode->bMin_ - cNode->bMinDelta_ - 1;
@@ -791,7 +804,7 @@ protected:
 				}
 			}
 
-			cit++;	// Move to next data
+			++cit;	// Move to next data
 		}
 	}
 
@@ -808,9 +821,9 @@ protected:
 		}
 	}
 
-	_NODISCARD coordinate<Dty_> getChildBaseCoor(coordinate<Dty_>& it)
+	_NODISCARD coordinate<Dty_> getChildBaseCoor(coordinate<Dty_>& parentCoor)
 	{
-		coordinate<Dty_> childBase = it;
+		coordinate<Dty_> childBase = parentCoor;
 		for (size_type d = 0; d < this->dSize_; d++)
 		{
 			childBase[d] *= 2;
@@ -818,9 +831,9 @@ protected:
 		return childBase;
 	}
 
-	_NODISCARD coordinate<Dty_> getParentCoor(coordinate<Dty_>& it)
+	_NODISCARD coordinate<Dty_> getParentCoor(coordinate<Dty_>& childCoor)
 	{
-		coordinate<Dty_> coorParent = it;
+		coordinate<Dty_> coorParent = childCoor;
 		for (size_type d = 0; d < this->dSize_; d++)
 		{
 			coorParent[d] /= 2;

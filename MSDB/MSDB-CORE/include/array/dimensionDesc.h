@@ -18,6 +18,7 @@ class dimensionDescs : public std::vector<pDimensionDesc>, public std::enable_sh
 public:
 	std::vector<position_t> getDims();
 	std::vector<position_t> getChunkDims();
+	std::vector<position_t> getChunkContainerDims();
 };
 
 class dimensionDesc

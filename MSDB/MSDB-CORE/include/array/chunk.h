@@ -167,7 +167,7 @@ public:
 	{
 		auto it = this->getItemIterator();
 		std::cout << "==============================" << std::endl;
-		for (size_t i = 0; i < it.getCapacity() && !it.end(); ++i, ++it)
+		for (size_t i = 0; i < it.getCapacity() && !it.isEnd(); ++i, ++it)
 		{
 			std::cout << (*it).get<Ty_>() << ", ";
 		}
@@ -179,7 +179,7 @@ public:
 	{
 		auto it = this->getItemIterator();
 		std::cout << "==============================" << std::endl;
-		for (size_t i = 0; i < it.getCapacity() && !it.end(); ++i, ++it)
+		for (size_t i = 0; i < it.getCapacity() && !it.isEnd(); ++i, ++it)
 		{
 			std::cout << static_cast<int>((*it).get<char>()) << ", ";
 		}

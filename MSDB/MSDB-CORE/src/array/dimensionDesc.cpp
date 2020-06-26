@@ -1,4 +1,5 @@
 #include <array/dimensionDesc.h>
+#include <util/math.h>
 
 namespace msdb
 {
@@ -42,4 +43,16 @@ std::vector<position_t> dimensionDescs::getChunkDims()
 
 	return dims;
 }
+
+std::vector<position_t> dimensionDescs::getChunkContainerDims()
+{
+	std::vector<position_t> dims;
+	for (auto it = this->begin(); it != this->end(); it++)
+	{
+		dims.push_back(intDivCeil((*it)->getLength(), (*it)->chunkSize_));
+	}
+
+	return dims;
+}
+
 }	// msdb

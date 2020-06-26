@@ -75,19 +75,26 @@ public:
 	arrayBase(pArrayDesc desc);
 
 public:
+	//////////////////////////////
+	// Getter
+	//////////////////////////////
 	arrayId getArrayId();
 	pArrayDesc getDesc();
 	size_type getNumChunks();
 	
+	// Chunk
+	pChunk getChunk(chunkId cId);
 	chunkId getChunkId(pChunkDesc cDesc);
 	chunkId getChunkIdFromItemCoor(coor& itemCoor);
 	chunkId getChunkIdFromChunkCoor(coor& chunkCoor);
 	virtual coor itemCoorToChunkCoor(coor& itemCoor);
+	virtual chunkIterator getChunkIterator(
+		iterateMode itMode = iterateMode::ALL);
+
+	//////////////////////////////
+	// Setter
+	//////////////////////////////
 	void insertChunk(pChunk inputChunk);
-	pChunk getChunk(chunkId cId);
-	virtual chunkIterator getChunkIterator();			// It iterates all chunk coordinate
-	chunkContainer::iterator getExistChunkIterator();	// It only iterates exsits chunks
-	chunkContainer::iterator getExistChunkItrEnd();	
 
 	template <class _Iter>
 	void insertChunk(_Iter begin, _Iter end)
@@ -96,7 +103,7 @@ public:
 		{
 			this->chunks_.insert(chunkPair((*begin)->getId(), *begin));
 		}
-	}
+	}	
 
 protected:
 	pArrayDesc desc_;
@@ -107,23 +114,54 @@ class chunkIterator : public coorItr
 {
 public:
 	using self_type = chunkIterator;
+	using base_type = coorItr;
+
 	using size_type = coorItr::size_type;
 	using chunkContainer = arrayBase::chunkContainer;
 
 public:
 	chunkIterator(const size_type dSize, dim_const_pointer dims, 
-				  chunkContainer* chunks);
+				  chunkContainer* chunks, iterateMode itMode);
 
 	chunkIterator(const self_type& mit);
 
 public:
 	size_type getSeqEnd();
+	bool isExist();
+	bool isExist(chunkId cid);
+	iterateMode getIterateMode();
 
+	//////////////////////////////
+	// Iterating
+	//////////////////////////////
+	virtual void next()
+	{
+		base_type::next();
+
+		while(!this->isExist() && !this->isEnd())
+		{
+			base_type::next();
+		}
+	}
+	virtual void prev()
+	{
+		base_type::prev();
+
+		while(!this->isExist() && !this->isFront())
+		{
+			base_type::prev();
+		}
+	}
+
+	//////////////////////////////
+	// Operators
+	//////////////////////////////
 	pChunk operator*() { return this->chunks_->at(this->seqPos_); }
 	pChunk operator->() { return this->chunks_->at(this->seqPos_); }
 
 protected:
 	chunkContainer* chunks_;
+	iterateMode itMode_;
 };
 }
 

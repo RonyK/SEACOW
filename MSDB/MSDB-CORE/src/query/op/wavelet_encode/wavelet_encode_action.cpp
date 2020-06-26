@@ -35,7 +35,7 @@ pArray wavelet_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 	// which can be used for current array.
 	maxLevel = wArray->getMaxLevel();
 
-	for(chunkId id = 0; id < cSize; id++)
+	for(chunkId id = 0; id < cSize; ++id, ++cItr)
 	{
 		auto cChunk = (*cItr);
 		// --------------------
@@ -49,8 +49,6 @@ pArray wavelet_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 		//std::cout << "-----" << std::endl;
 
 		wArray->insertChunk(convertedChunkList.begin(), convertedChunkList.end());
-		
-		++cItr;
 	}
 
 	return wArray;

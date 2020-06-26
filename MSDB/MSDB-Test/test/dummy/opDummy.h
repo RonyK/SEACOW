@@ -5,6 +5,9 @@
 #include <op/wavelet_decode/wavelet_decode_plan.h>
 #include <op/wavelet_decode/wavelet_decode_action.h>
 
+#include <op/mmt_build/mmt_build_plan.h>
+#include <op/mmt_build/mmt_build_action.h>
+
 namespace msdb
 {
 namespace caDummy
