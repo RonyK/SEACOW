@@ -30,7 +30,7 @@ pArray mmt_load_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 
 	for(auto attr : arr->getDesc()->getAttrDescs())
 	{
-		pMMT mmtIndex = std::make_shared<mmt>(attr->type_, dims, chunkDims);
+		pMMT mmtIndex = MinMaxTree::createMMT(attr->type_, dims, chunkDims);		// maxLevel is not setted
 		storageMgr::instance()->loadAttrIndex(arrId, attr->id_, mmtIndex);
 		arrayMgr::instance()->setAttributeIndex(arrId, attr->id_, mmtIndex);
 	}

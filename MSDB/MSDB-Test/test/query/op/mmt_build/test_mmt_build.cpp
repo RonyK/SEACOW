@@ -12,7 +12,7 @@ TEST(mmt_build_action, mmt_serialize_sc8x8)
 {
 	std::vector<pArray> sourceArr = getSourceArray();
 
-	eleDefault level = 2;
+	eleDefault level = 1;
 	std::shared_ptr<mmt_build_plan> mmtPlan;
 	std::shared_ptr<mmt_build_action> mmtAction;
 	pQuery mmtQuery;

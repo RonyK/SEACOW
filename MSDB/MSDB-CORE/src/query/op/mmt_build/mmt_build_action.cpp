@@ -35,7 +35,8 @@ pArray mmt_build_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 
 	for (auto attr : arr->getDesc()->getAttrDescs())
 	{
-		pMMT mmtIndex = std::make_shared<mmt>(attr->type_, dims, chunkDims, maxLevel);
+		//pMMT mmtIndex = std::make_shared<mmt>(attr->type_, dims, chunkDims, maxLevel);
+		pMMT mmtIndex = MinMaxTree::createMMT(attr->type_, dims, chunkDims, maxLevel);
 		auto it = arr->getChunkIterator(iterateMode::EXIST);
 		mmtIndex->build(it);
 		//arrayMgr::instance()->setAttributeIndex(arrId, attr->id_, mmtIndex);

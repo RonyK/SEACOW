@@ -53,9 +53,6 @@ element::element(const element& mit)
 {
 }
 
-element::~element()
-{
-}
 
 element& element::operator=(const element& mit)
 {

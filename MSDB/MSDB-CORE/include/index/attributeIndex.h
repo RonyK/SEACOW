@@ -18,11 +18,13 @@ class attributeIndex
 {
 public:
 	attributeIndex();
+	attributeIndex(attrIndexType type);
 
 public:
 	attrIndexType getType();
+	void setType(attrIndexType type);
 
-public:
+private:
 	attrIndexType aiType_;
 };
 }

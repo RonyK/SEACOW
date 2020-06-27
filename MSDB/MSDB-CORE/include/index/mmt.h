@@ -12,16 +12,65 @@
 
 namespace msdb
 {
-template<typename Dty_>
 class MinMaxTree;
-using mmt = MinMaxTree<position_t>;
+using mmt = MinMaxTree;
 using pMMT = std::shared_ptr<mmt>;
 
 template <typename Ty_>
 bit_cnt_type getPrefixPosForPrevLimit(Ty_, bit_cnt_type);
 
-template <typename Dty_>
 class MinMaxTree : public attributeIndex, public serializable
+{
+public:
+	using size_type = size_t;
+	using size_const = const size_t;
+	
+protected:
+	//////////////////////////////
+	// MMT Header				//
+	//////////////////////////////
+	class mmtHeader : public serialHeader
+	{
+	public:
+		static const char mmt_header_version = 1;
+
+	public:
+		virtual void serialize(std::ostream& os) override
+		{
+			os << this->version_ << this->size_ << static_cast<int>(this->eType_) << maxLevel_;
+		}
+		virtual void deserialize(std::istream& is) override
+		{
+			int ieType;
+			is >> this->version_ >> this->size_ >> ieType >> maxLevel_;
+
+			this->eType_ = static_cast<eleType>(ieType);
+		}
+
+	public:
+		//eleType dType_;	// dimension type, not used, fixed now.
+		eleType eType_;		// element type
+		size_type maxLevel_;
+	};
+
+public:
+	MinMaxTree(eleType eType);
+
+public:
+	virtual void build(chunkIterator& it) = 0;
+	virtual void serialize(std::ostream& os) = 0;
+	virtual void deserialize(std::istream& is) = 0;
+
+public:
+	template <typename Dty_>
+	static pMMT createMMT(eleType type, std::vector<Dty_>& dim, std::vector<Dty_>& blockDim,
+						  size_const maxLevel = 0);
+};
+template <typename Dty_, typename Ty_>
+class MinMaxTreeImpl;
+
+template <typename Dty_, typename Ty_>
+class MinMaxTreeImpl : public MinMaxTree
 {
 public:
 	using size_type = size_t;
@@ -52,124 +101,50 @@ public:
 	public:
 		sig_bit_type bMax_;			// significant nit of max value
 		sig_bit_type bMin_;			// significant nit of min value
-		bit_cnt_type bMaxDelta_;		// bMax_ delta from a parent node
-		bit_cnt_type bMinDelta_;		// bMin_ delta from a parent node
-		bit_cnt_type order_;			// n th significant nit
+		bit_cnt_type bMaxDelta_;	// bMax_ delta from a parent node
+		bit_cnt_type bMinDelta_;	// bMin_ delta from a parent node
+		bit_cnt_type order_;		// n th significant nit
 		bit_cnt_type bits_;			// required bits to represent min/max value
-		stableElement max_;
-		stableElement min_;
-		eleType eType_;
+		Ty_ max_;
+		Ty_ min_;
 
 	public:
-		mmtNode(eleType type) : bMax_(0), bMin_(0), bits_(0x80), order_(1), 
-			bMaxDelta_(0), bMinDelta_(0), max_(type), min_(type), eType_(type)
-		{}
+		mmtNode() : bMax_(0), bMin_(0), bits_(0x80), order_(1),
+			bMaxDelta_(0), bMinDelta_(0), max_(0), min_(0)
+		{
+		}
 
 	public:
-		virtual void setMaxToLimit(sig_bit_type bMax_) = 0;
-		virtual void setMinToLimit(sig_bit_type bMax_) = 0;
-		virtual void setMaxToLimitFrom(pNode prevNode) = 0;
-		virtual void setMinToLimitFrom(pNode prevNode) = 0;
-
-		virtual void initBits() = 0;
-		virtual void initBMax() = 0;
-		virtual void initBMin() = 0;
-
-		virtual void inMinMax(bstream& bs) = 0;
-		virtual void outMinMax(bstream& bs) = 0;
-
 		// use function cause of unknown compile error
 		virtual void inDelta(bstream& bs)
 		{
 			bs >> setw(this->bits_) >> this->bMaxDelta_ >> this->bMinDelta_;
 		}
-	};
-
-	template<typename Ty_>
-	class mmtNodeImpl : public mmtNode
-	{
-	public:
-		mmtNodeImpl() : mmtNode() {}
-
-	public:
-		virtual void setMaxToLimit(sig_bit_type bMax_)
-		{
-			this->max_ = element(getMaxBoundary<Ty_>(bMax_), this->eType_);
-		}
-		virtual void setMinToLimit(sig_bit_type bMin_)
-		{
-			this->min_ = element(getMinBoundary<Ty_>(bMin_), this->eType_);
-		}
-		virtual void setMaxToLimitFrom(pNode prevNode)
-		{
-			Ty_ prevMax = prevNode->max_.get<Ty_>();
-			this->max_ = element(getMaxBoundary<Ty_>(prevMax, this->order_, this->bMax_), this->eType_);
-		}
-		virtual void setMinToLimitFrom(pNode prevNode)
-		{
-			Ty_ prevMin = prevNode->min_.get<Ty_>();
-			this->min_ = element(getMinBoundary<Ty_>(prevMin, this->order_, this->bMin_), this->eType_);
-		}
 
 		virtual void inMinMax(bstream& bs)
 		{
-			Ty_ tMax, tMin;
-			bs >> setw(sizeof(Ty_) * CHAR_BIT) >> tMax >> tMin;
-			this->bits_ = msb<Ty_>(tMax - tMin);
-			this->max_.set<Ty_>(tMax);
-			this->min_.set<Ty_>(tMin);
+			bs >> setw(sizeof(Ty_) * CHAR_BIT) >> this->max_ >> this->min_;
+			this->bits_ = msb<Ty_>(max_ - min_);
 		}
 
 		virtual void outMinMax(bstream& bs)
 		{
 			bs << setw(sizeof(Ty_) * CHAR_BIT);
-			//bs << (Ty_)this->max_ << this->min_;
-
-			Ty_ max = this->max_.get<Ty_>();
-			Ty_ min = this->min_.get<Ty_>();
-			bs << max << min;
+			bs << max_ << min_;
 		}
 
 		virtual void initBits()
 		{
-			Ty_ max = this->max_.get<Ty_>();
-			Ty_ min = this->min_.get<Ty_>();
-			this->bits_ = msb<Ty_>(max - min);
+			this->bits_ = msb<Ty_>(max_ - min_);
 		}
 		virtual void initBMax()
 		{
-			Ty_ max = this->max_.get<Ty_>();
-			this->bMax_ = msb<Ty_>(abs_(max), this->order_) * SIGN(max);
+			this->bMax_ = msb<Ty_>(abs_(max_), this->order_) * SIGN(max_);
 		}
 		virtual void initBMin()
 		{
-			Ty_ min = this->min_.get<Ty_>();
-			this->bMin_ = msb<Ty_>(abs_(min), this->order_) * SIGN(min);
+			this->bMin_ = msb<Ty_>(abs_(min_), this->order_) * SIGN(min_);
 		}
-	};
-
-	class mmtHeader : public serialHeader
-	{
-	public:
-		static const char mmt_header_version = 1;
-
-	public:
-		virtual void serialize(std::ostream& os) override
-		{
-			os << this->version_ << this->size_ << static_cast<int>(this->eType_) << maxLevel_;
-		}
-		virtual void deserialize(std::istream& is) override
-		{
-			int ieType;
-			is >> this->version_ >> this->size_ >> ieType >> maxLevel_;
-
-			this->eType_ = static_cast<eleType>(ieType);
-		}
-
-	public:
-		//eleType dType_;	// dimension type, not used, fixed now.
-		eleType eType_;		// element type
-		size_type maxLevel_;
 	};
 
 protected:
@@ -177,7 +152,7 @@ protected:
 	virtual void updateToHeader() override
 	{
 		auto curHeader = std::static_pointer_cast<mmtHeader>(this->getHeader());
-		curHeader->version_ = MinMaxTree<Dty_>::mmtHeader::mmt_header_version;
+		curHeader->version_ = MinMaxTree::mmtHeader::mmt_header_version;
 		curHeader->size_ = this->serializedSize_;
 		curHeader->maxLevel_ = this->maxLevel_;
 		curHeader->eType_ = this->eType_;
@@ -191,34 +166,20 @@ protected:
 		this->eType_ = curHeader->eType_;
 	}
 
-public:
-	pNode(MinMaxTree::* makeNodeFunc)(eleType);
-
-	template<typename Ty_>
-	pNode makeNodeImpl(eleType type)
-	{
-		return std::make_shared<mmtNodeImpl<Ty_>>(type);
-	}
-
-	pNode makeNode()
-	{
-		return (this->*makeNodeFunc)(this->eType_);
-	}
-
 	//////////////////////////////
 	// MMT Constructor			//
 	//////////////////////////////
 public:
-	MinMaxTree(eleType eType, dim_vector_reference dim, dim_vector_reference blockDim, size_const maxLevel = 0)
-		: dim_(dim), dSize_(dim.size()), leafBlockDim_(blockDim), maxLevel_(maxLevel), serializedSize_(0),
-		eType_(eType_), TySize_(getEleSize(eType)), TyBits_(getEleSize(eType)* CHAR_BIT), 
-		serializable(std::make_shared<mmtHeader>())
+	MinMaxTreeImpl(eleType eType, dim_vector_reference dim, dim_vector_reference blockDim,
+				   size_const maxLevel = 0)
+		: MinMaxTree(eType), dim_(dim), dSize_(dim.size()), leafBlockDim_(blockDim), 
+		maxLevel_(maxLevel), serializedSize_(0), 
+		TySize_(getEleSize(eType)), TyBits_(getEleSize(eType)* CHAR_BIT)
 	{
 		this->initChunkInDim(dim, blockDim, maxLevel);
-		this->setMakeNodeFunc(eType);
 	}
 
-	~MinMaxTree() {}
+	~MinMaxTreeImpl() {}
 
 public:
 	// deprecated
@@ -256,12 +217,12 @@ public:
 	//{
 	//	bstream bs;
 	//	this->serialize(bs);
-
+	//
 	//	if (length < (bs.size() + CHAR_BIT - 1) / CHAR_BIT)
 	//	{
 	//		throw std::length_error();
 	//	}
-
+	//
 	//	memcpy(output, bs.data(), (bs.size() + CHAR_BIT - 1) / CHAR_BIT);
 	//}
 
@@ -313,17 +274,17 @@ public:
 		this->deserialize(bs);
 	}
 
-	const pNode getNodes(size_type level)
-	{
-		assert(level < this->nodes_.size());
-		return this->nodes_[level].data();
-	}
+	//const pNode getNodes(size_type level)
+	//{
+	//	assert(level < this->nodes_.size());
+	//	return this->nodes_[level].data();
+	//}
 
-	const dim_vector& getChunkInDim(size_type level)
-	{
-		assert(level <= this->levelBlockDims_.size());
-		return this->levelBlockDims_[level];
-	}
+	//const dim_vector& getChunkInDim(size_type level)
+	//{
+	//	assert(level <= this->levelBlockDims_.size());
+	//	return this->levelBlockDims_[level];
+	//}
 
 protected:
 	coor chunkCoorToBlockCoor(const coor& chunkCoor, const dimension& chunkDimForBlock)
@@ -358,12 +319,12 @@ protected:
 		// Use to convert block coordinate to seqencial node index
 		nodeItr nit(this->nodes_[0].data(), this->dSize_, blockDims.data());
 
-		while(!it.isEnd())
+		while (!it.isEnd())
 		{
 			// Setup a start point of blockCoor for blocks in a chunk
 			coor blockCoorSp = this->chunkCoorToBlockCoor(it.coor(), chunkDimForBlock);
 			coorItr bit(this->dSize_, chunkDimForBlock.data());
-			while(!bit.isEnd())
+			while (!bit.isEnd())
 			{
 				// Set iterator range according the block size
 				coor inBlockCoor = bit.coor(), inBlockDimSp(this->dSize_), inBlockDimEp(this->dSize_);
@@ -393,24 +354,24 @@ protected:
 
 	pNode forwardBuildLeafNode(itemItr& iit)
 	{
-		pNode node = this->makeNode();
+		pNode node = std::make_shared<mmtNode>();
 
-		auto value = *iit;
-		node->setMax(value);
-		node->setMin(value);
+		auto value = (*iit).get<Ty_>();
+		node->max_ = value;
+		node->min_ = value;
 		node->bits_ = (bit_cnt_type)TyBits_;
 		++iit;
 
-		while(!iit.isEnd())
+		while (!iit.isEnd())
 		{
-			auto v = *iit;
-			if(node->compareMax(v) < 0)
+			auto v = (*iit).get<Ty_>();
+			if (node->max_ < v)
 			{
-				node->setMax(v);
+				node->max_ = v;
 			}
-			if(node->compareMin(v) > 0)
+			if (node->min_ > v)
 			{
-				node->setMin(v);
+				node->min_ = v;
 			}
 			++iit;
 		}
@@ -449,7 +410,7 @@ protected:
 
 			// get target chunk
 			cit.moveTo(cur);
-			pNode node = makeNode();
+			pNode node = std::make_shared<mmtNode>();
 			(*cit) = node;
 
 			// init min, max value
@@ -461,15 +422,16 @@ protected:
 			} else
 			{
 				// compare min max value
-				if(node->max_ < (*pcit)->max_)
+				if (node->max_ < (*pcit)->max_)
 				{
 					node->max_ = (*pcit)->max_;
 				}
-				if(node->min_ > (*pcit)->min_)
+				if (node->min_ > (*pcit)->min_)
 				{
 					node->min_ = (*pcit)->min_;
 				}
 			}
+			this->nodes_[level][cit.coorToSeq(cur)] = node;
 
 			// move to next chunk
 			++pcit;
@@ -619,7 +581,7 @@ protected:
 
 		for (size_type i = 0; i < chunkCnt; i++)
 		{
-			rootNodes[i] = makeNode();
+			rootNodes[i] = std::make_shared<mmtNode>();
 			rootNodes[i]->inMinMax(bs);
 
 			//Ty_ max, min;
@@ -664,16 +626,12 @@ protected:
 
 				if (cNode->order_ == 1)
 				{
-					cNode->setMaxToLimit(cNode->bMax_);
-					cNode->setMinToLimit(cNode->bMin_);
-					//cNode->max = getMaxBoundary<Ty_>(cNode->bMax_);
-					//cNode->min = getMinBoundary<Ty_>(cNode->bMin_);
+					cNode->max_ = getMaxBoundary<Ty_>(cNode->bMax_);
+					cNode->min_ = getMinBoundary<Ty_>(cNode->bMin_);
 				} else
 				{
-					cNode->setMaxToLimitFrom(prevNode);
-					cNode->setMinToLimitFrom(prevNode);
-					//cNode->max = getMaxBoundary(prevNode->max, cNode->order_, cNode->bMax_);
-					//cNode->min = getMinBoundary(prevNode->min, cNode->order_, cNode->bMin_);
+					cNode->max_ = getMaxBoundary<Ty_>(prevNode->max_, cNode->order_, cNode->bMax_);
+					cNode->min_ = getMinBoundary<Ty_>(prevNode->min_, cNode->order_, cNode->bMin_);
 				}
 			} else
 			{
@@ -684,10 +642,8 @@ protected:
 					cNode->bMax_ = prevNode->bMax_ - cNode->bMaxDelta_ - 1;
 					cNode->bMin_ = prevNode->bMin_ - cNode->bMinDelta_ - 1;
 
-					cNode->setMaxToLimitFrom(prevNode);
-					cNode->setMinToLimitFrom(prevNode);
-					//cNode->max = getMaxBoundary(prevNode->max, cNode->order_, cNode->bMax_);
-					//cNode->min = getMinBoundary(prevNode->min, cNode->order_, cNode->bMin_);
+					cNode->max_ = getMaxBoundary<Ty_>(prevNode->max_, cNode->order_, cNode->bMax_);
+					cNode->min_ = getMinBoundary<Ty_>(prevNode->min_, cNode->order_, cNode->bMin_);
 				} else
 				{
 					cNode->bits_ = 0;
@@ -700,18 +656,14 @@ protected:
 			// Fill out min, max values.
 			if (cNode->order_ == 1)
 			{
-				cNode->setMaxToLimit(cNode->bMax_);
-				cNode->setMinToLimit(cNode->bMin_);
-				//cNode->max = getMaxBoundary<Ty_>(cNode->bMax_);
-				//cNode->min = getMinBoundary<Ty_>(cNode->bMin_);
+				cNode->max_ = getMaxBoundary<Ty_>(cNode->bMax_);
+				cNode->min_ = getMinBoundary<Ty_>(cNode->bMin_);
 			} else
 			{
 				if (cNode->bits_)
 				{
-					cNode->setMaxToLimitFrom(prevNode);
-					cNode->setMinToLimitFrom(prevNode);
-					//cNode->max = getMaxBoundary(prevNode->max, cNode->order_, cNode->bMax_);
-					//cNode->min = getMinBoundary(prevNode->min, cNode->order_, cNode->bMin_);
+					cNode->max_ = getMaxBoundary<Ty_>(prevNode->max_, cNode->order_, cNode->bMax_);
+					cNode->min_ = getMinBoundary<Ty_>(prevNode->min_, cNode->order_, cNode->bMin_);
 				}
 			}
 
@@ -753,53 +705,6 @@ protected:
 	}
 
 private:
-	void setMakeNodeFunc(eleType eType)
-	{
-		switch (eType)
-		{
-
-		case eleType::CHAR:
-			this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<char>;
-			break;
-		case eleType::INT8:
-			this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<int8_t>;
-			break;
-		case eleType::INT16:
-			this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<int16_t>;
-			break;
-		case eleType::INT32:
-			this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<int32_t>;
-			break;
-		case eleType::INT64:
-			this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<int64_t>;
-			break;
-		case eleType::UINT8:
-			this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<uint8_t>;
-			break;
-		case eleType::UINT16:
-			this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<uint16_t>;
-			break;
-		case eleType::UINT32:
-			this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<uint32_t>;
-			break;
-		case eleType::UINT64:
-			this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<uint64_t>;
-			break;
-
-		// NOT SUPPORTS
-		//case eleType::BOOL:
-		//	this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<bool>;
-		//	break;
-		//case eleType::FLOAT:
-		//	this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<float>;
-		//	break;
-		//case eleType::DOUBLE:
-		//	this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<double>;
-		//	break;
-		}
-	}
-
-private:
 	const size_type TySize_;
 	const size_type TyBits_;
 	eleType eType_;
@@ -826,36 +731,35 @@ private:
 	*
 	*/
 };
-
-class mmtHolder
+template<typename Dty_>
+inline pMMT MinMaxTree::createMMT(eleType type, 
+								  std::vector<Dty_>& dim, std::vector<Dty_>& blockDim, 
+								  size_const maxLevel)
 {
-public:
+	switch (type)
+	{
+	case eleType::CHAR:
+		return std::make_shared<MinMaxTreeImpl<Dty_, char>>(type, dim, blockDim, maxLevel);
+	case eleType::INT8:
+		return std::make_shared<MinMaxTreeImpl<Dty_, int8_t>>(type, dim, blockDim, maxLevel);
+	case eleType::INT16:
+		return std::make_shared<MinMaxTreeImpl<Dty_, int16_t>>(type, dim, blockDim, maxLevel);
+	case eleType::INT32:
+		return std::make_shared<MinMaxTreeImpl<Dty_, int32_t>>(type, dim, blockDim, maxLevel);
+	case eleType::INT64:
+		return std::make_shared<MinMaxTreeImpl<Dty_, int64_t>>(type, dim, blockDim, maxLevel);
+	case eleType::UINT8:
+		return std::make_shared<MinMaxTreeImpl<Dty_, uint8_t>>(type, dim, blockDim, maxLevel);
+	case eleType::UINT16:
+		return std::make_shared<MinMaxTreeImpl<Dty_, uint16_t>>(type, dim, blockDim, maxLevel);
+	case eleType::UINT32:
+		return std::make_shared<MinMaxTreeImpl<Dty_, uint32_t>>(type, dim, blockDim, maxLevel);
+	case eleType::UINT64:
+		return std::make_shared<MinMaxTreeImpl<Dty_, uint64_t>>(type, dim, blockDim, maxLevel);
+	}
 
-	mmtHolder(pMMT inMMT);
-
-protected:
-	pMMT mmt_;
-};
-
-class inMmtHolder : public mmtHolder
-{
-
-};
-
-class outMmtHolder : public mmtHolder
-{
-
-};
-
-class serializedMMTHolder
-{
-public:
-	serializedMMTHolder(pBstream bs);
-	serializedMMTHolder(void* data, size_t length);
-
-protected:
-	pBstream bs_;
-};
+	_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_UNKNOWN_ERROR, MSDB_ER_NOT_IMPLEMENTED));
+}
 }
 
 #endif		// _MSDB_MMT_H_

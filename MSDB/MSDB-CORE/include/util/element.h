@@ -154,7 +154,7 @@ public:
 
 	stableElement(const stableElement& mit);
 
-	~stableElement();
+	virtual ~stableElement();
 
 public:
 	stableElement& operator=(const element& mit);
