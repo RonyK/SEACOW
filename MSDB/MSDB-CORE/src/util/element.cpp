@@ -37,6 +37,11 @@ eleSize getEleSize(eleType type)
 	
 	_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_UNKNOWN_ELEMENT_TYPE));
 }
+element::element(eleType type)
+	: ptr_(nullptr)
+{
+	this->getFunc = this->findGetFunc(type);
+}
 element::element(void* ptr, eleType type)
 	: ptr_(ptr)
 {
@@ -45,6 +50,10 @@ element::element(void* ptr, eleType type)
 
 element::element(const element& mit)
 	: ptr_(mit.ptr_), getFunc(mit.getFunc)
+{
+}
+
+element::~element()
 {
 }
 
@@ -87,6 +96,13 @@ element::gFunc element::findGetFunc(eleType type)
 	return eleGetDataFPointer[static_cast<int>(type)];
 }
 
+stableElement::stableElement(eleType type)
+	: type_(type)
+{
+	size_t size = getEleSize(type);
+	this->ptr_ = static_cast<void*>(new char[size]);
+}
+
 stableElement::stableElement(void* ptr, eleType type)
 	: element(ptr, type), type_(type)
 {
@@ -103,7 +119,21 @@ stableElement::stableElement(const stableElement& mit)
 }
 
 
-stableElement& stableElement::operator=(const stableElement& mit)
+//stableElement& stableElement::operator=(const stableElement& mit)
+//{
+//	if (this->getCurrentTypeSize() != mit.getCurrentTypeSize())
+//	{
+//		delete[] this->ptr_;
+//		this->ptr_ = new char[mit.getCurrentTypeSize()];
+//	}
+//
+//	memcpy(this->ptr_, mit.ptr_, mit.getCurrentTypeSize());
+//	this->getFunc = mit.getFunc;
+//	
+//	return (*this);
+//}
+
+stableElement& stableElement::operator=(const element& mit)
 {
 	if (this->getCurrentTypeSize() != mit.getCurrentTypeSize())
 	{
@@ -113,7 +143,7 @@ stableElement& stableElement::operator=(const stableElement& mit)
 
 	memcpy(this->ptr_, mit.ptr_, mit.getCurrentTypeSize());
 	this->getFunc = mit.getFunc;
-	
+
 	return (*this);
 }
 

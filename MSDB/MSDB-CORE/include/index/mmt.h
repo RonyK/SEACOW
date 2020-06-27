@@ -56,13 +56,13 @@ public:
 		bit_cnt_type bMinDelta_;		// bMin_ delta from a parent node
 		bit_cnt_type order_;			// n th significant nit
 		bit_cnt_type bits_;			// required bits to represent min/max value
-		element max_;
-		element min_;
+		stableElement max_;
+		stableElement min_;
 		eleType eType_;
 
 	public:
 		mmtNode(eleType type) : bMax_(0), bMin_(0), bits_(0x80), order_(1), 
-			bMaxDelta_(0), bMinDelta_(0), eType_(type)
+			bMaxDelta_(0), bMinDelta_(0), max_(type), min_(type), eType_(type)
 		{}
 
 	public:
@@ -103,12 +103,12 @@ public:
 		virtual void setMaxToLimitFrom(pNode prevNode)
 		{
 			Ty_ prevMax = prevNode->max_.get<Ty_>();
-			this->max_ = getMaxBoundary<Ty_>(prevMax, this->order_, this->bMax_);
+			this->max_ = element(getMaxBoundary<Ty_>(prevMax, this->order_, this->bMax_), this->eType_);
 		}
 		virtual void setMinToLimitFrom(pNode prevNode)
 		{
 			Ty_ prevMin = prevNode->min_.get<Ty_>();
-			this->min_ = getMinBoundary<Ty_>(prevMin, this->order_, this->bMin_);
+			this->min_ = element(getMinBoundary<Ty_>(prevMin, this->order_, this->bMin_), this->eType_);
 		}
 
 		virtual void inMinMax(bstream& bs)

@@ -11,6 +11,9 @@ namespace msdb
 using eleDefault = int64_t;
 using eleSize = size_t;
 
+class stableElement;
+using pStableElement = std::shared_ptr<stableElement>;
+
 enum class eleType
 {
 	EMPTY,		// cannot use NULL
@@ -28,9 +31,12 @@ enum class eleType
 	DOUBLE
 };
 
+// Use stableElement if you need to hold a value.
 class element
 {
 public:
+	element(eleType type = _ELE_DEFAULT_TYPE);
+
 	element(void* ptr, eleType type = _ELE_DEFAULT_TYPE);
 
 	element(const element& mit);
@@ -112,7 +118,6 @@ public:
 	{
 		*(uint64_t*)output = this->getUint64();
 	}
-
 	// TODO :: operator comparison
 	// TODO :: operator assignment
 
@@ -134,15 +139,17 @@ protected:
 
 protected:
 	void* ptr_;
-};
 
-class stableElement;
-using pStableElement = std::shared_ptr<stableElement>;
+private:
+	friend class stableElement;
+};
 
 // hold element in new assigned storage space
 class stableElement : public element, public std::enable_shared_from_this<stableElement>
 {
 public:
+	stableElement(eleType type = _ELE_DEFAULT_TYPE);
+
 	stableElement(void* ptr, eleType type = _ELE_DEFAULT_TYPE);
 
 	stableElement(const stableElement& mit);
@@ -150,7 +157,10 @@ public:
 	~stableElement();
 
 public:
-	stableElement& operator=(const stableElement& mit);
+	stableElement& operator=(const element& mit);
+	// Comparison
+	//bool operator> (const element& mit);
+
 
 	eleType getEleType();
 
