@@ -23,6 +23,21 @@ const char* strArrayConfigFile = "arrays.xml";
 //	return;
 //}
 
+storageMgr::storageMgr()
+{
+	std::cout << "current dir: " << std::filesystem::current_path() << std::endl;
+
+	this->basePath_ = filePath(strBasePath);
+	this->configPath_ = filePath(strConfigPath);
+	this->arrayPath_ = filePath(strArrayPath);
+
+	this->indexFolder_ = filePath(strIndexFolder);
+}
+
+storageMgr::~storageMgr()
+{
+}
+
 config* storageMgr::loadConfigFile(ConfigType type)
 {
 	tinyxml2::XMLDocument xmlDoc;
@@ -119,16 +134,10 @@ bool storageMgr::isExists(filePath& fp)
 	return std::filesystem::exists(fp);
 }
 
-bool storageMgr::init()
-{
-	std::cout << "current dir: " << std::filesystem::current_path() << std::endl;
-
-	this->basePath_ = filePath(strBasePath);
-	this->configPath_ = filePath(strConfigPath);
-	this->arrayPath_ = filePath(strArrayPath);
-
-	this->indexFolder_ = filePath(strIndexFolder);
-
-	return true;
-}
+//bool storageMgr::init()
+//{
+//
+//
+//	return true;
+//}
 }

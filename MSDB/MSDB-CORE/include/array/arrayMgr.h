@@ -12,6 +12,11 @@ namespace msdb
 {
 class arrayMgr : public singleton<arrayMgr>
 {
+private:
+	arrayMgr();
+
+	~arrayMgr();
+
 public:
 	pArrayDesc getArrayDesc(arrayId arrId);
 	pAttrIndex getAttributeIndex(arrayId arrId, attributeId attrId);
@@ -26,7 +31,8 @@ public:
 	std::map<arrayId, std::map<attributeId, pAttrIndex>> attrIndies_;
 	std::map<arrayId, std::map<dimensionId, pDimensionIndex>> dimIndies_;
 
-	virtual bool init() override;
+protected:
+	friend singleton<arrayMgr>;
 };
 }
 

@@ -25,6 +25,11 @@ using filePath = std::filesystem::path;
 
 class storageMgr : public singleton<storageMgr>
 {
+private:
+	storageMgr();
+
+	~storageMgr();
+
 public:
 	config* loadConfigFile(ConfigType type);
 	void saveConfigFile(config* cFile);
@@ -48,15 +53,18 @@ protected:
 	//const filePath& getArrayPath();
 
 protected:
-	bool init();
+	//bool init();
 
 	// Paths
 	filePath basePath_;
 	filePath configPath_;
 	filePath arrayPath_;
-	
+
 	// Folders
 	filePath indexFolder_;
+
+protected:
+	friend singleton<storageMgr>;
 };
 }
 #endif	//_MSDB_STORAGEMGR_H_

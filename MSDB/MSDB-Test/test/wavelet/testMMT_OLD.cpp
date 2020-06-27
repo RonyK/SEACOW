@@ -165,7 +165,7 @@ namespace msdb
 				//////////////////////////////
 				const unsigned char* converted = bs.data();
 				char expected[dataLength] = { 0 };
-				getExMMT(expected, dataLength);
+				getExSerialMMT(expected, dataLength);
 				for (size_t i = 0; i < (bs.size() + CHAR_BIT - 1) / CHAR_BIT; i++)
 				{
 					EXPECT_EQ(converted[i], (unsigned char)expected[i]);

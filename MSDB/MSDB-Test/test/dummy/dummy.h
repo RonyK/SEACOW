@@ -30,6 +30,7 @@ namespace msdb
 			void getWTDummy(value_type* output, size_t length);
 			void getWTChunkDummy(value_type* output, size_t length);
 			void getExDummy(value_type* output, size_t length);
+			void getExMMT(value_type(*minOutput)[2][2], value_type(*maxOutput)[2][2], size_t length);
 			std::vector<pArray> getSourceArray();
 		}
 
@@ -51,7 +52,8 @@ namespace msdb
 			void getDummy(value_type* output, size_t length);
 			void getWTDummy(value_type* output, size_t length);
 			void getExDummy(value_type* output, size_t length);
-			void getExMMT(value_type* output, size_t length);
+			void getExMMT(value_type(*minOutput)[4][4], value_type(*maxOutput)[4][4], size_t length);
+			void getExSerialMMT(value_type* output, size_t length);
 			std::vector<pArray> getSourceArray();
 		}
 

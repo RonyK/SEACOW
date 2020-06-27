@@ -3,6 +3,12 @@
 
 namespace msdb
 {
+arrayMgr::arrayMgr()
+{
+}
+arrayMgr::~arrayMgr()
+{
+}
 pArrayDesc arrayMgr::getArrayDesc(arrayId arrId)
 {
 	assert(arrId != INVALID_ARRAY_ID);
@@ -41,9 +47,9 @@ void arrayMgr::setDimensionIndex(arrayId id, dimensionId dimId, pDimensionIndex 
 	assert(id != INVALID_ARRAY_ID);
 	(this->dimIndies_[id])[dimId] = dIndex;
 }
-bool arrayMgr::init()
-{
-	return false;
-}
+//bool arrayMgr::init()
+//{
+//	return true;
+//}
 }
 

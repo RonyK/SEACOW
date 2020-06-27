@@ -22,16 +22,15 @@ namespace msdb
 		singleton<_derived>& operator=(singleton<_derived>&&) = delete;
 
 	protected:
-		virtual bool init() = 0;
 
 	protected:
 		singleton() : isInit(false) 
 		{
-			this->init();
 			this->isInit = true;
 		}
 		virtual ~singleton() {}
 
+	protected:
 		bool isInit;
 	};
 }
