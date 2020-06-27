@@ -51,10 +51,7 @@ void getWaveletDecode(pArrayDesc sourceArrDesc, eleDefault level,
 	qry = wdQuery_;
 }
 
-void getMMTBuild(pArrayDesc sourceArrDesc, eleDefault level,
-				 std::shared_ptr<mmt_build_plan>& plan,
-				 std::shared_ptr<mmt_build_action>& action,
-				 pQuery& qry)
+void getMmtBuild(pArrayDesc sourceArrDesc, eleDefault level, std::shared_ptr<mmt_build_plan>& plan, std::shared_ptr<mmt_build_action>& action, pQuery& qry)
 {
 	pQuery weQuery_ = std::make_shared<query>();
 	auto mmtPlan_ = std::make_shared<mmt_build_plan>();
@@ -73,6 +70,5 @@ void getMMTBuild(pArrayDesc sourceArrDesc, eleDefault level,
 	action = mmtAction_;
 	qry = weQuery_;
 }
-
 }	// caDummy
 }	// msdb

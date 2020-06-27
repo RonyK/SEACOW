@@ -17,10 +17,14 @@ void getWaveletEncode(pArrayDesc sourceArrDesc, eleDefault level,
                       std::shared_ptr<wavelet_encode_action>& action,
                       pQuery& qry);
 
-
 void getWaveletDecode(pArrayDesc sourceArrDesc, eleDefault level,
                       std::shared_ptr<wavelet_decode_plan>& plan,
                       std::shared_ptr<wavelet_decode_action>& action,
                       pQuery& qry);
+
+void getMmtBuild(pArrayDesc sourceArrDesc, eleDefault level,
+                 std::shared_ptr<mmt_build_plan>& plan,
+                 std::shared_ptr<mmt_build_action>& action,
+                 pQuery& qry);
 }
 }

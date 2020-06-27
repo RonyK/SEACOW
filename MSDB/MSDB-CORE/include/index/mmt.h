@@ -56,22 +56,16 @@ public:
 		bit_cnt_type bMinDelta_;		// bMin_ delta from a parent node
 		bit_cnt_type order_;			// n th significant nit
 		bit_cnt_type bits_;			// required bits to represent min/max value
+		element max_;
+		element min_;
+		eleType eType_;
 
 	public:
-		mmtNode() : bMax_(0), bMin_(0), bits_(0x80), order_(1), bMaxDelta_(0), bMinDelta_(0) {}
+		mmtNode(eleType type) : bMax_(0), bMin_(0), bits_(0x80), order_(1), 
+			bMaxDelta_(0), bMinDelta_(0), eType_(type)
+		{}
 
 	public:
-		virtual void copyMaxFrom(pNode _right) = 0;
-		virtual void copyMinFrom(pNode _right) = 0;
-
-		virtual void setMax(const void* max) = 0;
-		virtual void setMax(element& max) = 0;
-		virtual void setMin(const void* min) = 0;
-		virtual void setMin(element& min) = 0;
-		
-		virtual void* getMax() = 0;
-		virtual void* getMin() = 0;
-
 		virtual void setMaxToLimit(sig_bit_type bMax_) = 0;
 		virtual void setMinToLimit(sig_bit_type bMax_) = 0;
 		virtual void setMaxToLimitFrom(pNode prevNode) = 0;
@@ -84,156 +78,73 @@ public:
 		virtual void inMinMax(bstream& bs) = 0;
 		virtual void outMinMax(bstream& bs) = 0;
 
-		virtual void inDelta(bstream& bs) = 0;
-
-		virtual char compareMax(pNode right) = 0;
-		virtual char compareMin(pNode right) = 0;
-
-		virtual char compareMax(element right) = 0;
-		virtual char compareMin(element right) = 0;
+		// use function cause of unknown compile error
+		virtual void inDelta(bstream& bs)
+		{
+			bs >> setw(this->bits_) >> this->bMaxDelta_ >> this->bMinDelta_;
+		}
 	};
 
 	template<typename Ty_>
 	class mmtNodeImpl : public mmtNode
 	{
 	public:
-		// TODO :: Change to element
-		Ty_ max_;
-		Ty_ min_;
+		mmtNodeImpl() : mmtNode() {}
 
 	public:
-		mmtNodeImpl() : mmtNode(), max_(0), min_(0) {}
-
-	public:
-		virtual void copyMaxFrom(pNode _right)
-		{
-			memcpy(&this->max_, _right->getMax(), sizeof(Ty_));
-			this->bMax_ = _right->bMax_;
-		}
-		virtual void copyMinFrom(pNode _right)
-		{
-			memcpy(&this->min_, _right->getMin(), sizeof(Ty_));
-			this->bMin_ = _right->bMin_;
-		}
-
-		virtual void* getMax()
-		{
-			return &this->max_;
-		}
-
-		virtual void* getMin()
-		{
-			return &this->min_;
-		}
-
-		virtual void setMax(const void* max)
-		{
-			memcpy(&this->max_, max, sizeof(Ty_));
-			this->bMax_ = msb<Ty_>(abs_(this->max_)) * SIGN(max);
-		}
-
-		virtual void setMax(element& max)
-		{
-			max.getData(&this->max_);
-			this->bMax_ = msb<Ty_>(abs_(this->max_)) * SIGN(max_);
-		}
-
-		virtual void setMin(const void* min)
-		{
-			memcpy(&this->min_, min, sizeof(Ty_));
-			this->bMin_ = msb<Ty_>(abs_(this->min_)) * SIGN(min);
-		}
-
-		virtual void setMin(element& min)
-		{
-			min.getData(&this->min_);
-			this->bMin_ = msb<Ty_>(abs_(this->min_)) * SIGN(min_);
-		}
-
 		virtual void setMaxToLimit(sig_bit_type bMax_)
 		{
-			this->max_ = getMaxBoundary<Ty_>(bMax_);
+			this->max_ = element(getMaxBoundary<Ty_>(bMax_), this->eType_);
 		}
 		virtual void setMinToLimit(sig_bit_type bMin_)
 		{
-			this->min_ = getMinBoundary<Ty_>(bMin_);
+			this->min_ = element(getMinBoundary<Ty_>(bMin_), this->eType_);
 		}
 		virtual void setMaxToLimitFrom(pNode prevNode)
 		{
-			Ty_ prevMax = *((Ty_*)prevNode->getMax());
+			Ty_ prevMax = prevNode->max_.get<Ty_>();
 			this->max_ = getMaxBoundary<Ty_>(prevMax, this->order_, this->bMax_);
 		}
 		virtual void setMinToLimitFrom(pNode prevNode)
 		{
-			Ty_ prevMin = *((Ty_*)prevNode->getMin());
+			Ty_ prevMin = prevNode->min_.get<Ty_>();
 			this->min_ = getMinBoundary<Ty_>(prevMin, this->order_, this->bMin_);
 		}
 
 		virtual void inMinMax(bstream& bs)
 		{
-			bs >> setw(sizeof(Ty_) * CHAR_BIT) >> this->max_ >> this->min_;
-			this->bits_ = msb<Ty_>(max_ - min_);
+			Ty_ tMax, tMin;
+			bs >> setw(sizeof(Ty_) * CHAR_BIT) >> tMax >> tMin;
+			this->bits_ = msb<Ty_>(tMax - tMin);
+			this->max_.set<Ty_>(tMax);
+			this->min_.set<Ty_>(tMin);
 		}
 
 		virtual void outMinMax(bstream& bs)
 		{
 			bs << setw(sizeof(Ty_) * CHAR_BIT);
 			//bs << (Ty_)this->max_ << this->min_;
-			bs << (Ty_)this->max_;
-			bs << (Ty_)this->min_;
-		}
 
-		virtual void inDelta(bstream& bs)
-		{
-			// TODO::
-			bs >> setw(this->bits_) >> this->bMaxDelta_ >> this->bMinDelta_;
-			//bs >> setw(this->bits_);
-			//bs + setw(1)
+			Ty_ max = this->max_.get<Ty_>();
+			Ty_ min = this->min_.get<Ty_>();
+			bs << max << min;
 		}
 
 		virtual void initBits()
 		{
-			this->bits_ = msb<Ty_>(max_ - min_);
+			Ty_ max = this->max_.get<Ty_>();
+			Ty_ min = this->min_.get<Ty_>();
+			this->bits_ = msb<Ty_>(max - min);
 		}
 		virtual void initBMax()
 		{
-			this->bMax_ = msb<Ty_>(abs_(this->max_), this->order_) * SIGN(this->max_);
+			Ty_ max = this->max_.get<Ty_>();
+			this->bMax_ = msb<Ty_>(abs_(max), this->order_) * SIGN(max);
 		}
 		virtual void initBMin()
 		{
-			this->bMin_ = msb<Ty_>(abs_(this->min_), this->order_) * SIGN(this->min_);
-		}
-
-		virtual char compareMax(pNode right)
-		{
-			Ty_ rightMax = *((Ty_*)right->getMax());
-			if (this->max_ < rightMax)	return -1;
-			if (this->max_ > rightMax) return 1;
-			return 0;
-		}
-		virtual char compareMin(pNode right)
-		{
-			Ty_ rightMin = *((Ty_*)right->getMax());
-			if (this->min_ < rightMin)	return -1;
-			if (this->min_ > rightMin) return 1;
-			return 0;
-		}
-		virtual char compareMax(element right)
-		{
-			Ty_ rightMax;
-			right.getData(&rightMax);
-			if (this->max_ < rightMax) return -1;
-			if (this->max_ > rightMax) return 1;
-			return 0;
-
-		}
-		virtual char compareMin(element right)
-		{
-			Ty_ rightMin;
-			right.getData(&rightMin);
-			if (this->min_ < rightMin) return -1;
-			if (this->min_ > rightMin) return 1;
-			return 0;
+			Ty_ min = this->min_.get<Ty_>();
+			this->bMin_ = msb<Ty_>(abs_(min), this->order_) * SIGN(min);
 		}
 	};
 
@@ -281,17 +192,17 @@ protected:
 	}
 
 public:
-	pNode(MinMaxTree::* makeNodeFunc)();
+	pNode(MinMaxTree::* makeNodeFunc)(eleType);
 
 	template<typename Ty_>
-	pNode makeNodeImpl()
+	pNode makeNodeImpl(eleType type)
 	{
-		return std::make_shared<mmtNodeImpl<Ty_>>();
+		return std::make_shared<mmtNodeImpl<Ty_>>(type);
 	}
 
 	pNode makeNode()
 	{
-		return (this->*makeNodeFunc)();
+		return (this->*makeNodeFunc)(this->eType_);
 	}
 
 	//////////////////////////////
@@ -455,11 +366,11 @@ protected:
 			while(!bit.isEnd())
 			{
 				// Set iterator range according the block size
-				coor inBlockCoor = bit.coor(), inBlockDimSp, inBlockDimEp;
+				coor inBlockCoor = bit.coor(), inBlockDimSp(this->dSize_), inBlockDimEp(this->dSize_);
 				for (dimensionId d = 0; d < this->dSize_; ++d)
 				{
 					inBlockDimSp[d] = blockDims[d] * inBlockCoor[d];
-					inBlockDimEp[d] = blockDims[d] * (inBlockCoor[d] + 1) - 1;
+					inBlockDimEp[d] = blockDims[d] * (inBlockCoor[d] + 1);
 				}
 
 				// TODO :: Reduce in one line
@@ -531,7 +442,7 @@ protected:
 		{
 			// current iterator coordiate -> parent coordinate
 			coordinate<Dty_> cur = pcit.coor();
-			for (size_type d = 0; d < this->dSize_; d++)
+			for (size_type d = 0; d < this->dSize_; ++d)
 			{
 				cur[d] /= 2;
 			}
@@ -544,19 +455,19 @@ protected:
 			// init min, max value
 			if (node->bits_ == 0x80)
 			{
-				node->copyMaxFrom((*pcit));
-				node->copyMinFrom((*pcit));
+				node->max_ = (*pcit)->max_;
+				node->min_ = (*pcit)->min_;
 				node->bits_ = (bit_cnt_type)TyBits_;
 			} else
 			{
 				// compare min max value
-				if(node->compareMax(*pcit) < 0)
+				if(node->max_ < (*pcit)->max_)
 				{
-					node->copyMaxFrom((*pcit));
+					node->max_ = (*pcit)->max_;
 				}
-				if(node->compareMin(*pcit) > 0)
+				if(node->min_ > (*pcit)->min_)
 				{
-					node->copyMinFrom((*pcit));
+					node->min_ = (*pcit)->min_;
 				}
 			}
 
@@ -781,8 +692,8 @@ protected:
 				{
 					cNode->bits_ = 0;
 					cNode->order_ = prevNode->order_;
-					cNode->copyMaxFrom(prevNode);
-					cNode->copyMinFrom(prevNode);
+					cNode->max_ = prevNode->max_;
+					cNode->min_ = prevNode->min_;
 				}
 			}
 
@@ -847,9 +758,9 @@ private:
 		switch (eType)
 		{
 
-		//case eleType::CHAR:
-		//	this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<char>;
-		//	break;
+		case eleType::CHAR:
+			this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<char>;
+			break;
 		case eleType::INT8:
 			this->makeNodeFunc = &MinMaxTree<Dty_>::makeNodeImpl<int8_t>;
 			break;

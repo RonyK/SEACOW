@@ -113,6 +113,9 @@ public:
 		*(uint64_t*)output = this->getUint64();
 	}
 
+	// TODO :: operator comparison
+	// TODO :: operator assignment
+
 protected:
 	typedef void(element::* gFunc)(void*);
 	gFunc findGetFunc(eleType type);
