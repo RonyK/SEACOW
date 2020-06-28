@@ -34,7 +34,7 @@ TEST(mmt_build_action, mmt_build_sc4x4)
 
 		value_type exMMT_min[2][2][2];
 		value_type exMMT_max[2][2][2];
-		getExMMT(exMMT_min, exMMT_max, 2 * 2 * 2);
+		getExMMTBuilded(exMMT_min, exMMT_max, 2 * 2 * 2);
 
 		for (size_t l = 0; l <= level; l++)
 		{
@@ -85,7 +85,7 @@ TEST(mmt_build_action, mmt_build_sc8x8)
 
 		value_type exMMT_min[3][4][4];
 		value_type exMMT_max[3][4][4];
-		getExMMT(exMMT_min, exMMT_max, 3 * 4 * 4);
+		getExMMTBuilded(exMMT_min, exMMT_max, 3 * 4 * 4);
 
 		for (size_t l = 0; l <= level; l++)
 		{

@@ -57,6 +57,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="test\query\op\mmt_build\test_mmt_build.cpp" />
+    <ClCompile Include="test\query\op\mmt_load\test_mmt_load.cpp" />
+    <ClCompile Include="test\query\op\mmt_save\test_mmt_save.cpp" />
     <ClCompile Include="test\query\op\wavelet_encode\test_wavelet_encode_action.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>

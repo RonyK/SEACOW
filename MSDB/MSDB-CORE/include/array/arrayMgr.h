@@ -26,6 +26,9 @@ public:
 	void setAttributeIndex(arrayId arrId, attributeId attrId, pAttrIndex aIndex);
 	void setDimensionIndex(arrayId arrId, dimensionId dimId, pDimensionIndex dIndex);
 
+	void flushAttributeIndex(arrayId arrId, attributeId attrId);
+	void flushDimensionIndex(arrayId arrId, dimensionId dimId);
+
 public:
 	std::map<arrayId, pArrayDesc> arrDescs_;
 	std::map<arrayId, std::map<attributeId, pAttrIndex>> attrIndies_;

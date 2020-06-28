@@ -51,16 +51,20 @@ void getWaveletDecode(pArrayDesc sourceArrDesc, eleDefault level,
 	qry = wdQuery_;
 }
 
-void getMmtBuild(pArrayDesc sourceArrDesc, eleDefault level, std::shared_ptr<mmt_build_plan>& plan, std::shared_ptr<mmt_build_action>& action, pQuery& qry)
+void getMmtBuild(pArrayDesc sourceArrDesc,
+				 eleDefault level, 
+				 std::shared_ptr<mmt_build_plan>& plan,
+				 std::shared_ptr<mmt_build_action>& action, 
+				 pQuery& qry)
 {
-	pQuery weQuery_ = std::make_shared<query>();
+	pQuery mmtQuery_ = std::make_shared<query>();
 	auto mmtPlan_ = std::make_shared<mmt_build_plan>();
 	auto mmtAction_ = std::make_shared<mmt_build_action>();
 	parameters params = {
 		std::make_shared<opParamArray>(sourceArrDesc),
 		std::make_shared<opParamConst>(std::make_shared<stableElement>(&level, _ELE_DEFAULT_TYPE))
 	};
-	auto pSet = std::make_shared<wavelet_encode_pset>(params);
+	auto pSet = std::make_shared<mmt_build_pset>(params);
 
 	mmtPlan_->setParamSet(pSet);
 	mmtAction_->setArrayDesc(mmtPlan_->inferSchema());
@@ -68,7 +72,49 @@ void getMmtBuild(pArrayDesc sourceArrDesc, eleDefault level, std::shared_ptr<mmt
 
 	plan = mmtPlan_;
 	action = mmtAction_;
-	qry = weQuery_;
+	qry = mmtQuery_;
+}
+void getMmtSave(pArrayDesc sourceArrDesc,
+				std::shared_ptr<mmt_save_plan>& plan, 
+				std::shared_ptr<mmt_save_action>& action,
+				pQuery& qry)
+{
+	pQuery mmtQuery_ = std::make_shared<query>();
+	auto mmtPlan_ = std::make_shared<mmt_save_plan>();
+	auto mmtAction_ = std::make_shared<mmt_save_action>();
+	parameters params = {
+		std::make_shared<opParamArray>(sourceArrDesc)
+	};
+	auto pSet = std::make_shared<mmt_save_pset>(params);
+
+	mmtPlan_->setParamSet(pSet);
+	mmtAction_->setArrayDesc(mmtPlan_->inferSchema());
+	mmtAction_->setParams(params);
+
+	plan = mmtPlan_;
+	action = mmtAction_;
+	qry = mmtQuery_;
+}
+void getMmtLoad(pArrayDesc sourceArrDesc, 
+				std::shared_ptr<mmt_load_plan>& plan,
+				std::shared_ptr<mmt_load_action>& action, 
+				pQuery& qry)
+{
+	pQuery mmtQuery_ = std::make_shared<query>();
+	auto mmtPlan_ = std::make_shared<mmt_load_plan>();
+	auto mmtAction_ = std::make_shared<mmt_load_action>();
+	parameters params = {
+		std::make_shared<opParamArray>(sourceArrDesc)
+	};
+	auto pSet = std::make_shared<mmt_load_pset>(params);
+
+	mmtPlan_->setParamSet(pSet);
+	mmtAction_->setArrayDesc(mmtPlan_->inferSchema());
+	mmtAction_->setParams(params);
+
+	plan = mmtPlan_;
+	action = mmtAction_;
+	qry = mmtQuery_;
 }
 }	// caDummy
 }	// msdb

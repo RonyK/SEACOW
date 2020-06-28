@@ -11,6 +11,7 @@ const char* strConfigPath = "../storage/config/";
 const char* strArrayPath =	"../storage/array/";
 
 const char* strIndexFolder = "indies";
+const char* strIndexFilExtension = ".msdbindex";
 
 const char* strArrayConfigFile = "arrays.xml";
 
@@ -65,11 +66,13 @@ void storageMgr::saveConfigFile(config* cFile)
 	}
 }
 
-void storageMgr::loadAttrIndex(arrayId arrId, attributeId attrId,pSerializable serialObj)
+void storageMgr::loadAttrIndex(arrayId arrId, attributeId attrId, pSerializable serialObj)
 {
 	filePath fpIndex = this->getArrayIndexPath(arrId) / std::to_string(attrId);
+	fpIndex.replace_extension(strIndexFilExtension);
+
 	std::ifstream fs;
-	fs.open(fpIndex, std::fstream::out | std::fstream::trunc | std::fstream::binary);
+	fs.open(fpIndex, std::fstream::out | std::fstream::binary);
 	if(!fs.is_open())
 	{
 		_MSDB_THROW(_MSDB_EXCEPTIONS_MSG(MSDB_EC_IO_ERROR, MSDB_ER_CANNOT_OPEN_FILE, fpIndex.generic_string().c_str()));
@@ -81,7 +84,14 @@ void storageMgr::loadAttrIndex(arrayId arrId, attributeId attrId,pSerializable s
 
 void storageMgr::saveAttrIndex(arrayId arrId, attributeId attrId, pSerializable serialObj)
 {
+	filePath fpIndexFolder = this->getArrayIndexPath(arrId);
 	filePath fpIndex = this->getArrayIndexPath(arrId) / std::to_string(attrId);
+	fpIndex.replace_extension(strIndexFilExtension);
+	if (!this->isExists(fpIndexFolder))
+	{
+		this->createDirs(fpIndexFolder);
+	}
+
 	std::ofstream fs;
 	fs.open(fpIndex, std::fstream::in | std::fstream::trunc | std::fstream::binary);
 	if(!fs.is_open())
@@ -90,7 +100,6 @@ void storageMgr::saveAttrIndex(arrayId arrId, attributeId attrId, pSerializable 
 	}
 
 	serialObj->serialize(fs);
-	
 	fs.close();
 }
 

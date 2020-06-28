@@ -37,14 +37,30 @@ protected:
 	public:
 		virtual void serialize(std::ostream& os) override
 		{
-			os << this->version_ << this->size_ << static_cast<int>(this->eType_) << maxLevel_;
+			std::cout << "Header serialize" << std::endl;
+			std::cout << this->version_ << ", " << this->size_ << ", " << static_cast<int>(this->eType_) << ", " << this->maxLevel_ << std::endl;
+			
+			int eTypeOut = static_cast<int>(this->eType_);
+			os.write((char*)(&this->version_), sizeof(this->version_));
+			os.write((char*)(&this->size_), sizeof(this->size_));
+			os.write((char*)(&eTypeOut), sizeof(int));
+			os.write((char*)(&this->maxLevel_), sizeof(this->maxLevel_));
+			//os << this->version_ << this->size_ << static_cast<int>(this->eType_) << this->maxLevel_;
+			// operator<< outputs the values in ASCII CODE (TEXT).
 		}
 		virtual void deserialize(std::istream& is) override
 		{
-			int ieType;
-			is >> this->version_ >> this->size_ >> ieType >> maxLevel_;
+			std::cout << "Header deserialize" << std::endl;
 
-			this->eType_ = static_cast<eleType>(ieType);
+			int eTypeIn;
+			is.read((char*)(&this->version_), sizeof(this->version_));
+			is.read((char*)(&this->size_), sizeof(this->size_));
+			is.read((char*)(&eTypeIn), sizeof(int));			
+			is.read((char*)(&this->maxLevel_), sizeof(this->maxLevel_));
+			this->eType_ = static_cast<eleType>(eTypeIn);
+
+			//is >> this->version_ >> this->size_ >> eTypeIn >> maxLevel_;
+			std::cout << this->version_ << ", " << this->size_ << ", " << static_cast<int>(this->eType_) << ", " << this->maxLevel_ << std::endl;
 		}
 
 	public:
@@ -116,33 +132,31 @@ public:
 
 	public:
 		// use function cause of unknown compile error
-		virtual void inDelta(bstream& bs)
+		inline void inDelta(bstream& bs)
 		{
 			bs >> setw(this->bits_) >> this->bMaxDelta_ >> this->bMinDelta_;
 		}
 
-		virtual void inMinMax(bstream& bs)
+		inline void inMinMax(bstream& bs)
 		{
 			bs >> setw(sizeof(Ty_) * CHAR_BIT) >> this->max_ >> this->min_;
-			this->bits_ = msb<Ty_>(max_ - min_);
 		}
 
-		virtual void outMinMax(bstream& bs)
+		inline void outMinMax(bstream& bs)
 		{
 			bs << setw(sizeof(Ty_) * CHAR_BIT);
 			bs << max_ << min_;
 		}
 
-		virtual void initBits()
+		inline void initBits()
 		{
 			this->bits_ = msb<Ty_>(max_ - min_);
+			this->setMinMaxBits();
 		}
-		virtual void initBMax()
+
+		inline void setMinMaxBits()
 		{
 			this->bMax_ = msb<Ty_>(abs_(max_), this->order_) * SIGN(max_);
-		}
-		virtual void initBMin()
-		{
 			this->bMin_ = msb<Ty_>(abs_(min_), this->order_) * SIGN(min_);
 		}
 	};
@@ -163,7 +177,10 @@ protected:
 	{
 		auto curHeader = std::static_pointer_cast<mmtHeader>(this->getHeader());
 		this->maxLevel_ = curHeader->maxLevel_;
+		this->serializedSize_ = curHeader->size_;
 		this->eType_ = curHeader->eType_;
+
+		this->initLevelDims(this->dim_, this->leafBlockDim_, this->maxLevel_);
 	}
 
 	//////////////////////////////
@@ -173,7 +190,7 @@ public:
 	MinMaxTreeImpl(eleType eType, dim_vector_reference dim, dim_vector_reference blockDim,
 				   size_const maxLevel = 0)
 		: MinMaxTree(eType), dim_(dim), dSize_(dim.size()), leafBlockDim_(blockDim),
-		maxLevel_(maxLevel), serializedSize_(0),
+		maxLevel_(maxLevel), serializedSize_(0), eType_(eType),
 		TySize_(getEleSize(eType)), TyBits_(getEleSize(eType)* CHAR_BIT)
 	{
 		this->initLevelDims(dim, blockDim, maxLevel);
@@ -267,7 +284,8 @@ public:
 
 	virtual void deserialize(std::istream& is)
 	{
-		this->getInHeader()->deserialize(is);
+		this->getHeader()->deserialize(is);
+		this->updateFromHeader();
 		bstream bs;
 		bs.resize(this->serializedSize_);
 		is.read(bs.data(), this->serializedSize_);
@@ -502,7 +520,7 @@ protected:
 			}
 
 			pNode prevNode = (*pcit);
-			bool sameOrder = (bool)(prevNode->bMax_ - prevNode->bMin_);	// if bMax_ == bMin_, move on to the next most significant nit
+			bool sameOrder = (prevNode->bMax_ != prevNode->bMin_);	// if bMax_ == bMin_, move on to the next most significant nit
 			bit_cnt_type bits = sameOrder ? msb<sig_bit_type>(prevNode->bMax_ - prevNode->bMin_) : msb<sig_bit_type>(abs_(prevNode->bMax_) - 1);
 
 			for (size_type cID = 0; cID < siblings; cID++)
@@ -535,8 +553,7 @@ protected:
 						cNode->bits_ = bits;
 						cNode->order_ = prevNode->order_ + 1;
 
-						cNode->initBMax();
-						cNode->initBMin();
+						cNode->setMinMaxBits();
 						//cNode->bMax_ = msb<Ty_>(std::abs(cNode->max), cNode->order_) * SIGN(cNode->max);
 						//cNode->bMin_ = msb<Ty_>(std::abs(cNode->min), cNode->order_) * SIGN(cNode->min);
 
@@ -583,7 +600,7 @@ protected:
 		// Re-generate nodes
 		// TODO:: Seperate this block to distict function.
 		this->nodes_.clear();
-		for (size_type l = 0; l < this->maxLevel_ + 1; l++)
+		for (size_type l = 0; l <= this->maxLevel_; ++l)
 		{
 			// TODO:: Calc blockCnt on each level
 			this->nodes_.push_back(std::vector<pNode>());
@@ -600,12 +617,7 @@ protected:
 		{
 			rootNodes[i] = std::make_shared<mmtNode>();
 			rootNodes[i]->inMinMax(bs);
-
-			//Ty_ max, min;
-			//bs >> setw(TyBits_) >> max >> min;
-			//rootNodes[i].setMax(max);
-			//rootNodes[i].setMin(min);
-			//rootNodes[i].bits = msb<Ty_>(max - min);
+			rootNodes[i]->initBits();
 		}
 	}
 
@@ -627,34 +639,25 @@ protected:
 
 		for (size_type i = 0; i < chunkCnt; i++)
 		{
-			pNode cNode = (*cit);
+			pNode cNode = std::make_shared<mmtNode>();
+			(*cit) = cNode;
+			cNode->inDelta(bs);
+
 			pcit.moveTo(this->getParentCoor(cit.coor()));
 			pNode prevNode = (*pcit);
 
-			bool sameOrder = prevNode->bMax_ != prevNode->bMin_;	// if bMax_ == bMin_, move on to the next most significant nit
-			cNode->bits_ = sameOrder ? msb<sig_bit_type>(prevNode->bMax_ - prevNode->bMin_) : msb<sig_bit_type>(abs_(prevNode->bMax_) - 1);
-			cNode->inDelta(bs);
+			// if bMax_ == bMin_, move on to the next most significant nit
+			bool orderChanged = prevNode->bMax_ == prevNode->bMin_;	
+			cNode->bits_ =
+				orderChanged ?
+				msb<sig_bit_type>(abs_(prevNode->bMax_) - 1) :
+				msb<sig_bit_type>(prevNode->bMax_ - prevNode->bMin_);
 
-			if (sameOrder)
-			{
-				cNode->order_ = prevNode->order_;
-				cNode->bMax_ = prevNode->bMax_ - cNode->bMaxDelta_;
-				cNode->bMin_ = prevNode->bMin_ + cNode->bMinDelta_;
-
-				if (cNode->order_ == 1)
-				{
-					cNode->max_ = getMaxBoundary<Ty_>(cNode->bMax_);
-					cNode->min_ = getMinBoundary<Ty_>(cNode->bMin_);
-				} else
-				{
-					cNode->max_ = getMaxBoundary<Ty_>(prevNode->max_, cNode->order_, cNode->bMax_);
-					cNode->min_ = getMinBoundary<Ty_>(prevNode->min_, cNode->order_, cNode->bMin_);
-				}
-			} else
+			if (orderChanged)
 			{
 				if ((size_type)prevNode->order_ + 1 < TyBits_)
 				{
-					// Move to next significant nit
+					// Move to next significant bit
 					cNode->order_ = prevNode->order_ + 1;
 					cNode->bMax_ = prevNode->bMax_ - cNode->bMaxDelta_ - 1;
 					cNode->bMin_ = prevNode->bMin_ - cNode->bMinDelta_ - 1;
@@ -663,27 +666,23 @@ protected:
 					cNode->min_ = getMinBoundary<Ty_>(prevNode->min_, cNode->order_, cNode->bMin_);
 				} else
 				{
+					// order == TyBits_
+					// No more detail
 					cNode->bits_ = 0;
 					cNode->order_ = prevNode->order_;
 					cNode->max_ = prevNode->max_;
 					cNode->min_ = prevNode->min_;
 				}
-			}
 
-			// Fill out min, max values.
-			if (cNode->order_ == 1)
-			{
-				cNode->max_ = getMaxBoundary<Ty_>(cNode->bMax_);
-				cNode->min_ = getMinBoundary<Ty_>(cNode->bMin_);
 			} else
 			{
-				if (cNode->bits_)
-				{
-					cNode->max_ = getMaxBoundary<Ty_>(prevNode->max_, cNode->order_, cNode->bMax_);
-					cNode->min_ = getMinBoundary<Ty_>(prevNode->min_, cNode->order_, cNode->bMin_);
-				}
-			}
+				cNode->order_ = prevNode->order_;
+				cNode->bMax_ = prevNode->bMax_ - cNode->bMaxDelta_;
+				cNode->bMin_ = prevNode->bMin_ + cNode->bMinDelta_;
 
+				cNode->max_ = getMaxBoundary<Ty_>(prevNode->max_, cNode->order_, cNode->bMax_);
+				cNode->min_ = getMinBoundary<Ty_>(prevNode->min_, cNode->order_, cNode->bMin_);
+			}
 			++cit;	// Move to next data
 		}
 	}
@@ -693,11 +692,14 @@ protected:
 	// UTILS					//
 	//////////////////////////////
 	// Calculate number of chunk on each dimension using the dimension sizes and chunk sizes
-	void initLevelDims(dim_vector_const_reference dims, dim_vector_const_reference chunkDim, size_type maxLevel)
+	void initLevelDims(dim_vector_const_reference dims,
+					   dim_vector_const_reference leafBlockDim,
+					   size_type maxLevel)
 	{
+		this->levelDims_.clear();
 		for (size_type level = 0; level <= maxLevel; level++)
 		{
-			this->levelDims_.push_back(calcChunkNums(dims.data(), chunkDim.data(), dims.size(), level));
+			this->levelDims_.push_back(calcChunkNums(dims.data(), leafBlockDim.data(), dims.size(), level));
 		}
 	}
 

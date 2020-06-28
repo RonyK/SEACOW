@@ -19,8 +19,20 @@ pArrayDesc arrayMgr::getArrayDesc(arrayId arrId)
 pAttrIndex arrayMgr::getAttributeIndex(arrayId arrId, attributeId attrId)
 {
 	assert(arrId != INVALID_ARRAY_ID);
-	assert(this->attrIndies_.find(arrId) != this->attrIndies_.end());
-	assert(this->attrIndies_[arrId].find(attrId) != this->attrIndies_[arrId].end());	// check attributeId exist
+	//assert(this->attrIndies_.find(arrId) != this->attrIndies_.end());
+	//assert(this->attrIndies_[arrId].find(attrId) != this->attrIndies_[arrId].end());	// check attributeId exist
+
+	if(this->attrIndies_.find(arrId) == this->attrIndies_.end())
+	{
+		std::string strMsg = "Attribute index for arrayId: " + std::to_string(arrId);
+		_MSDB_THROW(_MSDB_EXCEPTIONS_MSG(MSDB_EC_USER_QUERY_ERROR, MSDB_ER_NO_ATTR_INDEX, strMsg.c_str()));
+	}
+
+	if((this->attrIndies_[arrId]).find(attrId) == (this->attrIndies_[arrId]).end())
+	{
+		std::string strMsg = "Attribute index for arrayId: " + std::to_string(arrId) + " / attributeId: " + std::to_string(attrId);
+		_MSDB_THROW(_MSDB_EXCEPTIONS_MSG(MSDB_EC_USER_QUERY_ERROR, MSDB_ER_NO_ATTR_INDEX, strMsg.c_str()));
+	}
 
 	return (this->attrIndies_[arrId])[attrId];
 }
@@ -46,6 +58,16 @@ void arrayMgr::setDimensionIndex(arrayId id, dimensionId dimId, pDimensionIndex 
 {
 	assert(id != INVALID_ARRAY_ID);
 	(this->dimIndies_[id])[dimId] = dIndex;
+}
+void arrayMgr::flushAttributeIndex(arrayId arrId, attributeId attrId)
+{
+	assert(arrId != INVALID_ARRAY_ID);
+	(this->attrIndies_[arrId]).erase(attrId);
+}
+void arrayMgr::flushDimensionIndex(arrayId arrId, dimensionId dimId)
+{
+	assert(arrId != INVALID_ARRAY_ID);
+	(this->dimIndies_[arrId]).erase(dimId);
 }
 //bool arrayMgr::init()
 //{

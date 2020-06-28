@@ -8,6 +8,12 @@
 #include <op/mmt_build/mmt_build_plan.h>
 #include <op/mmt_build/mmt_build_action.h>
 
+#include <op/mmt_save/mmt_save_plan.h>
+#include <op/mmt_save/mmt_save_action.h>
+
+#include <op/mmt_load/mmt_load_plan.h>
+#include <op/mmt_load/mmt_load_action.h>
+
 namespace msdb
 {
 namespace caDummy
@@ -26,5 +32,15 @@ void getMmtBuild(pArrayDesc sourceArrDesc, eleDefault level,
                  std::shared_ptr<mmt_build_plan>& plan,
                  std::shared_ptr<mmt_build_action>& action,
                  pQuery& qry);
+
+void getMmtSave(pArrayDesc sourceArrDesc,
+                std::shared_ptr<mmt_save_plan>& plan,
+                std::shared_ptr<mmt_save_action>& action,
+                pQuery& qry);
+
+void getMmtLoad(pArrayDesc sourceArrDesc,
+                std::shared_ptr<mmt_load_plan>& plan,
+                std::shared_ptr<mmt_load_action>& action,
+                pQuery& qry);
 }
 }

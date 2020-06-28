@@ -112,7 +112,7 @@ namespace msdb
 				}
 			}
 
-			void getExMMT(value_type(*minOutput)[2][2], value_type(*maxOutput)[2][2], size_t length)
+			void getExMMTBuilded(value_type(*minOutput)[2][2], value_type(*maxOutput)[2][2], size_t length)
 			{
 				assert(length >= 2*2*2);
 
@@ -154,7 +154,7 @@ namespace msdb
 				attributeDescs attrDescs;
 				attrDescs.push_back(std::make_shared<attributeDesc>(0, "ATTR_1", eleType::CHAR));		// SIGNED CHAR
 
-				pArrayDesc arrDesc = std::make_shared<arrayDesc>(0, "data2D_sc4x4", arrDimDescs, attrDescs);
+				pArrayDesc arrDesc = std::make_shared<arrayDesc>(aid, "data2D_sc4x4", arrDimDescs, attrDescs);
 				pArray sourceArr = std::make_shared<arrayBase>(arrDesc);
 
 				// Build Chunk
@@ -257,7 +257,7 @@ namespace msdb
 				//}
 			}
 
-			void getExMMT(value_type (*minOutput)[4][4], value_type (*maxOutput)[4][4], size_t length)
+			void getExMMTBuilded(value_type (*minOutput)[4][4], value_type (*maxOutput)[4][4], size_t length)
 			{
 				assert(length >= 48);
 
@@ -326,7 +326,7 @@ namespace msdb
 				attributeDescs attrDescs;
 				attrDescs.push_back(std::make_shared<attributeDesc>(0, "ATTR_1", eleType::CHAR));		// SIGNED CHAR
 
-				pArrayDesc arrDesc = std::make_shared<arrayDesc>(0, "data2D_sc8x8", dimDescs, attrDescs);
+				pArrayDesc arrDesc = std::make_shared<arrayDesc>(aid, "data2D_sc8x8", dimDescs, attrDescs);
 				pArray sourceArr = std::make_shared<arrayBase>(arrDesc);
 				
 				// Build Chunk
@@ -430,7 +430,7 @@ namespace msdb
 				//}
 			}
 
-			void getExMMT(value_type* output, size_t length)
+			void getExSerialMMT(value_type* output, size_t length)
 			{
 				assert(length > 21);
 				const static value_type arr[21] = {

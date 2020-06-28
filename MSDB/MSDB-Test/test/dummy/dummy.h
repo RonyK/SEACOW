@@ -20,6 +20,7 @@ namespace msdb
 			static const size_t dimX = 4;
 			static const size_t dimY = 4;
 			static const size_t maxLevel = 0;
+			static const arrayId aid = 441;
 
 			extern std::vector<dim_type> dims;
 			extern std::vector<dim_type> chunkDims;
@@ -30,7 +31,7 @@ namespace msdb
 			void getWTDummy(value_type* output, size_t length);
 			void getWTChunkDummy(value_type* output, size_t length);
 			void getExDummy(value_type* output, size_t length);
-			void getExMMT(value_type(*minOutput)[2][2], value_type(*maxOutput)[2][2], size_t length);
+			void getExMMTBuilded(value_type(*minOutput)[2][2], value_type(*maxOutput)[2][2], size_t length);
 			std::vector<pArray> getSourceArray();
 		}
 
@@ -43,6 +44,7 @@ namespace msdb
 			static const size_t dimX = 8;
 			static const size_t dimY = 8;
 			static const size_t maxLevel = 2;
+			static const arrayId aid = 881;
 
 			extern std::vector<dim_type> dims;
 			extern std::vector<dim_type> chunkDims;
@@ -52,7 +54,7 @@ namespace msdb
 			void getDummy(value_type* output, size_t length);
 			void getWTDummy(value_type* output, size_t length);
 			void getExDummy(value_type* output, size_t length);
-			void getExMMT(value_type(*minOutput)[4][4], value_type(*maxOutput)[4][4], size_t length);
+			void getExMMTBuilded(value_type(*minOutput)[4][4], value_type(*maxOutput)[4][4], size_t length);
 			void getExSerialMMT(value_type* output, size_t length);
 			std::vector<pArray> getSourceArray();
 		}
@@ -66,6 +68,7 @@ namespace msdb
 			static const size_t dimX = 8;
 			static const size_t dimY = 8;
 			static const size_t maxLevel = 2;
+			static const arrayId aid = 882;
 
 			extern std::vector<dim_type> dims;
 			extern std::vector<dim_type> chunkDims;
@@ -74,7 +77,7 @@ namespace msdb
 			void getDummy(char* output, size_t length);
 			void getWTDummy(char* output, size_t length);
 			void getExDummy(char* output, size_t length);
-			void getExMMT(char* output, size_t length);
+			void getExMMTBuilded(char* output, size_t length);
 		}
 	}
 }

@@ -21,6 +21,11 @@ extern const char* strBasePath;
 extern const char* strConfigPath;
 extern const char* strArrayPath;
 
+extern const char* strIndexFolder;
+extern const char* strIndexFilExtension;
+
+extern const char* strArrayConfigFile;
+
 using filePath = std::filesystem::path;
 
 class storageMgr : public singleton<storageMgr>
@@ -43,11 +48,11 @@ protected:
 	filePath getArrayIndexPath(arrayId arrId);
 
 	// STD::FILESYSTEM
-	bool createDirs(filePath& fp);
-	bool removeFile(filePath& fp);
-	bool isFile(filePath& fp);
-	bool isDir(filePath& fp);
-	bool isExists(filePath& fp);
+	static bool createDirs(filePath& fp);
+	static bool removeFile(filePath& fp);
+	static bool isFile(filePath& fp);
+	static bool isDir(filePath& fp);
+	static bool isExists(filePath& fp);
 
 	//const filePath& getConfigPath();
 	//const filePath& getArrayPath();

@@ -682,7 +682,7 @@ public:
 	bool operator!=(const self_type& rhs) const { return ptr_ != rhs.ptr_ || this->seqPos_ != rhs.seqPos_; }
 
 	// Pointer
-	Ty_ operator*() { return ptr_[this->seqPos_]; }
+	Ty_& operator*() { return ptr_[this->seqPos_]; }
 	Ty_ operator->() { return ptr_[this->seqPos_]; }
 
 	// Move

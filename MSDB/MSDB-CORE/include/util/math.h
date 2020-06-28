@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <cassert>
 #include <cstdlib>
+#include <algorithm>
 
 namespace msdb
 {
@@ -55,37 +56,6 @@ template<typename Ty_, typename size_type = std::conditional_t<sizeof(Ty_) < 32,
 	return i;
 }
 
-// Return Max Limit value where num of bits is provided.
-template <typename Ty_>
-Ty_ getMaxBoundary(sig_bit_type bits)
-{
-	if (bits == 0)
-	{
-		return 0;
-	} else if (bits > 0)
-	{
-		return static_cast<Ty_>(calcMaxLimit(bits));
-	} else
-	{
-		return static_cast<Ty_>(calcMinLimit(-bits) * -1);
-	}
-}
-
-template <typename Ty_>
-Ty_ getMinBoundary(sig_bit_type bits)
-{
-	if (bits == 0)
-	{
-		return 0;
-	} else if (bits > 0)
-	{
-		return static_cast<Ty_>(calcMinLimit(bits));
-	} else
-	{
-		return static_cast<Ty_>(calcMaxLimit(-bits) * -1);
-	}
-}
-
 template <typename Ty_>
 bit_cnt_type getPrefixPosForPrevLimit(Ty_ prevLimit, bit_cnt_type order)
 {
@@ -126,21 +96,57 @@ bit_cnt_type getPrefixPosForPrevLimit(Ty_ prevLimit, bit_cnt_type order)
 
 // Return Max Limit value where num of bits is provided.
 template <typename Ty_>
+Ty_ getMaxBoundary(Ty_ prevLimit, sig_bit_type sigBitPos)
+{
+	if (sigBitPos == 0)
+	{
+		return 0;
+	} else if (sigBitPos > 0)
+	{
+		return std::min({ static_cast<Ty_>(calcMaxLimit(sigBitPos)), prevLimit });
+	} else
+	{
+		return std::min({ static_cast<Ty_>(calcMinLimit(-sigBitPos) * -1), prevLimit });
+	}
+}
+
+template <typename Ty_>
+Ty_ getMinBoundary(Ty_ prevLimit, sig_bit_type sigBitPos)
+{
+	if (sigBitPos == 0)
+	{
+		return 0;
+	} else if (sigBitPos > 0)
+	{
+		return std::max({ static_cast<Ty_>(calcMinLimit(sigBitPos)), prevLimit });
+	} else
+	{
+		return std::max({ static_cast<Ty_>(calcMaxLimit(-sigBitPos) * -1), prevLimit });
+	}
+}
+
+// Return Max Limit value where num of bits is provided.
+template <typename Ty_>
 Ty_ getMaxBoundary(Ty_ prevLimit, bit_cnt_type order, sig_bit_type sigBitPos)
 {
-	assert(order > 1 && sigBitPos > 0);
+	if(order == 1)
+	{
+		return getMaxBoundary(prevLimit, sigBitPos);
+	}
 
-	if (prevLimit == 0)
+	if (prevLimit == 0 || sigBitPos == 0)
 	{
 		return 0;
 	} else if (prevLimit > 0)
 	{
+		assert(sigBitPos > 0);
 		bit_cnt_type prefixPos = getPrefixPosForPrevLimit(prevLimit, order);
 		assert(prefixPos >= sigBitPos);
 
 		return (prevLimit | ~static_cast<Ty_>(calcMaxLimit(prefixPos)))& calcMaxLimit(sigBitPos);
 	} else
 	{
+		sigBitPos = abs_(sigBitPos);
 		bit_cnt_type prefixPos = getPrefixPosForPrevLimit(prevLimit, order);
 		assert(prefixPos >= sigBitPos);
 
@@ -151,19 +157,24 @@ Ty_ getMaxBoundary(Ty_ prevLimit, bit_cnt_type order, sig_bit_type sigBitPos)
 template <typename Ty_>
 Ty_ getMinBoundary(Ty_ prevLimit, bit_cnt_type order, sig_bit_type sigBitPos)
 {
-	assert(order > 1 && sigBitPos > 0);
+	if (order == 1)
+	{
+		return getMinBoundary(prevLimit, sigBitPos);
+	}
 
-	if (prevLimit == 0)
+	if (prevLimit == 0 || sigBitPos == 0)
 	{
 		return 0;
 	} else if (prevLimit > 0)
 	{
+		assert(sigBitPos > 0);
 		bit_cnt_type prefixPos = getPrefixPosForPrevLimit(prevLimit, order);
 		assert(prefixPos >= sigBitPos);
 
 		return (prevLimit | ~static_cast<Ty_>(calcMaxLimit(prefixPos)))& ((Ty_)1 << (sigBitPos - 1));
 	} else
 	{
+		sigBitPos = abs_(sigBitPos);
 		bit_cnt_type prefixPos = getPrefixPosForPrevLimit(prevLimit, order);
 		assert(prefixPos >= sigBitPos);
 
