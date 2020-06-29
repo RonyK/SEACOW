@@ -155,7 +155,7 @@ namespace msdb
 		}
 
 		// Return total number of used bits
-		_NODISCARD size_type size() const noexcept
+		_NODISCARD size_type sizebits() const noexcept
 		{
 			if (this->bitPos)
 			{
@@ -167,7 +167,7 @@ namespace msdb
 		// Return total number of bytes capacity
 		_NODISCARD size_type capacity() const noexcept
 		{
-			return this->_container->size();
+			return this->_container->size() * _BlockBytes;
 		}
 
 		_NODISCARD const _Block* data() const noexcept
@@ -324,10 +324,10 @@ namespace msdb
 			return false;
 		}
 
-		// Return total number of bits capacity
+		// Return total number of byte capacity
 		_NODISCARD size_type capacity() const noexcept
 		{
-			return this->_container->size() * _BlockBits;
+			return this->_container->size() * _BlockBytes;
 		}
 
 		_NODISCARD const _Block* data() const noexcept
@@ -437,10 +437,10 @@ namespace msdb
 		}
 
 	public:
-		// Return total number of bits capacity
+		// Return total number of byte capacity
 		_NODISCARD size_type capacity() const noexcept
 		{
-			return this->_concreateContainer.size() * _BlockBits;
+			return this->_concreateContainer.size() * _BlockBytes;
 		}
 
 		_NODISCARD _Block* data() noexcept

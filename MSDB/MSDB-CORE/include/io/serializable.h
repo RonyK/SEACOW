@@ -8,6 +8,7 @@ namespace msdb
 {
 using header_version_t = size_t;
 using header_size_t = size_t;
+using body_size_t = size_t;
 
 class serialHeader;
 using pHeader = std::shared_ptr<serialHeader>;
@@ -26,7 +27,7 @@ public:
 
 public:
 	header_version_t version_;
-	header_size_t size_;
+	body_size_t size_;
 	//header_size_t headerSize_;	// Not used
 };	// serialHeader
 

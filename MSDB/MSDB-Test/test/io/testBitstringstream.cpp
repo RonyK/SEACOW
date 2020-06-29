@@ -24,7 +24,7 @@ namespace msdb
 		// Output test				//
 		//////////////////////////////
 		const char* str = bs.data();
-		for (int i = 0; i < (bs.size() + 7) / 8; i++)
+		for (int i = 0; i < (bs.sizebits() + 7) / 8; i++)
 		{
 			EXPECT_EQ(static_cast<char>(str[i]), expected[i]);
 		}
@@ -59,7 +59,7 @@ namespace msdb
 		// Output test				//
 		//////////////////////////////
 		const char32_t* str = bs.data();
-		for (int i = 0; i < (bs.size() + 31) / 32; i++)
+		for (int i = 0; i < (bs.sizebits() + 31) / 32; i++)
 		{
 			EXPECT_EQ(static_cast<char32_t>(str[i]), u32Expected[i]);
 		}
@@ -83,7 +83,7 @@ namespace msdb
 		// Output test				//
 		//////////////////////////////
 		const char* str = bs.data();
-		for (int i = 0; i < (bs.size() + 7) / 8; i++)
+		for (int i = 0; i < (bs.sizebits() + 7) / 8; i++)
 		{
 			EXPECT_EQ(static_cast<char>(str[i]), expected[i]);
 		}
@@ -109,7 +109,7 @@ namespace msdb
 		// Output test				//
 		//////////////////////////////
 		const char* str = bs.data();
-		for (int i = 0; i < (bs.size() + 7) / 8; i++)
+		for (int i = 0; i < (bs.sizebits() + 7) / 8; i++)
 		{
 			EXPECT_EQ(static_cast<char>(str[i]), expected[i]);
 		}
@@ -137,7 +137,7 @@ namespace msdb
 		// Output test				//
 		//////////////////////////////
 		const char* str = bs.data();
-		for (int i = 0; i < (bs.size() + 7) / 8; i++)
+		for (int i = 0; i < (bs.sizebits() + 7) / 8; i++)
 		{
 			EXPECT_EQ(static_cast<char>(str[i]), expected[i]);
 		}
@@ -164,7 +164,7 @@ namespace msdb
 		//////////////////////////////
 		std::cout << "output" << std::endl;
 		const char* str = bs.data();
-		for (int i = 0; i < (bs.size() + 7) / 8; i++)
+		for (int i = 0; i < (bs.sizebits() + 7) / 8; i++)
 		{
 
 			EXPECT_EQ(static_cast<char>(str[i]), expected[i]);
@@ -174,7 +174,7 @@ namespace msdb
 		bs >> result[0] >> result[1];
 
 		std::cout << "input" << std::endl;
-		for (int i = 0; i < (bs.size() + 7) / 8; i++)
+		for (int i = 0; i < (bs.sizebits() + 7) / 8; i++)
 		{
 			EXPECT_EQ(result[i], expected[i]);
 		}

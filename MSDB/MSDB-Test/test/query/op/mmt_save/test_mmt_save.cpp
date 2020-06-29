@@ -10,20 +10,21 @@ namespace msdb
 {
 namespace caDummy
 {
-namespace data2D_sc4x4
-{
+
 class query_op_mmt_save : public ::testing::Test
 {
 protected:
     // You can define per-test set-up logic as usual.
-    virtual void SetUp() 
+    virtual void SetUp()
     {
         std::cout << "====================" << std::endl;
         std::cout << "Setup()" << std::endl;
         try
         {
             std::filesystem::remove_all(
-                filePath(strArrayPath) / std::to_string(aid) / strIndexFolder);
+                filePath(strArrayPath) / std::to_string(data2D_sc4x4::aid) / strIndexFolder);
+            std::filesystem::remove_all(
+                filePath(strArrayPath) / std::to_string(data2D_sc8x8::aid) / strIndexFolder);
 
             std::cout << "Remove index file success" << std::endl;
         } catch (...)
@@ -34,7 +35,7 @@ protected:
     }
 
     // You can define per-test tear-down logic as usual.
-    virtual void TearDown() 
+    virtual void TearDown()
     {
         std::cout << "====================" << std::endl;
         std::cout << "TearDown()" << std::endl;
@@ -42,6 +43,8 @@ protected:
     }
 };  // class query_op_mmt_save
 
+namespace data2D_sc4x4
+{
 TEST_F(query_op_mmt_save, mmt_serialize_sc4x4)
 {
     // should build mmt before
@@ -59,8 +62,6 @@ TEST_F(query_op_mmt_save, mmt_serialize_sc4x4)
         std::shared_ptr<MinMaxTreeImpl<position_t, char>> mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, char>>(arrIndex);
         bstream bs;
         mmtIndex->serialize(bs);
-
-
     }
 }
 
@@ -82,9 +83,19 @@ TEST_F(query_op_mmt_save, mmt_save_sc4x4)
 
 namespace data2D_sc8x8
 {
-TEST(query_op_mmt_save, mmt_save_sc8x8)
+TEST_F(query_op_mmt_save, mmt_save_sc8x8)
 {
+    // should build mmt before
+    std::vector<pArray> sourceArr = getSourceArray();
+    std::shared_ptr<mmt_save_plan> mmtPlan;
+    std::shared_ptr<mmt_save_action> mmtAction;
+    pQuery mmtQuery;
+    getMmtSave(sourceArr[0]->getDesc(), mmtPlan, mmtAction, mmtQuery);
 
+    auto afterArray = mmtAction->execute(sourceArr, mmtQuery);
+
+    EXPECT_TRUE(std::filesystem::is_regular_file(
+        filePath("../storage/array/881/indies/0.msdbindex")));
 }	// TEST()
 }	// data2D_sc8x8
 }	// caDummy

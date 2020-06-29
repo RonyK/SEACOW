@@ -648,8 +648,6 @@ protected:
 		{
 			pNode cNode = std::make_shared<mmtNode>();
 			(*cit) = cNode;
-			cNode->inDelta(bs);
-
 			pcit.moveTo(this->getParentCoor(cit.coor()));
 			pNode prevNode = (*pcit);
 
@@ -659,6 +657,8 @@ protected:
 				orderChanged ?
 				msb<sig_bit_type>(abs_(prevNode->bMax_) - 1) :
 				msb<sig_bit_type>(prevNode->bMax_ - prevNode->bMin_);
+
+			cNode->inDelta(bs);		// after set required bits, read delta data from bstream
 
 			if (orderChanged)
 			{

@@ -171,11 +171,13 @@ namespace msdb
 
 				// Build Array
 				dimensionDescs arrDimDescs;
-				arrDimDescs.push_back(std::make_shared<dimensionDesc>(0, "X", 0, dims[1], chunkDims[1]));
-				arrDimDescs.push_back(std::make_shared<dimensionDesc>(0, "Y", 0, dims[0], chunkDims[0]));
+				dimensionId dimId = 0;
+				arrDimDescs.push_back(std::make_shared<dimensionDesc>(dimId++, "X", 0, dims[1], chunkDims[1]));
+				arrDimDescs.push_back(std::make_shared<dimensionDesc>(dimId++, "Y", 0, dims[0], chunkDims[0]));
 
 				attributeDescs attrDescs;
-				attrDescs.push_back(std::make_shared<attributeDesc>(0, "ATTR_1", eleType::CHAR));		// SIGNED CHAR
+				attributeId attrId = 0;
+				attrDescs.push_back(std::make_shared<attributeDesc>(attrId++, "ATTR_1", eleType::CHAR));		// SIGNED CHAR
 
 				pArrayDesc arrDesc = std::make_shared<arrayDesc>(aid, "data2D_sc4x4", arrDimDescs, attrDescs);
 				pArray sourceArr = std::make_shared<arrayBase>(arrDesc);
@@ -343,11 +345,13 @@ namespace msdb
 
 				// Build Array
 				dimensionDescs dimDescs;
-				dimDescs.push_back(std::make_shared<dimensionDesc>(0, "X", 0, dims[1], chunkDims[1]));
-				dimDescs.push_back(std::make_shared<dimensionDesc>(0, "Y", 0, dims[0], chunkDims[0]));
+				dimensionId dimId = 0;
+				dimDescs.push_back(std::make_shared<dimensionDesc>(dimId++, "X", 0, dims[1], chunkDims[1]));
+				dimDescs.push_back(std::make_shared<dimensionDesc>(dimId++, "Y", 0, dims[0], chunkDims[0]));
 
 				attributeDescs attrDescs;
-				attrDescs.push_back(std::make_shared<attributeDesc>(0, "ATTR_1", eleType::CHAR));		// SIGNED CHAR
+				attributeId attrId = 0;
+				attrDescs.push_back(std::make_shared<attributeDesc>(attrId++, "ATTR_1", eleType::CHAR));		// SIGNED CHAR
 
 				pArrayDesc arrDesc = std::make_shared<arrayDesc>(aid, "data2D_sc8x8", dimDescs, attrDescs);
 				pArray sourceArr = std::make_shared<arrayBase>(arrDesc);
