@@ -116,24 +116,47 @@ namespace msdb
 			{
 				assert(length >= 2*2*2);
 
-				const static value_type min[2][2][2] = {
-					{
-						{3, 2},
-						{0, 0}
-					},
-					{
-						{0}
-					}
+				const static value_type min[2][2][2] =
+				{
+					{{3, 2}, {0, 0}},
+					{{0}}
 				};
 
-				const static value_type max[2][2][2] = {
-					{
-						{9, 6},
-						{8, 4}
-					},
-					{
-						{9}
-					}
+				const static value_type max[2][2][2] = 
+				{
+					{{9, 6}, {8, 4}},
+					{{9}}
+				};
+
+				const static value_type bMin[2][2][2] =
+				{
+					{{2, 2}, {1, 1}},
+					{{1}}
+				};
+
+				const static value_type bMax[2][2][2] =
+				{
+					{{4, 3}, {4, 3}},
+					{{4}}
+				};
+
+				const static value_type bMinDelta[2][2][2] =
+				{
+					{{1, 1}, {0, 0}},
+					{{0}}
+				};
+
+
+				const static value_type bMaxDelta[2][2][2] =
+				{
+					{{0, 1}, {0, 1}},
+					{{0}}
+				};
+
+				const static value_type order[2][2][2] =
+				{
+					{{1, 1}, {1, 1}},
+					{{1}}
 				};
 
 				memcpy(minOutput, min, sizeof(value_type) * 2 * 2 * 2);

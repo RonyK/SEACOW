@@ -137,6 +137,11 @@ public:
 			bs >> setw(this->bits_) >> this->bMaxDelta_ >> this->bMinDelta_;
 		}
 
+		inline void outDelta(bstream& bs)
+		{
+			bs << setw(this->bits_) << this->bMaxDelta_ << this->bMinDelta_;
+		}
+
 		inline void inMinMax(bstream& bs)
 		{
 			bs >> setw(sizeof(Ty_) * CHAR_BIT) >> this->max_ >> this->min_;
@@ -150,7 +155,8 @@ public:
 
 		inline void initBits()
 		{
-			this->bits_ = msb<Ty_>(max_ - min_);
+			this->bits_ = sizeof(Ty_) * CHAR_BIT;
+			this->order_ = 1;
 			this->setMinMaxBits();
 		}
 
@@ -253,13 +259,11 @@ public:
 		}
 
 		this->serializeRoot(bs);
-
 		for (size_type l = maxLevel - 1; l != (size_type)-1; l--)
 		{
 			this->serializeNonRoot(bs, l);
 		}
-
-		this->serializedSize_ = bs.capacity();
+		this->serializedSize_ = bs.capacity();	// set serialized size
 	}
 
 	virtual void serialize(std::ostream& os)
@@ -274,8 +278,16 @@ public:
 	// build MMT from bstream
 	void deserialize(bstream& bs)
 	{
-		this->deserializeRoot(bs);
+		////////////////////////////////////////
+		// Re-generate nodes
+		this->nodes_.clear();
+		for (size_type l = 0; l <= this->maxLevel_; ++l)
+		{
+			// TODO:: Calc blockCnt on each level
+			this->nodes_.push_back(std::vector<pNode>());
+		}
 
+		this->deserializeRoot(bs);
 		for (size_type l = this->maxLevel_ - 1; l != (size_type)-1; l--)
 		{
 			this->deserializeNonRoot(bs, l);
@@ -481,7 +493,6 @@ protected:
 		for (size_type i = 0; i < this->nodes_.back().size(); i++)
 		{
 			curLevel[i]->initBits();
-			//curLevel[i].bits = msb<Ty_>(curLevel[i].max - curLevel[i].min);
 		}
 	}
 
@@ -492,27 +503,27 @@ protected:
 		assert(level != -1);
 
 		size_type pLevel = level + 1;
-		size_type siblings = (size_type)pow(2, this->dim_.size());
+		size_type childs = (size_type)pow(2, this->dim_.size());
 
 		////////////////////////////////////////
 		// Calc chunk num of prev and current level
 		//
 		// Notes: In this method, prev is a upper level nodes (coarse)
-		dim_vector pChunksInDim = this->levelDims_[level + 1];
-		dim_vector chunksInDim = this->levelDims_[level];
+		dim_vector prevLevelDim = this->levelDims_[level + 1];
+		dim_vector levelDim = this->levelDims_[level];
 
 		////////////////////////////////////////
 		// Update nit order for chunks in current level
 		// Prev
 		coorIterator<Dty_, pNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
-									   pChunksInDim.data());
-
+									   prevLevelDim.data());
 		// Current
 		coorIterator<Dty_, pNode> cit(this->nodes_[level].data(), this->dSize_,
-									  chunksInDim.data());
+									  levelDim.data());
 
 		for (size_type i = 0; i < this->nodes_[level + 1].size(); ++i, ++pcit)
 		{
+			// Setup child Base
 			coordinate<Dty_> childBase = pcit.coor();
 			for (size_type d = 0; d < this->dSize_; d++)
 			{
@@ -520,14 +531,18 @@ protected:
 			}
 
 			pNode prevNode = (*pcit);
-			bool sameOrder = (prevNode->bMax_ != prevNode->bMin_);	// if bMax_ == bMin_, move on to the next most significant nit
-			bit_cnt_type bits = sameOrder ? msb<sig_bit_type>(prevNode->bMax_ - prevNode->bMin_) : msb<sig_bit_type>(abs_(prevNode->bMax_) - 1);
+			bool orderChanged = (prevNode->bMax_ == prevNode->bMin_);	// if bMax_ == bMin_, move on to the next most significant nit
+			bit_cnt_type bits = orderChanged ?
+				msb<sig_bit_type>(abs_(prevNode->bMax_) - 1) :			// decreases a required bits
+				msb<sig_bit_type>(prevNode->bMax_ - prevNode->bMin_);	// calculate a required bits from prev node
+			bool isLastBit = (bit_cnt_type)prevNode->order_ + 1 >= TyBits_;
 
-			for (size_type cID = 0; cID < siblings; cID++)
+			// Iterate childs
+			for (size_type cID = 0; cID < childs; cID++)
 			{
-				// Set child coordinate and move to iit
+				// Set child coordinate and move to cit
 				coordinate<Dty_> cur = childBase;
-				for (size_type d = 0; d < this->dSize_; d++)
+				for (size_type d = 0; d < this->dSize_; ++d)
 				{
 					if (cID & ((size_type)0x1 << d))
 					{
@@ -538,33 +553,37 @@ protected:
 
 				// Update
 				pNode cNode = (*cit);
-				if (sameOrder)
+				if (orderChanged)
 				{
-					cNode->bits_ = bits;
-					cNode->order_ = prevNode->order_;
-
-					cNode->bMaxDelta_ = static_cast<bit_cnt_type>(prevNode->bMax_ - cNode->bMax_);	// max: prev >= cur
-					cNode->bMinDelta_ = static_cast<bit_cnt_type>(cNode->bMin_ - prevNode->bMin_);	// min: prev <= cur
-				} else
-				{
-					if ((bit_cnt_type)prevNode->order_ + 1 < TyBits_)
+					// Order changed
+					if (isLastBit)
 					{
-						// Move to next significant nit
-						cNode->bits_ = bits;
-						cNode->order_ = prevNode->order_ + 1;
-
-						cNode->setMinMaxBits();
-						//cNode->bMax_ = msb<Ty_>(std::abs(cNode->max), cNode->order_) * SIGN(cNode->max);
-						//cNode->bMin_ = msb<Ty_>(std::abs(cNode->min), cNode->order_) * SIGN(cNode->min);
-
-						cNode->bMaxDelta_ = std::max(abs_(prevNode->bMax_ - cNode->bMax_) - 1, 0);
-						cNode->bMinDelta_ = std::max(abs_(cNode->bMin_ - prevNode->bMin_) - 1, 0);
-					} else
-					{
-						// The last nit. Has no more next significant nit
+						// The last bit. Has no more next significant bit
 						cNode->bits_ = 0;
 						cNode->order_ = prevNode->order_;
+						cNode->bMax_ = 0;
+						cNode->bMin_ = 0;
+						cNode->bMaxDelta_ = 0;
+						cNode->bMinDelta_ = 0;
+					} else
+					{
+						// Move to next significant bit
+						cNode->bits_ = bits;
+						cNode->order_ = prevNode->order_ + 1;
+						cNode->setMinMaxBits();
+						cNode->bMaxDelta_ = std::max({ abs_(prevNode->bMax_ - cNode->bMax_) - 1, 0 });
+						cNode->bMinDelta_ = std::max({ abs_(cNode->bMin_ - prevNode->bMin_) - 1, 0 });
+						// TODO::Change min, max according order and deltaBits
 					}
+				} else
+				{
+					// Order not changed
+					cNode->bits_ = bits;
+					cNode->order_ = prevNode->order_;
+					cNode->setMinMaxBits();
+					cNode->bMaxDelta_ = static_cast<bit_cnt_type>(prevNode->bMax_ - cNode->bMax_);	// max: prev >= cur
+					cNode->bMinDelta_ = static_cast<bit_cnt_type>(cNode->bMin_ - prevNode->bMin_);	// min: prev <= cur
+					// TODO::Change min, max according order and deltaBits
 				}
 			}
 		}
@@ -575,20 +594,18 @@ protected:
 	void serializeRoot(bstream& bs)
 	{
 		pNode* curLevelNodes = this->nodes_.back().data();
-
 		for (size_type i = 0; i < this->nodes_.back().size(); i++)
 		{
 			curLevelNodes[i]->outMinMax(bs);
-			//bs << setw(TyBits_) << curLevelNodes[i]->max << curLevelNodes[i]->min;
 		}
 	}
 
 	void serializeNonRoot(bstream& bs, size_type level)
 	{
-		pNode* cNodes = this->nodes_[level].data();
+		pNode* curLevelNodes = this->nodes_[level].data();
 		for (size_type i = 0; i < this->nodes_[level].size(); i++)
 		{
-			bs << setw(cNodes[i]->bits_) << cNodes[i]->bMaxDelta_ << cNodes[i]->bMinDelta_;
+			curLevelNodes[i]->outDelta(bs);
 		}
 	}
 
@@ -596,16 +613,6 @@ protected:
 	// Build MMT from an instream
 	void deserializeRoot(bstream& bs)
 	{
-		////////////////////////////////////////
-		// Re-generate nodes
-		// TODO:: Seperate this block to distict function.
-		this->nodes_.clear();
-		for (size_type l = 0; l <= this->maxLevel_; ++l)
-		{
-			// TODO:: Calc blockCnt on each level
-			this->nodes_.push_back(std::vector<pNode>());
-		}
-
 		////////////////////////////////////////
 		// Create new mmtNodes
 		auto chunksInDim = this->levelDims_[this->maxLevel_];
