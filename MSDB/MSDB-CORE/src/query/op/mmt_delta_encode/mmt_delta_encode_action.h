@@ -5,6 +5,7 @@
 #include <array/arrayMgr.h>
 #include <index/mmt.h>
 #include <query/opAction.h>
+#include <op/mmt_delta_encode/mmt_delta_encode_array.h>
 #include <memory>
 
 namespace msdb
@@ -20,14 +21,14 @@ public:
 	virtual pArray execute(std::vector<pArray>& inputArrays, pQuery q) override;
 
 	template<class Ty_>
-	void attributeEncode(pArray outArr, pArray inArr, pAttributeDesc attrDesc);
+	void attributeEncode(std::shared_ptr<mmt_delta_encode_array> outArr, pArray inArr, pAttributeDesc attrDesc);
 
 	template<class Ty_>
-	void chunkEncode(pChunk oit, pChunk iit, std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex);
+	void chunkEncode(std::shared_ptr<mmt_delta_encode_array> oit, pChunk iit, std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex);
 
 };
 template<class Ty_>
-void mmt_delta_encode_action::attributeEncode(pArray outArr, pArray inArr, pAttributeDesc attrDesc)
+void mmt_delta_encode_action::attributeEncode(std::shared_ptr<mmt_delta_encode_array> outArr, pArray inArr, pAttributeDesc attrDesc)
 {
 	auto arrIndex = arrayMgr::instance()->getAttributeIndex(inArr->getArrayId(), attrDesc->id_);
 	if (arrIndex->getType() != attrIndexType::MMT)
@@ -48,10 +49,12 @@ void mmt_delta_encode_action::attributeEncode(pArray outArr, pArray inArr, pAttr
 		outArr->insertChunk(deltaChunk);
 		++cit;
 	}
+
+	outArr->setMMT(attrDesc->id_, mmtIndex);
 }
 
 template<class Ty_>
-void mmt_delta_encode_action::chunkEncode(pChunk outChunk, pChunk inChunk, 
+void mmt_delta_encode_action::chunkEncode(std::shared_ptr<mmt_delta_encode_array> outChunk, pChunk inChunk,
 										  std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex)
 {
 	auto nit = mmtIndex->getNodeIterator(0);	// get level 0 node iterator
