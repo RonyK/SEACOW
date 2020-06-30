@@ -14,6 +14,9 @@
 #include <op/mmt_load/mmt_load_plan.h>
 #include <op/mmt_load/mmt_load_action.h>
 
+#include <op/mmt_delta_encode/mmt_delta_encode_plan.h>
+#include <op/mmt_delta_encode/mmt_delta_encode_action.h>
+
 namespace msdb
 {
 namespace caDummy
@@ -42,5 +45,10 @@ void getMmtLoad(pArrayDesc sourceArrDesc,
                 std::shared_ptr<mmt_load_plan>& plan,
                 std::shared_ptr<mmt_load_action>& action,
                 pQuery& qry);
+
+void getMmtDeltaEncode(pArrayDesc sourceArrDesc,
+                       std::shared_ptr<mmt_delta_encode_plan>& plan,
+                       std::shared_ptr<mmt_delta_encode_action>& action,
+                       pQuery& qry);
 }
 }

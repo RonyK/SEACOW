@@ -24,7 +24,7 @@ pAttrIndex arrayMgr::getAttributeIndex(arrayId arrId, attributeId attrId)
 
 	if(this->attrIndies_.find(arrId) == this->attrIndies_.end())
 	{
-		std::string strMsg = "Attribute index for arrayId: " + std::to_string(arrId);
+		std::string strMsg = "No attribute index for arrayId: " + std::to_string(arrId);
 		_MSDB_THROW(_MSDB_EXCEPTIONS_MSG(MSDB_EC_USER_QUERY_ERROR, MSDB_ER_NO_ATTR_INDEX, strMsg.c_str()));
 	}
 

@@ -9,6 +9,7 @@
 #include <util/coordinate.h>
 #include <util/math.h>
 #include <memory>
+#include <utility>
 
 namespace msdb
 {
@@ -304,6 +305,98 @@ public:
 		this->deserialize(bs);
 	}
 
+	void deltaEncode(chunkIterator& outChunkIt, chunkIterator& inChunkIt)
+	{
+		////////////////////////////////////////
+		// Create new mmtNodes
+		auto levelDims = this->levelDims_[0];				// get Level 0 block dims
+		auto chunkDims = (*inChunkIt)->getDesc()->dims_;	// get chunk dimension
+
+		dimension blockDims(this->dSize_);
+		dimension levelDimsInChunk(this->dSize_);			// block container in a chunk
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			blockDims[d] = this->dim_[d] / levelDims[d];
+			levelDimsInChunk[d] = chunkDims[d] / blockDims[d];
+		}
+
+		// Node iterator for all level 0 nodes
+		// Use to convert block coordinate to seqencial node index
+		nodeItr nit(this->nodes_[0].data(), this->dSize_, levelDims.data());
+
+		while (!inChunkIt.isEnd())
+		{
+			// Setup a start point of blockCoor for blocks in a chunk
+			coor blockCoorSp = this->chunkCoorToBlockCoor(inChunkIt.coor(), levelDimsInChunk);
+			coorItr bit(this->dSize_, levelDimsInChunk.data());
+			while (!bit.isEnd())
+			{
+				coor blockCoor = this->getBlockCoor(blockCoorSp, bit.coor());
+				auto bItemBdy = this->getBlockItemBoundary(bit.coor(), blockDims);
+				coor blockSpInChunk = bItemBdy.first, blockEpInChunk = bItemBdy.second;
+
+				auto iit = (*inChunkIt)->getItemRangeIterator(blockSpInChunk.data(), blockEpInChunk.data());
+				auto oit = (*outChunkIt)->getItemRangeIterator(blockSpInChunk.data(), blockEpInChunk.data());
+				this->deltaChunkEncode(
+					this->nodes_[0][nit.coorToSeq(blockCoor)],
+					iit,
+					oit);
+
+				++bit;	// Move on a next block in the chunk
+			}
+
+			// Move on a next chunk
+			++inChunkIt;
+			outChunkIt.moveTo(inChunkIt.coor());
+		}
+	}
+
+	void deltaDecode(chunkIterator& outChunkIt, chunkIterator& inChunkIt)
+	{
+		////////////////////////////////////////
+		// Create new mmtNodes
+		auto levelDims = this->levelDims_[0];				// get Level 0 block dims
+		auto chunkDims = (*inChunkIt)->getDesc()->dims_;	// get chunk dimension
+
+		dimension blockDims(this->dSize_);
+		dimension levelDimsInChunk(this->dSize_);			// block container in a chunk
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			blockDims[d] = this->dim_[d] / levelDims[d];
+			levelDimsInChunk[d] = chunkDims[d] / blockDims[d];
+		}
+
+		// Node iterator for all level 0 nodes
+		// Use to convert block coordinate to seqencial node index
+		nodeItr nit(this->nodes_[0].data(), this->dSize_, levelDims.data());
+
+		while (!inChunkIt.isEnd())
+		{
+			// Setup a start point of blockCoor for blocks in a chunk
+			coor blockCoorSp = this->chunkCoorToBlockCoor(inChunkIt.coor(), levelDimsInChunk);
+			coorItr bit(this->dSize_, levelDimsInChunk.data());
+			while (!bit.isEnd())
+			{
+				coor blockCoor = this->getBlockCoor(blockCoorSp, bit.coor());
+				auto bItemBdy = this->getBlockItemBoundary(bit.coor(), blockDims);
+				coor blockSpInChunk = bItemBdy.first, blockEpInChunk = bItemBdy.second;
+
+				auto iit = (*inChunkIt)->getItemRangeIterator(blockSpInChunk.data(), blockEpInChunk.data());
+				auto oit = (*outChunkIt)->getItemRangeIterator(blockSpInChunk.data(), blockEpInChunk.data());
+				this->deltaChunkDecode(
+					this->nodes_[0][nit.coorToSeq(blockCoor)],
+					iit,
+					oit);
+
+				++bit;	// Move on a next block in the chunk
+			}
+
+			// Move on a next chunk
+			++inChunkIt;
+			outChunkIt.moveTo(inChunkIt.coor());
+		}
+	}
+
 	//const pNode getNodes(size_type level)
 	//{
 	//	assert(level < this->nodes_.size());
@@ -317,14 +410,38 @@ public:
 	//}
 
 protected:
-	coor chunkCoorToBlockCoor(const coor& chunkCoor, const dimension& chunkDimForBlock)
+	coordinate<Dty_> chunkCoorToBlockCoor(const coordinate<Dty_>& chunkCoor, const dimension& chunkDimForBlock)
 	{
-		coor blockCoor(this->dSize_);
+		coordinate<Dty_> blockCoor(this->dSize_);
 		for (dimensionId d = 0; d < this->dSize_; ++d)
 		{
 			blockCoor[d] = chunkCoor[d] * chunkDimForBlock[d];
 		}
 		return blockCoor;
+	}
+
+	void deltaChunkEncode(pNode node, itemItr& iit, itemItr& oit)
+	{
+		while(!iit.isEnd())
+		{
+			auto inValue = (*iit).get<Ty_>();
+			auto outValue = inValue - node->min_;
+			(*oit).set<Ty_>(outValue);
+			++iit;
+			++oit;
+		}
+	}
+
+	void deltaChunkDecode(pNode node, itemItr& iit, itemItr& oit)
+	{
+		while (!iit.isEnd())
+		{
+			auto inValue = (*iit).get<Ty_>();
+			auto outValue = inValue + node->min_;
+			(*oit).set<Ty_>(outValue);
+			++iit;
+			++oit;
+		}
 	}
 
 	//////////////////////////////
@@ -359,28 +476,16 @@ protected:
 			coorItr bit(this->dSize_, levelDimsInChunk.data());
 			while (!bit.isEnd())
 			{
-				// Set iterator range according the block size
-				coor blockCoorInChunk = bit.coor(), blockSpInChunk(this->dSize_), blockEpInChunk(this->dSize_);
-				for (dimensionId d = 0; d < this->dSize_; ++d)
-				{
-					blockSpInChunk[d] = blockDims[d] * blockCoorInChunk[d];
-					blockEpInChunk[d] = blockDims[d] * (blockCoorInChunk[d] + 1);
-				}
+				coor blockCoor = this->getBlockCoor(blockCoorSp, bit.coor());
+				auto bItemBdy = this->getBlockItemBoundary(bit.coor(), blockDims);
+				coor blockSpInChunk = bItemBdy.first, blockEpInChunk = bItemBdy.second;
 
-				// TODO :: Reduce in one line
 				auto iit = (*it)->getItemRangeIterator(blockSpInChunk.data(), blockEpInChunk.data());
 				auto lNode = this->forwardBuildLeafNode(iit);
-
-				coor blockCoor(this->dSize_, blockCoorSp.data());
-				for (dimensionId d = 0; d < this->dSize_; ++d)
-				{
-					blockCoor[d] += blockCoorInChunk[d];
-				}
+				this->nodes_[0][nit.coorToSeq(blockCoor)] = lNode;
 
 				//std::cout << "leaf forward-" << std::endl;
 				//std::cout << "[" << blockCoor[0] << ", " << blockCoor[1] << "] : " << static_cast<int>(lNode->min_) << "~" << static_cast<int>(lNode->max_) << std::endl;
-
-				this->nodes_[0][nit.coorToSeq(blockCoor)] = lNode;
 				++bit;	// Move on a next block in the chunk
 			}
 
@@ -728,6 +833,30 @@ protected:
 			coorParent[d] /= 2;
 		}
 		return coorParent;
+	}
+
+	// sP: start coordinate of blocks in a chunk
+	// inner: inner coordiante of blocks in a chunk
+	_NODISCARD coordinate<Dty_> getBlockCoor(coordinate<Dty_>& sP, coordinate<Dty_>& inner)
+	{
+		coordinate<Dty_> blockCoor(sP);
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			blockCoor[d] += inner[d];
+		}
+		return blockCoor;
+	}
+
+	std::pair<coordinate<Dty_>, coordinate<Dty_>>
+		getBlockItemBoundary(coordinate<Dty_>& inner, dimension blockDims)
+	{
+		coordinate<Dty_> spOut(this->dSize_), epOut(this->dSize_);
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			spOut[d] = blockDims[d] * inner[d];
+			epOut[d] = blockDims[d] * (inner[d] + 1);
+		}
+		return std::make_pair<>(spOut, epOut);
 	}
 
 	// For test

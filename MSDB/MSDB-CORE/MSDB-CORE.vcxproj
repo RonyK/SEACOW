@@ -206,6 +206,9 @@
     <ClInclude Include="include\xml\tinyxml2.h" />
     <ClInclude Include="src\query\op\mmt_build\mmt_build_action.h" />
     <ClInclude Include="src\query\op\mmt_build\mmt_build_plan.h" />
+    <ClInclude Include="src\query\op\mmt_delta_encode\mmt_delta_encode_action.h" />
+    <ClInclude Include="src\query\op\mmt_delta_encode\mmt_delta_encode_array.h" />
+    <ClInclude Include="src\query\op\mmt_delta_encode\mmt_delta_encode_plan.h" />
     <ClInclude Include="src\query\op\mmt_load\mmt_load_action.h" />
     <ClInclude Include="src\query\op\mmt_load\mmt_load_plan.h" />
     <ClInclude Include="src\query\op\mmt_save\mmt_save_action.h" />
@@ -226,6 +229,9 @@
     <ClCompile Include="src\io\serializable.cpp" />
     <ClCompile Include="src\query\op\mmt_build\mmt_build_action.cpp" />
     <ClCompile Include="src\query\op\mmt_build\mmt_build_plan.cpp" />
+    <ClCompile Include="src\query\op\mmt_delta_encode\mmt_delta_encode_action.cpp" />
+    <ClCompile Include="src\query\op\mmt_delta_encode\mmt_delta_encode_array.cpp" />
+    <ClCompile Include="src\query\op\mmt_delta_encode\mmt_delta_encode_plan.cpp" />
     <ClCompile Include="src\query\op\mmt_load\mmt_load_action.cpp" />
     <ClCompile Include="src\query\op\mmt_load\mmt_load_plan.cpp" />
     <ClCompile Include="src\query\op\mmt_save\mmt_save_action.cpp" />

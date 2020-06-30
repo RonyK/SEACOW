@@ -204,6 +204,15 @@
     <ClInclude Include="src\query\op\mmt_build\mmt_build_action.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="src\query\op\mmt_delta_encode\mmt_delta_encode_plan.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\query\op\mmt_delta_encode\mmt_delta_encode_action.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\query\op\mmt_delta_encode\mmt_delta_encode_array.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">
@@ -345,6 +354,15 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\mmt_build\mmt_build_action.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\op\mmt_delta_encode\mmt_delta_encode_action.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\op\mmt_delta_encode\mmt_delta_encode_plan.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\op\mmt_delta_encode\mmt_delta_encode_array.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

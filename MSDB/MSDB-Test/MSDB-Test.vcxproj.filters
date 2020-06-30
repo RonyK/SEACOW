@@ -29,6 +29,7 @@
     <ClCompile Include="test\query\op\mmt_build\test_mmt_build.cpp" />
     <ClCompile Include="test\query\op\mmt_save\test_mmt_save.cpp" />
     <ClCompile Include="test\query\op\mmt_load\test_mmt_load.cpp" />
+    <ClCompile Include="test\query\op\delta_encode\test_delta_encode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">

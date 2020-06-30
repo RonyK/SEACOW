@@ -47,7 +47,7 @@ namespace data2D_sc4x4
 {
 TEST_F(query_op_mmt_save, mmt_serialize_sc4x4)
 {
-    // should build mmt before
+    // Should build mmt before
     std::vector<pArray> sourceArr = getSourceArray();
     pArray arr = sourceArr[0];
     arrayId arrId = arr->getArrayId();
@@ -67,7 +67,7 @@ TEST_F(query_op_mmt_save, mmt_serialize_sc4x4)
 
 TEST_F(query_op_mmt_save, mmt_save_sc4x4)
 {
-	// should build mmt before
+	// Should build mmt before
 	std::vector<pArray> sourceArr = getSourceArray();
 	std::shared_ptr<mmt_save_plan> mmtPlan;
 	std::shared_ptr<mmt_save_action> mmtAction;
@@ -85,7 +85,7 @@ namespace data2D_sc8x8
 {
 TEST_F(query_op_mmt_save, mmt_save_sc8x8)
 {
-    // should build mmt before
+    // Should build mmt before
     std::vector<pArray> sourceArr = getSourceArray();
     std::shared_ptr<mmt_save_plan> mmtPlan;
     std::shared_ptr<mmt_save_action> mmtAction;
