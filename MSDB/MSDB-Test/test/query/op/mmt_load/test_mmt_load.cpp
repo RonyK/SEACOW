@@ -1,10 +1,5 @@
 #include <pch.h>
-#include <array/arrayMgr.h>
-#include <op/mmt_load/mmt_load_plan.h>
-#include <op/mmt_load/mmt_load_action.h>
-#include <system/storageMgr.h>
-#include <index/mmt.h>
-#include <string>
+#include <index/testMMT.h>
 
 namespace msdb
 {
@@ -20,12 +15,6 @@ protected:
     {
         std::cout << "====================" << std::endl;
         std::cout << "Setup()" << std::endl;
-
-        attributeId attrId = 0;
-        arrayMgr::instance()->flushAttributeIndex(aid, attrId);
-
-        std::cout << "flush attribute index success" << std::endl;
-
         std::cout << "====================" << std::endl;
     }
 
@@ -40,21 +29,17 @@ protected:
 
 TEST_F(query_op_mmt_load, mmt_load_sc4x4)
 {
-    EXPECT_THROW(arrayMgr::instance()->getAttributeIndex(aid, 0), msdb_exception);
-    EXPECT_TRUE(std::filesystem::is_regular_file(
-        filePath("../storage/array/441/indies/0.msdbindex")));
+    auto arr = mmt_build();
+    arr = mmt_save(std::vector<pArray>({ arr }));
 
-    // should build mmt before
-    std::vector<pArray> sourceArr = getSourceArray();
-    std::shared_ptr<mmt_load_plan> mmtPlan;
-    std::shared_ptr<mmt_load_action> mmtAction;
-    pQuery mmtQuery;
-    getMmtLoad(sourceArr[0]->getDesc(), mmtPlan, mmtAction, mmtQuery);
+    std::cout << "====================" << std::endl;
+    std::cout << "Setup for load" << std::endl;
+    attributeId attrId = 0;
+    arrayMgr::instance()->flushAttributeIndex(aid, attrId);
+    std::cout << "flush attribute index success" << std::endl;
+    std::cout << "====================" << std::endl;
 
-    auto afterArray = mmtAction->execute(sourceArr, mmtQuery);
-
-    auto attrIndex = arrayMgr::instance()->getAttributeIndex(aid, 0);
-    std::cout << "mmt load" << std::endl;
+    arr = mmt_load(std::vector<pArray>({ arr }));
 }	// TEST()
 }	// data2D_sc4x4
 }	// caDummy

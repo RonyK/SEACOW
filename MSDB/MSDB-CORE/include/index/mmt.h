@@ -40,7 +40,7 @@ protected:
 		{
 			std::cout << "Header serialize" << std::endl;
 			std::cout << this->version_ << ", " << this->size_ << ", " << static_cast<int>(this->eType_) << ", " << this->maxLevel_ << std::endl;
-			
+
 			int eTypeOut = static_cast<int>(this->eType_);
 			os.write((char*)(&this->version_), sizeof(this->version_));
 			os.write((char*)(&this->size_), sizeof(this->size_));
@@ -56,7 +56,7 @@ protected:
 			int eTypeIn;
 			is.read((char*)(&this->version_), sizeof(this->version_));
 			is.read((char*)(&this->size_), sizeof(this->size_));
-			is.read((char*)(&eTypeIn), sizeof(int));			
+			is.read((char*)(&eTypeIn), sizeof(int));
 			is.read((char*)(&this->maxLevel_), sizeof(this->maxLevel_));
 			this->eType_ = static_cast<eleType>(eTypeIn);
 
@@ -80,7 +80,8 @@ public:
 
 public:
 	template <typename Dty_>
-	static pMMT createMMT(eleType type, std::vector<Dty_>& dim, std::vector<Dty_>& blockDim,
+	static pMMT createMMT(eleType type, std::vector<Dty_>& dim,
+						  std::vector<Dty_>& chunkDim, std::vector<Dty_>& blockDim,
 						  size_const maxLevel = 0);
 };
 template <typename Dty_, typename Ty_>
@@ -194,13 +195,14 @@ protected:
 	// MMT Constructor			//
 	//////////////////////////////
 public:
-	MinMaxTreeImpl(eleType eType, dim_vector_reference dim, dim_vector_reference blockDim,
+	MinMaxTreeImpl(eleType eType, dim_vector_reference dim, dim_vector_reference chunkDim, dim_vector_reference blockDim,
 				   size_const maxLevel = 0)
 		: MinMaxTree(eType), dim_(dim), dSize_(dim.size()), leafBlockDim_(blockDim),
-		maxLevel_(maxLevel), serializedSize_(0), eType_(eType),
+		maxLevel_(maxLevel), serializedSize_(0), eType_(eType), leafInChunkLevelDim_(dim.size()),
 		TySize_(getEleSize(eType)), TyBits_(getEleSize(eType)* CHAR_BIT)
 	{
 		this->initLevelDims(dim, blockDim, maxLevel);
+		this->initLeafInChunkLevelDim(chunkDim, blockDim);
 	}
 
 	~MinMaxTreeImpl() {}
@@ -305,111 +307,12 @@ public:
 		this->deserialize(bs);
 	}
 
-	void deltaEncode(chunkIterator& outChunkIt, chunkIterator& inChunkIt)
+	nodeItr getNodeIterator(size_type level)
 	{
-		////////////////////////////////////////
-		// Create new mmtNodes
-		auto levelDims = this->levelDims_[0];				// get Level 0 block dims
-		auto chunkDims = (*inChunkIt)->getDesc()->dims_;	// get chunk dimension
-
-		dimension blockDims(this->dSize_);
-		dimension levelDimsInChunk(this->dSize_);			// block container in a chunk
-		for (dimensionId d = 0; d < this->dSize_; ++d)
-		{
-			blockDims[d] = this->dim_[d] / levelDims[d];
-			levelDimsInChunk[d] = chunkDims[d] / blockDims[d];
-		}
-
-		// Node iterator for all level 0 nodes
-		// Use to convert block coordinate to seqencial node index
-		nodeItr nit(this->nodes_[0].data(), this->dSize_, levelDims.data());
-
-		while (!inChunkIt.isEnd())
-		{
-			// Setup a start point of blockCoor for blocks in a chunk
-			coor blockCoorSp = this->chunkCoorToBlockCoor(inChunkIt.coor(), levelDimsInChunk);
-			coorItr bit(this->dSize_, levelDimsInChunk.data());
-			while (!bit.isEnd())
-			{
-				coor blockCoor = this->getBlockCoor(blockCoorSp, bit.coor());
-				auto bItemBdy = this->getBlockItemBoundary(bit.coor(), blockDims);
-				coor blockSpInChunk = bItemBdy.first, blockEpInChunk = bItemBdy.second;
-
-				auto iit = (*inChunkIt)->getItemRangeIterator(blockSpInChunk.data(), blockEpInChunk.data());
-				auto oit = (*outChunkIt)->getItemRangeIterator(blockSpInChunk.data(), blockEpInChunk.data());
-				this->deltaChunkEncode(
-					this->nodes_[0][nit.coorToSeq(blockCoor)],
-					iit,
-					oit);
-
-				++bit;	// Move on a next block in the chunk
-			}
-
-			// Move on a next chunk
-			++inChunkIt;
-			outChunkIt.moveTo(inChunkIt.coor());
-		}
+		return nodeItr(this->nodes_[level].data(), this->dSize_, this->levelDims_[level].data());
 	}
 
-	void deltaDecode(chunkIterator& outChunkIt, chunkIterator& inChunkIt)
-	{
-		////////////////////////////////////////
-		// Create new mmtNodes
-		auto levelDims = this->levelDims_[0];				// get Level 0 block dims
-		auto chunkDims = (*inChunkIt)->getDesc()->dims_;	// get chunk dimension
-
-		dimension blockDims(this->dSize_);
-		dimension levelDimsInChunk(this->dSize_);			// block container in a chunk
-		for (dimensionId d = 0; d < this->dSize_; ++d)
-		{
-			blockDims[d] = this->dim_[d] / levelDims[d];
-			levelDimsInChunk[d] = chunkDims[d] / blockDims[d];
-		}
-
-		// Node iterator for all level 0 nodes
-		// Use to convert block coordinate to seqencial node index
-		nodeItr nit(this->nodes_[0].data(), this->dSize_, levelDims.data());
-
-		while (!inChunkIt.isEnd())
-		{
-			// Setup a start point of blockCoor for blocks in a chunk
-			coor blockCoorSp = this->chunkCoorToBlockCoor(inChunkIt.coor(), levelDimsInChunk);
-			coorItr bit(this->dSize_, levelDimsInChunk.data());
-			while (!bit.isEnd())
-			{
-				coor blockCoor = this->getBlockCoor(blockCoorSp, bit.coor());
-				auto bItemBdy = this->getBlockItemBoundary(bit.coor(), blockDims);
-				coor blockSpInChunk = bItemBdy.first, blockEpInChunk = bItemBdy.second;
-
-				auto iit = (*inChunkIt)->getItemRangeIterator(blockSpInChunk.data(), blockEpInChunk.data());
-				auto oit = (*outChunkIt)->getItemRangeIterator(blockSpInChunk.data(), blockEpInChunk.data());
-				this->deltaChunkDecode(
-					this->nodes_[0][nit.coorToSeq(blockCoor)],
-					iit,
-					oit);
-
-				++bit;	// Move on a next block in the chunk
-			}
-
-			// Move on a next chunk
-			++inChunkIt;
-			outChunkIt.moveTo(inChunkIt.coor());
-		}
-	}
-
-	//const pNode getNodes(size_type level)
-	//{
-	//	assert(level < this->nodes_.size());
-	//	return this->nodes_[level].data();
-	//}
-
-	//const dim_vector& getChunkInDim(size_type level)
-	//{
-	//	assert(level <= this->levelBlockDims_.size());
-	//	return this->levelBlockDims_[level];
-	//}
-
-protected:
+public:
 	coordinate<Dty_> chunkCoorToBlockCoor(const coordinate<Dty_>& chunkCoor, const dimension& chunkDimForBlock)
 	{
 		coordinate<Dty_> blockCoor(this->dSize_);
@@ -420,30 +323,7 @@ protected:
 		return blockCoor;
 	}
 
-	void deltaChunkEncode(pNode node, itemItr& iit, itemItr& oit)
-	{
-		while(!iit.isEnd())
-		{
-			auto inValue = (*iit).get<Ty_>();
-			auto outValue = inValue - node->min_;
-			(*oit).set<Ty_>(outValue);
-			++iit;
-			++oit;
-		}
-	}
-
-	void deltaChunkDecode(pNode node, itemItr& iit, itemItr& oit)
-	{
-		while (!iit.isEnd())
-		{
-			auto inValue = (*iit).get<Ty_>();
-			auto outValue = inValue + node->min_;
-			(*oit).set<Ty_>(outValue);
-			++iit;
-			++oit;
-		}
-	}
-
+protected:
 	//////////////////////////////
 	// MMT Build Functions
 	// For level 0
@@ -451,38 +331,20 @@ protected:
 	{
 		////////////////////////////////////////
 		// Create new mmtNodes
-		auto levelDims = this->levelDims_[0];				// get Level 0 block dims
-		auto chunkDims = (*it)->getDesc()->dims_;				// get chunk dimension
-
-		dimension blockDims(this->dSize_);
-		dimension levelDimsInChunk(this->dSize_);				// block container in a chunk
-		for (dimensionId d = 0; d < this->dSize_; ++d)
-		{
-			blockDims[d] = this->dim_[d] / levelDims[d];
-			levelDimsInChunk[d] = chunkDims[d] / blockDims[d];
-		}
-
-		size_type blockCnt = calcNumItems(levelDims.data(), levelDims.size());	// block numbers
-		this->nodes_.push_back(std::vector<pNode>(blockCnt));					// make new node
-
-		// Node iterator for all level 0 nodes
-		// Use to convert block coordinate to seqencial node index
-		nodeItr nit(this->nodes_[0].data(), this->dSize_, levelDims.data());
+		size_type blockCnt = calcNumItems(
+			this->levelDims_[0].data(), this->levelDims_[0].size());	// block numbers
+		this->nodes_.push_back(std::vector<pNode>(blockCnt));			// make new node
 
 		while (!it.isEnd())
 		{
 			// Setup a start point of blockCoor for blocks in a chunk
-			coor blockCoorSp = this->chunkCoorToBlockCoor(it.coor(), levelDimsInChunk);
-			coorItr bit(this->dSize_, levelDimsInChunk.data());
+			coorItr bit(this->leafInChunkLevelDim_);
 			while (!bit.isEnd())
 			{
-				coor blockCoor = this->getBlockCoor(blockCoorSp, bit.coor());
-				auto bItemBdy = this->getBlockItemBoundary(bit.coor(), blockDims);
-				coor blockSpInChunk = bItemBdy.first, blockEpInChunk = bItemBdy.second;
-
-				auto iit = (*it)->getItemRangeIterator(blockSpInChunk.data(), blockEpInChunk.data());
+				auto bItemBdy = this->getBlockItemBoundary(bit.coor());
+				auto iit = (*it)->getItemRangeIterator(bItemBdy.first.data(), bItemBdy.second.data());
 				auto lNode = this->forwardBuildLeafNode(iit);
-				this->nodes_[0][nit.coorToSeq(blockCoor)] = lNode;
+				this->setNode(lNode, it.coor(), bit.coor());
 
 				//std::cout << "leaf forward-" << std::endl;
 				//std::cout << "[" << blockCoor[0] << ", " << blockCoor[1] << "] : " << static_cast<int>(lNode->min_) << "~" << static_cast<int>(lNode->max_) << std::endl;
@@ -537,7 +399,7 @@ protected:
 		const size_type blockCnt = calcNumItems(levelDim.data(), levelDim.size());
 		this->nodes_.push_back(std::vector<pNode>(blockCnt));
 
-		for(size_t i = 0; i < blockCnt; ++i)
+		for (size_t i = 0; i < blockCnt; ++i)
 		{
 			this->nodes_[level][i] = std::make_shared<mmtNode>();
 		}
@@ -757,7 +619,7 @@ protected:
 			pNode prevNode = (*pcit);
 
 			// if bMax_ == bMin_, move on to the next most significant nit
-			bool orderChanged = prevNode->bMax_ == prevNode->bMin_;	
+			bool orderChanged = prevNode->bMax_ == prevNode->bMin_;
 			cNode->bits_ =
 				orderChanged ?
 				msb<sig_bit_type>(abs_(prevNode->bMax_) - 1) :
@@ -815,10 +677,19 @@ protected:
 		}
 	}
 
+	void initLeafInChunkLevelDim(dim_vector_const_reference chunkDim,
+								 dim_vector_const_reference leafBlockDim)
+	{
+		for (dimensionId d = 0; d < this->dSize_; d++)
+		{
+			this->leafInChunkLevelDim_[d] = intDivCeil(chunkDim[d], leafBlockDim[d]);
+		}
+	}
+
 	_NODISCARD coordinate<Dty_> getChildBaseCoor(coordinate<Dty_>& parentCoor)
 	{
 		coordinate<Dty_> childBase = parentCoor;
-		for (size_type d = 0; d < this->dSize_; d++)
+		for (dimensionId d = 0; d < this->dSize_; d++)
 		{
 			childBase[d] *= 2;
 		}
@@ -828,47 +699,87 @@ protected:
 	_NODISCARD coordinate<Dty_> getParentCoor(coordinate<Dty_>& childCoor)
 	{
 		coordinate<Dty_> coorParent = childCoor;
-		for (size_type d = 0; d < this->dSize_; d++)
+		for (dimensionId d = 0; d < this->dSize_; d++)
 		{
 			coorParent[d] /= 2;
 		}
 		return coorParent;
 	}
 
-	// sP: start coordinate of blocks in a chunk
+public:
+	// chunkCoor: coordinate of a chunk that contains the block
 	// inner: inner coordiante of blocks in a chunk
-	_NODISCARD coordinate<Dty_> getBlockCoor(coordinate<Dty_>& sP, coordinate<Dty_>& inner)
+	_NODISCARD coordinate<Dty_> getBlockCoor(coordinate<Dty_>& chunkCoor, coordinate<Dty_>& inner)
 	{
-		coordinate<Dty_> blockCoor(sP);
+		coordinate<Dty_> blockCoor(inner);
 		for (dimensionId d = 0; d < this->dSize_; ++d)
 		{
-			blockCoor[d] += inner[d];
+			blockCoor[d] += chunkCoor[d] * this->leafInChunkLevelDim_[d];
 		}
 		return blockCoor;
 	}
 
 	std::pair<coordinate<Dty_>, coordinate<Dty_>>
-		getBlockItemBoundary(coordinate<Dty_>& inner, dimension blockDims)
+		getBlockItemBoundary(coordinate<Dty_>& inner)
 	{
 		coordinate<Dty_> spOut(this->dSize_), epOut(this->dSize_);
 		for (dimensionId d = 0; d < this->dSize_; ++d)
 		{
-			spOut[d] = blockDims[d] * inner[d];
-			epOut[d] = blockDims[d] * (inner[d] + 1);
+			spOut[d] = this->leafBlockDim_[d] * inner[d];
+			epOut[d] = this->leafBlockDim_[d] * (inner[d] + 1);
 		}
 		return std::make_pair<>(spOut, epOut);
 	}
-
-	// For test
+	
 public:
+	// For test
 	std::vector<std::vector<pNode>> getNodes()
 	{
 		return this->nodes_;
 	}
 
+	pNode getNode(coor& nodeCoor, size_type level = 0)
+	{
+		auto nit = this->getNodeIterator(level);
+		return this->nodes_[level][nit.coorToSeq(nodeCoor)];
+	};
+
+	pNode getNode(coor& chunkCoor, coor& inner, size_type level = 0)
+	{
+		auto nit = this->getNodeIterator(level);
+		coor nodeCoor(inner);
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			nodeCoor[d] += chunkCoor[d] * this->leafInChunkLevelDim_[d];
+		}
+		return this->nodes_[level][nit.coorToSeq(nodeCoor)];
+	}
+
+	void setNode(pNode node, coor& nodeCoor, size_type level = 0)
+	{
+		auto nit = this->getNodeIterator(level);
+		this->nodes_[level][nit.coorToSeq(nodeCoor)] = node;
+	}
+
+	void setNode(pNode node, coor& chunkCoor, coor& inner, size_type level = 0)
+	{
+		auto nit = this->getNodeIterator(level);
+		coor nodeCoor(inner);
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			nodeCoor[d] += chunkCoor[d] * this->leafInChunkLevelDim_[d];
+		}
+		this->nodes_[level][nit.coorToSeq(nodeCoor)] = node;
+	}
+
 	dim_vector getLevelDim(size_type level)
 	{
 		return this->levelDims_[level];
+	}
+
+	dim_vector getLeaftBlockDim()
+	{
+		return this->leafBlockDim_;
 	}
 
 private:
@@ -880,9 +791,11 @@ private:
 	size_type dSize_;
 	size_type serializedSize_;
 	size_type maxLevel_;
-	dim_vector dim_;		// dimensions
-	dim_vector leafBlockDim_;
-	std::vector<dim_vector> levelDims_;
+	dim_vector dim_;					// dimensions
+	//dim_vector chunkDim_;
+	dim_vector leafBlockDim_;			// leaf block dimension (num of items)
+	dim_vector leafInChunkLevelDim_;	// level dim in chunk (num of blocks)
+	std::vector<dim_vector> levelDims_;	// level dim (num of blocks)
 	std::vector<std::vector<pNode>> nodes_;	// mmt
 	/*
 	* Here is an example of a 'nodes_' with size 4 (has 0~3 levels).
@@ -900,30 +813,30 @@ private:
 };
 
 template<typename Dty_>
-inline pMMT MinMaxTree::createMMT(eleType type,
-								  std::vector<Dty_>& dim, std::vector<Dty_>& blockDim,
+inline pMMT MinMaxTree::createMMT(eleType type, std::vector<Dty_>& dim,
+								  std::vector<Dty_>& chunkDim, std::vector<Dty_>& blockDim,
 								  size_const maxLevel)
 {
 	switch (type)
 	{
 	case eleType::CHAR:
-		return std::make_shared<MinMaxTreeImpl<Dty_, char>>(type, dim, blockDim, maxLevel);
+		return std::make_shared<MinMaxTreeImpl<Dty_, char>>(type, dim, chunkDim, blockDim, maxLevel);
 	case eleType::INT8:
-		return std::make_shared<MinMaxTreeImpl<Dty_, int8_t>>(type, dim, blockDim, maxLevel);
+		return std::make_shared<MinMaxTreeImpl<Dty_, int8_t>>(type, dim, chunkDim, blockDim, maxLevel);
 	case eleType::INT16:
-		return std::make_shared<MinMaxTreeImpl<Dty_, int16_t>>(type, dim, blockDim, maxLevel);
+		return std::make_shared<MinMaxTreeImpl<Dty_, int16_t>>(type, dim, chunkDim, blockDim, maxLevel);
 	case eleType::INT32:
-		return std::make_shared<MinMaxTreeImpl<Dty_, int32_t>>(type, dim, blockDim, maxLevel);
+		return std::make_shared<MinMaxTreeImpl<Dty_, int32_t>>(type, dim, chunkDim, blockDim, maxLevel);
 	case eleType::INT64:
-		return std::make_shared<MinMaxTreeImpl<Dty_, int64_t>>(type, dim, blockDim, maxLevel);
+		return std::make_shared<MinMaxTreeImpl<Dty_, int64_t>>(type, dim, chunkDim, blockDim, maxLevel);
 	case eleType::UINT8:
-		return std::make_shared<MinMaxTreeImpl<Dty_, uint8_t>>(type, dim, blockDim, maxLevel);
+		return std::make_shared<MinMaxTreeImpl<Dty_, uint8_t>>(type, dim, chunkDim, blockDim, maxLevel);
 	case eleType::UINT16:
-		return std::make_shared<MinMaxTreeImpl<Dty_, uint16_t>>(type, dim, blockDim, maxLevel);
+		return std::make_shared<MinMaxTreeImpl<Dty_, uint16_t>>(type, dim, chunkDim, blockDim, maxLevel);
 	case eleType::UINT32:
-		return std::make_shared<MinMaxTreeImpl<Dty_, uint32_t>>(type, dim, blockDim, maxLevel);
+		return std::make_shared<MinMaxTreeImpl<Dty_, uint32_t>>(type, dim, chunkDim, blockDim, maxLevel);
 	case eleType::UINT64:
-		return std::make_shared<MinMaxTreeImpl<Dty_, uint64_t>>(type, dim, blockDim, maxLevel);
+		return std::make_shared<MinMaxTreeImpl<Dty_, uint64_t>>(type, dim, chunkDim, blockDim, maxLevel);
 	}
 
 	_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_UNKNOWN_ERROR, MSDB_ER_NOT_IMPLEMENTED));

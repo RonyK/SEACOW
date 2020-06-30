@@ -30,6 +30,7 @@
     <ClCompile Include="test\query\op\mmt_save\test_mmt_save.cpp" />
     <ClCompile Include="test\query\op\mmt_load\test_mmt_load.cpp" />
     <ClCompile Include="test\query\op\delta_encode\test_delta_encode.cpp" />
+    <ClCompile Include="test\index\testMMT.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">
@@ -37,6 +38,7 @@
     </ClInclude>
     <ClInclude Include="test\pch.h" />
     <ClInclude Include="test\dummy\opDummy.h" />
+    <ClInclude Include="test\index\testMMT.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="test">
