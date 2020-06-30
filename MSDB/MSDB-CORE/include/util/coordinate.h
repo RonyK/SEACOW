@@ -215,6 +215,32 @@ public:
 		this->initSeqCapacity();
 	}
 
+	coordinateIterator(const std::vector<dim_type>& lst)
+		: coor_(lst.size()), dSize_(lst.size()), end_(false), basisDimOffset_(1), seqPos_(0)
+	{
+		this->dims_ = new dim_type[this->dSize()];
+		this->memcpyDim(this->dims_, lst.data());
+
+		this->basisDim_ = this->dSize() - 1;
+		this->sP_ = new dim_type[this->dSize()]();
+		this->eP_ = this->dims_;
+
+		this->initSeqCapacity();
+	}
+
+	coordinateIterator(std::initializer_list<dim_type> lst)
+		: coor_(lst.size()), dSize_(lst.size()), end_(false), basisDimOffset_(1), seqPos_(0)
+	{
+		this->dims_ = new dim_type[this->dSize()];
+		this->memcpyDim(this->dims_, lst.data());
+
+		this->basisDim_ = this->dSize() - 1;
+		this->sP_ = new dim_type[this->dSize()]();
+		this->eP_ = this->dims_;
+
+		this->initSeqCapacity();
+	}
+
 	coordinateIterator(const self_type& mit)
 		: coor_(mit.coor_), basisDim_(mit.basisDim_), dSize_(mit.dSize_),
 		end_(mit.end_), basisDimOffset_(mit.basisDimOffset_),

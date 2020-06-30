@@ -128,6 +128,11 @@ void chunk::print()
 	}
 }
 
+coor chunk::getChunkCoor()
+{
+	return this->desc_->chunkCoor_;
+}
+
 void chunk::free()
 {
 	if (this->isMaterialized())
