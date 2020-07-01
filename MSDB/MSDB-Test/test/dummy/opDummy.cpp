@@ -138,5 +138,27 @@ void getMmtDeltaEncode(pArrayDesc sourceArrDesc,
 	action = mmtAction_;
 	qry = mmtQuery_;
 }
+
+void getMmtDeltaDecode(pArrayDesc sourceArrDesc,
+					   std::shared_ptr<mmt_delta_decode_plan>& plan,
+					   std::shared_ptr<mmt_delta_decode_action>& action,
+					   pQuery& qry)
+{
+	pQuery mmtQuery_ = std::make_shared<query>();
+	auto mmtPlan_ = std::make_shared<mmt_delta_decode_plan>();
+	auto mmtAction_ = std::make_shared<mmt_delta_decode_action>();
+	parameters params = {
+		std::make_shared<opParamArray>(sourceArrDesc)
+	};
+	auto pSet = std::make_shared<mmt_delta_decode_pset>(params);
+
+	mmtPlan_->setParamSet(pSet);
+	mmtAction_->setArrayDesc(mmtPlan_->inferSchema());
+	mmtAction_->setParams(params);
+
+	plan = mmtPlan_;
+	action = mmtAction_;
+	qry = mmtQuery_;
+}
 }	// caDummy
 }	// msdb

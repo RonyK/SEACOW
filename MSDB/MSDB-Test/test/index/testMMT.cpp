@@ -10,8 +10,11 @@
 #include <op/mmt_build/mmt_build_action.h>
 #include <op/mmt_delta_encode/mmt_delta_encode_plan.h>
 #include <op/mmt_delta_encode/mmt_delta_encode_action.h>
+#include <op/mmt_delta_decode/mmt_delta_decode_plan.h>
+#include <op/mmt_delta_decode/mmt_delta_decode_action.h>
 
 #include <string>
+#include <memory>
 
 namespace msdb
 {
@@ -21,7 +24,7 @@ namespace data2D_sc4x4
 {
 void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
 {
-	if(sourceArr.empty())
+	if (sourceArr.empty())
 	{
 		sourceArr = getSourceArray();
 	}
@@ -131,8 +134,56 @@ pArray mmt_delta_encode(std::vector<pArray> sourceArr)
 
 	auto afterArray = mmtAction->execute(sourceArr, mmtQuery);
 	std::cout << "mmt delta encode" << std::endl;
-	
+
 	return afterArray;
+}
+
+pArray mmt_delta_decode(std::vector<std::shared_ptr<mmt_delta_encode_array>>& sourceArr)
+{
+	// Should build mmt before
+	std::shared_ptr<mmt_delta_decode_plan> mmtPlan;
+	std::shared_ptr<mmt_delta_decode_action> mmtAction;
+	pQuery mmtQuery;
+	getMmtDeltaDecode(sourceArr[0]->getDesc(), mmtPlan, mmtAction, mmtQuery);
+
+	auto afterArray = mmtAction->execute(std::vector<pArray>({ std::static_pointer_cast<arrayBase>(sourceArr[0]) }), mmtQuery);
+	std::cout << "mmt delta decode" << std::endl;
+
+	return afterArray;
+}
+std::shared_ptr<mmt_delta_encode_array> get_mmt_delta_encode_array()
+{
+	auto listArr = getSourceArray<mmt_delta_encode_array>();
+	assert(listArr.size() == 1);
+
+	auto arr = listArr[0];
+	auto arrId = arr->getArrayId();
+
+	for (auto attr : arr->getDesc()->attrDescs_)
+	{
+		_MSDB_TRY_BEGIN
+		{
+			if(arrayMgr::instance()->hasAttributeIndex(arrId, attr->id_))
+			{
+				_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_USER_QUERY_ERROR, MSDB_ER_NO_ATTR_INDEX));
+			}
+			if (arrayMgr::instance()->getAttributeIndex(arrId, attr->id_)->getType() != attrIndexType::MMT)
+			{
+				_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_USER_QUERY_ERROR, MSDB_ER_ATTR_INDEX_TYPE_DIFF));
+			}
+		}
+		_MSDB_CATCH_ALL;
+		{
+			mmt_load();
+		}
+		_MSDB_CATCH_END;
+
+		auto arrIndex = arrayMgr::instance()->getAttributeIndex(arrId, attr->id_);
+		std::shared_ptr<MinMaxTreeImpl<position_t, char>> mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, char>>(arrIndex);
+		arr->setMMT(attr->id_, mmtIndex);
+	}
+
+	return arr;
 }
 }	// data2D_sc4x4
 }	// caDummy
