@@ -71,7 +71,7 @@ protected:
 	};
 
 public:
-	MinMaxTree(eleType eType);
+	MinMaxTree(eleType eType, size_const maxLevel = 0);
 
 public:
 	virtual void build(chunkIterator& it) = 0;
@@ -79,10 +79,21 @@ public:
 	virtual void deserialize(std::istream& is) = 0;
 
 public:
+	eleType getEleType();
+	size_type getMaxLevel();
+	size_type getSerializedSize();
+
+public:
 	template <typename Dty_>
 	static pMMT createMMT(eleType type, std::vector<Dty_>& dim,
 						  std::vector<Dty_>& chunkDim, std::vector<Dty_>& blockDim,
 						  size_const maxLevel = 0);
+
+protected:
+	eleType eType_;
+
+	size_type serializedSize_;
+	size_type maxLevel_;
 };
 template <typename Dty_, typename Ty_>
 class MinMaxTreeImpl;
@@ -197,9 +208,9 @@ protected:
 public:
 	MinMaxTreeImpl(eleType eType, dim_vector_reference dim, dim_vector_reference chunkDim, dim_vector_reference blockDim,
 				   size_const maxLevel = 0)
-		: MinMaxTree(eType), dim_(dim), dSize_(dim.size()), leafBlockDim_(blockDim),
-		maxLevel_(maxLevel), serializedSize_(0), eType_(eType), leafInChunkLevelDim_(dim.size()),
-		TySize_(getEleSize(eType)), TyBits_(getEleSize(eType)* CHAR_BIT)
+		: MinMaxTree(eType, maxLevel), dim_(dim), dSize_(dim.size()), leafBlockDim_(blockDim),
+		leafInChunkLevelDim_(dim.size()), TySize_(getEleSize(eType)), 
+		TyBits_(getEleSize(eType)* CHAR_BIT)
 	{
 		this->initLevelDims(dim, blockDim, maxLevel);
 		this->initLeafInChunkLevelDim(chunkDim, blockDim);
@@ -552,6 +563,9 @@ protected:
 					cNode->bMinDelta_ = static_cast<bit_cnt_type>(cNode->bMin_ - prevNode->bMin_);	// min: prev <= cur
 					// TODO::Change min, max according order and deltaBits
 				}
+
+				cNode->max_ = getMaxBoundary<Ty_>(prevNode->max_, cNode->order_, cNode->bMax_);;
+				cNode->min_ = getMinBoundary<Ty_>(prevNode->min_, cNode->order_, cNode->bMin_);
 			}
 		}
 	}
@@ -785,12 +799,9 @@ public:
 private:
 	const size_type TySize_;
 	const size_type TyBits_;
-	eleType eType_;
 
 private:
 	size_type dSize_;
-	size_type serializedSize_;
-	size_type maxLevel_;
 	dim_vector dim_;					// dimensions
 	//dim_vector chunkDim_;
 	dim_vector leafBlockDim_;			// leaf block dimension (num of items)

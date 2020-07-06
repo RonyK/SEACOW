@@ -11,15 +11,16 @@ namespace caDummy
 {
 namespace data2D_sc4x4
 {
-TEST(mmt_build_action, mmt_build_sc4x4)
+TEST(query_op_mmt_build, mmt_build_sc4x4)
 {
-	mmt_build();
+	auto arr = mmt_build();
+	mmt_build_test(arr);
 }	// TEST()
 }	// data2D_sc4x4
 
 namespace data2D_sc8x8
 {
-TEST(mmt_build_action, mmt_build_sc8x8)
+TEST(query_op_mmt_build, mmt_build_sc8x8)
 {
 	std::vector<pArray> sourceArr = getSourceArray();
 	eleDefault level = 2;

@@ -43,6 +43,11 @@ pArray mmt_build(std::vector<pArray> sourceArr)
 	// Execute mmt build action
 	auto afterArray = mmtAction->execute(sourceArr, mmtQuery);
 
+	return afterArray;
+}
+
+void mmt_build_test(pArray afterArray)
+{
 	// Result check
 	for (auto attrDesc : afterArray->getDesc()->attrDescs_)
 	{
@@ -51,6 +56,7 @@ pArray mmt_build(std::vector<pArray> sourceArr)
 
 		std::shared_ptr<MinMaxTreeImpl<dim_type, value_type>> mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<dim_type, value_type>>(attrIndex);
 		auto nodes = mmtIndex->getNodes();
+		size_t level = mmtIndex->getMaxLevel();
 		EXPECT_EQ(nodes.size(), level + 1);
 
 		value_type exMMT_min[2][2][2];
@@ -77,8 +83,6 @@ pArray mmt_build(std::vector<pArray> sourceArr)
 			}
 		}
 	}
-
-	return afterArray;
 }
 
 pArray mmt_save(std::vector<pArray> sourceArr)
@@ -138,6 +142,33 @@ pArray mmt_delta_encode(std::vector<pArray> sourceArr)
 	return afterArray;
 }
 
+void mmt_delta_encode_test(std::shared_ptr<mmt_delta_encode_array> arr)
+{
+	auto arrId = arr->getArrayId();
+
+	for (auto attr : arr->getDesc()->attrDescs_)
+	{
+		value_type expected[dataLength];
+		getExDelta(expected, dataLength);
+
+		auto cit = arr->getChunkIterator();
+		size_t c = 0;
+
+		while (!cit.isEnd())
+		{
+			auto iit = (*cit)->getItemIterator();
+			for (size_t i = 0; i < iit.getCapacity(); ++i)
+			{
+				std::cout << "[" << iit.coor()[0] << ", " << iit.coor()[1] << "] " << static_cast<int>((*iit).getChar()) << ", " << static_cast<int>(expected[i]) << std::endl;
+				EXPECT_EQ((*iit).getChar(), expected[i + iit.getCapacity() * c]);
+				++iit;
+			}
+			++c;
+			++cit;
+		}
+	}
+}
+
 pArray mmt_delta_decode(std::vector<std::shared_ptr<mmt_delta_encode_array>>& sourceArr)
 {
 	// Should build mmt before
@@ -153,37 +184,37 @@ pArray mmt_delta_decode(std::vector<std::shared_ptr<mmt_delta_encode_array>>& so
 }
 std::shared_ptr<mmt_delta_encode_array> get_mmt_delta_encode_array()
 {
-	auto listArr = getSourceArray<mmt_delta_encode_array>();
-	assert(listArr.size() == 1);
+	auto arr_1 = mmt_build();
+	auto arr_2 = mmt_delta_encode(std::vector<pArray>({ arr_1 }));
 
-	auto arr = listArr[0];
+	return std::static_pointer_cast<mmt_delta_encode_array>(arr_2);
+}
+
+void mmt_delta_decode_test(std::shared_ptr<mmt_delta_decode_array> arr)
+{
 	auto arrId = arr->getArrayId();
 
 	for (auto attr : arr->getDesc()->attrDescs_)
 	{
-		_MSDB_TRY_BEGIN
-		{
-			if(arrayMgr::instance()->hasAttributeIndex(arrId, attr->id_))
-			{
-				_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_USER_QUERY_ERROR, MSDB_ER_NO_ATTR_INDEX));
-			}
-			if (arrayMgr::instance()->getAttributeIndex(arrId, attr->id_)->getType() != attrIndexType::MMT)
-			{
-				_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_USER_QUERY_ERROR, MSDB_ER_ATTR_INDEX_TYPE_DIFF));
-			}
-		}
-		_MSDB_CATCH_ALL;
-		{
-			mmt_load();
-		}
-		_MSDB_CATCH_END;
+		value_type expected[dataLength];
+		getChunkDummy(expected, dataLength);
 
-		auto arrIndex = arrayMgr::instance()->getAttributeIndex(arrId, attr->id_);
-		std::shared_ptr<MinMaxTreeImpl<position_t, char>> mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, char>>(arrIndex);
-		arr->setMMT(attr->id_, mmtIndex);
+		auto cit = arr->getChunkIterator();
+		size_t c = 0;
+
+		while (!cit.isEnd())
+		{
+			auto iit = (*cit)->getItemIterator();
+			for (size_t i = 0; i < iit.getCapacity(); ++i)
+			{
+				std::cout << "[" << iit.coor()[0] << ", " << iit.coor()[1] << "] " << static_cast<int>((*iit).getChar()) << ", " << static_cast<int>(expected[i]) << std::endl;
+				EXPECT_EQ((*iit).getChar(), expected[i + iit.getCapacity() * c]);
+				++iit;
+			}
+			++c;
+			++cit;
+		}
 	}
-
-	return arr;
 }
 }	// data2D_sc4x4
 }	// caDummy

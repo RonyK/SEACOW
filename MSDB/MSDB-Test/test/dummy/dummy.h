@@ -32,6 +32,7 @@ namespace msdb
 			void getWTChunkDummy(value_type* output, size_t length);
 			void getExDummy(value_type* output, size_t length);
 			void getExMMTBuilded(value_type(*minOutput)[2][2], value_type(*maxOutput)[2][2], size_t length);
+			void getExDelta(value_type* output, size_t length);
 
 			template<class Aty_ = arrayBase>
 			std::vector<std::shared_ptr<Aty_>> getSourceArray()

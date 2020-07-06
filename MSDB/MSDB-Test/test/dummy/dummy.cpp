@@ -91,7 +91,6 @@ namespace msdb
 				//};
 
 				const value_type* seqArr = (value_type*)arr;
-
 				for (int i = 0; i < 4 * 4; i++)
 				{
 					output[i] = seqArr[i];
@@ -116,15 +115,27 @@ namespace msdb
 			{
 				assert(length >= 2*2*2);
 
-				const static value_type min[2][2][2] =
+				const static value_type origianlMin[2][2][2] =
 				{
 					{{3, 2}, {0, 0}},
 					{{0}}
 				};
 
-				const static value_type max[2][2][2] = 
+				const static value_type originalMax[2][2][2] = 
 				{
 					{{9, 6}, {8, 4}},
+					{{9}}
+				};
+
+				const static value_type min[2][2][2] =
+				{
+					{{2, 2}, {0, 0}},
+					{{0}}
+				};
+
+				const static value_type max[2][2][2] =
+				{
+					{{9, 7}, {9, 7}},
 					{{9}}
 				};
 
@@ -161,6 +172,31 @@ namespace msdb
 
 				memcpy(minOutput, min, sizeof(value_type) * 2 * 2 * 2);
 				memcpy(maxOutput, max, sizeof(value_type) * 2 * 2 * 2);
+			}
+			
+			void getExDelta(value_type* output, size_t length)
+			{
+				assert(length >= 4 * 4);
+				const static value_type arr[4][2][2] = {
+					{ {7, 5}, {3, 1}},
+					{ {4, 0}, {2, 2}},
+					{ {8, 2}, {6, 0}},
+					{ {4, 0}, {2, 2}}
+				};
+
+				// In multi-dimensional fashion
+				//
+				//	{7,5,4,0},
+				//	{3,1,2,2},
+				//	{8,2,4,0},
+				//	{6,0,2,2}
+				//};
+
+				const value_type* seqArr = (value_type*)arr;
+				for (int i = 0; i < 4 * 4; i++)
+				{
+					output[i] = seqArr[i];
+				}
 			}
 		}
 
