@@ -139,55 +139,6 @@ std::list<pChunk> wavelet_encode_action::waveletLevelEncode(pChunk wChunk, pWave
 	return levelChunks;
 }
 
-//std::list<pChunk> wavelet_encode_action::waveletTransform(pChunk inChunk, pWavelet w, dimensionId basisDim, pQuery q)
-//{
-//	// Setting chunkDesc for band chunk
-//	auto bandDesc = std::make_shared<chunkDesc>(*inChunk->getDesc());
-//	bandDesc->setDim(basisDim, intDivCeil(bandDesc->dims_[basisDim], 2));
-//
-//	// Make chunk
-//	pChunk approximateChunk = std::make_shared<chunk>(bandDesc);
-//	pChunk detailChunk = std::make_shared<chunk>(bandDesc);
-//
-//	approximateChunk->materialize();
-//	detailChunk->materialize();
-//
-//	// Get Iterator for each chunk
-//	auto iit = inChunk->getItemIterator();
-//	auto ait = approximateChunk->getItemIterator();
-//	auto dit = detailChunk->getItemIterator();
-//
-//	iit.setBasisDim(basisDim);
-//	ait.setBasisDim(basisDim);
-//	dit.setBasisDim(basisDim);
-//
-//	iit.moveToStart();
-//	ait.moveToStart();
-//	dit.moveToStart();
-//
-//	// Iterate data
-//	size_t length = inChunk->getDesc()->dims_[basisDim];
-//	size_t rows = intDivCeil(inChunk->numCells(), length);
-//	
-//	for(size_t r = 0; r < rows; r++)
-//	{
-//		for(size_t i = 0; i < length; i += 2)
-//		{
-//			for(size_t j = 0; (j < w->c_) && (i + j < length); j++)
-//			{
-//				auto ele = iit.getAt(j);
-//				//*ait += w->h_0[j] * iit.getAt(j);
-//				//*dit += w->g_0[j] * iit.getAt(j);
-//			}
-//
-//			++ait;
-//			++dit;
-//		}
-//	}
-//
-//	return std::list<pChunk>({ approximateChunk, detailChunk });
-//}
-
 const char* msdb::wavelet_encode_action::name()
 {
 	return "wavelet_encode";
