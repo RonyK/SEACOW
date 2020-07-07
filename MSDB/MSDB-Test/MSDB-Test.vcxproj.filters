@@ -23,9 +23,6 @@
     <ClCompile Include="test\query\op\wavelet_encode\test_wavelet_encode_action.cpp" />
     <ClCompile Include="test\array\testArray.cpp" />
     <ClCompile Include="test\dummy\opDummy.cpp" />
-    <ClCompile Include="test\wavelet\testMMT_OLD.cpp">
-      <Filter>test\wavelet</Filter>
-    </ClCompile>
     <ClCompile Include="test\query\op\mmt_build\test_mmt_build.cpp" />
     <ClCompile Include="test\query\op\mmt_save\test_mmt_save.cpp" />
     <ClCompile Include="test\query\op\mmt_load\test_mmt_load.cpp" />

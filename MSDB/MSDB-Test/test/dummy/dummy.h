@@ -68,7 +68,7 @@ namespace msdb
 						pChunkDesc cDesc = std::make_shared<chunkDesc>(
 							sourceArr->getChunkIdFromItemCoor(sP), attrDescs[0], dimChunk, sP, eP);
 						pChunk sourceChunk = std::make_shared<chunk>(cDesc);
-						sourceChunk->materialize();
+						sourceChunk->alloc();
 
 						// Insert data into chunk
 						auto it = sourceChunk->getItemIterator();

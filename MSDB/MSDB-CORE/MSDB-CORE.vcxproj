@@ -165,7 +165,6 @@
     <ClInclude Include="include\array\dimensionId.h" />
     <ClInclude Include="include\array\memBlock.h" />
     <ClInclude Include="include\array\memChunkBuffer.h" />
-    <ClInclude Include="include\array\mmtArray.h" />
     <ClInclude Include="include\compression\compression.h" />
     <ClInclude Include="include\index\mmt.h" />
     <ClInclude Include="include\index\attributeIndex.h" />
@@ -199,9 +198,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="include\compression\haar.h" />
-    <ClInclude Include="include\compression\mmt_old.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="include\compression\wavelet.h" />
     <ClInclude Include="include\xml\tinyxml2.h" />
     <ClInclude Include="src\query\op\mmt_build\mmt_build_action.h" />

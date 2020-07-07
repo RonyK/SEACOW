@@ -142,8 +142,8 @@ public:
 	virtual ~chunk();
 
 public:
-	void materialize();
-	void materialize(bufferSize size);
+	void alloc();
+	void alloc(bufferSize size);
 	void materializeCopy(void* data, bufferSize size);
 	void materializeAssign(void* data, bufferSize size);
 	bool isMaterialized() const;

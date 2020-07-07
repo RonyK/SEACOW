@@ -87,7 +87,7 @@ private:
 
 		// Make chunk
 		pChunk outChunk = std::make_shared<chunk>(outChunkDesc);
-		outChunk->materialize();
+		outChunk->alloc();
 
 		auto ait = approximateChunk->getItemIterator();
 		auto dit = detailChunk->getItemIterator();

@@ -168,12 +168,6 @@
     <ClInclude Include="include\array\memChunkBuffer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="include\array\mmtArray.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\compression\mmt_old.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="include\index\attributeIndex.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
