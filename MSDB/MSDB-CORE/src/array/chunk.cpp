@@ -12,14 +12,14 @@ chunk::~chunk()
 	this->free();
 }
 
-void chunk::materialize()
+void chunk::alloc()
 {
 	this->free();
 	this->makeBuffer();
 	this->cached_->alloc(this->desc_->mSize_);
 }
 
-void chunk::materialize(bufferSize size)
+void chunk::alloc(bufferSize size)
 {
 	this->free();
 	this->makeBuffer();
@@ -27,14 +27,15 @@ void chunk::materialize(bufferSize size)
 	this->desc_->mSize_ = size;
 }
 
+// Deep copy
 void chunk::materializeCopy(void* data, bufferSize size)
 {
-	this->free();
-	this->materialize(size);
+	this->alloc(size);
 	this->cached_->copy(data, size);
 	this->desc_->mSize_ = size;
 }
 
+// Copy pointer
 void chunk::materializeAssign(void* data, bufferSize size)
 {
 	this->free();
