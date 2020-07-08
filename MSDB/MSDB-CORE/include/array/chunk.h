@@ -199,7 +199,7 @@ protected:
 
 protected:
 	//////////////////////////////
-	// MMT Header				//
+	// Chunk Header				//
 	//////////////////////////////
 	class chunkHeader : public serialHeader
 	{
@@ -244,6 +244,7 @@ public:
 			bs << (*it).get<Ty_>();
 			++it;
 		}
+		this->serializedSize_ = bs.capacity();
 	}
 
 	template<class Ty_>
