@@ -35,8 +35,8 @@ private:
 		pChunk approximateChunk = std::make_shared<chunk>(std::make_shared<chunkDesc>(*bandDesc));
 		pChunk detailChunk = std::make_shared<chunk>(std::make_shared<chunkDesc>(*bandDesc));
 
-		approximateChunk->materialize();
-		detailChunk->materialize();
+		approximateChunk->alloc();
+		detailChunk->alloc();
 
 		// Get Iterator for each chunk
 		auto iit = inChunk->getItemIterator();
@@ -90,5 +90,4 @@ public:
 									// This for the testing various wavelet functions.
 };
 }
-
 #endif		// _MSDB_OP_WAVELET_ENCODE_ACTION_H_

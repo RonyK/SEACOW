@@ -10,7 +10,7 @@ namespace msdb
 {
 #define ROUNDING(x, dig)	( floor((x) * pow(double(10), dig) + 0.5f) / pow(double(10), dig) )
 
-TEST(wavelet_encode_action, waveletHaar_1D)
+TEST(query_op_wavelet_encode, waveletHaar_1D)
 {
 	//////////////////////////////
 	// Set up dummy data
@@ -92,7 +92,7 @@ TEST(wavelet_encode_action, waveletHaar_1D)
 	//}
 }
 
-TEST(wavelet_encode_action, waveletHaarSimple_2D)
+TEST(query_op_wavelet_encode, waveletHaarSimple_2D)
 {
 	//////////////////////////////
 	// Set up dummy data
@@ -164,7 +164,7 @@ namespace caDummy
 {
 namespace data2D_sc4x4
 {
-TEST(wavelet_encode_action, waveletHaarSimple_sc4x4)
+TEST(query_op_wavelet_encode, waveletHaarSimple_sc4x4)
 {
 	std::vector<pArray> sourceArr = getSourceArray();
 

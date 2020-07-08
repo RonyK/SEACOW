@@ -39,6 +39,8 @@
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h" />
     <ClInclude Include="test\dummy\opDummy.h" />
+    <ClInclude Include="test\index\testMMT.h" />
+    <ClInclude Include="test\io\testIO.h" />
     <ClInclude Include="test\pch.h" />
   </ItemGroup>
   <ItemGroup>
@@ -46,6 +48,8 @@
     <ClCompile Include="test\array\testMemChunk.cpp" />
     <ClCompile Include="test\dummy\dummy.cpp" />
     <ClCompile Include="test\dummy\opDummy.cpp" />
+    <ClCompile Include="test\index\testMMT.cpp" />
+    <ClCompile Include="test\io\testIO.cpp" />
     <ClCompile Include="test\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -56,6 +60,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="test\query\op\delta_decode\test_mmt_delta_decode.cpp" />
+    <ClCompile Include="test\query\op\delta_encode\test_delta_encode.cpp" />
+    <ClCompile Include="test\query\op\load\test_load.cpp" />
+    <ClCompile Include="test\query\op\save\test_save.cpp" />
     <ClCompile Include="test\query\op\mmt_build\test_mmt_build.cpp" />
     <ClCompile Include="test\query\op\mmt_load\test_mmt_load.cpp" />
     <ClCompile Include="test\query\op\mmt_save\test_mmt_save.cpp" />
@@ -73,10 +81,6 @@
     <ClCompile Include="test\util\testIterator.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="test\wavelet\testMMT_OLD.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="test\wavelet\testWavelet.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

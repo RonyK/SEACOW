@@ -91,7 +91,6 @@ namespace msdb
 				//};
 
 				const value_type* seqArr = (value_type*)arr;
-
 				for (int i = 0; i < 4 * 4; i++)
 				{
 					output[i] = seqArr[i];
@@ -116,15 +115,27 @@ namespace msdb
 			{
 				assert(length >= 2*2*2);
 
-				const static value_type min[2][2][2] =
+				const static value_type origianlMin[2][2][2] =
 				{
 					{{3, 2}, {0, 0}},
 					{{0}}
 				};
 
-				const static value_type max[2][2][2] = 
+				const static value_type originalMax[2][2][2] = 
 				{
 					{{9, 6}, {8, 4}},
+					{{9}}
+				};
+
+				const static value_type min[2][2][2] =
+				{
+					{{2, 2}, {0, 0}},
+					{{0}}
+				};
+
+				const static value_type max[2][2][2] =
+				{
+					{{9, 7}, {9, 7}},
 					{{9}}
 				};
 
@@ -162,64 +173,38 @@ namespace msdb
 				memcpy(minOutput, min, sizeof(value_type) * 2 * 2 * 2);
 				memcpy(maxOutput, max, sizeof(value_type) * 2 * 2 * 2);
 			}
-
-			std::vector<pArray> getSourceArray()
+			
+			void getExDelta(value_type* output, size_t length)
 			{
-				// Get Dummy data
-				value_type data[dataLength];
-				getDummy(data, dataLength);
+				assert(length >= 4 * 4);
+				const static value_type arr[4][2][2] = {
+					{ {7, 5}, {3, 1}},
+					{ {4, 0}, {2, 2}},
+					{ {8, 2}, {6, 0}},
+					{ {4, 0}, {2, 2}}
+				};
 
-				// Build Array
-				dimensionDescs arrDimDescs;
-				dimensionId dimId = 0;
-				arrDimDescs.push_back(std::make_shared<dimensionDesc>(dimId++, "X", 0, dims[1], chunkDims[1]));
-				arrDimDescs.push_back(std::make_shared<dimensionDesc>(dimId++, "Y", 0, dims[0], chunkDims[0]));
+				// In multi-dimensional fashion
+				//
+				//	{7,5,4,0},
+				//	{3,1,2,2},
+				//	{8,2,4,0},
+				//	{6,0,2,2}
+				//};
 
-				attributeDescs attrDescs;
-				attributeId attrId = 0;
-				attrDescs.push_back(std::make_shared<attributeDesc>(attrId++, "ATTR_1", eleType::CHAR));		// SIGNED CHAR
-
-				pArrayDesc arrDesc = std::make_shared<arrayDesc>(aid, "data2D_sc4x4", arrDimDescs, attrDescs);
-				pArray sourceArr = std::make_shared<arrayBase>(arrDesc);
-
-				// Build Chunk
-				auto a = chunkDims.data();
-				auto s = chunkDims.size();
-				dimension dimChunk(s, a);
-				for (int y = 0; y < chunkNums[0]; y++)
+				const value_type* seqArr = (value_type*)arr;
+				for (int i = 0; i < 4 * 4; i++)
 				{
-					for (int x = 0; x < chunkNums[1]; x++)
-					{
-						coor sP = { y * chunkDims[0], x * chunkDims[1] };
-						coor eP = { sP[0] + chunkDims[0], sP[1] + chunkDims[1] };
-
-						pChunkDesc cDesc = std::make_shared<chunkDesc>(
-							sourceArr->getChunkIdFromItemCoor(sP), attrDescs[0], dimChunk, sP, eP);
-						pChunk sourceChunk = std::make_shared<chunk>(cDesc);
-						sourceChunk->materialize();
-
-						// Insert data into chunk
-						auto it = sourceChunk->getItemIterator();
-						//std::cout << "-----" << std::endl;
-						for (int iy = 0; iy < chunkDims[0]; iy++)
-						{
-							for (int ix = 0; ix < chunkDims[1]; ix++)
-							{
-								(*it).setChar(data[(y * chunkDims[0] + iy) * dimX + (x * chunkDims[1] + ix)]);
-								//char c = (*it).getChar();
-								//std::cout << static_cast<int>(c) << ", ";
-								++it;
-							}
-							std::cout << std::endl;
-						}
-						//std::cout << std::endl << "-----" << std::endl;
-						sourceArr->insertChunk(sourceChunk);
-					}
+					output[i] = seqArr[i];
 				}
+			}
 
-				// Build source array
-				std::vector<pArray> arrs = { sourceArr };
-				return arrs;
+			void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
+			{
+				if (sourceArr.empty())
+				{
+					sourceArr = getSourceArray();
+				}
 			}
 		}
 
@@ -370,7 +355,7 @@ namespace msdb
 
 						pChunkDesc cDesc = std::make_shared<chunkDesc>(cid, attrDescs[0], dimChunk, sP, eP);
 						pChunk sourceChunk = std::make_shared<chunk>(cDesc);
-						sourceChunk->materialize();
+						sourceChunk->alloc();
 						
 						// Insert data into chunk
 						auto it = sourceChunk->getItemIterator();

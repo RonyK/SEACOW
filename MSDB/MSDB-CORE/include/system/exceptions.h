@@ -64,7 +64,7 @@ catch (...) {;
 
         virtual ~msdb_exception() noexcept = default;
 
-    private:
+    public:
         std::string _file;
         std::string _function;
         int32_t _line;

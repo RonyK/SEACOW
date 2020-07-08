@@ -1,389 +1,445 @@
-ï»¿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="ì†ŒìŠ¤ íŒŒì¼">
+    <Filter Include="¼Ò½º ÆÄÀÏ">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="í—¤ë” íŒŒì¼">
+    <Filter Include="Çì´õ ÆÄÀÏ">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="ë¦¬ì†ŒìŠ¤ íŒŒì¼">
+    <Filter Include="¸®¼Ò½º ÆÄÀÏ">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\system\errorCodes.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\system\exceptions.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\util\coordinate.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\util\singleton.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\util\stringUtil.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\util\waveletIterator.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\query\operator.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\query\query.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\io\bitstream.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\io\io.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\array\array.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\array\arrayDesc.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\array\attributeDesc.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\array\block.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\array\chunk.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\array\chunkDesc.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\array\chunkMgr.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\array\compBlock.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\array\compChunk.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\array\dimensionDesc.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\array\memBlock.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\system\storageMgr.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\io\file.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\array\buffer.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\array\arrayId.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\array\attributeId.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\array\dimensionId.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\array\chunkId.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\compression\compact.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\compression\haar.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\compression\wavelet.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\xml\tinyxml2.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\array\arrayMgr.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\array\configArrays.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\system\config.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\array\chunkBuffer.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\compression\compression.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\util\element.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\query\opAction.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\query\opPlan.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\query\opParam.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\query\opParamSet.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_plan.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_action.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_array.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\util\math.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_action.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_plan.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_array.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\array\memChunkBuffer.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\mmtArray.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
-    </ClInclude>
-    <ClInclude Include="include\compression\mmt_old.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\index\attributeIndex.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\index\dimensionIndex.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\index\mmt.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="src\query\op\mmt_save\mmt_save_plan.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="src\query\op\mmt_save\mmt_save_action.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="include\io\serializable.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="src\query\op\mmt_load\mmt_load_action.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="src\query\op\mmt_load\mmt_load_plan.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="src\query\op\mmt_build\mmt_build_plan.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="src\query\op\mmt_build\mmt_build_action.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="src\query\op\spiht_encode\spiht_encode_plan.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="src\query\op\spiht_encode\spiht_encode_action.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="src\query\op\spiht_decode\spiht_decode_plan.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="src\query\op\spiht_decode\spiht_decode_action.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
     <ClInclude Include="src\query\op\spiht_decode\spiht_decode_array.h">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+    <ClInclude Include="src\query\op\mmt_delta_encode\mmt_delta_encode_plan.h">
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
+    </ClInclude>
+    <ClInclude Include="src\query\op\mmt_delta_encode\mmt_delta_encode_action.h">
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
+    </ClInclude>
+    <ClInclude Include="src\query\op\mmt_delta_encode\mmt_delta_encode_array.h">
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
+    </ClInclude>
+    <ClInclude Include="src\query\op\mmt_delta_decode\mmt_delta_decode_plan.h">
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
+    </ClInclude>
+    <ClInclude Include="src\query\op\mmt_delta_decode\mmt_delta_decode_action.h">
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
+    </ClInclude>
+    <ClInclude Include="src\query\op\mmt_delta_decode\mmt_delta_decode_array.h">
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
+    </ClInclude>
+    <ClInclude Include="src\query\op\save\save_action.h">
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
+    </ClInclude>
+    <ClInclude Include="src\query\op\save\save_plan.h">
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
+    </ClInclude>
+    <ClInclude Include="include\array\memArray.h">
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
+    </ClInclude>
+    <ClInclude Include="src\query\op\load\load_action.h">
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
+    </ClInclude>
+    <ClInclude Include="src\query\op\load\load_plan.h">
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\system\errorCodes.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\system\exceptions.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\io\bitstream.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\array\array.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\array\chunkDesc.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\array\compChunk.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\io\file.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\system\storageMgr.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\array\buffer.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\compression\compact.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\compression\daubechies.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\compression\haar.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\compression\wavelet.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\xml\tinyxml2.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\array\arrayDesc.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\array\configArrays.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\system\config.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\array\chunkBuffer.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\array\chunk.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\util\element.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\query\opParam.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\query\opPlan.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\query\opParamSet.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_plan.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\query\opAction.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_action.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_array.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\util\math.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\array\dimensionDesc.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\array\attributeDesc.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_action.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_plan.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_array.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\array\memChunkBuffer.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\compression\mmt_old.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\array\arrayMgr.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\index\mmt.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\index\attributeIndex.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\mmt_save\mmt_save_action.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\mmt_save\mmt_save_plan.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\io\serializable.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\mmt_load\mmt_load_plan.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\mmt_load\mmt_load_action.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\mmt_build\mmt_build_plan.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\mmt_build\mmt_build_action.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\spiht_encode\spiht_encode_plan.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\spiht_encode\spiht_encode_action.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\spiht_decode\spiht_decode_plan.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\spiht_decode\spiht_decode_action.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\spiht_decode\spiht_decode_array.cpp">
-      <Filter>ì†ŒìŠ¤ íŒŒì¼</Filter>
+    <ClCompile Include="src\query\op\mmt_delta_encode\mmt_delta_encode_action.cpp">
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\op\mmt_delta_encode\mmt_delta_encode_plan.cpp">
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\op\mmt_delta_encode\mmt_delta_encode_array.cpp">
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\op\mmt_delta_decode\mmt_delta_decode_action.cpp">
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\op\mmt_delta_decode\mmt_delta_decode_plan.cpp">
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\op\mmt_delta_decode\mmt_delta_decode_array.cpp">
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\op\save\save_action.cpp">
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\op\save\save_plan.cpp">
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
+    </ClCompile>
+    <ClCompile Include="src\array\memArray.cpp">
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\op\load\load_action.cpp">
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\op\load\load_plan.cpp">
+      <Filter>¼Ò½º ÆÄÀÏ</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\system\errorCategories.inc">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </None>
     <None Include="include\system\errors.inc">
-      <Filter>í—¤ë” íŒŒì¼</Filter>
+      <Filter>Çì´õ ÆÄÀÏ</Filter>
     </None>
   </ItemGroup>
 </Project>

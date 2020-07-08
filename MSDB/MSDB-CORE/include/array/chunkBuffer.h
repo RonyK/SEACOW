@@ -27,7 +27,7 @@ public:
 	bool isAllocated();
 
 private:
-	bufferSize size_;
+	bufferSize bodySize_;
 	void* data_;
 	bool isAllocated_;
 };

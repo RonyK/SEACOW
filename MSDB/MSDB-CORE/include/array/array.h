@@ -95,6 +95,7 @@ public:
 	// Setter
 	//////////////////////////////
 	void insertChunk(pChunk inputChunk);
+	void flush();
 
 	template <class _Iter>
 	void insertChunk(_Iter begin, _Iter end)

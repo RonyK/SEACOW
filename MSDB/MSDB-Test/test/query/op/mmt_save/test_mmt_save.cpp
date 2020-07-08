@@ -1,16 +1,11 @@
 #include <pch.h>
-#include <array/arrayMgr.h>
-#include <op/mmt_build/mmt_build_plan.h>
-#include <op/mmt_build/mmt_build_action.h>
+#include <index/testMMT.h>
 #include <system/storageMgr.h>
-#include <index/mmt.h>
-#include <string>
 
 namespace msdb
 {
 namespace caDummy
 {
-
 class query_op_mmt_save : public ::testing::Test
 {
 protected:
@@ -47,7 +42,7 @@ namespace data2D_sc4x4
 {
 TEST_F(query_op_mmt_save, mmt_serialize_sc4x4)
 {
-    // should build mmt before
+    // Should build mmt before
     std::vector<pArray> sourceArr = getSourceArray();
     pArray arr = sourceArr[0];
     arrayId arrId = arr->getArrayId();
@@ -67,17 +62,8 @@ TEST_F(query_op_mmt_save, mmt_serialize_sc4x4)
 
 TEST_F(query_op_mmt_save, mmt_save_sc4x4)
 {
-	// should build mmt before
-	std::vector<pArray> sourceArr = getSourceArray();
-	std::shared_ptr<mmt_save_plan> mmtPlan;
-	std::shared_ptr<mmt_save_action> mmtAction;
-	pQuery mmtQuery;
-	getMmtSave(sourceArr[0]->getDesc(), mmtPlan, mmtAction, mmtQuery);
-
-	auto afterArray = mmtAction->execute(sourceArr, mmtQuery);
-
-    EXPECT_TRUE(std::filesystem::is_regular_file(
-        filePath("../storage/array/441/indies/0.msdbindex")));
+    auto arr = mmt_build();
+    arr = mmt_save(std::vector<pArray>({ arr }));
 }	// TEST()
 }	// data2D_sc4x4
 
@@ -85,7 +71,7 @@ namespace data2D_sc8x8
 {
 TEST_F(query_op_mmt_save, mmt_save_sc8x8)
 {
-    // should build mmt before
+    // Should build mmt before
     std::vector<pArray> sourceArr = getSourceArray();
     std::shared_ptr<mmt_save_plan> mmtPlan;
     std::shared_ptr<mmt_save_action> mmtAction;

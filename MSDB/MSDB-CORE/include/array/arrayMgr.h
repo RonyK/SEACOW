@@ -18,6 +18,9 @@ private:
 	~arrayMgr();
 
 public:
+	bool hasAttributeIndex(arrayId arrId, attributeId attrId);
+	bool hasDimensionIndex(arrayId arrId, dimensionId dimId);
+
 	pArrayDesc getArrayDesc(arrayId arrId);
 	pAttrIndex getAttributeIndex(arrayId arrId, attributeId attrId);
 	pDimensionIndex getDimensionIndex(arrayId arrId, dimensionId dimId);

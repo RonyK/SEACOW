@@ -37,6 +37,11 @@ void arrayBase::insertChunk(pChunk inputChunk)
 	this->chunks_.insert(chunkPair(inputChunk->getId(), inputChunk));
 }
 
+void arrayBase::flush()
+{
+	this->chunks_.clear();
+}
+
 pChunk arrayBase::getChunk(chunkId cId)
 {
 	return this->chunks_[cId];

@@ -23,12 +23,15 @@
     <ClCompile Include="test\query\op\wavelet_encode\test_wavelet_encode_action.cpp" />
     <ClCompile Include="test\array\testArray.cpp" />
     <ClCompile Include="test\dummy\opDummy.cpp" />
-    <ClCompile Include="test\wavelet\testMMT_OLD.cpp">
-      <Filter>test\wavelet</Filter>
-    </ClCompile>
     <ClCompile Include="test\query\op\mmt_build\test_mmt_build.cpp" />
     <ClCompile Include="test\query\op\mmt_save\test_mmt_save.cpp" />
     <ClCompile Include="test\query\op\mmt_load\test_mmt_load.cpp" />
+    <ClCompile Include="test\query\op\delta_encode\test_delta_encode.cpp" />
+    <ClCompile Include="test\index\testMMT.cpp" />
+    <ClCompile Include="test\query\op\delta_decode\test_mmt_delta_decode.cpp" />
+    <ClCompile Include="test\query\op\save\test_save.cpp" />
+    <ClCompile Include="test\query\op\load\test_load.cpp" />
+    <ClCompile Include="test\io\testIO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">
@@ -36,6 +39,8 @@
     </ClInclude>
     <ClInclude Include="test\pch.h" />
     <ClInclude Include="test\dummy\opDummy.h" />
+    <ClInclude Include="test\index\testMMT.h" />
+    <ClInclude Include="test\io\testIO.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="test">

@@ -27,16 +27,22 @@ public:
 
 public:
 	header_version_t version_;
-	body_size_t size_;
-	//header_size_t headerSize_;	// Not used
+	header_size_t headerSize_;
+	body_size_t bodySize_;
 };	// serialHeader
 
 class serializable
 {
 public:
+	using size_type = size_t;
+
+public:
 	serializable(pHeader myHeader);
 
 public:
+	size_type getSerializedSize();
+	void setSerializedSize(size_type size);
+
 	pHeader getHeader();		// header without any update
 	pHeader getInHeader();		// header used to deserialize
 	pHeader getOutHeader();		// header used to serialize
@@ -49,6 +55,9 @@ public:
 
 private:
 	pHeader myHeader_;
+
+protected:
+	size_type serializedSize_;
 };	// serializable
 }
 
