@@ -163,6 +163,7 @@
     <ClInclude Include="include\array\configArrays.h" />
     <ClInclude Include="include\array\dimensionDesc.h" />
     <ClInclude Include="include\array\dimensionId.h" />
+    <ClInclude Include="include\array\memArray.h" />
     <ClInclude Include="include\array\memBlock.h" />
     <ClInclude Include="include\array\memChunkBuffer.h" />
     <ClInclude Include="include\compression\compression.h" />
@@ -200,6 +201,8 @@
     <ClInclude Include="include\compression\haar.h" />
     <ClInclude Include="include\compression\wavelet.h" />
     <ClInclude Include="include\xml\tinyxml2.h" />
+    <ClInclude Include="src\query\op\load\load_action.h" />
+    <ClInclude Include="src\query\op\load\load_plan.h" />
     <ClInclude Include="src\query\op\mmt_build\mmt_build_action.h" />
     <ClInclude Include="src\query\op\mmt_build\mmt_build_plan.h" />
     <ClInclude Include="src\query\op\mmt_delta_decode\mmt_delta_decode_action.h" />
@@ -212,6 +215,8 @@
     <ClInclude Include="src\query\op\mmt_load\mmt_load_plan.h" />
     <ClInclude Include="src\query\op\mmt_save\mmt_save_action.h" />
     <ClInclude Include="src\query\op\mmt_save\mmt_save_plan.h" />
+    <ClInclude Include="src\query\op\save\save_action.h" />
+    <ClInclude Include="src\query\op\save\save_plan.h" />
     <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_action.h" />
     <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_array.h" />
     <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_plan.h" />
@@ -221,11 +226,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.cpp" />
+    <ClCompile Include="src\array\memArray.cpp" />
     <ClCompile Include="src\index\attributeIndex.cpp" />
     <ClCompile Include="src\array\arrayMgr.cpp" />
     <ClCompile Include="src\array\attributeDesc.cpp" />
     <ClCompile Include="src\index\mmt.cpp" />
     <ClCompile Include="src\io\serializable.cpp" />
+    <ClCompile Include="src\query\op\load\load_action.cpp" />
+    <ClCompile Include="src\query\op\load\load_plan.cpp" />
     <ClCompile Include="src\query\op\mmt_build\mmt_build_action.cpp" />
     <ClCompile Include="src\query\op\mmt_build\mmt_build_plan.cpp" />
     <ClCompile Include="src\query\op\mmt_delta_decode\mmt_delta_decode_action.cpp" />
@@ -238,6 +246,8 @@
     <ClCompile Include="src\query\op\mmt_load\mmt_load_plan.cpp" />
     <ClCompile Include="src\query\op\mmt_save\mmt_save_action.cpp" />
     <ClCompile Include="src\query\op\mmt_save\mmt_save_plan.cpp" />
+    <ClCompile Include="src\query\op\save\save_action.cpp" />
+    <ClCompile Include="src\query\op\save\save_plan.cpp" />
     <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_action.cpp" />
     <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_array.cpp" />
     <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_plan.cpp" />

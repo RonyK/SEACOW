@@ -93,6 +93,8 @@ namespace msdb
 				std::vector<std::shared_ptr<Aty_>> arrs({ sourceArr });
 				return arrs;
 			}
+
+			void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
 		}
 
 		// signed char

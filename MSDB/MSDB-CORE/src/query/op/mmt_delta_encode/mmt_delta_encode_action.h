@@ -21,14 +21,14 @@ public:
 	virtual pArray execute(std::vector<pArray>& inputArrays, pQuery q) override;
 
 	template<class Ty_>
-	void attributeEncode(std::shared_ptr<mmt_delta_encode_array> outArr, pArray inArr, pAttributeDesc attrDesc);
+	void saveAttribute(std::shared_ptr<mmt_delta_encode_array> outArr, pArray inArr, pAttributeDesc attrDesc);
 
 	template<class Ty_>
 	void chunkEncode(pChunk oit, pChunk iit, std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex);
 };
 
 template<class Ty_>
-void mmt_delta_encode_action::attributeEncode(std::shared_ptr<mmt_delta_encode_array> outArr, pArray inArr, pAttributeDesc attrDesc)
+void mmt_delta_encode_action::saveAttribute(std::shared_ptr<mmt_delta_encode_array> outArr, pArray inArr, pAttributeDesc attrDesc)
 {
 	auto arrIndex = arrayMgr::instance()->getAttributeIndex(inArr->getArrayId(), attrDesc->id_);
 	if (arrIndex->getType() != attrIndexType::MMT)

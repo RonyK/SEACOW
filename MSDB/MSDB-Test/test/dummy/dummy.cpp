@@ -198,6 +198,14 @@ namespace msdb
 					output[i] = seqArr[i];
 				}
 			}
+
+			void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
+			{
+				if (sourceArr.empty())
+				{
+					sourceArr = getSourceArray();
+				}
+			}
 		}
 
 		namespace data2D_sc8x8

@@ -22,7 +22,6 @@ public:
 class mmt_delta_encode_pset : public opParamSet
 {
 public:
-	mmt_delta_encode_pset();
 	mmt_delta_encode_pset(parameters& pSet);
 
 public:

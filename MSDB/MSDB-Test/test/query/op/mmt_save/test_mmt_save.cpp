@@ -1,13 +1,11 @@
 #include <pch.h>
 #include <index/testMMT.h>
-
 #include <system/storageMgr.h>
 
 namespace msdb
 {
 namespace caDummy
 {
-
 class query_op_mmt_save : public ::testing::Test
 {
 protected:

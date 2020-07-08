@@ -21,11 +21,6 @@ pAction mmt_delta_encode_plan::getAction()
 	return std::make_shared<mmt_delta_encode_action>();
 }
 
-mmt_delta_encode_pset::mmt_delta_encode_pset()
-	: opParamSet()
-{
-}
-
 mmt_delta_encode_pset::mmt_delta_encode_pset(parameters& pSet)
 	: opParamSet(pSet)
 {

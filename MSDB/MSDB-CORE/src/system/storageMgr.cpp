@@ -3,6 +3,7 @@
 #include <array/configArrays.h>
 #include <xml/tinyxml2.h>
 #include <fstream>
+#include <array/chunkId.h>
 
 namespace msdb
 {
@@ -14,6 +15,7 @@ const char* strIndexFolder = "indies";
 const char* strIndexFilExtension = ".msdbindex";
 
 const char* strArrayConfigFile = "arrays.xml";
+const char* strChunkFilExtension = ".chunk";
 
 //void msdb::storageMgr::getConfigFile(std::string path)
 //{
@@ -68,37 +70,51 @@ void storageMgr::saveConfigFile(config* cFile)
 
 void storageMgr::loadAttrIndex(arrayId arrId, attributeId attrId, pSerializable serialObj)
 {
-	filePath fpIndex = this->getArrayIndexPath(arrId) / std::to_string(attrId);
-	fpIndex.replace_extension(strIndexFilExtension);
-
 	std::ifstream fs;
-	fs.open(fpIndex, std::fstream::out | std::fstream::binary);
-	if(!fs.is_open())
-	{
-		_MSDB_THROW(_MSDB_EXCEPTIONS_MSG(MSDB_EC_IO_ERROR, MSDB_ER_CANNOT_OPEN_FILE, fpIndex.generic_string().c_str()));
-	}
-
+	this->getIfstream(fs, this->getArrayIndexPath(arrId) / std::to_string(attrId),
+					  strIndexFilExtension);
 	serialObj->deserialize(fs);
 	fs.close();
 }
 
 void storageMgr::saveAttrIndex(arrayId arrId, attributeId attrId, pSerializable serialObj)
 {
-	filePath fpIndexFolder = this->getArrayIndexPath(arrId);
-	filePath fpIndex = this->getArrayIndexPath(arrId) / std::to_string(attrId);
-	fpIndex.replace_extension(strIndexFilExtension);
-	if (!this->isExists(fpIndexFolder))
-	{
-		this->createDirs(fpIndexFolder);
-	}
-
 	std::ofstream fs;
-	fs.open(fpIndex, std::fstream::in | std::fstream::trunc | std::fstream::binary);
-	if(!fs.is_open())
-	{
-		_MSDB_THROW(_MSDB_EXCEPTIONS_MSG(MSDB_EC_IO_ERROR, MSDB_ER_CANNOT_OPEN_FILE, fpIndex.generic_string().c_str()));
-	}
+	this->getOfstream(fs, this->getArrayIndexPath(arrId) / std::to_string(attrId), 
+					  strIndexFilExtension);
+	serialObj->serialize(fs);
+	fs.close();
+}
 
+void storageMgr::loadChunk(arrayId arrId, attributeId attrId, chunkId chkId, pSerializable serialObj)
+{
+	_MSDB_TRY_BEGIN
+	{
+		std::ifstream fs;
+		this->getIfstream(fs, this->getChunkPath(arrId, attrId, chkId),
+						  strChunkFilExtension);
+		serialObj->deserialize(fs);
+		fs.close();
+	}
+	_MSDB_CATCH(msdb_exception msex)
+	{
+		if(msex._error_category == MSDB_EC_IO_ERROR)
+		{
+			if(msex._error_code == MSDB_ER_CANNOT_OPEN_FILE)
+			{
+				// No chunk file, pass chunk
+				return;
+			}
+		}
+	}
+	_MSDB_CATCH_END
+}
+
+void storageMgr::saveChunk(arrayId arrId, attributeId attrId, chunkId chkId, pSerializable serialObj)
+{
+	std::ofstream fs;
+	this->getOfstream(fs, this->getChunkPath(arrId, attrId, chkId), 
+					  strChunkFilExtension);
 	serialObj->serialize(fs);
 	fs.close();
 }
@@ -116,6 +132,37 @@ filePath storageMgr::getArrayFolder(arrayId arrId)
 filePath storageMgr::getArrayIndexPath(arrayId arrId)
 {
 	return this->getArrayPath(arrId) / this->indexFolder_;
+}
+
+filePath storageMgr::getChunkPath(arrayId arrId, attributeId attrId, chunkId chkId)
+{
+	return this->getArrayPath(arrId) / std::to_string(attrId) / std::to_string(chkId);
+}
+
+void storageMgr::getOfstream(std::ofstream& fs, filePath fPath, const char* ext)
+{
+	fPath.replace_extension(ext);
+	filePath dir = fPath.parent_path();
+	if (!this->isExists(dir))
+	{
+		this->createDirs(dir);
+	}
+
+	fs.open(fPath, std::fstream::in | std::fstream::trunc | std::fstream::binary);
+	if (!fs.is_open())
+	{
+		_MSDB_THROW(_MSDB_EXCEPTIONS_MSG(MSDB_EC_IO_ERROR, MSDB_ER_CANNOT_OPEN_FILE, fPath.generic_string().c_str()));
+	}
+}
+
+void storageMgr::getIfstream(std::ifstream& fs, filePath fPath, const char* ext)
+{
+	fPath.replace_extension(ext);
+	fs.open(fPath, std::fstream::out | std::fstream::binary);
+	if (!fs.is_open())
+	{
+		_MSDB_THROW(_MSDB_EXCEPTIONS_MSG(MSDB_EC_IO_ERROR, MSDB_ER_CANNOT_OPEN_FILE, fPath.generic_string().c_str()));
+	}
 }
 
 bool storageMgr::createDirs(filePath& fp)
@@ -142,11 +189,4 @@ bool storageMgr::isExists(filePath& fp)
 {
 	return std::filesystem::exists(fp);
 }
-
-//bool storageMgr::init()
-//{
-//
-//
-//	return true;
-//}
 }

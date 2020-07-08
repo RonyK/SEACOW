@@ -30,31 +30,31 @@ pArray mmt_delta_encode_action::execute(std::vector<pArray>& inputArrays, pQuery
 		switch(attr->type_)
 		{
 		case eleType::CHAR:
-			this->attributeEncode<char>(deltaArr, sourceArr, attr);
+			this->saveAttribute<char>(deltaArr, sourceArr, attr);
 			break;
 		case eleType::INT8:
-			this->attributeEncode<int8_t>(deltaArr, sourceArr, attr);
+			this->saveAttribute<int8_t>(deltaArr, sourceArr, attr);
 			break;
 		case eleType::INT16:
-			this->attributeEncode<int16_t>(deltaArr, sourceArr, attr);
+			this->saveAttribute<int16_t>(deltaArr, sourceArr, attr);
 			break;
 		case eleType::INT32:
-			this->attributeEncode<int32_t>(deltaArr, sourceArr, attr);
+			this->saveAttribute<int32_t>(deltaArr, sourceArr, attr);
 			break;
 		case eleType::INT64:
-			this->attributeEncode<int64_t>(deltaArr, sourceArr, attr);
+			this->saveAttribute<int64_t>(deltaArr, sourceArr, attr);
 			break;
 		case eleType::UINT8:
-			this->attributeEncode<uint8_t>(deltaArr, sourceArr, attr);
+			this->saveAttribute<uint8_t>(deltaArr, sourceArr, attr);
 			break;
 		case eleType::UINT16:
-			this->attributeEncode<uint16_t>(deltaArr, sourceArr, attr);
+			this->saveAttribute<uint16_t>(deltaArr, sourceArr, attr);
 			break;
 		case eleType::UINT32:
-			this->attributeEncode<uint32_t>(deltaArr, sourceArr, attr);
+			this->saveAttribute<uint32_t>(deltaArr, sourceArr, attr);
 			break;
 		case eleType::UINT64:
-			this->attributeEncode<uint64_t>(deltaArr, sourceArr, attr);
+			this->saveAttribute<uint64_t>(deltaArr, sourceArr, attr);
 			break;
 		default:
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));

@@ -39,11 +39,11 @@ protected:
 		virtual void serialize(std::ostream& os) override
 		{
 			std::cout << "Header serialize" << std::endl;
-			std::cout << this->version_ << ", " << this->size_ << ", " << static_cast<int>(this->eType_) << ", " << this->maxLevel_ << std::endl;
+			std::cout << this->version_ << ", " << this->bodySize_ << ", " << static_cast<int>(this->eType_) << ", " << this->maxLevel_ << std::endl;
 
 			int eTypeOut = static_cast<int>(this->eType_);
 			os.write((char*)(&this->version_), sizeof(this->version_));
-			os.write((char*)(&this->size_), sizeof(this->size_));
+			os.write((char*)(&this->bodySize_), sizeof(this->bodySize_));
 			os.write((char*)(&eTypeOut), sizeof(int));
 			os.write((char*)(&this->maxLevel_), sizeof(this->maxLevel_));
 			//os << this->version_ << this->size_ << static_cast<int>(this->eType_) << this->maxLevel_;
@@ -55,13 +55,13 @@ protected:
 
 			int eTypeIn;
 			is.read((char*)(&this->version_), sizeof(this->version_));
-			is.read((char*)(&this->size_), sizeof(this->size_));
+			is.read((char*)(&this->bodySize_), sizeof(this->bodySize_));
 			is.read((char*)(&eTypeIn), sizeof(int));
 			is.read((char*)(&this->maxLevel_), sizeof(this->maxLevel_));
 			this->eType_ = static_cast<eleType>(eTypeIn);
 
 			//is >> this->version_ >> this->size_ >> eTypeIn >> maxLevel_;
-			std::cout << this->version_ << ", " << this->size_ << ", " << static_cast<int>(this->eType_) << ", " << this->maxLevel_ << std::endl;
+			std::cout << this->version_ << ", " << this->bodySize_ << ", " << static_cast<int>(this->eType_) << ", " << this->maxLevel_ << std::endl;
 		}
 
 	public:
@@ -81,7 +81,6 @@ public:
 public:
 	eleType getEleType();
 	size_type getMaxLevel();
-	size_type getSerializedSize();
 
 public:
 	template <typename Dty_>
@@ -91,8 +90,6 @@ public:
 
 protected:
 	eleType eType_;
-
-	size_type serializedSize_;
 	size_type maxLevel_;
 };
 template <typename Dty_, typename Ty_>
@@ -186,7 +183,7 @@ protected:
 	{
 		auto curHeader = std::static_pointer_cast<mmtHeader>(this->getHeader());
 		curHeader->version_ = MinMaxTree::mmtHeader::mmt_header_version;
-		curHeader->size_ = this->serializedSize_;
+		curHeader->bodySize_ = this->serializedSize_;
 		curHeader->maxLevel_ = this->maxLevel_;
 		curHeader->eType_ = this->eType_;
 	}
@@ -196,7 +193,7 @@ protected:
 	{
 		auto curHeader = std::static_pointer_cast<mmtHeader>(this->getHeader());
 		this->maxLevel_ = curHeader->maxLevel_;
-		this->serializedSize_ = curHeader->size_;
+		this->serializedSize_ = curHeader->bodySize_;
 		this->eType_ = curHeader->eType_;
 
 		this->initLevelDims(this->dim_, this->leafBlockDim_, this->maxLevel_);

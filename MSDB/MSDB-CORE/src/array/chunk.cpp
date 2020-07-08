@@ -3,7 +3,8 @@
 
 namespace msdb
 {
-chunk::chunk(pChunkDesc desc) : cached_(nullptr), desc_(desc)
+chunk::chunk(pChunkDesc desc) : cached_(nullptr), desc_(desc),
+serializable(std::make_shared<chunkHeader>())
 {
 }
 
@@ -144,6 +145,97 @@ void chunk::free()
 void chunk::makeBuffer()
 {
 	this->cached_ = new memChunkBuffer();
+}
+
+void chunk::updateToHeader()
+{
+	auto curHeader = std::static_pointer_cast<chunkHeader>(this->getHeader());
+	curHeader->version_ = chunk::chunkHeader::chunk_header_version;
+	curHeader->bodySize_ = this->getSerializedSize();
+}
+
+void chunk::updateFromHeader()
+{
+}
+
+void chunk::serialize(std::ostream& os)
+{
+	bstream bs;
+	switch (this->desc_->attrDesc_->type_)
+	{
+	case eleType::CHAR:
+		this->serialize<char>(bs);
+		break;
+	case eleType::INT8:
+		this->serialize<int8_t>(bs);
+		break;
+	case eleType::INT16:
+		this->serialize<int16_t>(bs);
+		break;
+	case eleType::INT32:
+		this->serialize<int32_t>(bs);
+		break;
+	case eleType::INT64:
+		this->serialize<int64_t>(bs);
+		break;
+	case eleType::UINT8:
+		this->serialize<uint8_t>(bs);
+		break;
+	case eleType::UINT16:
+		this->serialize<uint16_t>(bs);
+		break;
+	case eleType::UINT32:
+		this->serialize<uint32_t>(bs);
+		break;
+	case eleType::UINT64:
+		this->serialize<uint64_t>(bs);
+		break;
+	default:
+		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
+	}
+	this->getOutHeader()->serialize(os);
+	os.write(bs.data(), bs.capacity());
+}
+
+void chunk::deserialize(std::istream& is)
+{
+	this->getHeader()->deserialize(is);
+	this->updateFromHeader();
+	bstream bs;
+	bs.resize(this->serializedSize_);
+	is.read(bs.data(), this->serializedSize_);
+	switch (this->desc_->attrDesc_->type_)
+	{
+	case eleType::CHAR:
+		this->deserialize<char>(bs);
+		break;
+	case eleType::INT8:
+		this->deserialize<int8_t>(bs);
+		break;
+	case eleType::INT16:
+		this->deserialize<int16_t>(bs);
+		break;
+	case eleType::INT32:
+		this->deserialize<int32_t>(bs);
+		break;
+	case eleType::INT64:
+		this->deserialize<int64_t>(bs);
+		break;
+	case eleType::UINT8:
+		this->deserialize<uint8_t>(bs);
+		break;
+	case eleType::UINT16:
+		this->deserialize<uint16_t>(bs);
+		break;
+	case eleType::UINT32:
+		this->deserialize<uint32_t>(bs);
+		break;
+	case eleType::UINT64:
+		this->deserialize<uint64_t>(bs);
+		break;
+	default:
+		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
+	}
 }
 
 chunkItemIterator::chunkItemIterator(void* data, eleType eType, const size_type dSize, position_t* dims, dim_pointer csP)

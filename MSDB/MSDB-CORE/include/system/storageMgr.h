@@ -3,6 +3,7 @@
 #define _MSDB_STORAGEMGR_H_
 
 #include <array/arrayId.h>
+#include <array/chunkId.h>
 #include <array/attributeId.h>
 #include <util/singleton.h>
 #include <io/bitstream.h>
@@ -42,10 +43,17 @@ public:
 	void loadAttrIndex(arrayId arrId, attributeId attrId, pSerializable serialObj);
 	void saveAttrIndex(arrayId arrId, attributeId attrId, pSerializable serialObj);
 
+	void loadChunk(arrayId arrId, attributeId attrId, chunkId chkId, pSerializable serialObj);
+	void saveChunk(arrayId arrId, attributeId attrId, chunkId chkId, pSerializable serialObj);
+
 protected:
 	filePath getArrayPath(arrayId arrId);
 	filePath getArrayFolder(arrayId arrId);
 	filePath getArrayIndexPath(arrayId arrId);
+	filePath getChunkPath(arrayId arrId, attributeId attrId, chunkId chkId);
+
+	void getOfstream(std::ofstream& fs, filePath fPath, const char* ext);
+	void getIfstream(std::ifstream& fs, filePath fPath, const char* ext);
 
 	// STD::FILESYSTEM
 	static bool createDirs(filePath& fp);
@@ -56,6 +64,7 @@ protected:
 
 	//const filePath& getConfigPath();
 	//const filePath& getArrayPath();
+
 
 protected:
 	//bool init();

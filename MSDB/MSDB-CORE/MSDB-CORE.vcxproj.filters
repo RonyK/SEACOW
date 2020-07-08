@@ -216,6 +216,21 @@
     <ClInclude Include="src\query\op\mmt_delta_decode\mmt_delta_decode_array.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="src\query\op\save\save_action.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\query\op\save\save_plan.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\array\memArray.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\query\op\load\load_action.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\query\op\load\load_plan.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">
@@ -375,6 +390,21 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\mmt_delta_decode\mmt_delta_decode_array.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\op\save\save_action.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\op\save\save_plan.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\array\memArray.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\op\load\load_action.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\query\op\load\load_plan.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

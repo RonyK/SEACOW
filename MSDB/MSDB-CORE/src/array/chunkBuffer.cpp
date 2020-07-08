@@ -6,7 +6,7 @@
 namespace msdb
 {
 chunkBuffer::chunkBuffer()
-	: size_(0), isAllocated_(false), data_(nullptr)
+	: bodySize_(0), isAllocated_(false), data_(nullptr)
 {
 
 }
@@ -28,7 +28,7 @@ void const* chunkBuffer::getReadData() const
 
 bufferSize msdb::chunkBuffer::size() const
 {
-	return this->size_;
+	return this->bodySize_;
 }
 
 void chunkBuffer::alloc(bufferSize size)
@@ -41,7 +41,7 @@ void chunkBuffer::alloc(bufferSize size)
 	}
 	
 	this->data_ = new char[size];
-	this->size_ = size;
+	this->bodySize_ = size;
 	this->isAllocated_ = true;
 }
 
@@ -55,11 +55,11 @@ void chunkBuffer::realloc(bufferSize size)
 	}
 
 	void* re = new char[size];
-	memcpy(re, this->data_, std::min(size, this->size_));
+	memcpy(re, this->data_, std::min(size, this->bodySize_));
 	this->free();
 	
 	this->data_ = re;
-	this->size_ = size;
+	this->bodySize_ = size;
 }
 
 void chunkBuffer::copy(void* data, bufferSize size)
@@ -67,7 +67,7 @@ void chunkBuffer::copy(void* data, bufferSize size)
 	this->free();
 	this->data_ = new char[size];
 	memcpy(this->data_, data, size);
-	this->size_ = size;
+	this->bodySize_ = size;
 }
 
 // WARNING:: data is deleted when the chunkBuffer is disappear in a destructor.
@@ -75,15 +75,15 @@ void chunkBuffer::assign(void* data, bufferSize size)
 {
 	this->free();
 	this->data_ = data;
-	this->size_ = size;
+	this->bodySize_ = size;
 }
 
 void chunkBuffer::free()
 {
-	if(this->data_ != nullptr && this->size_ != 0)
+	if(this->data_ != nullptr && this->bodySize_ != 0)
 	{
 		delete[] this->data_;
-		this->size_ = 0;
+		this->bodySize_ = 0;
 		this->data_ = nullptr;
 	}
 }

@@ -22,14 +22,6 @@ namespace caDummy
 {
 namespace data2D_sc4x4
 {
-void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
-{
-	if (sourceArr.empty())
-	{
-		sourceArr = getSourceArray();
-	}
-}
-
 pArray mmt_build(std::vector<pArray> sourceArr)
 {
 	getSourceArrayIfEmpty(sourceArr);
