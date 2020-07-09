@@ -231,6 +231,9 @@
     <ClInclude Include="src\query\op\load\load_plan.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="include\compression\wtChunk.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">
@@ -405,6 +408,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\query\op\load\load_plan.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\compression\wtChunk.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

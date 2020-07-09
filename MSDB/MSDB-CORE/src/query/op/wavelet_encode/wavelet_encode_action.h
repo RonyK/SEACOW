@@ -3,6 +3,7 @@
 #define _MSDB_OP_WAVELET_ENCODE_ACTION_H_
 
 #include <compression/wavelet.h>
+#include <compression/wtChunk.h>
 #include <query/opAction.h>
 #include <util/math.h>
 #include <vector>
@@ -56,8 +57,8 @@ private:
 		bandDesc->setDim(basisDim, intDivCeil(bandDesc->dims_[basisDim], 2));
 
 		// Make chunk
-		pChunk approximateChunk = std::make_shared<chunk>(std::make_shared<chunkDesc>(*bandDesc));
-		pChunk detailChunk = std::make_shared<chunk>(std::make_shared<chunkDesc>(*bandDesc));
+		pWtChunk approximateChunk = std::make_shared<wtChunk>(std::make_shared<chunkDesc>(*bandDesc));
+		pWtChunk detailChunk = std::make_shared<wtChunk>(std::make_shared<chunkDesc>(*bandDesc));
 
 		approximateChunk->alloc();
 		detailChunk->alloc();
@@ -105,7 +106,9 @@ private:
 			}
 		}
 
-		return std::list<pChunk>({ approximateChunk, detailChunk });
+		return std::list<pChunk>({ 
+			std::static_pointer_cast<chunk>(approximateChunk), 
+			std::static_pointer_cast<chunk>(detailChunk) });
 	}
 
 public:
