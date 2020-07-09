@@ -20,6 +20,30 @@ public:
 	pArray execute(std::vector<pArray>& inputArrays, pQuery q);
 
 private:
+	/* chunkEncode() splits a chunk into multiple band chunks.
+	*  Numbers in chunks are bnadId.
+	*	┌───────────┐   ┌─────┬─────┐   ┌──┬──┬─────┐
+	*	│           │   │     │     │   │ 0│ 1│     │
+	*	│           │   │  0  │  1  │   ├──┼──┤  4  │
+	*	│           │   │     │     │   │ 2│ 3│     │
+	*	│     0     │ → ├─────┼─────┤ → ├──┴──┼─────┤
+	*	│           │   │     │     │   │     │     │
+	*	│           │   │  2  │  3  │   │  5  │  6  │
+	*	│           │   │     │     │   │     │     │
+	*	└───────────┘   └─────┴─────┘   └─────┴─────┘
+	*      chunk 0         level 0         level 1
+	*
+	*	┌───────────┬───────────┐   ┌──┬──┬─────┬──┬──┬─────┐
+	*	│           │           │   │ 0│ 1│     │ 7│ 8│     │
+	*	│           │           │   ├──┼──┤  4  ├──┼──┤  11 │
+	*	│           │           │   │ 2│ 3│     │ 9│10│     │
+	*	│     0     │     1     │ → ├──┴──┼─────├──┴──┼─────┤
+	*	│           │           │   │     │     │     │     │
+	*	│           │           │   │  5  │  6  │  12 │  13 │
+	*	│           │           │   │     │     │     │     │
+	*	└───────────┴───────────┘   └─────┴─────┴─────┴─────┘
+	*      chunk 0      chunk1               level 1
+	*/
 	std::list<pChunk> chunkEncode(pArray wArray, pChunk sourceChunk, 
 								  pWavelet w, size_t maxLevel, pQuery q);
 	std::list<pChunk> waveletLevelEncode(pChunk wChunk, pWavelet w, pQuery q);
