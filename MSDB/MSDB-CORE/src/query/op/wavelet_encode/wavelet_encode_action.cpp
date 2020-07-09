@@ -122,9 +122,9 @@ std::list<pChunk> wavelet_encode_action::waveletLevelEncode(pChunk wChunk, pWave
 			case eleType::UINT64:
 				newChunkBands = waveletTransform<uint64_t>(chunkBands, w, d, q);
 				break;
-			case eleType::DOUBLE:
-				newChunkBands = waveletTransform<double>(chunkBands, w, d, q);
-				break;
+			//case eleType::DOUBLE:
+			//	newChunkBands = waveletTransform<double>(chunkBands, w, d, q);
+			//	break;
 			default:
 				_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 			}
