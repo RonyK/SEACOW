@@ -120,6 +120,34 @@ public:
 		}
 		return false;
 	}
+	bool operator<(const self_type& rhs) const
+	{
+		if (*this == rhs)
+			return false;
+
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			if (this->coor_[d] > rhs[d])
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	bool operator>(const self_type& rhs) const
+	{
+		if (*this == rhs)
+			return false;
+
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			if (this->coor_[d] < rhs[d])
+			{
+				return false;
+			}
+		}
+		return true;
+	}
 
 	// Assign
 	self_type& operator=(const self_type& mit)
@@ -134,6 +162,30 @@ public:
 	self_type& operator=(const dim_type* mit)
 	{
 		this->memcpyCoor(this->coor_, mit);
+
+		return *this;
+	}
+
+	self_type& operator+= (const self_type& mit)
+	{
+		assert(this->dSize_ == mit.dSize_);
+
+		for(dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			this->coor_[d] += mit[d];
+		}
+
+		return *this;
+	}
+
+	self_type& operator-= (const self_type& mit)
+	{
+		assert(this->dSize_ == mit.dSize_);
+
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			this->coor_[d] -= mit[d];
+		}
 
 		return *this;
 	}
@@ -185,6 +237,146 @@ protected:
 protected:
 	size_type dSize_;
 	dim_pointer coor_;
+};
+
+template <typename Dty_>
+coordinate<Dty_> operator+(const coordinate<Dty_>& left, const coordinate<Dty_>& right)
+{
+	assert(left.size() == right.size());
+
+	coordinate output(left);
+	for(dimensionId d = 0; d < left.size(); ++d)
+	{
+		output[d] += right[d];
+	}
+	return output;
+}
+
+template <typename Dty_>
+coordinate<Dty_> operator-(const coordinate<Dty_>& left, const coordinate<Dty_>& right)
+{
+	assert(left.size() == right.size());
+
+	coordinate output(left);
+	for (dimensionId d = 0; d < left.size(); ++d)
+	{
+		output[d] -= right[d];
+	}
+	return output;
+}
+
+template <typename Dty_>
+class range
+{
+public:
+	using self_type = range;
+	using size_type = size_t;
+	using dim_type = Dty_;
+	using dim_pointer = Dty_*;
+	using dim_const_pointer = const Dty_*;
+	using dim_reference = Dty_&;
+	using dim_const_reference = const Dty_&;
+
+public:
+	range(const size_type dSize = 0)
+		: dSize_(dSize), sP_(dSize), eP_(dSize)
+	{
+	}
+
+	range(const std::vector<dim_type>& sP, const std::vector<dim_type>& eP)
+		: dSize_(sP.size()), sP_(sP), eP_(eP)
+	{
+		assert(sP_.size() == eP_.size());
+	}
+
+	range(std::initializer_list<dim_type> sP, std::initializer_list<dim_type> eP)
+		: dSize_(sP.size()), sP_(sP), eP_(eP)
+	{
+	}
+
+	range(const self_type& mit)
+		: dSize_(mit.dSize_), sP_(mit.sP_), eP_(mit.eP_)
+	{
+	}
+
+	~range()
+	{
+	}
+
+public:
+	//////////////////////////////
+	// Getter
+	_NODISCARD inline constexpr size_type size() const noexcept
+	{
+		return this->dSize_;
+	}
+
+	coordinate<Dty_> getSp()
+	{
+		return this->sP_;
+	}
+	coordinate<Dty_> getEp()
+	{
+		return this->eP_;
+	}
+
+	void move(const coordinate& offset)
+	{
+		this->sP_ += offset;
+		this->eP_ += offset;
+	}
+
+	void moveTo(const coordinate& sP)
+	{
+		coordinate offset(sP);
+		offset -= this->sP_;
+
+		this->move(offset):
+	}
+
+public:
+	bool operator==(const self_type& rhs) const
+	{
+		return this->dSize_ == rhs.dSize_ && sP_ == rhs.sP_ && eP_ == rhs.eP_;
+	}
+
+	bool operator!=(const self_type& rhs) const
+	{
+		return !(*this == rhs);
+	}
+
+	bool operator<(const self_type& rhs) const
+	{
+		assert(this->dSize_ == rhs.dSize_);
+		if (*this == rhs)
+			return false;
+
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			if (this->sP_[d] < rhs->sP_[d] || this->eP_[d] > rhs->eP_[d])
+				return false;
+		}
+		return true;
+	}
+
+	bool operator>(const self_type& rhs) const
+	{
+		assert(this->dSize_ == rhs.dSize_);
+		if (*this == rhs)
+			return false;
+
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			if (this->sP_[d] > rhs->sP_[d] || this->eP_[d] < rhs->eP_[d])
+				return false;
+		}
+		return true;
+	}
+
+protected:
+	size_type dSize_;
+	coordinate<Dty_> sP_;
+	coordinate<Dty_> eP_;
 };
 
 template <typename Dty_>
