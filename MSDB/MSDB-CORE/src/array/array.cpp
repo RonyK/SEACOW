@@ -104,7 +104,38 @@ bool chunkIterator::isExist(chunkId cid)
 {
 	return this->chunks_->find(cid) != this->chunks_->end();
 }
+
 iterateMode chunkIterator::getIterateMode()
+{
+	return this->itMode_;
+}
+
+blockIterator::blockIterator(const size_type dSize, dim_const_pointer dims, iterateMode itMode)
+	: coorItr(dSize, dims), itMode_(itMode)
+{
+}
+
+blockIterator::blockIterator(const self_type& mit)
+	: coorItr(mit), itMode_(mit.itMode_)
+{
+}
+
+blockIterator::size_type blockIterator::getSeqEnd()
+{
+	return 0;
+}
+
+bool blockIterator::isExist()
+{
+	return false;
+}
+
+bool blockIterator::isExist(chunkId cid)
+{
+	return false;
+}
+
+iterateMode blockIterator::getIterateMode()
 {
 	return this->itMode_;
 }

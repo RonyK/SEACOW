@@ -152,6 +152,9 @@
     <ClInclude Include="include\array\attributeDesc.h" />
     <ClInclude Include="include\array\attributeId.h" />
     <ClInclude Include="include\array\block.h" />
+    <ClInclude Include="include\array\blockBuffer.h" />
+    <ClInclude Include="include\array\blockDesc.h" />
+    <ClInclude Include="include\array\blockChunk.h" />
     <ClInclude Include="include\array\buffer.h" />
     <ClInclude Include="include\array\chunk.h" />
     <ClInclude Include="include\array\chunkBuffer.h" />
@@ -228,6 +231,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.cpp" />
+    <ClCompile Include="src\array\block.cpp" />
+    <ClCompile Include="src\array\blockBuffer.cpp" />
+    <ClCompile Include="src\array\blockDesc.cpp" />
+    <ClCompile Include="src\array\blockChunk.cpp" />
     <ClCompile Include="src\array\memArray.cpp" />
     <ClCompile Include="src\array\memChunk.cpp" />
     <ClCompile Include="src\compression\wtChunk.cpp" />

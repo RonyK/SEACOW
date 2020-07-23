@@ -234,7 +234,16 @@
     <ClInclude Include="include\compression\wtChunk.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="include\array\blockBuffer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\array\blockDesc.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="include\array\memChunk.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\array\blockChunk.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -416,7 +425,19 @@
     <ClCompile Include="src\compression\wtChunk.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="src\array\blockBuffer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\array\blockDesc.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\array\block.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="src\array\memChunk.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\array\blockChunk.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

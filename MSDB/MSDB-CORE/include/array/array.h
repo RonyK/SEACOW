@@ -164,6 +164,59 @@ protected:
 	chunkContainer* chunks_;
 	iterateMode itMode_;
 };
+
+class blockIterator : public coorItr
+{
+public:
+	using self_type = blockIterator;
+	using base_type = coorItr;
+
+	using size_type = coorItr::size_type;
+
+public:
+	blockIterator(const size_type dSize, dim_const_pointer dims,
+				 iterateMode itMode);
+
+	blockIterator(const self_type& mit);
+
+public:
+	size_type getSeqEnd();
+	bool isExist();
+	bool isExist(chunkId cid);
+	iterateMode getIterateMode();
+
+	//////////////////////////////
+	// Iterating
+	//////////////////////////////
+	virtual void next()
+	{
+		base_type::next();
+
+		while (!this->isExist() && !this->isEnd())
+		{
+			base_type::next();
+		}
+	}
+	virtual void prev()
+	{
+		base_type::prev();
+
+		while (!this->isExist() && !this->isFront())
+		{
+			base_type::prev();
+		}
+	}
+
+	//////////////////////////////
+	// Operators
+	//////////////////////////////
+	//pChunk operator*() { return this->cBuffer->at(this->seqPos_); }
+	//pChunk operator->() { return this->cBuffer->at(this->seqPos_); }
+
+protected:
+	//chunkBuffer* cBuffer_;
+	iterateMode itMode_;
+};
 }
 
 #endif
