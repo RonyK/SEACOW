@@ -350,7 +350,7 @@ protected:
 			while (!bit.isEnd())
 			{
 				auto bItemBdy = this->getBlockItemBoundary(bit.coor());
-				auto iit = (*it)->getItemRangeIterator(bItemBdy.first.data(), bItemBdy.second.data());
+				auto iit = (*it)->getItemRangeIterator(bItemBdy);
 				auto lNode = this->forwardBuildLeafNode(iit);
 				this->setNode(lNode, it.coor(), bit.coor());
 
@@ -730,8 +730,7 @@ public:
 		return blockCoor;
 	}
 
-	std::pair<coordinate<Dty_>, coordinate<Dty_>>
-		getBlockItemBoundary(coordinate<Dty_>& inner)
+	coorRange getBlockItemBoundary(coordinate<Dty_>& inner)
 	{
 		coordinate<Dty_> spOut(this->dSize_), epOut(this->dSize_);
 		for (dimensionId d = 0; d < this->dSize_; ++d)
@@ -739,7 +738,7 @@ public:
 			spOut[d] = this->leafBlockDim_[d] * inner[d];
 			epOut[d] = this->leafBlockDim_[d] * (inner[d] + 1);
 		}
-		return std::make_pair<>(spOut, epOut);
+		return coorRange(spOut, epOut);
 	}
 	
 public:
@@ -765,6 +764,30 @@ public:
 		}
 		return this->nodes_[level][nit.coorToSeq(nodeCoor)];
 	}
+
+	// qRange: query range
+	pNode getNode(const coorRange qRange)
+	{
+		auto rangeDim = qRange.width();
+		coor blockDim(this->leafBlockDim_);
+
+		for (size_type level = 0; level <= this->maxLevel_; ++level)
+		{
+			if (rangeDim > blockDim)
+			{
+				blockDim /= 2;
+				continue;
+			}
+
+			auto nodeCoor = qRange.getSp();
+			nodeCoor /= blockDim;
+
+			auto nit = this->getNodeIterator(level);
+			return this->nodes_[level][nit.coorToSeq(nodeCoor)];
+		}
+
+		return nullptr;
+	};
 
 	void setNode(pNode node, coor& nodeCoor, size_type level = 0)
 	{

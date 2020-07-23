@@ -3,6 +3,7 @@
 #define _MSDB_COORDINATE_H_
 
 #include <util/element.h>
+#include <util/math.h>
 #include <system/exceptions.h>
 #include <array/dimensionId.h>
 #include <iostream>
@@ -85,6 +86,11 @@ public:
 	{
 		return this->coor_;
 	}
+
+	const dim_pointer data() const
+	{
+		return this->coor_;
+	}
 	//////////////////////////////
 
 	//////////////////////////////
@@ -92,7 +98,7 @@ public:
 	// Comparison
 	bool operator==(const self_type& rhs) const
 	{
-		return this->dSize_ == rhs.dSize_ && (memcmp(this->coor_, rhs.coor_, this->dSize * sizeof(dim_type)) == 0);
+		return this->dSize_ == rhs.dSize_ && (memcmp(this->coor_, rhs.coor_, this->dSize_ * sizeof(dim_type)) == 0);
 	}
 	bool operator==(const dim_type* rhs) const
 	{
@@ -107,7 +113,7 @@ public:
 	}
 	bool operator!=(const self_type& rhs) const
 	{
-		return this->dSize_ != rhs.dSize_ || (memcmp(this->coor_, rhs.coor_, this->dSize * sizeof(dim_type)) != 0);
+		return this->dSize_ != rhs.dSize_ || (memcmp(this->coor_, rhs.coor_, this->dSize_ * sizeof(dim_type)) != 0);
 	}
 	bool operator!=(const dim_type* rhs) const
 	{
@@ -190,6 +196,46 @@ public:
 		return *this;
 	}
 
+	self_type& operator *= (const self_type& mit)
+	{
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			this->coor_[d] *= mit[d];
+		}
+
+		return *this;
+	}
+
+	self_type& operator*= (const int64_t mit)
+	{
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			this->coor_[d] *= mit;
+		}
+
+		return *this;
+	}
+
+	self_type& operator/= (const self_type& mit)
+	{
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			this->coor_[d] = intDivCeil(this->coor_[d], mit[d]);
+		}
+
+		return *this;
+	}
+
+	self_type& operator/= (const int64_t mit)
+	{
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			this->coor_[d] /= mit;
+		}
+
+		return *this;
+	}
+
 	// Move
 	self_type& operator++()
 	{
@@ -240,36 +286,42 @@ protected:
 };
 
 template <typename Dty_>
-coordinate<Dty_> operator+(const coordinate<Dty_>& left, const coordinate<Dty_>& right)
+coordinate<Dty_> operator+ (const coordinate<Dty_>& left, const coordinate<Dty_>& right)
 {
-	assert(left.size() == right.size());
-
-	coordinate output(left);
-	for(dimensionId d = 0; d < left.size(); ++d)
-	{
-		output[d] += right[d];
-	}
+	coordinate<Dty_> output(left);
+	output += right;
 	return output;
 }
 
 template <typename Dty_>
-coordinate<Dty_> operator-(const coordinate<Dty_>& left, const coordinate<Dty_>& right)
+coordinate<Dty_> operator- (const coordinate<Dty_>& left, const coordinate<Dty_>& right)
 {
-	assert(left.size() == right.size());
-
-	coordinate output(left);
-	for (dimensionId d = 0; d < left.size(); ++d)
-	{
-		output[d] -= right[d];
-	}
+	coordinate<Dty_> output(left);
+	output -= right;
 	return output;
 }
 
 template <typename Dty_>
-class range
+coordinate<Dty_> operator* (const coordinate<Dty_>& left, const coordinate<Dty_>& right)
+{
+	coordinate<Dty_> output(left);
+	output *= right;
+	return output;
+}
+
+template <typename Dty_>
+coordinate<Dty_> operator/ (const coordinate<Dty_>& left, const coordinate<Dty_>& right)
+{
+	coordinate<Dty_> output(left);
+	output /= right;
+	return output;
+}
+
+template <typename Dty_>
+class coordinateRange
 {
 public:
-	using self_type = range;
+	using self_type = coordinateRange;
 	using size_type = size_t;
 	using dim_type = Dty_;
 	using dim_pointer = Dty_*;
@@ -278,28 +330,34 @@ public:
 	using dim_const_reference = const Dty_&;
 
 public:
-	range(const size_type dSize = 0)
+	coordinateRange(const size_type dSize = 0)
 		: dSize_(dSize), sP_(dSize), eP_(dSize)
 	{
 	}
 
-	range(const std::vector<dim_type>& sP, const std::vector<dim_type>& eP)
+	coordinateRange(const std::vector<dim_type>& sP, const std::vector<dim_type>& eP)
 		: dSize_(sP.size()), sP_(sP), eP_(eP)
 	{
 		assert(sP_.size() == eP_.size());
 	}
 
-	range(std::initializer_list<dim_type> sP, std::initializer_list<dim_type> eP)
+	coordinateRange(std::initializer_list<dim_type> sP, std::initializer_list<dim_type> eP)
 		: dSize_(sP.size()), sP_(sP), eP_(eP)
 	{
 	}
 
-	range(const self_type& mit)
+	coordinateRange(const coordinate<Dty_>& sP, const coordinate<Dty_>& eP)
+		: dSize_(sP.size()), sP_(sP), eP_(eP)
+	{
+		assert(sP.size() == eP.size());
+	}
+
+	coordinateRange(const self_type& mit)
 		: dSize_(mit.dSize_), sP_(mit.sP_), eP_(mit.eP_)
 	{
 	}
 
-	~range()
+	~coordinateRange()
 	{
 	}
 
@@ -311,27 +369,44 @@ public:
 		return this->dSize_;
 	}
 
-	coordinate<Dty_> getSp()
+	coordinate<Dty_> getSp() const
 	{
 		return this->sP_;
 	}
-	coordinate<Dty_> getEp()
+	coordinate<Dty_> getEp() const
 	{
 		return this->eP_;
 	}
 
-	void move(const coordinate& offset)
+	coordinate<Dty_>& getSp()
+	{
+		return this->sP_;
+	}
+	coordinate<Dty_>& getEp()
+	{
+		return this->eP_;
+	}
+
+	coordinate<Dty_> width() const
+	{
+		coordinate<Dty_> width(this->eP_);
+		width -= sP_;
+
+		return width;
+	}
+
+	void move(const coordinate<Dty_>& offset)
 	{
 		this->sP_ += offset;
 		this->eP_ += offset;
 	}
 
-	void moveTo(const coordinate& sP)
+	void moveTo(const coordinate<Dty_>& sP)
 	{
-		coordinate offset(sP);
+		coordinate<Dty_> offset(sP);
 		offset -= this->sP_;
 
-		this->move(offset):
+		this->move(offset);
 	}
 
 public:
@@ -412,6 +487,19 @@ public:
 	{
 		this->dims_ = new dim_type[this->dSize()];
 		this->memcpyDim(this->dims_, lst.data());
+
+		this->basisDim_ = this->dSize() - 1;
+		this->sP_ = new dim_type[this->dSize()]();
+		this->eP_ = this->dims_;
+
+		this->initSeqCapacity();
+	}
+
+	coordinateIterator(const coordinate<position_t> space)
+		: coor_(space.size()), dSize_(space.size()), end_(false), basisDimOffset_(1), seqPos_(0)
+	{
+		this->dims_ = new dim_type[this->dSize()];
+		this->memcpyDim(this->dims_, space.data());
 
 		this->basisDim_ = this->dSize() - 1;
 		this->sP_ = new dim_type[this->dSize()]();
@@ -815,6 +903,19 @@ public:
 		this->moveToStart();
 	}
 
+	itemRangeIterator(void* ptr, eleType eType, const size_type dSize, dim_const_pointer dim,
+					  const coordinateRange<Dty_>& range)
+		: base_type(ptr, eType, dSize, dim), coordinateIterator<Dty_>(dSize, dim)
+	{
+		this->eP_ = new dim_type[dSize];
+		this->memcpyDim(this->sP_, range.getSp().data());
+		this->memcpyDim(this->eP_, range.getEp().data());
+
+		assert(this->initCheckSpEp());
+
+		this->moveToStart();
+	}
+
 	itemRangeIterator(const self_type& mit) : base_type(mit), coordinateIterator<Dty_>(mit)
 	{
 		this->eP_ = new dim_type[mit.dSize()];
@@ -1017,6 +1118,7 @@ protected:
 
 using coor = coordinate<position_t>;
 using coorItr = coordinateIterator<position_t>;
+using coorRange = coordinateRange<position_t>;
 using itemItr = itemIterator<position_t>;
 using itemRangeItr = itemRangeIterator<position_t>;
 }
