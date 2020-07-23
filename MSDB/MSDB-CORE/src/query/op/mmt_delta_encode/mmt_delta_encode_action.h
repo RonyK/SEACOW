@@ -3,6 +3,7 @@
 #define _MSDB_OP_MMT_DELTA_ENCODE_ACTION_H_
 
 #include <array/arrayMgr.h>
+#include <array/memChunk.h>
 #include <index/mmt.h>
 #include <query/opAction.h>
 #include <op/mmt_delta_encode/mmt_delta_encode_array.h>
@@ -42,7 +43,7 @@ void mmt_delta_encode_action::saveAttribute(std::shared_ptr<mmt_delta_encode_arr
 	{
 		// Make new chunk
 		auto cDesc = (*cit)->getDesc();
-		pChunk deltaChunk = std::make_shared<chunk>(std::make_shared<chunkDesc>(*cDesc));
+		pChunk deltaChunk = std::make_shared<memChunk>(std::make_shared<chunkDesc>(*cDesc));
 		deltaChunk->alloc();
 
 		this->chunkEncode(deltaChunk, *cit, mmtIndex);
@@ -66,8 +67,8 @@ void mmt_delta_encode_action::chunkEncode(pChunk outChunk, pChunk inChunk,
 	while(!bit.isEnd())
 	{
 		auto bItemBdy = mmtIndex->getBlockItemBoundary(bit.coor());
-		auto iit = inChunk->getItemRangeIterator(bItemBdy.first.data(), bItemBdy.second.data());
-		auto oit = outChunk->getItemRangeIterator(bItemBdy.first.data(), bItemBdy.second.data());
+		auto iit = inChunk->getItemRangeIterator(bItemBdy);
+		auto oit = outChunk->getItemRangeIterator(bItemBdy);
 		auto node = mmtIndex->getNode(inChunk->getDesc()->chunkCoor_, bit.coor());
 
 		// Block encode

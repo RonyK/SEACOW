@@ -234,6 +234,9 @@
     <ClInclude Include="include\compression\wtChunk.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="include\array\memChunk.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">
@@ -411,6 +414,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\compression\wtChunk.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\array\memChunk.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

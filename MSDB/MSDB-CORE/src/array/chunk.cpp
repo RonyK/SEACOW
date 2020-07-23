@@ -54,26 +54,7 @@ bool chunk::isMaterialized() const
 
 	return true;
 }
-chunkItemIterator chunk::getItemIterator()
-{
-	memChunkItemIterator it(this->cached_->getData(),
-						 this->desc_->attrDesc_->type_,
-						 this->desc_->dims_.size(),
-						 this->desc_->dims_.data(),
-						 this->desc_->sp_.data());
-	return it;
-}
-chunkItemRangeIterator chunk::getItemRangeIterator(chunkItemRangeIterator::dim_const_pointer sP, 
-												   chunkItemRangeIterator::dim_const_pointer eP)
-{
-	chunkItemRangeIterator it(this->cached_->getData(),
-						   this->desc_->attrDesc_->type_,
-						   this->desc_->dims_.size(),
-						   this->desc_->dims_.data(),
-						   sP, eP,
-						   this->desc_->sp_.data());
-	return it;
-}
+
 chunkId chunk::getId() const
 {
 	return this->desc_->id_;
@@ -139,12 +120,8 @@ void chunk::free()
 {
 	if (this->isMaterialized())
 	{
-		delete this->cached_;
+		this->cached_ = nullptr;
 	}
-}
-void chunk::makeBuffer()
-{
-	this->cached_ = new memChunkBuffer();
 }
 
 void chunk::updateToHeader()
@@ -158,86 +135,6 @@ void chunk::updateFromHeader()
 {
 }
 
-void chunk::serialize(std::ostream& os)
-{
-	bstream bs;
-	switch (this->desc_->attrDesc_->type_)
-	{
-	case eleType::CHAR:
-		this->serialize<char>(bs);
-		break;
-	case eleType::INT8:
-		this->serialize<int8_t>(bs);
-		break;
-	case eleType::INT16:
-		this->serialize<int16_t>(bs);
-		break;
-	case eleType::INT32:
-		this->serialize<int32_t>(bs);
-		break;
-	case eleType::INT64:
-		this->serialize<int64_t>(bs);
-		break;
-	case eleType::UINT8:
-		this->serialize<uint8_t>(bs);
-		break;
-	case eleType::UINT16:
-		this->serialize<uint16_t>(bs);
-		break;
-	case eleType::UINT32:
-		this->serialize<uint32_t>(bs);
-		break;
-	case eleType::UINT64:
-		this->serialize<uint64_t>(bs);
-		break;
-	default:
-		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
-	}
-	this->getOutHeader()->serialize(os);
-	os.write(bs.data(), bs.capacity());
-}
-
-void chunk::deserialize(std::istream& is)
-{
-	this->getHeader()->deserialize(is);
-	this->updateFromHeader();
-	bstream bs;
-	bs.resize(this->serializedSize_);
-	is.read(bs.data(), this->serializedSize_);
-	switch (this->desc_->attrDesc_->type_)
-	{
-	case eleType::CHAR:
-		this->deserialize<char>(bs);
-		break;
-	case eleType::INT8:
-		this->deserialize<int8_t>(bs);
-		break;
-	case eleType::INT16:
-		this->deserialize<int16_t>(bs);
-		break;
-	case eleType::INT32:
-		this->deserialize<int32_t>(bs);
-		break;
-	case eleType::INT64:
-		this->deserialize<int64_t>(bs);
-		break;
-	case eleType::UINT8:
-		this->deserialize<uint8_t>(bs);
-		break;
-	case eleType::UINT16:
-		this->deserialize<uint16_t>(bs);
-		break;
-	case eleType::UINT32:
-		this->deserialize<uint32_t>(bs);
-		break;
-	case eleType::UINT64:
-		this->deserialize<uint64_t>(bs);
-		break;
-	default:
-		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
-	}
-}
-
 chunkItemIterator::chunkItemIterator(void* data, eleType eType, const size_type dSize, position_t* dims, dim_pointer csP)
 	: itemItr(data, eType, dSize, dims), chunkItemItrBase(data, eType, dSize, dims, csP), coorItr(dSize, dims)
 {
@@ -246,6 +143,12 @@ chunkItemRangeIterator::chunkItemRangeIterator(void* data, eleType eType, const 
 											   position_t* dims, dim_const_pointer sP, dim_const_pointer eP,
 											   dim_pointer csP)
 	: itemRangeItr(data, eType, dSize, dims, sP, eP), chunkItemItrBase(data, eType, dSize, dims, csP), coorItr(dSize, dims)
+{
+}
+
+chunkItemRangeIterator::chunkItemRangeIterator(void* data, eleType eType, const size_type dSize,
+											   position_t* dims, const coorRange& range, dim_pointer csP)
+	: itemRangeItr(data, eType, dSize, dims, range), chunkItemItrBase(data, eType, dSize, dims, csP), coorItr(dSize, dims)
 {
 }
 }

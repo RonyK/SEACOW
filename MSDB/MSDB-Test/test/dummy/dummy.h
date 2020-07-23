@@ -4,6 +4,7 @@
 
 #include <pch.h>
 #include <array/array.h>
+#include <array/memChunk.h>
 #include <vector>
 
 namespace msdb
@@ -67,7 +68,7 @@ namespace msdb
 
 						pChunkDesc cDesc = std::make_shared<chunkDesc>(
 							sourceArr->getChunkIdFromItemCoor(sP), attrDescs[0], dimChunk, sP, eP);
-						pChunk sourceChunk = std::make_shared<chunk>(cDesc);
+						pChunk sourceChunk = std::make_shared<memChunk>(cDesc);
 						sourceChunk->alloc();
 
 						// Insert data into chunk

@@ -2,14 +2,15 @@
 #ifndef _MSDB_WT_CHUNK_H_
 #define _MSDB_WT_CHUNK_H_
 
-#include <array/chunk.h>
+#include <array/memChunk.h>
 
 namespace msdb
 {
 class wtChunk;
 using pWtChunk = std::shared_ptr<wtChunk>;
 
-class wtChunk : public chunk
+// TODO:: inherit blocked chunk
+class wtChunk : public memChunk
 {
 public:
 	wtChunk(pChunkDesc desc);
@@ -24,10 +25,12 @@ public:
 	void setBandId(chunkId bid);
 	void setSourceChunkId(chunkId cid);
 
+	dimension getTileSpace(dimension sourceChunkDim);
+
 protected:
 	size_t level_;
 	chunkId bandId_;
-	chunkId sourceChunkId;
+	chunkId sourceChunkId_;
 };
 }	// msdb
 #endif		// _MSDB_WT_CHUNK_H_

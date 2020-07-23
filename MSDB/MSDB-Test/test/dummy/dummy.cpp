@@ -354,7 +354,7 @@ namespace msdb
 						coor eP = { sP[0] + chunkDims[0], sP[1] + chunkDims[1] };
 
 						pChunkDesc cDesc = std::make_shared<chunkDesc>(cid, attrDescs[0], dimChunk, sP, eP);
-						pChunk sourceChunk = std::make_shared<chunk>(cDesc);
+						pChunk sourceChunk = std::make_shared<memChunk>(cDesc);
 						sourceChunk->alloc();
 						
 						// Insert data into chunk

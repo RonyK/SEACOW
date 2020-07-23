@@ -3,7 +3,7 @@
 namespace msdb
 {
 wtChunk::wtChunk(pChunkDesc desc)
-	: chunk(desc)
+	: memChunk(desc)
 {
 }
 
@@ -21,7 +21,7 @@ chunkId wtChunk::getBandId()
 }
 chunkId wtChunk::getSourceChunkId()
 {
-	return this->sourceChunkId;
+	return this->sourceChunkId_;
 }
 
 void wtChunk::setLevel(size_t level)
@@ -34,6 +34,15 @@ void wtChunk::setBandId(chunkId bid)
 }
 void wtChunk::setSourceChunkId(chunkId cid)
 {
-	this->sourceChunkId = cid;
+	this->sourceChunkId_ = cid;
+}
+dimension wtChunk::getTileSpace(dimension sourceChunkDim)
+{
+	dimension tileSpace(sourceChunkDim);
+	dimension tileDim(sourceChunkDim);
+	tileDim /= pow(2, this->level_ + 1);
+	tileSpace /= tileDim;
+
+	return tileSpace;
 }
 }	// msdb

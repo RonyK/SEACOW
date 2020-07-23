@@ -8,7 +8,6 @@
 #include <io/bitstream.h>
 #include <memory>
 
-
 namespace msdb
 {
 class chunk;
@@ -133,6 +132,10 @@ public:
 	chunkItemRangeIterator(void* data, eleType eType, const size_type dSize,
 						   position_t* dims, dim_const_pointer sP, dim_const_pointer eP,
 						   dim_pointer csP);
+
+	chunkItemRangeIterator(void* data, eleType eType, const size_type dSize,
+						   position_t* dims, const coorRange& range,
+						   dim_pointer csP);
 };
 
 class chunk : public std::enable_shared_from_this<chunk>, public serializable
@@ -145,16 +148,12 @@ public:
 	virtual ~chunk();
 
 public:
-	void alloc();
-	void alloc(bufferSize size);
-	void materializeCopy(void* data, bufferSize size);
-	void materializeAssign(void* data, bufferSize size);
+	virtual void alloc();
+	virtual void alloc(bufferSize size);
+	virtual void materializeCopy(void* data, bufferSize size);
+	virtual void materializeAssign(void* data, bufferSize size);
 	bool isMaterialized() const;
 
-	chunkItemIterator getItemIterator();
-	chunkItemRangeIterator getItemRangeIterator(chunkItemRangeIterator::dim_const_pointer sP,
-												chunkItemRangeIterator::dim_const_pointer eP);
-	
 	chunkId getId() const;
 	// chunk id can be chnaged in query processing
 	void setId(chunkId id);
@@ -164,6 +163,8 @@ public:
 	void print();
 
 	coor getChunkCoor();
+	virtual chunkItemIterator getItemIterator() = 0;
+	virtual chunkItemRangeIterator getItemRangeIterator(const coorRange& range) = 0;
 
 	template <class Ty_>
 	void printImp()
@@ -188,13 +189,13 @@ public:
 		}
 		std::cout << std::endl << "==============================" << std::endl;
 	}
-	
-protected:
-	void free();
-	void makeBuffer();
 
 protected:
-	chunkBuffer* cached_;	// hold materialized chunk
+	void free();
+	virtual void makeBuffer() = 0;
+
+protected:
+	pChunkBuffer cached_;	// hold materialized chunk
 	pChunkDesc desc_;		// chunk desc
 
 protected:
@@ -230,37 +231,6 @@ public:
 	// inherit from serializable
 	virtual void updateToHeader() override;
 	virtual void updateFromHeader() override;
-	virtual void serialize(std::ostream& os) override;
-	virtual void deserialize(std::istream& is) override;
-
-	template<typename Ty_>
-	void serialize(bstream& bs)
-	{
-		bs << setw(sizeof(Ty_) * CHAR_BIT);
-		auto it = this->getItemIterator();
-
-		while(!it.isEnd())
-		{
-			bs << (*it).get<Ty_>();
-			++it;
-		}
-		this->serializedSize_ = bs.capacity();
-	}
-
-	template<class Ty_>
-	void deserialize(bstream& bs)
-	{
-		bs >> setw(sizeof(Ty_) * CHAR_BIT);
-		auto it = this->getItemIterator();
-
-		while (!it.isEnd())
-		{
-			Ty_ value;
-			bs >> value;
-			(*it).set<Ty_>(value);
-			++it;
-		}
-	}
 };
 };
 #endif	// _MSDB_CHUNK_H_

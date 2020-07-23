@@ -42,5 +42,9 @@ attributeDescs& arrayDesc::getAttrDescs()
 {
 	return this->attrDescs_;
 }
+size_t arrayDesc::getDSize()
+{
+	return this->dimDescs_.size();
+}
 }	// msdb
 

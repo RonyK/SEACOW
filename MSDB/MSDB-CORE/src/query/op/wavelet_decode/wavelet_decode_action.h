@@ -2,6 +2,7 @@
 #ifndef _MSDB_OP_WAVELET_DECODE_ACTION_H_
 #define _MSDB_OP_WAVELET_DECODE_ACTION_H_
 
+#include <array/memChunk.h>
 #include <compression/wavelet.h>
 #include <query/opAction.h>
 #include <util/math.h>
@@ -86,7 +87,7 @@ private:
 		outChunkDesc->setDim(basisDim, outChunkDesc->dims_[basisDim] * 2);
 
 		// Make chunk
-		pChunk outChunk = std::make_shared<chunk>(outChunkDesc);
+		pChunk outChunk = std::make_shared<memChunk>(outChunkDesc);
 		outChunk->alloc();
 
 		auto ait = approximateChunk->getItemIterator();

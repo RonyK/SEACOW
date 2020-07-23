@@ -33,7 +33,7 @@ public:
 public:
 	// csP : chunk start point
 	memChunkItemIterator(void* data, eleType eType, const size_type dSize, position_t* dims,
-					 dim_pointer csP);
+						 dim_pointer csP);
 };
 
 class memChunkItemRangeIterator : public chunkItemRangeIterator
@@ -42,6 +42,10 @@ public:
 
 	memChunkItemRangeIterator(void* data, eleType eType, const size_type dSize,
 							  dim_const_pointer sP, dim_const_pointer eP,
+							  position_t* dims, dim_pointer csP);
+
+	memChunkItemRangeIterator(void* data, eleType eType, const size_type dSize,
+							  const coorRange& range,
 							  position_t* dims, dim_pointer csP);
 };
 }

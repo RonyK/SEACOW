@@ -6,7 +6,7 @@ extern const chunkSize INVALID_CHUNK_SIZE = static_cast<chunkSize>(~0);
 
 chunkDesc::chunkDesc()
 {
-	// TODO::Initialize
+	// TODO::initialization
 }
 
 chunkDesc::chunkDesc(const chunkId id,
@@ -50,6 +50,11 @@ void chunkDesc::setDim(dimensionId dId, position_t value)
 	this->initPhysicalChunkSizeFromDims();
 }
 
+dimension chunkDesc::getDim()
+{
+	return this->dims_;
+}
+
 size_t chunkDesc::getDimSize()
 {
 	return this->dims_.size();
@@ -73,6 +78,7 @@ void chunkDesc::initChunkCoor()
 {
 	for(dimensionId d = 0; d < this->dims_.size(); d++)
 	{
+		// this->ep_[d] - this->sp_[d] = chunk width
 		this->chunkCoor_[d] = this->sp_[d] / (this->ep_[d] - this->sp_[d]);
 	}
 }

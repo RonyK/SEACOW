@@ -28,4 +28,8 @@ memChunkItemRangeIterator::memChunkItemRangeIterator(void* data, eleType eType, 
 	: chunkItemRangeIterator(data, eType, dSize, dims, sP, eP, csP), coorItr(dSize, dims)
 {
 }
+memChunkItemRangeIterator::memChunkItemRangeIterator(void* data, eleType eType, const size_type dSize, const coorRange& range, position_t* dims, dim_pointer csP)
+	: chunkItemRangeIterator(data, eType, dSize, dims, range, csP), coorItr(dSize, dims)
+{
+}
 }

@@ -1,4 +1,5 @@
 #include <pch.h>
+#include <array/memChunk.h>
 #include <array/memChunkBuffer.h>
 #include <array/dimensionDesc.h>
 #include <op/wavelet_encode/wavelet_encode_plan.h>
@@ -35,7 +36,7 @@ TEST(query_op_wavelet_encode, waveletHaar_1D)
 	std::vector<pArray> arrs = { sourceArr };
 
 	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, sP, eP);
-	pChunk sourceChunk = std::make_shared<chunk>(cDesc);
+	pChunk sourceChunk = std::make_shared<memChunk>(cDesc);
 	sourceChunk->materializeCopy(data, sizeof(data));
 	sourceArr->insertChunk(sourceChunk);
 
@@ -117,7 +118,7 @@ TEST(query_op_wavelet_encode, waveletHaarSimple_2D)
 	std::vector<pArray> arrs = { sourceArr };
 
 	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, sP, eP);
-	pChunk sourceChunk = std::make_shared<chunk>(cDesc);
+	pChunk sourceChunk = std::make_shared<memChunk>(cDesc);
 	sourceChunk->materializeCopy(data, sizeof(data));
 	sourceArr->insertChunk(sourceChunk);
 

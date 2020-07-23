@@ -42,6 +42,7 @@ public:
 
 public:
 	void setDim(dimensionId dId, position_t value);
+	dimension getDim();
 	size_t getDimSize();
 
 public:

@@ -4,15 +4,20 @@
 
 #include <array/buffer.h>
 #include <compression/compression.h>
+#include <memory>
 
 namespace msdb
 {
+class chunkBuffer;
+using pChunkBuffer = std::shared_ptr<chunkBuffer>;
+
 class chunkBuffer : public buffer
 {
 public:
 	chunkBuffer();
 	virtual ~chunkBuffer();
 
+public:
 	virtual void* getData();
 	virtual void const* getReadData() const;
 
@@ -26,7 +31,7 @@ public:
 	
 	bool isAllocated();
 
-private:
+protected:
 	bufferSize bodySize_;
 	void* data_;
 	bool isAllocated_;

@@ -165,6 +165,7 @@
     <ClInclude Include="include\array\dimensionId.h" />
     <ClInclude Include="include\array\memArray.h" />
     <ClInclude Include="include\array\memBlock.h" />
+    <ClInclude Include="include\array\memChunk.h" />
     <ClInclude Include="include\array\memChunkBuffer.h" />
     <ClInclude Include="include\compression\compression.h" />
     <ClInclude Include="include\compression\wtChunk.h" />
@@ -228,6 +229,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.cpp" />
     <ClCompile Include="src\array\memArray.cpp" />
+    <ClCompile Include="src\array\memChunk.cpp" />
     <ClCompile Include="src\compression\wtChunk.cpp" />
     <ClCompile Include="src\index\attributeIndex.cpp" />
     <ClCompile Include="src\array\arrayMgr.cpp" />
