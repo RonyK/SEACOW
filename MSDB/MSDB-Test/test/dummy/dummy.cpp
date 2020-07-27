@@ -385,6 +385,14 @@ namespace msdb
 			{
 				// TODO :: Implement getExDummy()
 			}
+
+			void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
+			{
+				if (sourceArr.empty())
+				{
+					sourceArr = getSourceArray();
+				}
+			}
 		}
 
 		namespace data2D_si8x8

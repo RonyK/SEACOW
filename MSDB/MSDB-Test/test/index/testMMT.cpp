@@ -209,5 +209,42 @@ void mmt_delta_decode_test(std::shared_ptr<mmt_delta_decode_array> arr)
 	}
 }
 }	// data2D_sc4x4
+
+namespace data2D_sc8x8
+{
+pArray mmt_build(std::vector<pArray> sourceArr)
+{
+	getSourceArrayIfEmpty(sourceArr);
+
+	eleDefault level = 1;
+	std::shared_ptr<mmt_build_plan> mmtPlan;
+	std::shared_ptr<mmt_build_action> mmtAction;
+	pQuery mmtQuery;
+	getMmtBuild(sourceArr[0]->getDesc(), level, mmtPlan, mmtAction, mmtQuery);
+
+	// Execute mmt build action
+	auto afterArray = mmtAction->execute(sourceArr, mmtQuery);
+
+	return afterArray;
+}
+
+pArray mmt_save(std::vector<pArray> sourceArr)
+{
+	// Should build mmt before
+	getSourceArrayIfEmpty(sourceArr);
+
+	std::shared_ptr<mmt_save_plan> mmtPlan;
+	std::shared_ptr<mmt_save_action> mmtAction;
+	pQuery mmtQuery;
+	getMmtSave(sourceArr[0]->getDesc(), mmtPlan, mmtAction, mmtQuery);
+
+	auto afterArray = mmtAction->execute(sourceArr, mmtQuery);
+
+	EXPECT_TRUE(std::filesystem::is_regular_file(
+		filePath("../storage/array/881/indies/0.msdbindex")));
+
+	return afterArray;
+}
+}
 }	// caDummy
 }	// msdb
