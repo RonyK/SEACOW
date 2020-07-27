@@ -2,9 +2,9 @@
 #ifndef _MSDB_BLOCK_H_
 #define _MSDB_BLOCK_H_
 
-#include <memory>
-#include <array/blockDesc.h>
 #include <array/blockBuffer.h>
+#include <array/blockDesc.h>
+#include <memory>
 
 namespace msdb
 {
@@ -19,7 +19,7 @@ public:
 	virtual ~block();
 
 protected:
-	blockBuffer* cached_;	// hold materialized block
+	pBlockBuffer cached_;	// hold materialized block
 	pBlockDesc desc_;
 };
 };

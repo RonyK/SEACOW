@@ -3,6 +3,7 @@
 #define _MSDB_BLOCK_DESC_H_
 
 #include <array/buffer.h>
+#include <array/blockId.h>
 #include <array/dimensionDesc.h>
 #include <util/coordinate.h>
 #include <memory>
@@ -14,9 +15,6 @@ class blockDesc;
 using pBlockDesc = std::shared_ptr<blockDesc>;
 using blockSize = bufferSize;
 extern const blockSize INVALID_BLOCK_SIZE;
-
-typedef uint32_t blockId;
-extern const blockId INVALID_BLOCK_ID;
 
 class blockDesc : std::enable_shared_from_this<blockDesc>
 {

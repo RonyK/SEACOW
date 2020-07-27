@@ -3,6 +3,7 @@
 #define _MSDB_RAWCHUNK_H_
 
 #include <array/chunk.h>
+#include <array/chunkBuffer.h>
 #include <util/coordinate.h>
 
 namespace msdb

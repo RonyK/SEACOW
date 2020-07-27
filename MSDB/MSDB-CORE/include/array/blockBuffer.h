@@ -6,6 +6,9 @@
 
 namespace msdb
 {
+class blockBuffer;
+using pBlockBuffer = std::shared_ptr<blockBuffer>;
+
 class blockBuffer : public chunkBuffer
 {
 public:

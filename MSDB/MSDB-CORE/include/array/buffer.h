@@ -12,6 +12,7 @@ class buffer
 {
 public:
 	buffer();
+	virtual ~buffer();
 
 public:
 	virtual void* getData() = 0;								// writable data pointer
@@ -22,11 +23,22 @@ public:
 	virtual void alloc(bufferSize size) = 0;
 	virtual void realloc(bufferSize size) = 0;
 	virtual void copy(void* data, bufferSize size) = 0;			// copy input data
+	virtual void assign(void* data, bufferSize size) = 0;
 	virtual void free();										// free binary data
+
+	inline bool isAllocated()
+	{
+		if (this->isAllocated_)
+			return true;
+		return false;
+	}
 
 	//virtual bool pin() const = 0;
 	//virtual void unPin() const = 0;
+
+protected:
+	bufferSize bodySize_;
+	bool isAllocated_;
 };
 }
-
 #endif	// _MSDB_BUFFER_H_

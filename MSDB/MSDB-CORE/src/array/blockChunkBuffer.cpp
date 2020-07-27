@@ -1,52 +1,48 @@
-#include <array/chunkBuffer.h>
-#include <system/exceptions.h>
-#include <iostream>
-#include <algorithm>
+#include <array/blockChunkBuffer.h>
 
 namespace msdb
 {
-chunkBuffer::chunkBuffer()
+blockChunkBuffer::blockChunkBuffer()
 	: buffer(), data_(nullptr)
 {
-
 }
 
-chunkBuffer::~chunkBuffer()
+blockChunkBuffer::~blockChunkBuffer()
 {
 	this->free();
 }
 
-void* chunkBuffer::getData()
+void* blockChunkBuffer::getData()
 {
 	return this->data_;
 }
 
-void const* chunkBuffer::getReadData() const
+void const* blockChunkBuffer::getReadData() const
 {
 	return this->data_;
 }
 
-bufferSize msdb::chunkBuffer::size() const
+bufferSize blockChunkBuffer::size() const
 {
 	return this->bodySize_;
 }
 
-void chunkBuffer::alloc(bufferSize size)
+void blockChunkBuffer::alloc(bufferSize size)
 {
 	assert(size > 0);
 
-	if(this->isAllocated())
+	if (this->isAllocated())
 	{
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_MEMORY_ERROR, MSDB_ER_MEMORY_ALLOC_FAIL));
 	}
-	
+
 	this->isAllocated_ = true;
 	this->data_ = new char[size];
 	this->bodySize_ = size;
 	this->isAllocated_ = true;
 }
 
-void chunkBuffer::realloc(bufferSize size)
+void blockChunkBuffer::realloc(bufferSize size)
 {
 	assert(size > 0);
 
@@ -59,25 +55,24 @@ void chunkBuffer::realloc(bufferSize size)
 	this->bodySize_ = size;
 }
 
-void chunkBuffer::copy(void* data, bufferSize size)
+void blockChunkBuffer::copy(void* data, bufferSize size)
 {
-	this->free();
 	this->isAllocated_ = true;
 	this->data_ = new char[size];
 	memcpy(this->data_, data, size);
 	this->bodySize_ = size;
 }
 
-// WARNING:: data is deleted when the chunkBuffer is disappear in a destructor.
-void chunkBuffer::assign(void* data, bufferSize size)
+void blockChunkBuffer::assign(void* data, bufferSize size)
 {
 	this->free();
 	this->isAllocated_ = false;
 	this->data_ = data;
 	this->bodySize_ = size;
+
 }
 
-void chunkBuffer::free()
+void blockChunkBuffer::free()
 {
 	if(this->isAllocated_ && this->data_ != nullptr)
 	{
@@ -85,16 +80,7 @@ void chunkBuffer::free()
 		this->isAllocated_ = false;
 		this->bodySize_ = 0;
 		this->data_ = nullptr;
+		//this->blocks_.clear();
 	}
 }
-
-//void chunkBuffer::compress(CompressionMethod cm)
-//{
-//	_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_CHUNK_CANNOT_COMPRESS));
-//}
-//
-//void chunkBuffer::uncompress()
-//{
-//	_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_CHUNK_CANNOT_UNCOMPRESS));
-//}
-}
+}	// msdb

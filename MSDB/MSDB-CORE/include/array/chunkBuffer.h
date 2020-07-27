@@ -29,12 +29,8 @@ public:
 	virtual void assign(void* data, bufferSize size);
 	virtual void free();
 	
-	bool isAllocated();
-
 protected:
-	bufferSize bodySize_;
 	void* data_;
-	bool isAllocated_;
 };
 }
 

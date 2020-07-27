@@ -82,4 +82,29 @@ void chunkDesc::initChunkCoor()
 		this->chunkCoor_[d] = this->sp_[d] / (this->ep_[d] - this->sp_[d]);
 	}
 }
+blockChunkDesc::blockChunkDesc()
+	: chunkDesc()
+{
+}
+blockChunkDesc::blockChunkDesc(const chunkId id, 
+							   pAttributeDesc attrDesc, 
+							   const dimension& dims, const dimension& blockDims,
+							   const coor sp, const coor ep, 
+							   const chunkSize mSize)
+	: chunkDesc(id, attrDesc, dims, sp, ep, mSize), blockDims_(blockDims)
+{
+}
+blockChunkDesc::blockChunkDesc(const chunkId id, 
+							   pAttributeDesc attrDesc, 
+							   const dimension& dims, const dimension& blockDims, 
+							   const coor sp, const coor ep, 
+							   const chunkSize mSize, const chunkSize cSize,
+							   const CompressionMethod cType)
+	: chunkDesc(id, attrDesc, dims, sp, ep, mSize, cSize, cType), blockDims_(blockDims)
+{
+}
+blockChunkDesc::blockChunkDesc(const blockChunkDesc& mit)
+	: chunkDesc(mit), blockDims_(mit.blockDims_)
+{
+}
 }

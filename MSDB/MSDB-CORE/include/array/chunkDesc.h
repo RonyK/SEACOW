@@ -13,13 +13,15 @@
 namespace msdb
 {
 class chunkDesc;
-
+class blockChunkDesc;
 using pChunkDesc = std::shared_ptr<chunkDesc>;
+using pBlockChunkDesc = std::shared_ptr<blockChunkDesc>;
+
 using chunkSize = bufferSize;
 extern const chunkSize INVALID_CHUNK_SIZE;
 
 class chunkDesc : std::enable_shared_from_this<chunkDesc>
-{	
+{
 	struct chunkHeader
 	{
 		uint64_t bytes;
@@ -29,12 +31,12 @@ public:
 	chunkDesc();
 
 	chunkDesc(const chunkId id,
-			  pAttributeDesc attrDesc, const dimension& dims, 
+			  pAttributeDesc attrDesc, const dimension& dims,
 			  const coor sp, const coor ep, const chunkSize mSize = INVALID_CHUNK_SIZE);
 
-	chunkDesc(const chunkId id, 
+	chunkDesc(const chunkId id,
 			  pAttributeDesc attrDesc, const dimension& dims,
-			  const coor sp, const coor ep, 
+			  const coor sp, const coor ep,
 			  const chunkSize mSize, const chunkSize cSize,
 			  const CompressionMethod cType);
 
@@ -48,7 +50,7 @@ public:
 public:
 	void initPhysicalChunkSizeFromDims();
 
-private:
+protected:
 	void initChunkCoor();
 
 public:
@@ -66,6 +68,28 @@ public:
 	coor sp_;					// start point
 	coor ep_;					// end point
 	coor chunkCoor_;			// chunk coordinate
+};
+
+class blockChunkDesc : public chunkDesc
+{
+public:
+	blockChunkDesc();
+
+	blockChunkDesc(const chunkId id,
+				   pAttributeDesc attrDesc, const dimension& dims, const dimension& blockDims,
+				   const coor sp, const coor ep, const chunkSize mSize = INVALID_CHUNK_SIZE);
+
+	blockChunkDesc(const chunkId id,
+				   pAttributeDesc attrDesc, const dimension& dims,
+				   const dimension& blockDims,
+				   const coor sp, const coor ep,
+				   const chunkSize mSize, const chunkSize cSize,
+				   const CompressionMethod cType);
+
+	blockChunkDesc(const blockChunkDesc& mit);
+
+public:
+	dimension blockDims_;		// block dimensions
 };
 }
 #endif		// _MSDB_CHUNKDESC_H_
