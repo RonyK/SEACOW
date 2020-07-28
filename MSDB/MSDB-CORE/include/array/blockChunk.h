@@ -2,10 +2,10 @@
 #ifndef _MSDB_BLOCKEDCHUNK_H_
 #define _MSDB_BLOCKEDCHUNK_H_
 
-#include <array/chunk.h>
 #include <array/block.h>
 #include <array/blockIterator.h>
 #include <array/blockContainer.h>
+#include <array/chunkIterator.h>
 #include <util/coordinate.h>
 #include <map>
 
@@ -51,18 +51,6 @@ public:
 	virtual void serialize(std::ostream& os) override;
 	virtual void deserialize(std::istream& is) override;
 
-	template<typename Ty_>
-	void serialize(bstream& bs)
-	{
-		// TODO::Serialize
-	}
-
-	template <typename Ty_>
-	void deserialize(bstream& bs)
-	{
-		// TODO::Deserialize
-	}
-
 protected:
 	blockContainer blocks_;
 };
@@ -82,24 +70,32 @@ public:
 	using dim_const_reference = base_type::dim_const_reference;
 public:
 	// csP : chunk start point
-	blockChunkItemIterator(void* data, eleType eType, const size_type dSize, position_t* dims,
-						   dim_pointer csP, blockIterator bItr);
+	blockChunkItemIterator(void* data, const eleType eType, const size_type dSize, 
+						   dim_const_pointer dims,
+						   dim_const_pointer csP, blockIterator bItr);
+
+	blockChunkItemIterator(void* data, const eleType eType,
+						   const dimension dims,
+						   const dimension csP, blockIterator bItr);
 
 protected:
 	blockIterator bItr_;
+	chunkItemIterator* curBlockItemItr_;
 };
 
 class blockChunkItemRangeIterator : public chunkItemRangeIterator
 {
 public:
 
-	blockChunkItemRangeIterator(void* data, eleType eType, const size_type dSize,
+	blockChunkItemRangeIterator(void* data, const eleType eType, const size_type dSize,
+								dim_const_pointer dims,
 								dim_const_pointer sP, dim_const_pointer eP,
-								position_t* dims, dim_pointer csP, blockIterator bItr);
+								dim_const_pointer csP, blockIterator bItr);
 
-	blockChunkItemRangeIterator(void* data, eleType eType, const size_type dSize,
+	blockChunkItemRangeIterator(void* data, eleType eType, 
+								const dimension dims,
 								const coorRange& range,
-								position_t* dims, dim_pointer csP, blockIterator bItr);
+								const dimension csP, blockIterator bItr);
 	
 protected:
 	blockIterator bItr_;

@@ -21,19 +21,17 @@ chunkItemIterator memChunk::getItemIterator()
 {
 	memChunkItemIterator it(this->cached_->getData(),
 							this->desc_->attrDesc_->type_,
-							this->desc_->dims_.size(),
-							this->desc_->dims_.data(),
-							this->desc_->sp_.data());
+							this->desc_->dims_,
+							this->desc_->sp_);
 	return it;
 }
 chunkItemRangeIterator memChunk::getItemRangeIterator(const coorRange& range)
 {
 	memChunkItemRangeIterator it(this->cached_->getData(),
 								 this->desc_->attrDesc_->type_,
-								 this->desc_->dims_.size(),
+								 this->desc_->dims_,
 								 range,
-								 this->desc_->dims_.data(),
-								 this->desc_->sp_.data());
+								 this->desc_->sp_);
 	return it;
 }
 

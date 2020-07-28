@@ -66,9 +66,8 @@ chunkItemIterator blockChunk::getItemIterator()
 {
 	blockChunkItemIterator it(this->cached_->getData(),
 							  this->desc_->attrDesc_->type_,
-							  this->desc_->dims_.size(),
-							  this->desc_->dims_.data(),
-							  this->desc_->sp_.data(),
+							  this->desc_->dims_,
+							  this->desc_->sp_,
 							  this->getBlockIterator());
 	return it;
 }
@@ -77,10 +76,9 @@ chunkItemRangeIterator blockChunk::getItemRangeIterator(const coorRange& range)
 {
 	blockChunkItemRangeIterator it(this->cached_->getData(),
 								   this->desc_->attrDesc_->type_,
-								   this->desc_->dims_.size(),
+								   this->desc_->dims_,
 								   range,
-								   this->desc_->dims_.data(),
-								   this->desc_->sp_.data(),
+								   this->desc_->sp_,
 								   this->getBlockIterator());
 	return it;
 }
@@ -93,38 +91,14 @@ void blockChunk::flush()
 void blockChunk::serialize(std::ostream& os)
 {
 	bstream bs;
-	switch (this->desc_->attrDesc_->type_)
+	auto it = this->getBlockIterator();
+	while (!it.isEnd())
 	{
-	case eleType::CHAR:
-		this->serialize<char>(bs);
-		break;
-	case eleType::INT8:
-		this->serialize<int8_t>(bs);
-		break;
-	case eleType::INT16:
-		this->serialize<int16_t>(bs);
-		break;
-	case eleType::INT32:
-		this->serialize<int32_t>(bs);
-		break;
-	case eleType::INT64:
-		this->serialize<int64_t>(bs);
-		break;
-	case eleType::UINT8:
-		this->serialize<uint8_t>(bs);
-		break;
-	case eleType::UINT16:
-		this->serialize<uint16_t>(bs);
-		break;
-	case eleType::UINT32:
-		this->serialize<uint32_t>(bs);
-		break;
-	case eleType::UINT64:
-		this->serialize<uint64_t>(bs);
-		break;
-	default:
-		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
+		(*it)->serialize(bs);
+		++it;
 	}
+	this->serializedSize_ = bs.capacity();
+
 	this->getOutHeader()->serialize(os);
 	os.write(bs.data(), bs.capacity());
 }
@@ -133,64 +107,58 @@ void blockChunk::deserialize(std::istream& is)
 {
 	this->getHeader()->deserialize(is);
 	this->updateFromHeader();
+
 	bstream bs;
 	bs.resize(this->serializedSize_);
 	is.read(bs.data(), this->serializedSize_);
-	switch (this->desc_->attrDesc_->type_)
+
+	auto it = this->getBlockIterator();
+	while (!it.isEnd())
 	{
-	case eleType::CHAR:
-		this->deserialize<char>(bs);
-		break;
-	case eleType::INT8:
-		this->deserialize<int8_t>(bs);
-		break;
-	case eleType::INT16:
-		this->deserialize<int16_t>(bs);
-		break;
-	case eleType::INT32:
-		this->deserialize<int32_t>(bs);
-		break;
-	case eleType::INT64:
-		this->deserialize<int64_t>(bs);
-		break;
-	case eleType::UINT8:
-		this->deserialize<uint8_t>(bs);
-		break;
-	case eleType::UINT16:
-		this->deserialize<uint16_t>(bs);
-		break;
-	case eleType::UINT32:
-		this->deserialize<uint32_t>(bs);
-		break;
-	case eleType::UINT64:
-		this->deserialize<uint64_t>(bs);
-		break;
-	default:
-		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
+		(*it)->deserialize(bs);
+		++it;
 	}
 }
 
-
 // BLOCKCHUNKITEMITERATOR
+blockChunkItemIterator::blockChunkItemIterator(void* data, const eleType eType,
+											   const size_type dSize,
+											   dim_const_pointer dims,
+											   dim_const_pointer csP, 
+											   blockIterator bItr)
+	: chunkItemIterator(data, eType, dSize, dims, csP), 
+	coorItr(dSize, dims),
+	bItr_(bItr), curBlockItemItr_(nullptr)
+{
+	// TODO::set cur block item itr
+}
 
-blockChunkItemIterator::blockChunkItemIterator(void* data, eleType eType, const size_type dSize,
-											   position_t* dims, dim_pointer csP, blockIterator bItr)
-	:chunkItemIterator(data, eType, dSize, dims, csP), coordinateIterator<dim_type>(dSize, dims),
-	bItr_(bItr)
+blockChunkItemIterator::blockChunkItemIterator(void* data, const eleType eType,
+											   const dimension dims,
+											   const dimension csP,
+											   blockIterator bItr)
+	: chunkItemIterator(data, eType, dims, csP),
+	coorItr(dims.size(), dims.data()),
+	bItr_(bItr), curBlockItemItr_(nullptr)
 {
+	// TODO::set cur block item itr
 }
-blockChunkItemRangeIterator::blockChunkItemRangeIterator(void* data, eleType eType, const size_type dSize,
+
+blockChunkItemRangeIterator::blockChunkItemRangeIterator(void* data, const eleType eType, const size_type dSize,
+														 dim_const_pointer dims,
 														 dim_const_pointer sP, dim_const_pointer eP,
-														 position_t* dims, dim_pointer csP, blockIterator bItr)
-	: chunkItemRangeIterator(data, eType, dSize, dims, sP, eP, csP), coorItr(dSize, dims), 
+														 dim_const_pointer csP, blockIterator bItr)
+	: chunkItemRangeIterator(data, eType, dSize, dims, sP, eP, csP), 
+	coorItr(dSize, dims), 
 	bItr_(bItr)
 {
 }
-blockChunkItemRangeIterator::blockChunkItemRangeIterator(void* data, eleType eType, const size_type dSize,
+blockChunkItemRangeIterator::blockChunkItemRangeIterator(void* data, eleType eType, 
+														 const dimension dims,
 														 const coorRange& range,
-														 position_t* dims,
-														 dim_pointer csP, blockIterator bItr)
-	: chunkItemRangeIterator(data, eType, dSize, dims, range, csP), coorItr(dSize, dims),
+														 const dimension csP, blockIterator bItr)
+	: chunkItemRangeIterator(data, eType, dims, range, csP), 
+	coorItr(dims.size(), dims.data()),
 	bItr_(bItr)
 {
 }

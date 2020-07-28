@@ -264,6 +264,12 @@
     <ClInclude Include="include\array\blockId.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="include\array\chunkItemIterator.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="include\array\dimension.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">
@@ -465,6 +471,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\array\blockIterator.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\array\memBlock.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\array\chunkItemIterator.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

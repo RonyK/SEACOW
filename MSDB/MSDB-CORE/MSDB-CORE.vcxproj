@@ -165,11 +165,13 @@
     <ClInclude Include="include\array\chunkContainer.h" />
     <ClInclude Include="include\array\chunkDesc.h" />
     <ClInclude Include="include\array\chunkId.h" />
+    <ClInclude Include="include\array\chunkItemIterator.h" />
     <ClInclude Include="include\array\chunkIterator.h" />
     <ClInclude Include="include\array\chunkMgr.h" />
     <ClInclude Include="include\array\compBlock.h" />
     <ClInclude Include="include\array\compChunk.h" />
     <ClInclude Include="include\array\configArrays.h" />
+    <ClInclude Include="include\array\dimension.h" />
     <ClInclude Include="include\array\dimensionDesc.h" />
     <ClInclude Include="include\array\dimensionId.h" />
     <ClInclude Include="include\array\memArray.h" />
@@ -237,6 +239,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.cpp" />
+    <ClCompile Include="src\array\chunkItemIterator.cpp" />
+    <ClCompile Include="src\array\memBlock.cpp" />
     <ClCompile Include="src\array\block.cpp" />
     <ClCompile Include="src\array\blockBuffer.cpp" />
     <ClCompile Include="src\array\blockChunkBuffer.cpp" />

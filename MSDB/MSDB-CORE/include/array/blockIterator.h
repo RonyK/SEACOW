@@ -39,9 +39,12 @@ public:
 		// TODO::use STL iterator
 		base_type::next();
 
-		while (!this->isExist() && !this->isEnd())
+		if(this->itMode_ == iterateMode::EXIST)
 		{
-			base_type::next();
+			while (!this->isExist() && !this->isEnd())
+			{
+				base_type::next();
+			}
 		}
 	}
 	virtual void prev()
@@ -49,17 +52,22 @@ public:
 		// TODO::use STL iterator
 		base_type::prev();
 
-		while (!this->isExist() && !this->isFront())
+		if (this->itMode_ == iterateMode::EXIST)
 		{
-			base_type::prev();
+			while (!this->isExist() && !this->isFront())
+			{
+				base_type::prev();
+			}
 		}
 	}
 
 	//////////////////////////////
 	// Operators
 	//////////////////////////////
-	//pBlock operator*() { return this->blocks_->at(this->seqPos_); }
-	//pBlock operator->() { return this->blocks_->at(this->seqPos_); }
+	// If 'seqPos_' does not match the key of any block in the container,
+	// the function throws an 'std::out_of_range' exception.
+	pBlock operator*() { return this->blocks_->at(this->seqPos_); }
+	pBlock operator->() { return this->blocks_->at(this->seqPos_); }
 
 protected:
 	blockContainer* blocks_;

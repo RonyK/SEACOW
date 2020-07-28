@@ -2,7 +2,6 @@
 #ifndef _MSDB_CHUNKITERATOR_H_
 #define _MSDB_CHUNKITERATOR_H_
 
-#include <array/chunk.h>
 #include <array/chunkContainer.h>
 #include <util/coordinate.h>
 #include <map>
@@ -36,18 +35,24 @@ public:
 	{
 		base_type::next();
 
-		while (!this->isExist() && !this->isEnd())
+		if (this->itMode_ == iterateMode::EXIST)
 		{
-			base_type::next();
+			while (!this->isExist() && !this->isEnd())
+			{
+				base_type::next();
+			}
 		}
 	}
 	virtual void prev()
 	{
 		base_type::prev();
 
-		while (!this->isExist() && !this->isFront())
+		if (this->itMode_ == iterateMode::EXIST)
 		{
-			base_type::prev();
+			while (!this->isExist() && !this->isFront())
+			{
+				base_type::prev();
+			}
 		}
 	}
 

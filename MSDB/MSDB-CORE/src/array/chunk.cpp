@@ -134,21 +134,4 @@ void chunk::updateToHeader()
 void chunk::updateFromHeader()
 {
 }
-
-chunkItemIterator::chunkItemIterator(void* data, eleType eType, const size_type dSize, position_t* dims, dim_pointer csP)
-	: itemItr(data, eType, dSize, dims), chunkItemItrBase(data, eType, dSize, dims, csP), coorItr(dSize, dims)
-{
-}
-chunkItemRangeIterator::chunkItemRangeIterator(void* data, eleType eType, const size_type dSize,
-											   position_t* dims, dim_const_pointer sP, dim_const_pointer eP,
-											   dim_pointer csP)
-	: itemRangeItr(data, eType, dSize, dims, sP, eP), chunkItemItrBase(data, eType, dSize, dims, csP), coorItr(dSize, dims)
-{
-}
-
-chunkItemRangeIterator::chunkItemRangeIterator(void* data, eleType eType, const size_type dSize,
-											   position_t* dims, const coorRange& range, dim_pointer csP)
-	: itemRangeItr(data, eType, dSize, dims, range), chunkItemItrBase(data, eType, dSize, dims, csP), coorItr(dSize, dims)
-{
-}
 }

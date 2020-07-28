@@ -3,6 +3,7 @@
 #define _MSDB_MEMCHUNK_H_
 
 #include <array/chunk.h>
+#include <array/chunkIterator.h>
 
 namespace msdb
 {
