@@ -363,21 +363,21 @@ protected:
 		}
 	}
 
-	pNode forwardBuildLeafNode(itemItr& iit)
+	pNode forwardBuildLeafNode(std::shared_ptr<itemItr> iit)
 	{
 		pNode node = std::make_shared<mmtNode>();
 
-		auto value = (*iit).get<Ty_>();
+		auto value = (**iit).get<Ty_>();
 		//std::cout << "chunk: " << static_cast<int>(value) << ", ";
 
 		node->max_ = value;
 		node->min_ = value;
 		node->bits_ = (bit_cnt_type)TyBits_;
-		++iit;
+		++(*iit);
 
-		while (!iit.isEnd())
+		while (!iit->isEnd())
 		{
-			auto v = (*iit).get<Ty_>();
+			auto v = (**iit).get<Ty_>();
 			//std::cout << static_cast<int>(v) << ", ";
 			if (node->max_ < v)
 			{
@@ -387,7 +387,7 @@ protected:
 			{
 				node->min_ = v;
 			}
-			++iit;
+			++(*iit);
 		}
 
 		//std::cout << std::endl << "----------" << std::endl;

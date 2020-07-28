@@ -78,10 +78,10 @@ namespace msdb
 						{
 							for (int ix = 0; ix < chunkDims[1]; ix++)
 							{
-								(*it).setChar(data[(y * chunkDims[0] + iy) * dimX + (x * chunkDims[1] + ix)]);
+								(**it).setChar(data[(y * chunkDims[0] + iy) * dimX + (x * chunkDims[1] + ix)]);
 								//char c = (*it).getChar();
 								//std::cout << static_cast<int>(c) << ", ";
-								++it;
+								++(*it);
 							}
 							std::cout << std::endl;
 						}
@@ -163,10 +163,10 @@ namespace msdb
 						{
 							for (int ix = 0; ix < chunkDims[1]; ix++)
 							{
-								(*it).setChar(data[(y * chunkDims[0] + iy) * dimX + (x * chunkDims[1] + ix)]);
+								(**it).setChar(data[(y * chunkDims[0] + iy) * dimX + (x * chunkDims[1] + ix)]);
 								//char c = (*it).getChar();
 								//std::cout << static_cast<int>(c) << ", ";
-								++it;
+								++(*it);
 							}
 							std::cout << std::endl;
 						}

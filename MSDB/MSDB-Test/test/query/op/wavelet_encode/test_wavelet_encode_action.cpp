@@ -66,15 +66,15 @@ TEST(query_op_wavelet_encode, waveletHaar_1D)
 	for(size_t i = 0; i < sizeof(data) / sizeof(double); )
 	{
 		auto it = weArray->getChunk(cId)->getItemIterator();
-		if (it.getCapacity() == 0)
+		if (it->getCapacity() == 0)
 		{
 			throw std::exception();
 		}
-		for(size_t j = 0; j < it.getCapacity(); ++j, ++i)
+		for(size_t j = 0; j < it->getCapacity(); ++j, ++i)
 		{
-			std::cout << (*it).getDouble() << " <> " << expectedEncoding[i] << std::endl;
-			EXPECT_EQ(ROUNDING((*it).getDouble(), 6), ROUNDING(expectedEncoding[i], 6));
-			++it;
+			std::cout << (**it).getDouble() << " <> " << expectedEncoding[i] << std::endl;
+			EXPECT_EQ(ROUNDING((**it).getDouble(), 6), ROUNDING(expectedEncoding[i], 6));
+			++(*it);
 		}
 		++cId;
 	}
@@ -147,15 +147,15 @@ TEST(query_op_wavelet_encode, waveletHaarSimple_2D)
 	for (size_t i = 0; i < sizeof(data) / sizeof(double); )
 	{
 		auto it = weArray->getChunk(cId)->getItemIterator();
-		if (it.getCapacity() == 0)
+		if (it->getCapacity() == 0)
 		{
 			throw std::exception();
 		}
-		for (size_t j = 0; j < it.getCapacity(); ++j, ++i)
+		for (size_t j = 0; j < it->getCapacity(); ++j, ++i)
 		{
-			std::cout << (*it).getDouble() << " <> " << expectedOutput[i] << std::endl;
-			EXPECT_EQ(ROUNDING((*it).getDouble(), 6), ROUNDING(expectedOutput[i], 6));
-			++it;
+			std::cout << (**it).getDouble() << " <> " << expectedOutput[i] << std::endl;
+			EXPECT_EQ(ROUNDING((**it).getDouble(), 6), ROUNDING(expectedOutput[i], 6));
+			++(*it);
 		}
 		++cId;
 	}
@@ -188,14 +188,14 @@ TEST(query_op_wavelet_encode, waveletHaarSimple_sc4x4)
 		for (size_t i = 0; i < dataLength; )
 		{
 			auto it = weArray->getChunk(cId)->getItemIterator();
-			if (it.getCapacity() == 0)
+			if (it->getCapacity() == 0)
 			{
 				throw std::exception();
 			}
-			for (size_t j = 0; j < it.getCapacity(); ++j, ++i, ++it)
+			for (size_t j = 0; j < it->getCapacity(); ++j, ++i, ++(*it))
 			{
-				std::cout << static_cast<int>((*it).getChar()) << " <> " << static_cast<int>(expected[i]) << std::endl;
-				EXPECT_EQ(ROUNDING((*it).getChar(), 6), ROUNDING(expected[i], 6));
+				std::cout << static_cast<int>((**it).getChar()) << " <> " << static_cast<int>(expected[i]) << std::endl;
+				EXPECT_EQ(ROUNDING((**it).getChar(), 6), ROUNDING(expected[i], 6));
 			}
 			++cId;
 		}
@@ -221,12 +221,12 @@ TEST(query_op_wavelet_encode, waveletHaarSimple_sc4x4)
 		for(size_t i = 0; i < dataLength;)
 		{
 			auto it = wdArray->getChunk(cId)->getItemIterator();
-			assert(it.getCapacity() == chunkDims[0] * chunkDims[1]);
+			assert(it->getCapacity() == chunkDims[0] * chunkDims[1]);
 
-			for(size_t j = 0; j < it.getCapacity(); ++j, ++i, ++it)
+			for(size_t j = 0; j < it->getCapacity(); ++j, ++i, ++(*it))
 			{
-				std::cout << static_cast<int>((*it).getChar()) << " <> " << static_cast<int>(deExpected[i]) << std::endl;
-				EXPECT_EQ(ROUNDING((*it).getChar(), 6), ROUNDING(deExpected[i], 6));
+				std::cout << static_cast<int>((**it).getChar()) << " <> " << static_cast<int>(deExpected[i]) << std::endl;
+				EXPECT_EQ(ROUNDING((**it).getChar(), 6), ROUNDING(deExpected[i], 6));
 			}
 			++cId;
 		}

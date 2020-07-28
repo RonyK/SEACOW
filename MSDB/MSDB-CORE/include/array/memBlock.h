@@ -25,10 +25,10 @@ public:
 	{
 		bs << setw(sizeof(Ty_) * CHAR_BIT);
 		auto it = this->getItemIterator();
-		while (!it.isEnd())
+		while (!it->isEnd())
 		{
-			bs << (*it).get<Ty_>();
-			++it;
+			bs << (**it).get<Ty_>();
+			++(*it);
 		}
 	}
 
@@ -37,17 +37,17 @@ public:
 	{
 		bs >> setw(sizeof(Ty_) * CHAR_BIT);
 		auto it = this->getItemIterator();
-		while (!it.isEnd())
+		while (!it->isEnd())
 		{
 			Ty_ value;
 			bs >> value;
-			(*it).set<Ty_>(value);
-			++it;
+			(**it).set<Ty_>(value);
+			++(*it);
 		}
 	}
 
-	virtual chunkItemIterator getItemIterator();
-	virtual chunkItemRangeIterator getItemRangeIterator(const coorRange& range);
+	virtual pChunkItemIterator getItemIterator();
+	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range);
 };
 }
 

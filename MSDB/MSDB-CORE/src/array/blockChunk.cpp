@@ -49,38 +49,29 @@ coor blockChunk::itemCoorToBlockCoor(coor& itemCoor)
 	return blockCoor;
 }
 
-//blockIterator blockChunk::getBlockIterator()
-//{
-//	iterateMode itMode = iterateMode::ALL;
-//	pBlockChunkDesc bDesc = std::static_pointer_cast<blockChunkDesc>(this->desc_);
-//	return blockIterator(bDesc->blockDims_, itMode);
-//}
-
 blockIterator blockChunk::getBlockIterator(iterateMode itMode)
 {
 	auto bChunkDesc = std::static_pointer_cast<blockChunkDesc>(this->desc_);
 	return blockIterator(bChunkDesc->blockDims_, &this->blocks_, itMode);
 }
 
-chunkItemIterator blockChunk::getItemIterator()
+pChunkItemIterator blockChunk::getItemIterator()
 {
-	blockChunkItemIterator it(this->cached_->getData(),
-							  this->desc_->attrDesc_->type_,
-							  this->desc_->dims_,
-							  this->desc_->sp_,
-							  this->getBlockIterator());
-	return it;
+	return std::make_shared<blockChunkItemIterator>(this->cached_->getData(),
+													this->desc_->attrDesc_->type_,
+													this->desc_->dims_,
+													this->desc_->sp_,
+													this->getBlockIterator());
 }
 
-chunkItemRangeIterator blockChunk::getItemRangeIterator(const coorRange& range)
+pChunkItemRangeIterator blockChunk::getItemRangeIterator(const coorRange& range)
 {
-	blockChunkItemRangeIterator it(this->cached_->getData(),
-								   this->desc_->attrDesc_->type_,
-								   this->desc_->dims_,
-								   range,
-								   this->desc_->sp_,
-								   this->getBlockIterator());
-	return it;
+	return std::make_shared<blockChunkItemRangeIterator>(this->cached_->getData(),
+														 this->desc_->attrDesc_->type_,
+														 this->desc_->dims_,
+														 range,
+														 this->desc_->sp_,
+														 this->getBlockIterator());
 }
 
 void blockChunk::flush()
@@ -124,12 +115,18 @@ void blockChunk::deserialize(std::istream& is)
 blockChunkItemIterator::blockChunkItemIterator(void* data, const eleType eType,
 											   const size_type dSize,
 											   dim_const_pointer dims,
-											   dim_const_pointer csP, 
+											   dim_const_pointer csP,
 											   blockIterator bItr)
-	: chunkItemIterator(data, eType, dSize, dims, csP), 
+	: chunkItemIterator(data, eType, dSize, dims, csP),
 	coorItr(dSize, dims),
 	bItr_(bItr), curBlockItemItr_(nullptr)
 {
+	// if iterMode all
+	if (bItr_.isExist())
+	{
+		auto it = (*bItr_)->getItemIterator();
+		//this->curBlockItemItr_ = std::make_shared<chunkItemIterator>
+	}
 	// TODO::set cur block item itr
 }
 
@@ -148,16 +145,16 @@ blockChunkItemRangeIterator::blockChunkItemRangeIterator(void* data, const eleTy
 														 dim_const_pointer dims,
 														 dim_const_pointer sP, dim_const_pointer eP,
 														 dim_const_pointer csP, blockIterator bItr)
-	: chunkItemRangeIterator(data, eType, dSize, dims, sP, eP, csP), 
-	coorItr(dSize, dims), 
+	: chunkItemRangeIterator(data, eType, dSize, dims, sP, eP, csP),
+	coorItr(dSize, dims),
 	bItr_(bItr)
 {
 }
-blockChunkItemRangeIterator::blockChunkItemRangeIterator(void* data, eleType eType, 
+blockChunkItemRangeIterator::blockChunkItemRangeIterator(void* data, eleType eType,
 														 const dimension dims,
 														 const coorRange& range,
 														 const dimension csP, blockIterator bItr)
-	: chunkItemRangeIterator(data, eType, dims, range, csP), 
+	: chunkItemRangeIterator(data, eType, dims, range, csP),
 	coorItr(dims.size(), dims.data()),
 	bItr_(bItr)
 {

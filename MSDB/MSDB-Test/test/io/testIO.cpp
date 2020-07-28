@@ -93,11 +93,11 @@ void load_test(pArray arr)
 		while (!cit.isEnd())
 		{
 			auto iit = (*cit)->getItemIterator();
-			for (size_t i = 0; i < iit.getCapacity(); ++i)
+			for (size_t i = 0; i < iit->getCapacity(); ++i)
 			{
-				std::cout << "[" << iit.coor()[0] << ", " << iit.coor()[1] << "] " << static_cast<int>((*iit).getChar()) << ", " << static_cast<int>(expected[i]) << std::endl;
-				EXPECT_EQ((*iit).getChar(), expected[i + iit.getCapacity() * c]);
-				++iit;
+				std::cout << "[" << iit->coor()[0] << ", " << iit->coor()[1] << "] " << static_cast<int>((**iit).getChar()) << ", " << static_cast<int>(expected[i]) << std::endl;
+				EXPECT_EQ((**iit).getChar(), expected[i + iit->getCapacity() * c]);
+				++(*iit);
 				++items;
 			}
 			++c;

@@ -17,22 +17,20 @@ void memChunk::makeBuffer()
 	this->cached_ = std::make_shared<memChunkBuffer>();
 }
 
-chunkItemIterator memChunk::getItemIterator()
+pChunkItemIterator memChunk::getItemIterator()
 {
-	memChunkItemIterator it(this->cached_->getData(),
+	return std::make_shared<memChunkItemIterator>(this->cached_->getData(),
 							this->desc_->attrDesc_->type_,
 							this->desc_->dims_,
 							this->desc_->sp_);
-	return it;
 }
-chunkItemRangeIterator memChunk::getItemRangeIterator(const coorRange& range)
+pChunkItemRangeIterator memChunk::getItemRangeIterator(const coorRange& range)
 {
-	memChunkItemRangeIterator it(this->cached_->getData(),
+	return std::make_shared<memChunkItemRangeIterator>(this->cached_->getData(),
 								 this->desc_->attrDesc_->type_,
 								 this->desc_->dims_,
 								 range,
 								 this->desc_->sp_);
-	return it;
 }
 
 void memChunk::serialize(std::ostream& os)

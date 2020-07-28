@@ -39,17 +39,17 @@ public:
 	void print();
 
 	coor getChunkCoor();
-	virtual chunkItemIterator getItemIterator() = 0;
-	virtual chunkItemRangeIterator getItemRangeIterator(const coorRange& range) = 0;
+	virtual pChunkItemIterator getItemIterator() = 0;
+	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range) = 0;
 
 	template <class Ty_>
 	void printImp()
 	{
 		auto it = this->getItemIterator();
 		std::cout << "==============================" << std::endl;
-		for (size_t i = 0; i < it.getCapacity() && !it.isEnd(); ++i, ++it)
+		for (size_t i = 0; i < it->getCapacity() && !it->isEnd(); ++i, ++(*it))
 		{
-			std::cout << (*it).get<Ty_>() << ", ";
+			std::cout << (**it).get<Ty_>() << ", ";
 		}
 		std::cout << std::endl << "==============================" << std::endl;
 	}
@@ -59,9 +59,9 @@ public:
 	{
 		auto it = this->getItemIterator();
 		std::cout << "==============================" << std::endl;
-		for (size_t i = 0; i < it.getCapacity() && !it.isEnd(); ++i, ++it)
+		for (size_t i = 0; i < it->getCapacity() && !it->isEnd(); ++i, ++(*it))
 		{
-			std::cout << static_cast<int>((*it).get<char>()) << ", ";
+			std::cout << static_cast<int>((**it).get<char>()) << ", ";
 		}
 		std::cout << std::endl << "==============================" << std::endl;
 	}

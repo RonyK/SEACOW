@@ -83,19 +83,19 @@ void memBlock::deserialize(bstream& bs)
 	}
 }
 
-chunkItemIterator memBlock::getItemIterator()
+pChunkItemIterator memBlock::getItemIterator()
 {
 	//void* data, eleType eType, const size_type dSize,
 	//	position_t* dims, dim_pointer csP
-	return chunkItemIterator(this->cached_->getData(),
+	return std::make_shared<chunkItemIterator>(this->cached_->getData(),
 							 this->desc_->eType_,
 							 this->desc_->dims_,
 							 this->desc_->sp_);
 }
 
-chunkItemRangeIterator memBlock::getItemRangeIterator(const coorRange& range)
+pChunkItemRangeIterator memBlock::getItemRangeIterator(const coorRange& range)
 {
-	return chunkItemRangeIterator(this->cached_->getData(),
+	return std::make_shared<chunkItemRangeIterator>(this->cached_->getData(),
 								  this->desc_->eType_,
 								  this->desc_->dims_,
 								  range,

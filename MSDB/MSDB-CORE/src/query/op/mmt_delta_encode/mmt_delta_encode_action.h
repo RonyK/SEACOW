@@ -72,13 +72,13 @@ void mmt_delta_encode_action::chunkEncode(pChunk outChunk, pChunk inChunk,
 		auto node = mmtIndex->getNode(inChunk->getDesc()->chunkCoor_, bit.coor());
 
 		// Block encode
-		while (!iit.isEnd())
+		while (!iit->isEnd())
 		{
-			auto inValue = (*iit).get<Ty_>();
+			auto inValue = (**iit).get<Ty_>();
 			auto outValue = inValue - node->min_;
-			(*oit).set<Ty_>(outValue);
-			++iit;
-			++oit;
+			(**oit).set<Ty_>(outValue);
+			++(*iit);
+			++(*oit);
 		}
 
 		++bit;

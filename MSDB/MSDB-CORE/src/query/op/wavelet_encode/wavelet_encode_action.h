@@ -68,13 +68,13 @@ private:
 		auto ait = approximateChunk->getItemIterator();
 		auto dit = detailChunk->getItemIterator();
 
-		iit.setBasisDim(basisDim);
-		ait.setBasisDim(basisDim);
-		dit.setBasisDim(basisDim);
+		iit->setBasisDim(basisDim);
+		ait->setBasisDim(basisDim);
+		dit->setBasisDim(basisDim);
 
-		iit.moveToStart();
-		ait.moveToStart();
-		dit.moveToStart();
+		iit->moveToStart();
+		ait->moveToStart();
+		dit->moveToStart();
 
 		// Iterate data
 		size_t length = inChunk->getDesc()->dims_[basisDim];
@@ -90,19 +90,19 @@ private:
 				double h = 0, g = 0;
 				for (size_t j = 0; (j < w->c_) && (i + j < length); j++)
 				{
-					auto in = iit.getAt(j).get<Ty_>();
-					char in_char = iit.getAt(j).getChar();
+					auto in = iit->getAt(j).get<Ty_>();
+					char in_char = iit->getAt(j).getChar();
 
-					h += w->h_0[j] * iit.getAt(j).get<Ty_>();
-					g += w->g_0[j] * iit.getAt(j).get<Ty_>();
+					h += w->h_0[j] * iit->getAt(j).get<Ty_>();
+					g += w->g_0[j] * iit->getAt(j).get<Ty_>();
 				}
 
-				(*ait).set<Ty_>(h);
-				(*dit).set<Ty_>(g);
+				(**ait).set<Ty_>(h);
+				(**dit).set<Ty_>(g);
 
-				++ait;
-				++dit;
-				iit += 2;
+				++(*ait);
+				++(*dit);
+				(*iit) += 2;
 			}
 		}
 

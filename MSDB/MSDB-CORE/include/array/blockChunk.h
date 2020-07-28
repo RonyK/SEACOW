@@ -11,6 +11,8 @@
 
 namespace msdb
 {
+std::map<int, int> ma;
+auto a = ma.begin();
 class blockIterator;
 
 class blockChunk : public chunk
@@ -35,12 +37,9 @@ public:
 	blockId getBlockIdFromItemCoor(coor& itemCoor);
 	blockId getBlockIdFromBlockCoor(coor& chunkCoor);
 	virtual coor itemCoorToBlockCoor(coor& itemCoor);
-	//virtual blockIterator getBlockIterator(iterateMode itMode = iterateMode::ALL);
-	//virtual blockIterator getBlockIterator();
-
 	virtual blockIterator getBlockIterator(iterateMode itMode = iterateMode::ALL);
-	virtual chunkItemIterator getItemIterator();
-	virtual chunkItemRangeIterator getItemRangeIterator(const coorRange& range);
+	virtual pChunkItemIterator getItemIterator();
+	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range);
 
 	//////////////////////////////
 	// Setter
@@ -80,7 +79,7 @@ public:
 
 protected:
 	blockIterator bItr_;
-	chunkItemIterator* curBlockItemItr_;
+	std::shared_ptr<chunkItemIterator> curBlockItemItr_;
 };
 
 class blockChunkItemRangeIterator : public chunkItemRangeIterator
