@@ -11,4 +11,8 @@ block::~block()
 {
 
 }
+pBlockDesc block::getDesc()
+{
+	return this->desc_;
+}
 }

@@ -178,6 +178,7 @@
     <ClInclude Include="include\array\memBlock.h" />
     <ClInclude Include="include\array\memChunk.h" />
     <ClInclude Include="include\array\memChunkBuffer.h" />
+    <ClInclude Include="include\array\memChunkItemIterator.h" />
     <ClInclude Include="include\compression\compression.h" />
     <ClInclude Include="include\compression\wtChunk.h" />
     <ClInclude Include="include\index\mmt.h" />
@@ -212,7 +213,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="include\compression\haar.h" />
-    <ClInclude Include="include\compression\wavelet.h" />
+    <ClInclude Include="include\compression\wavelet.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="include\xml\tinyxml2.h" />
     <ClInclude Include="src\query\op\load\load_action.h" />
     <ClInclude Include="src\query\op\load\load_plan.h" />
@@ -250,6 +253,7 @@
     <ClCompile Include="src\array\chunkIterator.cpp" />
     <ClCompile Include="src\array\memArray.cpp" />
     <ClCompile Include="src\array\memChunk.cpp" />
+    <ClCompile Include="src\array\memChunkItemIterator.cpp" />
     <ClCompile Include="src\compression\wtChunk.cpp" />
     <ClCompile Include="src\index\attributeIndex.cpp" />
     <ClCompile Include="src\array\arrayMgr.cpp" />

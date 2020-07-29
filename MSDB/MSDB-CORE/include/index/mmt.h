@@ -120,7 +120,7 @@ public:
 public:
 	class mmtNode;
 	using pNode = std::shared_ptr<mmtNode>;
-	using nodeItr = coorIterator<Dty_, pNode>;
+	using nodeItr = coordinateIterator<Dty_>;
 
 	class mmtNode : public attributeIndex
 	{
@@ -317,7 +317,7 @@ public:
 
 	nodeItr getNodeIterator(size_type level)
 	{
-		return nodeItr(this->nodes_[level].data(), this->dSize_, this->levelDims_[level].data());
+		return nodeItr(this->dSize_, this->levelDims_[level].data());
 	}
 
 public:
@@ -414,9 +414,9 @@ protected:
 
 		////////////////////////////////////////
 		// Update min/max values
-		coorIterator<Dty_, pNode> pcit(this->nodes_[level - 1].data(), this->dSize_,
+		itemIterator<Dty_, pNode> pcit(this->nodes_[level - 1].data(), this->dSize_,
 									   prevLevelDim.data());
-		coorIterator<Dty_, pNode> cit(this->nodes_[level].data(), this->dSize_,
+		itemIterator<Dty_, pNode> cit(this->nodes_[level].data(), this->dSize_,
 									  levelDim.data());
 
 		for (size_type i = 0; i < this->nodes_[level - 1].size(); i++)
@@ -490,10 +490,10 @@ protected:
 		////////////////////////////////////////
 		// Update nit order for chunks in current level
 		// Prev
-		coorIterator<Dty_, pNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
+		itemIterator<Dty_, pNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
 									   prevLevelDim.data());
 		// Current
-		coorIterator<Dty_, pNode> cit(this->nodes_[level].data(), this->dSize_,
+		itemIterator<Dty_, pNode> cit(this->nodes_[level].data(), this->dSize_,
 									  levelDim.data());
 
 		for (size_type i = 0; i < this->nodes_[level + 1].size(); ++i, ++pcit)
@@ -615,11 +615,11 @@ protected:
 		this->nodes_[level].resize(chunkCnt);
 
 		// Prev
-		coorIterator<Dty_, pNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
+		itemIterator<Dty_, pNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
 									   pChunksInDim.data());
 
 		// Current
-		coorIterator<Dty_, pNode> cit(this->nodes_[level].data(), this->dSize_,
+		itemIterator<Dty_, pNode> cit(this->nodes_[level].data(), this->dSize_,
 									  chunksInDim.data());
 
 		for (size_type i = 0; i < chunkCnt; i++)

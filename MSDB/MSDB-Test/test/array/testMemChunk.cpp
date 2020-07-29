@@ -1,5 +1,6 @@
 #include <pch.h>
 #include <array/chunk.h>
+#include <array/memChunkItemIterator.h>
 #include <array/chunkBuffer.h>
 #include <array/memChunkBuffer.h>
 

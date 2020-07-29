@@ -1,5 +1,6 @@
 #include <array/memChunk.h>
 #include <array/memChunkBuffer.h>
+#include <array/memChunkItemIterator.h>
 
 namespace msdb
 {

@@ -1,4 +1,5 @@
 #include <array/memBlock.h>
+#include <array/memChunkItemIterator.h>
 
 namespace msdb
 {
@@ -87,7 +88,7 @@ pChunkItemIterator memBlock::getItemIterator()
 {
 	//void* data, eleType eType, const size_type dSize,
 	//	position_t* dims, dim_pointer csP
-	return std::make_shared<chunkItemIterator>(this->cached_->getData(),
+	return std::make_shared<memChunkItemIterator>(this->cached_->getData(),
 							 this->desc_->eType_,
 							 this->desc_->dims_,
 							 this->desc_->sp_);
@@ -95,7 +96,7 @@ pChunkItemIterator memBlock::getItemIterator()
 
 pChunkItemRangeIterator memBlock::getItemRangeIterator(const coorRange& range)
 {
-	return std::make_shared<chunkItemRangeIterator>(this->cached_->getData(),
+	return std::make_shared<memChunkItemRangeIterator>(this->cached_->getData(),
 								  this->desc_->eType_,
 								  this->desc_->dims_,
 								  range,

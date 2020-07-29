@@ -6,6 +6,7 @@
 #include <array/blockIterator.h>
 #include <array/blockContainer.h>
 #include <array/chunkIterator.h>
+#include <array/memChunkItemIterator.h>
 #include <util/coordinate.h>
 #include <map>
 
@@ -37,7 +38,7 @@ public:
 	blockId getBlockIdFromItemCoor(coor& itemCoor);
 	blockId getBlockIdFromBlockCoor(coor& chunkCoor);
 	virtual coor itemCoorToBlockCoor(coor& itemCoor);
-	virtual blockIterator getBlockIterator(iterateMode itMode = iterateMode::ALL);
+	virtual pBlockIterator getBlockIterator(iterateMode itMode = iterateMode::ALL);
 	virtual pChunkItemIterator getItemIterator();
 	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range);
 
@@ -71,15 +72,22 @@ public:
 	// csP : chunk start point
 	blockChunkItemIterator(void* data, const eleType eType, const size_type dSize, 
 						   dim_const_pointer dims,
-						   dim_const_pointer csP, blockIterator bItr);
+						   dim_const_pointer csP, pBlockIterator bItr);
 
 	blockChunkItemIterator(void* data, const eleType eType,
 						   const dimension dims,
-						   const dimension csP, blockIterator bItr);
+						   const dimension csP, pBlockIterator bItr);
+
+public:
+	virtual void next() override;
+	virtual void prev() override;
+
+	virtual element getAt(position_t pos) override;
+	virtual element operator*() override;
 
 protected:
-	blockIterator bItr_;
-	std::shared_ptr<chunkItemIterator> curBlockItemItr_;
+	pBlockIterator bItr_;
+	pChunkItemIterator curBlockItemItr_;
 };
 
 class blockChunkItemRangeIterator : public chunkItemRangeIterator
@@ -89,15 +97,23 @@ public:
 	blockChunkItemRangeIterator(void* data, const eleType eType, const size_type dSize,
 								dim_const_pointer dims,
 								dim_const_pointer sP, dim_const_pointer eP,
-								dim_const_pointer csP, blockIterator bItr);
+								dim_const_pointer csP, pBlockIterator bItr);
 
 	blockChunkItemRangeIterator(void* data, eleType eType, 
 								const dimension dims,
 								const coorRange& range,
-								const dimension csP, blockIterator bItr);
-	
+								const dimension csP, pBlockIterator bItr);
+
+public:
+	virtual void next() override;
+	virtual void prev() override;
+
+	virtual element getAt(position_t pos) override;
+	virtual element operator*() override;
+
 protected:
-	blockIterator bItr_;
+	pBlockIterator bItr_;
+	pChunkItemIterator curBlockItemItr_;
 };
 }
 #endif		// _MSDB_BLOCKEDCHUNK_H_

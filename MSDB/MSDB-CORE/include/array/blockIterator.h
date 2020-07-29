@@ -8,6 +8,9 @@
 
 namespace msdb
 {
+class blockIterator;
+using pBlockIterator = std::shared_ptr<blockIterator>;
+
 class blockIterator : public coorItr
 {
 public:

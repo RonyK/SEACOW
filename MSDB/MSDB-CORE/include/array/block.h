@@ -27,6 +27,8 @@ public:
 	virtual pChunkItemIterator getItemIterator() = 0;
 	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range) = 0;
 
+	pBlockDesc getDesc();
+
 protected:
 	pBlockBuffer cached_;	// hold materialized block
 	pBlockDesc desc_;
