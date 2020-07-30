@@ -33,6 +33,7 @@ public:
 	// Getter
 	//////////////////////////////
 	// Block
+	size_t getBlockCapacity();
 	pBlock getBlock(blockId bId);
 	blockId getBlockId(pBlockDesc cDesc);
 	blockId getBlockIdFromItemCoor(coor& itemCoor);

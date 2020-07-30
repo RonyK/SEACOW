@@ -32,6 +32,7 @@
     <ClCompile Include="test\query\op\save\test_save.cpp" />
     <ClCompile Include="test\query\op\load\test_load.cpp" />
     <ClCompile Include="test\io\testIO.cpp" />
+    <ClCompile Include="test\array\testBlock.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">

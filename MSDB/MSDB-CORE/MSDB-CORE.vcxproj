@@ -180,6 +180,7 @@
     <ClInclude Include="include\array\memChunkBuffer.h" />
     <ClInclude Include="include\array\memChunkItemIterator.h" />
     <ClInclude Include="include\compression\compression.h" />
+    <ClInclude Include="include\compression\seChunk.h" />
     <ClInclude Include="include\compression\wtChunk.h" />
     <ClInclude Include="include\index\mmt.h" />
     <ClInclude Include="include\index\attributeIndex.h" />
@@ -233,6 +234,8 @@
     <ClInclude Include="src\query\op\mmt_save\mmt_save_plan.h" />
     <ClInclude Include="src\query\op\save\save_action.h" />
     <ClInclude Include="src\query\op\save\save_plan.h" />
+    <ClInclude Include="src\query\op\se_compression\se_compression_action.h" />
+    <ClInclude Include="src\query\op\se_compression\se_compression_plan.h" />
     <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_action.h" />
     <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_array.h" />
     <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_plan.h" />
@@ -254,6 +257,7 @@
     <ClCompile Include="src\array\memArray.cpp" />
     <ClCompile Include="src\array\memChunk.cpp" />
     <ClCompile Include="src\array\memChunkItemIterator.cpp" />
+    <ClCompile Include="src\compression\seChunk.cpp" />
     <ClCompile Include="src\compression\wtChunk.cpp" />
     <ClCompile Include="src\index\attributeIndex.cpp" />
     <ClCompile Include="src\array\arrayMgr.cpp" />
@@ -276,6 +280,8 @@
     <ClCompile Include="src\query\op\mmt_save\mmt_save_plan.cpp" />
     <ClCompile Include="src\query\op\save\save_action.cpp" />
     <ClCompile Include="src\query\op\save\save_plan.cpp" />
+    <ClCompile Include="src\query\op\se_compression\se_compression_action.cpp" />
+    <ClCompile Include="src\query\op\se_compression\se_compression_plan.cpp" />
     <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_action.cpp" />
     <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_array.cpp" />
     <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_plan.cpp" />

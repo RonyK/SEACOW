@@ -1,40 +1,58 @@
-#include <array/memChunk.h>
-#include <array/memChunkBuffer.h>
-#include <array/memChunkItemIterator.h>
+#include <compression/seChunk.h>
+
+#include <array/chunk.h>
 
 namespace msdb
 {
-memChunk::memChunk(pChunkDesc desc)
-	: chunk(desc)
+seChunk::seChunk(pChunkDesc desc)
+	: blockChunk(desc), level_(0), 
+	bandId_(INVALID_CHUNK_ID), sourceChunkId_(INVALID_CHUNK_ID)
+{
+	//auto chunkDim = this->desc_->dims_;
+	//auto blockDim = std::static_pointer_cast<blockChunkDesc>(this->desc_)->blockDims_;
+	//auto blockSpace = chunkDim / blockDim;
+	//this->rBitFromMMT.resize(blockSpace.area());
+	//this->rBitFromDelta.resize(blockSpace.area());
+}
+
+inline seChunk::~seChunk()
 {
 }
 
-memChunk::~memChunk()
+size_t seChunk::getLevel()
 {
+	return this->level_;
+}
+chunkId seChunk::getBandId()
+{
+	return this->bandId_;
+}
+//chunkId seChunk::getTileId()
+//{
+//	return this->tileId_;
+//}
+chunkId seChunk::getSourceChunkId()
+{
+	return this->sourceChunkId_;
+}
+void seChunk::setLevel(size_t level)
+{
+	this->level_ = level;
+}
+void seChunk::setBandId(chunkId bid)
+{
+	this->bandId_ = bid;
+}
+//void seChunk::setTileId(chunkId tid)
+//{
+//	this->tileId_ = tid;
+//}
+void seChunk::setSourceChunkId(chunkId cid)
+{
+	this->sourceChunkId_ = cid;
 }
 
-void memChunk::makeBuffer()
-{
-	this->cached_ = std::make_shared<memChunkBuffer>();
-}
-
-pChunkItemIterator memChunk::getItemIterator()
-{
-	return std::make_shared<memChunkItemIterator>(this->cached_->getData(),
-							this->desc_->attrDesc_->type_,
-							this->desc_->dims_,
-							this->desc_->sp_);
-}
-pChunkItemRangeIterator memChunk::getItemRangeIterator(const coorRange& range)
-{
-	return std::make_shared<memChunkItemRangeIterator>(this->cached_->getData(),
-								 this->desc_->attrDesc_->type_,
-								 this->desc_->dims_,
-								 range,
-								 this->desc_->sp_);
-}
-
-void memChunk::serialize(std::ostream& os)
+void seChunk::serialize(std::ostream& os)
 {
 	bstream bs;
 	switch (this->desc_->attrDesc_->type_)
@@ -75,14 +93,14 @@ void memChunk::serialize(std::ostream& os)
 	os.write(bs.data(), bs.capacity());
 }
 
-void memChunk::deserialize(std::istream& is)
+void seChunk::deserialize(std::istream& is)
 {
 	this->getHeader()->deserialize(is);
 	this->updateFromHeader();
-
 	bstream bs;
 	bs.resize(this->serializedSize_);
 	is.read(bs.data(), this->serializedSize_);
+
 	switch (this->desc_->attrDesc_->type_)
 	{
 	case eleType::CHAR:

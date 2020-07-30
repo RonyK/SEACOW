@@ -86,6 +86,15 @@ public:
 	{
 		return this->dSize_;
 	}
+	_NODISCARD inline size_type area() const
+	{
+		size_type capacity = 1;
+		for (dimensionId d = 0; d < dSize_; ++d)
+		{
+			capacity *= this->coor_[d];
+		}
+		return capacity;
+	}
 	dim_pointer data()
 	{
 		return this->coor_;

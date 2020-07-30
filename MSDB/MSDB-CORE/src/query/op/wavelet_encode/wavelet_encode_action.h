@@ -48,6 +48,7 @@ private:
 	std::list<pChunk> chunkEncode(pArray wArray, pChunk sourceChunk, 
 								  pWavelet w, size_t maxLevel, pQuery q);
 	std::list<pChunk> waveletLevelEncode(pChunk wChunk, pWavelet w, pQuery q);
+
 	template<class Ty_>
 	std::list<pChunk> waveletTransform(pChunk inChunk, pWavelet w, dimensionId basisDim, pQuery q)
 	{

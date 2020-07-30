@@ -18,6 +18,12 @@ void blockChunk::makeBuffer()
 	this->cached_ = std::make_shared<memChunkBuffer>();
 }
 
+size_t blockChunk::getBlockCapacity()
+{
+	auto bItr = this->getBlockIterator();
+	return bItr->getCapacity();
+}
+
 pBlock blockChunk::getBlock(blockId bId)
 {
 	return this->blocks_[bId];
