@@ -1,6 +1,7 @@
 #include <op/spiht_encode/spiht_encode_action.h>
 #include <op/wavelet_encode/wavelet_encode_array.h>
 #include <system/storageMgr.h>
+#include <array/memChunk.h>
 
 namespace msdb
 {
@@ -70,7 +71,7 @@ pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 		}
 
-		pChunk oChunk = std::make_shared<chunk>((*chunkItr)->getDesc());
+		pChunk oChunk = std::make_shared<memChunk>((*chunkItr)->getDesc());
 		// TODO::Save chunk
 		//storageMgr::instance()->saveChunk(arrId, attr->id_, (*cit)->getId(),
 		//	serialChunk);

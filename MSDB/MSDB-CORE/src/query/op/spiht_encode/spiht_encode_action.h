@@ -22,7 +22,7 @@ public:
 private:
 	void encode_init(size_t dSize, std::vector<size_t> bandSize);
 	template<class Ty_>
-	void encode_progress(size_t dSize, std::vector<position_t> cSize, std::vector<size_t> bandSize, chunkItemIterator itemItr)
+	void encode_progress(size_t dSize, std::vector<position_t> cSize, std::vector<size_t> bandSize, pChunkItemIterator itemItr)
 	{
 		size_t maxStep = sizeof(Ty_) * 8;
 		Ty_ signBit = (Ty_)0x1 << (maxStep - 1);
@@ -38,13 +38,13 @@ private:
 
 		for (size_t i = 0; i < abs_num; i++)
 		{
-			itemItr.moveTo(init_coor);
-			auto data = (*itemItr).get<Ty_>();
+			itemItr->moveTo(init_coor);
+			auto data = (**itemItr).get<Ty_>();
 			if (data & signBit)
 			{
 				data = data * -1;
 				data = data ^ signBit;
-				(*itemItr).set<Ty_>(data);
+				(**itemItr).set<Ty_>(data);
 			}
 
 			for (int d = (int)dSize - 1; d >= 0; d--)	// iteration(?)
@@ -72,7 +72,7 @@ private:
 
 	template<class Ty_>
 	void encode_sigpass(size_t dSize, std::vector<position_t> cSize, std::vector<size_t> bandSize,
-		chunkItemIterator itemItr, Ty_ signBit, Ty_ stepBit)
+		pChunkItemIterator itemItr, Ty_ signBit, Ty_ stepBit)
 	{
 		// LIP
 		size_t LIP_size = this->LIP_.size();
@@ -80,8 +80,8 @@ private:
 		{
 			auto LIP_coor = this->LIP_.front();
 			this->LIP_.pop_front();
-			itemItr.moveTo(LIP_coor);
-			auto LIP_data = (*itemItr).get<Ty_>();
+			itemItr->moveTo(LIP_coor);
+			auto LIP_data = (**itemItr).get<Ty_>();
 
 			if (LIP_data & stepBit)
 			{
@@ -117,8 +117,8 @@ private:
 		{
 			coor LIS_coor = this->LIS_.front();
 			this->LIS_.pop_front();
-			itemItr.moveTo(LIS_coor);
-			auto LIS_data = (*itemItr).get<Ty_>();
+			itemItr->moveTo(LIS_coor);
+			auto LIS_data = (**itemItr).get<Ty_>();
 
 			// set child_coor
 			bool firstBand = true;
@@ -158,8 +158,8 @@ private:
 				bool oneFlag = false;
 				for (size_t i = 0; i < (size_t)pow(2, dSize); i++)
 				{
-					itemItr.moveTo(child_coor);
-					auto child_data = (*itemItr).get<Ty_>();
+					itemItr->moveTo(child_coor);
+					auto child_data = (**itemItr).get<Ty_>();
 
 					if (child_data & stepBit)
 					{
@@ -189,8 +189,8 @@ private:
 					child_coor = temp_coor;
 					for (size_t i = 0; i < (size_t)pow(2, dSize); i++)
 					{
-						itemItr.moveTo(child_coor);
-						auto child_data = (*itemItr).get<Ty_>();
+						itemItr->moveTo(child_coor);
+						auto child_data = (**itemItr).get<Ty_>();
 
 						if (child_data & stepBit)
 						{
@@ -267,8 +267,8 @@ private:
 
 					for (size_t j = 0; j < (size_t)pow(2, dSize); j++)
 					{
-						itemItr.moveTo(grand_coor);
-						auto grand_data = (*itemItr).get<Ty_>();
+						itemItr->moveTo(grand_coor);
+						auto grand_data = (**itemItr).get<Ty_>();
 
 						if (grand_data & stepBit)
 						{
@@ -348,14 +348,14 @@ private:
 	}
 
 	template<class Ty_>
-	void encode_refinepass(chunkItemIterator itemItr, Ty_ stepBit, size_t LSP_size)
+	void encode_refinepass(pChunkItemIterator itemItr, Ty_ stepBit, size_t LSP_size)
 	{
 		for (size_t i = 0; i < LSP_size; i++)
 		{
 			coor LSP_coor = this->LSP_.front();
 			this->LSP_.pop_front();
-			itemItr.moveTo(LSP_coor);
-			auto LSP_data = (*itemItr).get<Ty_>();
+			itemItr->moveTo(LSP_coor);
+			auto LSP_data = (**itemItr).get<Ty_>();
 
 			if (LSP_data & stepBit)
 			{
