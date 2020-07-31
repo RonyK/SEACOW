@@ -4,17 +4,54 @@
 
 #include <array/block.h>
 #include <array/compBlock.h>
+#include <array/chunkIterator.h>
+#include <array/chunkItemIterator.h>
+#include <io/bitstream.h>
 
 namespace msdb
 {
-	class memBlock : public blockBase
-	{
-	public:
-		compBlock compress()
-		{
+class memBlock : public block
+{
+public:
+	memBlock(pBlockDesc desc);
+	virtual ~memBlock();
 
+public:
+	virtual void serialize(bstream& os) override;
+	virtual void deserialize(bstream& is) override;
+
+	template<typename Ty_>
+	void serializeTy(bstream& bs)
+	{
+		bs << setw(sizeof(Ty_) * CHAR_BIT);
+		auto it = this->getItemIterator();
+		while (!it->isEnd())
+		{
+			bs << (**it).get<Ty_>();
+			++(*it);
 		}
-	};
+	}
+
+	template<typename Ty_>
+	void deserializeTy(bstream& bs)
+	{
+		bs >> setw(sizeof(Ty_) * CHAR_BIT);
+		auto it = this->getItemIterator();
+		while (!it->isEnd())
+		{
+			Ty_ value;
+			bs >> value;
+			(**it).set<Ty_>(value);
+			++(*it);
+		}
+	}
+
+	virtual pChunkItemIterator getItemIterator();
+	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range);
+
+protected:
+	virtual void makeBuffer() override;
+};
 }
 
 #endif

@@ -26,7 +26,7 @@ pArray mmt_load_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 	auto dims = arr->getDesc()->getDimDescs().getDims();
 	auto chunkDims = arr->getDesc()->getDimDescs().getChunkDims();
 
-	arrayId arrId = arr->getArrayId();
+	arrayId arrId = arr->getId();
 
 	for(auto attr : arr->getDesc()->getAttrDescs())
 	{

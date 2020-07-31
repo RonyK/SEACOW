@@ -59,11 +59,22 @@ std::list<pChunk> wavelet_encode_action::chunkEncode(pArray wArray, pChunk sourc
 {
 	std::list<pChunk> chunks;
 	chunks.push_back(sourceChunk);
+	chunkId sourceChunkId = sourceChunk->getId();
 
 	for(size_t level = 0; level <= maxLevel; level++)
 	{
 		auto l = this->waveletLevelEncode(chunks.front(), w, q);
 		chunks.pop_front();
+
+		chunkId bandId = 0;
+		for(auto c : l)
+		{
+			pWtChunk wtChunk_ = std::static_pointer_cast<wtChunk>(c);
+			wtChunk_->setBandId(bandId);
+			wtChunk_->setLevel(level);
+			wtChunk_->setSourceChunkId(sourceChunkId);
+			++bandId;
+		}
 		chunks.insert(chunks.begin(), l.begin(), l.end());
 	}
 
@@ -122,9 +133,9 @@ std::list<pChunk> wavelet_encode_action::waveletLevelEncode(pChunk wChunk, pWave
 			case eleType::UINT64:
 				newChunkBands = waveletTransform<uint64_t>(chunkBands, w, d, q);
 				break;
-			case eleType::DOUBLE:
-				newChunkBands = waveletTransform<double>(chunkBands, w, d, q);
-				break;
+			//case eleType::DOUBLE:
+			//	newChunkBands = waveletTransform<double>(chunkBands, w, d, q);
+			//	break;
 			default:
 				_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 			}

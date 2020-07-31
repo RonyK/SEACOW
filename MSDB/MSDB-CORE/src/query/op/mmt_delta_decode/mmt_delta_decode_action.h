@@ -3,6 +3,7 @@
 #define _MSDB_OP_MMT_DELTA_DECODE_ACTION_H_
 
 #include <array/arrayMgr.h>
+#include <array/memChunk.h>
 #include <query/opAction.h>
 #include <index/mmt.h>
 #include <op/mmt_delta_decode/mmt_delta_decode_array.h>
@@ -51,7 +52,7 @@ void mmt_delta_decode_action::attributeDecode(std::shared_ptr<mmt_delta_decode_a
 	{
 		// Make new chunk
 		auto cDesc = (*cit)->getDesc();
-		pChunk deltaChunk = std::make_shared<chunk>(std::make_shared<chunkDesc>(*cDesc));
+		pChunk deltaChunk = std::make_shared<memChunk>(std::make_shared<chunkDesc>(*cDesc));
 		deltaChunk->alloc();
 
 		this->chunkDecode(deltaChunk, *cit, mmtIndex);
@@ -73,18 +74,18 @@ void mmt_delta_decode_action::chunkDecode(pChunk outChunk, pChunk inChunk,
 	while (!bit.isEnd())
 	{
 		auto bItemBdy = mmtIndex->getBlockItemBoundary(bit.coor());
-		auto iit = inChunk->getItemRangeIterator(bItemBdy.first.data(), bItemBdy.second.data());
-		auto oit = outChunk->getItemRangeIterator(bItemBdy.first.data(), bItemBdy.second.data());
+		auto iit = inChunk->getItemRangeIterator(bItemBdy);
+		auto oit = outChunk->getItemRangeIterator(bItemBdy);
 		auto node = mmtIndex->getNode(inChunk->getDesc()->chunkCoor_, bit.coor());
 
 		// Block encode
-		while (!iit.isEnd())
+		while (!iit->isEnd())
 		{
-			auto inValue = (*iit).get<Ty_>();
+			auto inValue = (**iit).get<Ty_>();
 			auto outValue = inValue + node->min_;
-			(*oit).set<Ty_>(outValue);
-			++iit;
-			++oit;
+			(**oit).set<Ty_>(outValue);
+			++(*iit);
+			++(*oit);
 		}
 
 		++bit;

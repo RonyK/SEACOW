@@ -354,7 +354,7 @@ namespace msdb
 						coor eP = { sP[0] + chunkDims[0], sP[1] + chunkDims[1] };
 
 						pChunkDesc cDesc = std::make_shared<chunkDesc>(cid, attrDescs[0], dimChunk, sP, eP);
-						pChunk sourceChunk = std::make_shared<chunk>(cDesc);
+						pChunk sourceChunk = std::make_shared<memChunk>(cDesc);
 						sourceChunk->alloc();
 						
 						// Insert data into chunk
@@ -364,10 +364,10 @@ namespace msdb
 						{
 							for(int ix = 0; ix < chunkDims[1]; ix++)
 							{
-								(*it).setChar(data[(y * chunkDims[0] + iy) * dimX + (x * chunkDims[1] + ix)]);
+								(**it).setChar(data[(y * chunkDims[0] + iy) * dimX + (x * chunkDims[1] + ix)]);
 								//char c = (*it).getChar();
 								//std::cout << static_cast<int>(c) << ", ";
-								++it;
+								++(*it);
 							}
 						}
 						//std::cout << std::endl << "-----" << std::endl;
@@ -384,6 +384,14 @@ namespace msdb
 			void getExDummy(value_type* output, size_t length)
 			{
 				// TODO :: Implement getExDummy()
+			}
+
+			void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
+			{
+				if (sourceArr.empty())
+				{
+					sourceArr = getSourceArray();
+				}
 			}
 		}
 

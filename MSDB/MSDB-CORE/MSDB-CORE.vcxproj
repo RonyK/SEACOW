@@ -152,21 +152,36 @@
     <ClInclude Include="include\array\attributeDesc.h" />
     <ClInclude Include="include\array\attributeId.h" />
     <ClInclude Include="include\array\block.h" />
+    <ClInclude Include="include\array\blockBuffer.h" />
+    <ClInclude Include="include\array\blockChunkBuffer.h" />
+    <ClInclude Include="include\array\blockContainer.h" />
+    <ClInclude Include="include\array\blockDesc.h" />
+    <ClInclude Include="include\array\blockChunk.h" />
+    <ClInclude Include="include\array\blockId.h" />
+    <ClInclude Include="include\array\blockIterator.h" />
     <ClInclude Include="include\array\buffer.h" />
     <ClInclude Include="include\array\chunk.h" />
     <ClInclude Include="include\array\chunkBuffer.h" />
+    <ClInclude Include="include\array\chunkContainer.h" />
     <ClInclude Include="include\array\chunkDesc.h" />
     <ClInclude Include="include\array\chunkId.h" />
+    <ClInclude Include="include\array\chunkItemIterator.h" />
+    <ClInclude Include="include\array\chunkIterator.h" />
     <ClInclude Include="include\array\chunkMgr.h" />
     <ClInclude Include="include\array\compBlock.h" />
     <ClInclude Include="include\array\compChunk.h" />
     <ClInclude Include="include\array\configArrays.h" />
+    <ClInclude Include="include\array\dimension.h" />
     <ClInclude Include="include\array\dimensionDesc.h" />
     <ClInclude Include="include\array\dimensionId.h" />
     <ClInclude Include="include\array\memArray.h" />
     <ClInclude Include="include\array\memBlock.h" />
+    <ClInclude Include="include\array\memChunk.h" />
     <ClInclude Include="include\array\memChunkBuffer.h" />
+    <ClInclude Include="include\array\memChunkItemIterator.h" />
     <ClInclude Include="include\compression\compression.h" />
+    <ClInclude Include="include\compression\seChunk.h" />
+    <ClInclude Include="include\compression\wtChunk.h" />
     <ClInclude Include="include\index\mmt.h" />
     <ClInclude Include="include\index\attributeIndex.h" />
     <ClInclude Include="include\index\dimensionIndex.h" />
@@ -199,7 +214,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="include\compression\haar.h" />
-    <ClInclude Include="include\compression\wavelet.h" />
+    <ClInclude Include="include\compression\wavelet.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="include\xml\tinyxml2.h" />
     <ClInclude Include="src\query\op\load\load_action.h" />
     <ClInclude Include="src\query\op\load\load_plan.h" />
@@ -221,6 +238,8 @@
     <ClInclude Include="src\query\op\spiht_encode\spiht_encode_plan.h" />
     <ClInclude Include="src\query\op\save\save_action.h" />
     <ClInclude Include="src\query\op\save\save_plan.h" />
+    <ClInclude Include="src\query\op\se_compression\se_compression_action.h" />
+    <ClInclude Include="src\query\op\se_compression\se_compression_plan.h" />
     <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_action.h" />
     <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_array.h" />
     <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_plan.h" />
@@ -230,7 +249,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.cpp" />
+    <ClCompile Include="src\array\chunkItemIterator.cpp" />
+    <ClCompile Include="src\array\memBlock.cpp" />
+    <ClCompile Include="src\array\block.cpp" />
+    <ClCompile Include="src\array\blockBuffer.cpp" />
+    <ClCompile Include="src\array\blockChunkBuffer.cpp" />
+    <ClCompile Include="src\array\blockDesc.cpp" />
+    <ClCompile Include="src\array\blockChunk.cpp" />
+    <ClCompile Include="src\array\blockIterator.cpp" />
+    <ClCompile Include="src\array\chunkIterator.cpp" />
     <ClCompile Include="src\array\memArray.cpp" />
+    <ClCompile Include="src\array\memChunk.cpp" />
+    <ClCompile Include="src\array\memChunkItemIterator.cpp" />
+    <ClCompile Include="src\compression\seChunk.cpp" />
+    <ClCompile Include="src\compression\wtChunk.cpp" />
     <ClCompile Include="src\index\attributeIndex.cpp" />
     <ClCompile Include="src\array\arrayMgr.cpp" />
     <ClCompile Include="src\array\attributeDesc.cpp" />
@@ -256,6 +288,8 @@
     <ClCompile Include="src\query\op\spiht_encode\spiht_encode_plan.cpp" />
     <ClCompile Include="src\query\op\save\save_action.cpp" />
     <ClCompile Include="src\query\op\save\save_plan.cpp" />
+    <ClCompile Include="src\query\op\se_compression\se_compression_action.cpp" />
+    <ClCompile Include="src\query\op\se_compression\se_compression_plan.cpp" />
     <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_action.cpp" />
     <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_array.cpp" />
     <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_plan.cpp" />

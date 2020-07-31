@@ -4,6 +4,7 @@
 
 #include <util/coordinate.h>
 #include <array/dimensionId.h>
+#include <array/dimension.h>
 #include <string>
 #include <vector>
 
@@ -11,7 +12,6 @@ namespace msdb
 {
 class dimensionDesc;
 using pDimensionDesc = std::shared_ptr<dimensionDesc>;
-using dimension = coordinate<position_t>;
 
 class dimensionDescs : public std::vector<pDimensionDesc>, public std::enable_shared_from_this<dimensionDescs>
 {

@@ -4,6 +4,7 @@
 
 #include <array/arrayDesc.h>
 #include <array/chunk.h>
+#include <array/chunkIterator.h>
 #include <util/coordinate.h>
 #include <memory>
 #include <map>
@@ -61,7 +62,6 @@ std::vector<Dty_> calcChunkDims(const Dty_* dims, const Dty_* chunkNums, const s
 }
 
 class arrayBase;
-class chunkIterator;
 using pArray = std::shared_ptr<arrayBase>;
 
 class arrayBase : public std::enable_shared_from_this<arrayBase>
@@ -78,10 +78,10 @@ public:
 	//////////////////////////////
 	// Getter
 	//////////////////////////////
-	arrayId getArrayId();
+	arrayId getId();
 	pArrayDesc getDesc();
 	size_type getNumChunks();
-	
+
 	// Chunk
 	pChunk getChunk(chunkId cId);
 	chunkId getChunkId(pChunkDesc cDesc);
@@ -94,6 +94,7 @@ public:
 	//////////////////////////////
 	// Setter
 	//////////////////////////////
+	void setId(arrayId id);	// only used for test
 	void insertChunk(pChunk inputChunk);
 	void flush();
 
@@ -104,66 +105,13 @@ public:
 		{
 			this->chunks_.insert(chunkPair((*begin)->getId(), *begin));
 		}
-	}	
+	}
+
+	void print();
 
 protected:
 	pArrayDesc desc_;
 	chunkContainer chunks_;		// TODO::Seperate chunk container by attributeId
 };
-
-class chunkIterator : public coorItr
-{
-public:
-	using self_type = chunkIterator;
-	using base_type = coorItr;
-
-	using size_type = coorItr::size_type;
-	using chunkContainer = arrayBase::chunkContainer;
-
-public:
-	chunkIterator(const size_type dSize, dim_const_pointer dims, 
-				  chunkContainer* chunks, iterateMode itMode);
-
-	chunkIterator(const self_type& mit);
-
-public:
-	size_type getSeqEnd();
-	bool isExist();
-	bool isExist(chunkId cid);
-	iterateMode getIterateMode();
-
-	//////////////////////////////
-	// Iterating
-	//////////////////////////////
-	virtual void next()
-	{
-		base_type::next();
-
-		while(!this->isExist() && !this->isEnd())
-		{
-			base_type::next();
-		}
-	}
-	virtual void prev()
-	{
-		base_type::prev();
-
-		while(!this->isExist() && !this->isFront())
-		{
-			base_type::prev();
-		}
-	}
-
-	//////////////////////////////
-	// Operators
-	//////////////////////////////
-	pChunk operator*() { return this->chunks_->at(this->seqPos_); }
-	pChunk operator->() { return this->chunks_->at(this->seqPos_); }
-
-protected:
-	chunkContainer* chunks_;
-	iterateMode itMode_;
-};
-}
-
-#endif
+}	// msdb
+#endif		// _MSDB_ARRAY_H_

@@ -2,6 +2,7 @@
 #ifndef _MSDB_OP_WAVELET_DECODE_ACTION_H_
 #define _MSDB_OP_WAVELET_DECODE_ACTION_H_
 
+#include <array/memChunk.h>
 #include <compression/wavelet.h>
 #include <query/opAction.h>
 #include <util/math.h>
@@ -86,20 +87,20 @@ private:
 		outChunkDesc->setDim(basisDim, outChunkDesc->dims_[basisDim] * 2);
 
 		// Make chunk
-		pChunk outChunk = std::make_shared<chunk>(outChunkDesc);
+		pChunk outChunk = std::make_shared<memChunk>(outChunkDesc);
 		outChunk->alloc();
 
 		auto ait = approximateChunk->getItemIterator();
 		auto dit = detailChunk->getItemIterator();
 		auto oit = outChunk->getItemIterator();
 
-		ait.setBasisDim(basisDim);
-		dit.setBasisDim(basisDim);
-		oit.setBasisDim(basisDim);
+		ait->setBasisDim(basisDim);
+		dit->setBasisDim(basisDim);
+		oit->setBasisDim(basisDim);
 
-		ait.moveToStart();
-		dit.moveToStart();
-		oit.moveToStart();
+		ait->moveToStart();
+		dit->moveToStart();
+		oit->moveToStart();
 
 		// Iterate data
 		size_t bandBasisDimLength = approximateChunk->getDesc()->dims_[basisDim];
@@ -113,8 +114,8 @@ private:
 			for(size_t i = 0; i < bandBasisDimLength; i++)
 			{
 				Ty_ vApproximate, vDetail;
-				(*ait).getData(&vApproximate);
-				(*dit).getData(&vDetail);
+				(**ait).getData(&vApproximate);
+				(**dit).getData(&vDetail);
 
 				for(size_t j = 0; (j < filterSize) && (i + j < decodedBasisDimLength); ++j)
 				{
@@ -122,10 +123,10 @@ private:
 					std::cout << intermediate[(i + j) % filterSize] << std::endl;
 				}
 
-				(*oit).set<Ty_>(intermediate[i]);
-				++oit;
-				(*oit).set<Ty_>(intermediate[(i + 1) % filterSize]);
-				++oit;
+				(**oit).set<Ty_>(intermediate[i]);
+				++(*oit);
+				(**oit).set<Ty_>(intermediate[(i + 1) % filterSize]);
+				++(*oit);
 
 				//std::cout << "------" << std::endl;
 				//std::cout << "Intermediate" << std::endl;
@@ -136,8 +137,8 @@ private:
 				//std::cout << std::endl << "------" << std::endl;
 
 				intermediate[i] = intermediate[(i + 1) % filterSize] = 0;
-				++ait;
-				++dit;
+				++(*ait);
+				++(*dit);
 			}
 		}
 

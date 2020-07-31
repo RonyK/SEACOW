@@ -28,6 +28,8 @@ public:
 	dimensionDescs& getDimDescs();
 	attributeDescs& getAttrDescs();
 
+	size_t getDSize();
+
 public:
 	arrayId id_;
 	std::string name_;

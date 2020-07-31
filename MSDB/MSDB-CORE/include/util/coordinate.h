@@ -3,6 +3,7 @@
 #define _MSDB_COORDINATE_H_
 
 #include <util/element.h>
+#include <util/math.h>
 #include <system/exceptions.h>
 #include <array/dimensionId.h>
 #include <iostream>
@@ -34,24 +35,28 @@ public:
 	using dim_const_reference = const Dty_&;
 
 public:
-	coordinate(const size_type dSize = 0) : dSize_(dSize)
+	coordinate(const size_type dSize = 0)
+		: dSize_(dSize)
 	{
 		this->coor_ = new dim_type[this->dSize_]();
 	}
 
-	coordinate(const size_type dSize, const dim_pointer coor) : dSize_(dSize)
+	coordinate(const size_type dSize, dim_const_pointer coor)
+		: dSize_(dSize)
 	{
 		this->coor_ = new dim_type[this->dSize_];
 		memcpy(this->coor_, coor, this->dSize_ * sizeof(dim_type));
 	}
 
 	coordinate(const std::vector<dim_type>& coorVec)
+		: dSize_(coorVec.size())
 	{
 		this->coor_ = new dim_type[coorVec.size()];
 		memcpy(this->coor_, coorVec.data(), coorVec.size() * sizeof(dim_type));
 	}
 
-	coordinate(const self_type& mit) : dSize_(mit.dSize_)
+	coordinate(const self_type& mit)
+		: dSize_(mit.dSize_)
 	{
 		this->coor_ = new dim_type[this->dSize_];
 		memcpy(this->coor_, mit.coor_, mit.dSize_ * sizeof(dim_type));
@@ -81,7 +86,21 @@ public:
 	{
 		return this->dSize_;
 	}
+	_NODISCARD inline size_type area() const
+	{
+		size_type capacity = 1;
+		for (dimensionId d = 0; d < dSize_; ++d)
+		{
+			capacity *= this->coor_[d];
+		}
+		return capacity;
+	}
 	dim_pointer data()
+	{
+		return this->coor_;
+	}
+
+	const dim_pointer data() const
 	{
 		return this->coor_;
 	}
@@ -92,7 +111,7 @@ public:
 	// Comparison
 	bool operator==(const self_type& rhs) const
 	{
-		return this->dSize_ == rhs.dSize_ && (memcmp(this->coor_, rhs.coor_, this->dSize * sizeof(dim_type)) == 0);
+		return this->dSize_ == rhs.dSize_ && (memcmp(this->coor_, rhs.coor_, this->dSize_ * sizeof(dim_type)) == 0);
 	}
 	bool operator==(const dim_type* rhs) const
 	{
@@ -107,7 +126,7 @@ public:
 	}
 	bool operator!=(const self_type& rhs) const
 	{
-		return this->dSize_ != rhs.dSize_ || (memcmp(this->coor_, rhs.coor_, this->dSize * sizeof(dim_type)) != 0);
+		return this->dSize_ != rhs.dSize_ || (memcmp(this->coor_, rhs.coor_, this->dSize_ * sizeof(dim_type)) != 0);
 	}
 	bool operator!=(const dim_type* rhs) const
 	{
@@ -119,6 +138,34 @@ public:
 			}
 		}
 		return false;
+	}
+	bool operator<(const self_type& rhs) const
+	{
+		if (*this == rhs)
+			return false;
+
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			if (this->coor_[d] > rhs[d])
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	bool operator>(const self_type& rhs) const
+	{
+		if (*this == rhs)
+			return false;
+
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			if (this->coor_[d] < rhs[d])
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 
 	// Assign
@@ -134,6 +181,70 @@ public:
 	self_type& operator=(const dim_type* mit)
 	{
 		this->memcpyCoor(this->coor_, mit);
+
+		return *this;
+	}
+
+	self_type& operator+= (const self_type& mit)
+	{
+		assert(this->dSize_ == mit.dSize_);
+
+		for(dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			this->coor_[d] += mit[d];
+		}
+
+		return *this;
+	}
+
+	self_type& operator-= (const self_type& mit)
+	{
+		assert(this->dSize_ == mit.dSize_);
+
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			this->coor_[d] -= mit[d];
+		}
+
+		return *this;
+	}
+
+	self_type& operator *= (const self_type& mit)
+	{
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			this->coor_[d] *= mit[d];
+		}
+
+		return *this;
+	}
+
+	self_type& operator*= (const int64_t mit)
+	{
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			this->coor_[d] *= mit;
+		}
+
+		return *this;
+	}
+
+	self_type& operator/= (const self_type& mit)
+	{
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			this->coor_[d] = intDivCeil(this->coor_[d], mit[d]);
+		}
+
+		return *this;
+	}
+
+	self_type& operator/= (const int64_t mit)
+	{
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			this->coor_[d] /= mit;
+		}
 
 		return *this;
 	}
@@ -188,6 +299,212 @@ protected:
 };
 
 template <typename Dty_>
+coordinate<Dty_> operator+ (const coordinate<Dty_>& left, const coordinate<Dty_>& right)
+{
+	coordinate<Dty_> output(left);
+	output += right;
+	return output;
+}
+
+template <typename Dty_>
+coordinate<Dty_> operator+ (const coordinate<Dty_>& left, const int right)
+{
+	coordinate<Dty_> output(left);
+	output += right;
+	return output;
+}
+
+template <typename Dty_>
+coordinate<Dty_> operator- (const coordinate<Dty_>& left, const coordinate<Dty_>& right)
+{
+	coordinate<Dty_> output(left);
+	output -= right;
+	return output;
+}
+
+template <typename Dty_>
+coordinate<Dty_> operator- (const coordinate<Dty_>& left, const int right)
+{
+	coordinate<Dty_> output(left);
+	output -= right;
+	return output;
+}
+
+template <typename Dty_>
+coordinate<Dty_> operator* (const coordinate<Dty_>& left, const coordinate<Dty_>& right)
+{
+	coordinate<Dty_> output(left);
+	output *= right;
+	return output;
+}
+
+template <typename Dty_>
+coordinate<Dty_> operator* (const coordinate<Dty_>& left, const int right)
+{
+	coordinate<Dty_> output(left);
+	output *= right;
+	return output;
+}
+
+template <typename Dty_>
+coordinate<Dty_> operator/ (const coordinate<Dty_>& left, const coordinate<Dty_>& right)
+{
+	coordinate<Dty_> output(left);
+	output /= right;
+	return output;
+}
+
+template <typename Dty_>
+coordinate<Dty_> operator/ (const coordinate<Dty_>& left, const int right)
+{
+	coordinate<Dty_> output(left);
+	output /= right;
+	return output;
+}
+
+template <typename Dty_>
+class coordinateRange
+{
+public:
+	using self_type = coordinateRange;
+	using size_type = size_t;
+	using dim_type = Dty_;
+	using dim_pointer = Dty_*;
+	using dim_const_pointer = const Dty_*;
+	using dim_reference = Dty_&;
+	using dim_const_reference = const Dty_&;
+
+public:
+	coordinateRange(const size_type dSize = 0)
+		: dSize_(dSize), sP_(dSize), eP_(dSize)
+	{
+	}
+
+	coordinateRange(const std::vector<dim_type>& sP, const std::vector<dim_type>& eP)
+		: dSize_(sP.size()), sP_(sP), eP_(eP)
+	{
+		assert(sP_.size() == eP_.size());
+	}
+
+	coordinateRange(std::initializer_list<dim_type> sP, std::initializer_list<dim_type> eP)
+		: dSize_(sP.size()), sP_(sP), eP_(eP)
+	{
+	}
+
+	coordinateRange(const coordinate<Dty_>& sP, const coordinate<Dty_>& eP)
+		: dSize_(sP.size()), sP_(sP), eP_(eP)
+	{
+		assert(sP.size() == eP.size());
+	}
+
+	coordinateRange(const self_type& mit)
+		: dSize_(mit.dSize_), sP_(mit.sP_), eP_(mit.eP_)
+	{
+	}
+
+	~coordinateRange()
+	{
+	}
+
+public:
+	//////////////////////////////
+	// Getter
+	_NODISCARD inline constexpr size_type size() const noexcept
+	{
+		return this->dSize_;
+	}
+
+	coordinate<Dty_> getSp() const
+	{
+		return this->sP_;
+	}
+	coordinate<Dty_> getEp() const
+	{
+		return this->eP_;
+	}
+
+	coordinate<Dty_>& getSp()
+	{
+		return this->sP_;
+	}
+	coordinate<Dty_>& getEp()
+	{
+		return this->eP_;
+	}
+
+	coordinate<Dty_> width() const
+	{
+		coordinate<Dty_> width(this->eP_);
+		width -= sP_;
+
+		return width;
+	}
+
+	void move(const coordinate<Dty_>& offset)
+	{
+		this->sP_ += offset;
+		this->eP_ += offset;
+	}
+
+	void moveTo(const coordinate<Dty_>& sP)
+	{
+		coordinate<Dty_> offset(sP);
+		offset -= this->sP_;
+
+		this->move(offset);
+	}
+
+public:
+	bool operator==(const self_type& rhs) const
+	{
+		return this->dSize_ == rhs.dSize_ && sP_ == rhs.sP_ && eP_ == rhs.eP_;
+	}
+
+	bool operator!=(const self_type& rhs) const
+	{
+		return !(*this == rhs);
+	}
+
+	bool operator<(const self_type& rhs) const
+	{
+		assert(this->dSize_ == rhs.dSize_);
+		if (*this == rhs)
+			return false;
+
+		if(!(this->sP_ < rhs.sP_))
+		{
+			return false;
+		}
+
+		if(!(this->eP_ > rhs.eP_))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	bool operator>(const self_type& rhs) const
+	{
+		assert(this->dSize_ == rhs.dSize_);
+		if (*this == rhs)
+			return false;
+
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			if (this->sP_[d] > rhs.sP_[d] || this->eP_[d] < rhs.eP_[d])
+				return false;
+		}
+		return true;
+	}
+
+protected:
+	size_type dSize_;
+	coordinate<Dty_> sP_;
+	coordinate<Dty_> eP_;
+};
+
+template <typename Dty_>
 class coordinateIterator
 {
 public:
@@ -203,62 +520,49 @@ public:
 
 public:
 	coordinateIterator(const size_type dSize, dim_const_pointer dims)
-		: coor_(dSize), dSize_(dSize), end_(false), basisDimOffset_(1), seqPos_(0)
+		: coor_(dSize), dSize_(dSize), end_(false), basisDimOffset_(1), seqPos_(0), 
+		dims_(dSize, dims), sP_(dSize), eP_(dSize, dims)
 	{
-		this->dims_ = new dim_type[this->dSize()];
-		this->memcpyDim(this->dims_, dims);
-
 		this->basisDim_ = this->dSize() - 1;
-		this->sP_ = new dim_type[this->dSize()]();
-		this->eP_ = this->dims_;
-
 		this->initSeqCapacity();
 	}
 
 	coordinateIterator(const std::vector<dim_type>& lst)
-		: coor_(lst.size()), dSize_(lst.size()), end_(false), basisDimOffset_(1), seqPos_(0)
+		: coor_(lst.size()), dSize_(lst.size()), end_(false), basisDimOffset_(1), seqPos_(0),
+		dims_(lst), sP_(lst.size()), eP_(lst)
 	{
-		this->dims_ = new dim_type[this->dSize()];
-		this->memcpyDim(this->dims_, lst.data());
-
 		this->basisDim_ = this->dSize() - 1;
-		this->sP_ = new dim_type[this->dSize()]();
-		this->eP_ = this->dims_;
+		this->initSeqCapacity();
+	}
 
+	coordinateIterator(const coordinate<position_t> space)
+		: coor_(space.size()), dSize_(space.size()), end_(false), basisDimOffset_(1), seqPos_(0),
+		dims_(space), sP_(space.size()), eP_(space)
+	{
+		this->basisDim_ = this->dSize() - 1;
 		this->initSeqCapacity();
 	}
 
 	coordinateIterator(std::initializer_list<dim_type> lst)
-		: coor_(lst.size()), dSize_(lst.size()), end_(false), basisDimOffset_(1), seqPos_(0)
+		: coor_(lst.size()), dSize_(lst.size()), end_(false), basisDimOffset_(1), seqPos_(0),
+		dims_(lst.size(), lst.data()), sP_(lst.size()), eP_(lst.size(), lst.data())
 	{
-		this->dims_ = new dim_type[this->dSize()];
-		this->memcpyDim(this->dims_, lst.data());
-
 		this->basisDim_ = this->dSize() - 1;
-		this->sP_ = new dim_type[this->dSize()]();
-		this->eP_ = this->dims_;
-
 		this->initSeqCapacity();
 	}
 
 	coordinateIterator(const self_type& mit)
 		: coor_(mit.coor_), basisDim_(mit.basisDim_), dSize_(mit.dSize_),
-		end_(mit.end_), basisDimOffset_(mit.basisDimOffset_),
-		seqPos_(mit.seqPos_), seqCapacity_(mit.seqCapacity_)
+		front_(mit.front_), end_(mit.end_), basisDimOffset_(mit.basisDimOffset_),
+		seqPos_(mit.seqPos_), seqCapacity_(mit.seqCapacity_),
+		dims_(mit.dims_), sP_(mit.sP_), eP_(mit.eP_)
 	{
-		this->dims_ = new dim_type[this->dSize()];
-		this->memcpyDim(this->dims_, mit.dims_);
-
-		this->sP_ = new dim_type[this->dSize()];
-		this->memcpyDim(this->sP_, mit.sP_);
-
-		this->eP_ = this->dims_;
 	}
 
 	~coordinateIterator()
 	{
-		delete[] this->dims_;
-		delete[] this->sP_;
+		//delete[] this->dims_;
+		//delete[] this->sP_;
 	}
 
 public:
@@ -415,8 +719,13 @@ public:
 	}
 	virtual void moveToStart()
 	{
-		this->moveTo(coordinate<Dty_>(this->dSize(), this->sP_));
+		this->moveTo(this->sP_);
 	}
+	virtual void moveToLast()
+	{
+		this->moveTo(this->eP_ - 1);
+	}
+
 	//////////////////////////////
 
 	//////////////////////////////
@@ -447,7 +756,7 @@ public:
 	self_type& operator--()
 	{
 		this->prev();
-		return +this;
+		return *this;
 	}
 	self_type operator--(int)
 	{
@@ -522,9 +831,9 @@ protected:
 	coordinate_type coor_;		// coordinate
 	dimensionId basisDim_;		// current dimension
 
-	dim_pointer dims_;			// original array dimension size
-	dim_pointer sP_;			// range start point
-	dim_pointer eP_;			// range end point
+	coordinate_type dims_;		// original array dimension size
+	coordinate_type sP_;		// range start point
+	coordinate_type eP_;		// range end point
 	size_type dSize_;			// number of dimensions
 
 	bool end_;					// is iterator at the end
@@ -538,11 +847,64 @@ protected:
 	// static std::vector<dim_type> zeroP_;
 };
 
-template <typename Dty_>
+template <typename Dty_, typename Ty_ = element>
 class itemIterator : virtual public coordinateIterator<Dty_>
 {
 public:
-	using self_type = itemIterator<Dty_>;
+	using self_type = itemIterator<Dty_, Ty_>;
+	using base_type = coordinateIterator<Dty_>;
+	using coordinate_type = coordinate<Dty_>;
+	using size_type = size_t;
+	using dim_type = Dty_;
+	using dim_pointer = Dty_*;
+	using dim_const_pointer = const Dty_*;
+	using dim_reference = Dty_&;
+	using dim_const_reference = const Dty_&;
+
+public:
+	itemIterator(Ty_* ptr, const size_type dSize, dim_const_pointer dims)
+		: base_type(dSize, dims), ptr_(ptr)
+	{
+	}
+
+	itemIterator(const self_type& mit)
+		: base_type(mit), ptr_(mit.ptr_)
+	{
+
+	}
+
+public:
+	//////////////////////////////
+	// Getter
+	//////////////////////////////
+	virtual Ty_ getAt(position_t pos)
+	{
+		return *(ptr_ + this->seqPos_ + this->posToSeq(pos));
+	}
+	//////////////////////////////
+
+	//////////////////////////////
+	// Operators
+	//////////////////////////////
+	// Comparison
+	bool operator==(const self_type& rhs) const { return ptr_ == rhs.ptr_ && this->seqPos_ == rhs.seqPos_; }
+	bool operator!=(const self_type& rhs) const { return ptr_ != rhs.ptr_ || this->seqPos_ != rhs.seqPos_; }
+
+	// Pointer
+	virtual Ty_& operator*() { return *(ptr_ + this->seqPos_); }
+	//element operator->() { return element((void*)(ptr_ + this->seqPos_ * this->eSize_), this->eType_); }
+	//////////////////////////////
+
+protected:
+	Ty_* ptr_;					// pointer to element
+								// set pointer type as char, to move one byte for each seqPos_
+};
+
+template <typename Dty_>
+class itemIterator<Dty_, element> : virtual public coordinateIterator<Dty_>
+{
+public:
+	using self_type = itemIterator<Dty_, element>;
 	using base_type = coordinateIterator<Dty_>;
 	using coordinate_type = coordinate<Dty_>;
 	using size_type = size_t;
@@ -569,7 +931,7 @@ public:
 	//////////////////////////////
 	// Getter
 	//////////////////////////////
-	element getAt(position_t pos)
+	virtual element getAt(position_t pos)
 	{
 		return element((void*)(ptr_ + (this->seqPos_ + this->posToSeq(pos)) * this->eSize_), this->eType_);
 	}
@@ -583,7 +945,7 @@ public:
 	bool operator!=(const self_type& rhs) const { return ptr_ != rhs.ptr_ || this->seqPos_ != rhs.seqPos_; }
 
 	// Pointer
-	element operator*() { return element((void*)(ptr_ + this->seqPos_ * this->eSize_), this->eType_); }
+	virtual element operator*() { return element((void*)(ptr_ + this->seqPos_ * this->eSize_), this->eType_); }
 	//element operator->() { return element((void*)(ptr_ + this->seqPos_ * this->eSize_), this->eType_); }
 	//////////////////////////////
 
@@ -594,12 +956,12 @@ protected:
 	size_type eSize_;			// element size in byte
 };
 
-template <typename Dty_>
-class itemRangeIterator : public itemIterator<Dty_>
+template <typename Dty_, typename Ty_ = element>
+class itemRangeIterator : public itemIterator<Dty_, Ty_>
 {
 public:
-	using self_type = itemRangeIterator<Dty_>;
-	using base_type = itemIterator<Dty_>;
+	using self_type = itemRangeIterator<Dty_, Ty_>;
+	using base_type = itemIterator<Dty_, Ty_>;
 
 	using coordinate_type = base_type::coordinate_type;
 	using size_type = base_type::size_type;
@@ -610,29 +972,34 @@ public:
 	using dim_const_reference = base_type::dim_const_reference;
 
 public:
-	itemRangeIterator(void* ptr, eleType eType, const size_type dSize, dim_const_pointer dim,
+	itemRangeIterator(void* ptr, const size_type dSize, dim_const_pointer dim,
 					  dim_const_pointer sP, dim_const_pointer eP)
+		: base_type(ptr, dSize, dim), coordinateIterator<Dty_>(dSize, dim)
+	{
+		assert(this->initCheckSpEp());
+		this->sP_ = coordinate<Dty_>(dSize, sP);
+		this->eP_ = coordinate<Dty_>(dSize, eP);
+		this->moveToStart();
+	}
+
+	itemRangeIterator(void* ptr, eleType eType, const size_type dSize, dim_const_pointer dim,
+					  const coordinateRange<Dty_>& range)
 		: base_type(ptr, eType, dSize, dim), coordinateIterator<Dty_>(dSize, dim)
 	{
-		this->eP_ = new dim_type[dSize];
-		this->memcpyDim(this->sP_, sP);
-		this->memcpyDim(this->eP_, eP);
-
 		assert(this->initCheckSpEp());
-
+		this->sP_ = range.getSp();
+		this->eP_ = range.getEp();
 		this->moveToStart();
 	}
 
 	itemRangeIterator(const self_type& mit) : base_type(mit), coordinateIterator<Dty_>(mit)
 	{
-		this->eP_ = new dim_type[mit.dSize()];
-		this->memcpyDim(this->eP_, mit.eP_);
-		//memcpy(this->eP_, mit.eP_, mit.dSize() * sizeof(dim_type));
+		this->sP_ = mit.sP_;
+		this->eP_ = mit.eP_;
 	}
 
 	~itemRangeIterator()
 	{
-		delete[] this->eP_;
 	}
 
 protected:
@@ -651,155 +1018,59 @@ protected:
 	}
 };
 
-// TODO:: Do not inherit caCoor
-template <typename Dty_, typename Ty_>
-class coorIterator : public coordinateIterator<Dty_>
+template <typename Dty_>
+class itemRangeIterator<Dty_, element> : public itemIterator<Dty_, element>
 {
 public:
-	using self_type = coorIterator<Dty_, Ty_>;
-	using base_type = coordinateIterator<Dty_>;
+	using self_type = itemRangeIterator<Dty_, element>;
+	using base_type = itemIterator<Dty_, element>;
 
-	using coordinate_type = coordinate<Dty_>;
-	using size_type = size_t;
-	using dim_type = Dty_;
-	using dim_pointer = Dty_*;
-	using dim_const_pointer = const Dty_*;
-	using dim_reference = Dty_&;
-	using dim_const_reference = const Dty_&;
-
-	using value_type = Ty_;
-	using value_pointer = Ty_*;
-	using value_const_pointer = const Ty_*;
-	using value_reference = Ty_&;
-	using value_const_reference = const Ty_&;
+	using coordinate_type = base_type::coordinate_type;
+	using size_type = base_type::size_type;
+	using dim_type = base_type::dim_type;
+	using dim_pointer = base_type::dim_pointer;
+	using dim_const_pointer = base_type::dim_const_pointer;
+	using dim_reference = base_type::dim_reference;
+	using dim_const_reference = base_type::dim_const_reference;
 
 public:
-	coorIterator(value_pointer ptr, const size_type dSize, dim_const_pointer dims)
-		: base_type(dSize, dims), ptr_(ptr)
+	itemRangeIterator(void* ptr, eleType eType, const size_type dSize, dim_const_pointer dim,
+					  dim_const_pointer sP, dim_const_pointer eP)
+		: base_type(ptr, eType, dSize, dim), coordinateIterator<Dty_>(dSize, dim)
 	{
-
-	}
-
-	coorIterator(const self_type& mit) : base_type(mit), ptr_(mit.ptr_)
-	{
-
-	}
-
-	~coorIterator()
-	{
-
-	}
-
-public:
-	//////////////////////////////
-	// Getter
-	//////////////////////////////
-	Ty_ getAt(position_t pos)
-	{
-		return ptr_[this->seqPos_ + this->posToSeq(pos)];
-	}
-	//////////////////////////////
-
-	//////////////////////////////
-	// Operators
-	//////////////////////////////
-	// Comparison
-	bool operator==(const self_type& rhs) const { return ptr_ == rhs.ptr_ && this->seqPos_ == rhs.seqPos_; }
-	bool operator!=(const self_type& rhs) const { return ptr_ != rhs.ptr_ || this->seqPos_ != rhs.seqPos_; }
-
-	// Pointer
-	Ty_& operator*() { return ptr_[this->seqPos_]; }
-	Ty_ operator->() { return ptr_[this->seqPos_]; }
-
-	// Move
-	self_type& operator++()
-	{
-		base_type::operator++();
-		return *this;
-	}
-	self_type operator++(int)
-	{
-		self_type tmp(*this);
-		operator++();
-		return tmp;
-	}
-	self_type& operator--()
-	{
-		base_type::operator--();
-		return *this;
-	}
-	self_type operator--(int)
-	{
-		self_type tmp(*this);
-		operator--();
-		return tmp;
-	}
-
-	// random access
-	_NODISCARD value_reference operator[](size_type pos)
-	{
-		// TODO:: out of range check
-		return ptr_[this->seqPos_ + this->posToSeq(pos)];
-	}
-	_NODISCARD const value_reference operator[](size_type pos) const
-	{
-		// TODO:: out of range check
-		return ptr_[this->seqPos_ + this->posToSeq(pos)];
-	}
-	//////////////////////////////
-
-protected:
-	Ty_* ptr_;				// pointer to element
-};
-
-// TODO:: Do not inherit caCoorSeq
-template <typename Dty_, typename Ty_>
-class coorRangeIterator : public coorIterator<Dty_, Ty_>
-{
-	using self_type = coorRangeIterator;
-	using size_type = size_t;
-	using dim_type = Dty_;
-	using dim_pointer = Dty_*;
-	using dim_const_pointer = const Dty_*;
-	using dim_reference = Dty_&;
-	using dim_const_reference = const Dty_&;
-
-	using value_type = Ty_;
-	using value_pointer = Ty_*;
-	using value_const_pointer = const Ty_*;
-	using value_reference = Ty_&;
-	using value_const_reference = const Ty_&;
-
-public:
-	coorRangeIterator(value_pointer x, const size_type dSize, dim_const_pointer boundary,
-					  dim_const_pointer sP, dim_const_pointer eP) :
-		coorIterator<Dty_, Ty_>(x, dSize, boundary)
-	{
-		this->eP_ = new Dty_[dSize];
-		this->memcpyDim(this->sP_, sP);
-		this->memcpyDim(this->eP_, eP);
-
+		assert(this->initCheckSpEp());
+		this->sP_ = coordinate<Dty_>(dSize, sP);
+		this->eP_ = coordinate<Dty_>(dSize, eP);
 		this->moveToStart();
 	}
 
-	coorRangeIterator(const coorRangeIterator& mit) : coorIterator<Dty_, Ty_>(mit)
+	itemRangeIterator(void* ptr, eleType eType, const size_type dSize, dim_const_pointer dim,
+					  const coordinateRange<Dty_>& range)
+		: base_type(ptr, eType, dSize, dim), coordinateIterator<Dty_>(dSize, dim)
 	{
-		this->eP_ = new Dty_[mit.dSize_];
-		this->memcpyDim(this->eP_, mit.eP_);
+		assert(this->initCheckSpEp());
+		this->sP_ = range.getSp();
+		this->eP_ = range.getEp();
+		this->moveToStart();
 	}
 
-	~coorRangeIterator()
+	itemRangeIterator(const self_type& mit) : base_type(mit), coordinateIterator<Dty_>(mit)
 	{
-		delete[] this->eP_;
+		this->sP_ = mit.sP_;
+		this->eP_ = mit.eP_;
+	}
+
+	~itemRangeIterator()
+	{
 	}
 
 protected:
-	// Check if sP_ and eP_ has proper range.
-	bool checkSpEp()
+	// Check if sP_ and eP_ has proper coordinate.
+	bool initCheckSpEp()
 	{
-		for (int i = 0; i < this->dSize_; i++)
+		for (dimensionId d = 0; d < this->dSize(); d++)
 		{
-			if (this->sP_[i] > this->eP_[i])
+			if (this->sP_[d] > this->eP_[d] || this->dims_[d] < this->eP_[d])
 			{
 				return false;
 			}
@@ -807,24 +1078,41 @@ protected:
 
 		return true;
 	}
-
-	// Check if eP_ and boundary_ has proper range.
-	bool checkEpBoundary()
-	{
-		for (int i = 0; i < this->dSize_; i++)
-		{
-			if (this->dims_[i] < this->eP_[i])
-			{
-				return false;
-			}
-		}
-
-		return false;
-	}
 };
+
+// Pic less coordinate value on each dimension
+template <typename Dty_>
+coordinate<Dty_> getInsideCoor(coordinate<Dty_>& c1, coordinate<Dty_>& c2)
+{
+	coordinate<Dty_> newCoor(c1);
+	for(dimensionId d = 0; d < c1.size(); ++d)
+	{
+		if(c1[d] > c2[d])
+		{
+			newCoor[d] = c2[d];
+		}
+	}
+	return newCoor;
+}
+
+// Pic greater coordiante value on each dimension
+template <typename Dty_>
+coordinate<Dty_> getOutsideCoor(coordinate<Dty_>& c1, coordinate<Dty_>& c2)
+{
+	coordinate<Dty_> newCoor(c1);
+	for (dimensionId d = 0; d < c1.size(); ++d)
+	{
+		if (c1[d] < c2[d])
+		{
+			newCoor[d] = c2[d];
+		}
+	}
+	return newCoor;
+}
 
 using coor = coordinate<position_t>;
 using coorItr = coordinateIterator<position_t>;
+using coorRange = coordinateRange<position_t>;
 using itemItr = itemIterator<position_t>;
 using itemRangeItr = itemRangeIterator<position_t>;
 }

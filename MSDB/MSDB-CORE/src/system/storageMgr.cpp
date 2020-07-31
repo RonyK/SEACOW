@@ -110,6 +110,9 @@ void storageMgr::loadChunk(arrayId arrId, attributeId attrId, chunkId chkId, pSe
 	_MSDB_CATCH_END
 }
 
+// StorageMgr do not know the struct of chunk.
+// Instead, it can deal with serializable objects.
+// So, we seperate 'pChunk' into 'chunkId' and 'pSerializable'.
 void storageMgr::saveChunk(arrayId arrId, attributeId attrId, chunkId chkId, pSerializable serialObj)
 {
 	std::ofstream fs;

@@ -6,7 +6,7 @@
 namespace msdb
 {
 chunkBuffer::chunkBuffer()
-	: bodySize_(0), isAllocated_(false), data_(nullptr)
+	: buffer(), data_(nullptr)
 {
 
 }
@@ -40,6 +40,7 @@ void chunkBuffer::alloc(bufferSize size)
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_MEMORY_ERROR, MSDB_ER_MEMORY_ALLOC_FAIL));
 	}
 	
+	this->isAllocated_ = true;
 	this->data_ = new char[size];
 	this->bodySize_ = size;
 	this->isAllocated_ = true;
@@ -49,15 +50,11 @@ void chunkBuffer::realloc(bufferSize size)
 {
 	assert(size > 0);
 
-	if(!this->isAllocated())
-	{
-		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_MEMORY_ERROR, MSDB_ER_MEMORY_REALLOC_FAIL));
-	}
-
 	void* re = new char[size];
 	memcpy(re, this->data_, std::min(size, this->bodySize_));
 	this->free();
-	
+
+	this->isAllocated_ = true;
 	this->data_ = re;
 	this->bodySize_ = size;
 }
@@ -65,6 +62,7 @@ void chunkBuffer::realloc(bufferSize size)
 void chunkBuffer::copy(void* data, bufferSize size)
 {
 	this->free();
+	this->isAllocated_ = true;
 	this->data_ = new char[size];
 	memcpy(this->data_, data, size);
 	this->bodySize_ = size;
@@ -74,24 +72,20 @@ void chunkBuffer::copy(void* data, bufferSize size)
 void chunkBuffer::assign(void* data, bufferSize size)
 {
 	this->free();
+	this->isAllocated_ = false;
 	this->data_ = data;
 	this->bodySize_ = size;
 }
 
 void chunkBuffer::free()
 {
-	if(this->data_ != nullptr && this->bodySize_ != 0)
+	if(this->isAllocated_ && this->data_ != nullptr)
 	{
 		delete[] this->data_;
+		this->isAllocated_ = false;
 		this->bodySize_ = 0;
 		this->data_ = nullptr;
 	}
-}
-bool chunkBuffer::isAllocated()
-{
-	if (this->isAllocated_ && this->data_ != nullptr)
-		return true;
-	return false;
 }
 
 //void chunkBuffer::compress(CompressionMethod cm)

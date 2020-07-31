@@ -23,6 +23,7 @@ void getLoad(pArrayDesc sourceArrDesc,
 
 pArray save(std::vector<pArray> sourceArr);
 pArray load(std::vector<pArray> sourceArr);
+void load_test(pArray arr);
 }	// data2D_sc4x4
 }	// caDummy
 }	// msdb

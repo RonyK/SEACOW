@@ -120,7 +120,7 @@ public:
 public:
 	class mmtNode;
 	using pNode = std::shared_ptr<mmtNode>;
-	using nodeItr = coorIterator<Dty_, pNode>;
+	using nodeItr = coordinateIterator<Dty_>;
 
 	class mmtNode : public attributeIndex
 	{
@@ -317,7 +317,7 @@ public:
 
 	nodeItr getNodeIterator(size_type level)
 	{
-		return nodeItr(this->nodes_[level].data(), this->dSize_, this->levelDims_[level].data());
+		return nodeItr(this->dSize_, this->levelDims_[level].data());
 	}
 
 public:
@@ -350,7 +350,7 @@ protected:
 			while (!bit.isEnd())
 			{
 				auto bItemBdy = this->getBlockItemBoundary(bit.coor());
-				auto iit = (*it)->getItemRangeIterator(bItemBdy.first.data(), bItemBdy.second.data());
+				auto iit = (*it)->getItemRangeIterator(bItemBdy);
 				auto lNode = this->forwardBuildLeafNode(iit);
 				this->setNode(lNode, it.coor(), bit.coor());
 
@@ -363,21 +363,21 @@ protected:
 		}
 	}
 
-	pNode forwardBuildLeafNode(itemItr& iit)
+	pNode forwardBuildLeafNode(std::shared_ptr<itemItr> iit)
 	{
 		pNode node = std::make_shared<mmtNode>();
 
-		auto value = (*iit).get<Ty_>();
+		auto value = (**iit).get<Ty_>();
 		//std::cout << "chunk: " << static_cast<int>(value) << ", ";
 
 		node->max_ = value;
 		node->min_ = value;
 		node->bits_ = (bit_cnt_type)TyBits_;
-		++iit;
+		++(*iit);
 
-		while (!iit.isEnd())
+		while (!iit->isEnd())
 		{
-			auto v = (*iit).get<Ty_>();
+			auto v = (**iit).get<Ty_>();
 			//std::cout << static_cast<int>(v) << ", ";
 			if (node->max_ < v)
 			{
@@ -387,7 +387,7 @@ protected:
 			{
 				node->min_ = v;
 			}
-			++iit;
+			++(*iit);
 		}
 
 		//std::cout << std::endl << "----------" << std::endl;
@@ -414,9 +414,9 @@ protected:
 
 		////////////////////////////////////////
 		// Update min/max values
-		coorIterator<Dty_, pNode> pcit(this->nodes_[level - 1].data(), this->dSize_,
+		itemIterator<Dty_, pNode> pcit(this->nodes_[level - 1].data(), this->dSize_,
 									   prevLevelDim.data());
-		coorIterator<Dty_, pNode> cit(this->nodes_[level].data(), this->dSize_,
+		itemIterator<Dty_, pNode> cit(this->nodes_[level].data(), this->dSize_,
 									  levelDim.data());
 
 		for (size_type i = 0; i < this->nodes_[level - 1].size(); i++)
@@ -490,10 +490,10 @@ protected:
 		////////////////////////////////////////
 		// Update nit order for chunks in current level
 		// Prev
-		coorIterator<Dty_, pNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
+		itemIterator<Dty_, pNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
 									   prevLevelDim.data());
 		// Current
-		coorIterator<Dty_, pNode> cit(this->nodes_[level].data(), this->dSize_,
+		itemIterator<Dty_, pNode> cit(this->nodes_[level].data(), this->dSize_,
 									  levelDim.data());
 
 		for (size_type i = 0; i < this->nodes_[level + 1].size(); ++i, ++pcit)
@@ -615,11 +615,11 @@ protected:
 		this->nodes_[level].resize(chunkCnt);
 
 		// Prev
-		coorIterator<Dty_, pNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
+		itemIterator<Dty_, pNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
 									   pChunksInDim.data());
 
 		// Current
-		coorIterator<Dty_, pNode> cit(this->nodes_[level].data(), this->dSize_,
+		itemIterator<Dty_, pNode> cit(this->nodes_[level].data(), this->dSize_,
 									  chunksInDim.data());
 
 		for (size_type i = 0; i < chunkCnt; i++)
@@ -730,8 +730,7 @@ public:
 		return blockCoor;
 	}
 
-	std::pair<coordinate<Dty_>, coordinate<Dty_>>
-		getBlockItemBoundary(coordinate<Dty_>& inner)
+	coorRange getBlockItemBoundary(coordinate<Dty_>& inner)
 	{
 		coordinate<Dty_> spOut(this->dSize_), epOut(this->dSize_);
 		for (dimensionId d = 0; d < this->dSize_; ++d)
@@ -739,7 +738,7 @@ public:
 			spOut[d] = this->leafBlockDim_[d] * inner[d];
 			epOut[d] = this->leafBlockDim_[d] * (inner[d] + 1);
 		}
-		return std::make_pair<>(spOut, epOut);
+		return coorRange(spOut, epOut);
 	}
 	
 public:
@@ -765,6 +764,30 @@ public:
 		}
 		return this->nodes_[level][nit.coorToSeq(nodeCoor)];
 	}
+
+	// qRange: query range
+	pNode getNode(const coorRange qRange)
+	{
+		auto rangeDim = qRange.width();
+		coor blockDim(this->leafBlockDim_);
+
+		for (size_type level = 0; level <= this->maxLevel_; ++level)
+		{
+			if (rangeDim > blockDim)
+			{
+				blockDim /= 2;
+				continue;
+			}
+
+			auto nodeCoor = qRange.getSp();
+			nodeCoor /= blockDim;
+
+			auto nit = this->getNodeIterator(level);
+			return this->nodes_[level][nit.coorToSeq(nodeCoor)];
+		}
+
+		return nullptr;
+	};
 
 	void setNode(pNode node, coor& nodeCoor, size_type level = 0)
 	{

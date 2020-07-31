@@ -21,7 +21,7 @@ pArray mmt_delta_encode_action::execute(std::vector<pArray>& inputArrays, pQuery
 	assert(inputArrays.size() == 1);
 
 	pArray sourceArr = inputArrays[0];
-	arrayId arrId = sourceArr->getArrayId();
+	arrayId arrId = sourceArr->getId();
 
 	auto deltaArr = std::make_shared<mmt_delta_encode_array>(this->getArrayDesc());
 

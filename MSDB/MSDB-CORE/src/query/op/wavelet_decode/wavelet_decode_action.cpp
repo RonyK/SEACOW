@@ -47,18 +47,36 @@ pArray wavelet_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 
 		switch(chunkBundle.front()->getDesc()->attrDesc_->type_)
 		{
+		case eleType::CHAR:
+			wdArray->insertChunk(this->chunkDecode<char>(wdArray, chunkBundle, w, maxLevel, q));
+			break;
+		case eleType::INT8:
+			wdArray->insertChunk(this->chunkDecode<int8_t>(wdArray, chunkBundle, w, maxLevel, q));
+			break;
+		case eleType::INT16:
+			wdArray->insertChunk(this->chunkDecode<int16_t>(wdArray, chunkBundle, w, maxLevel, q));
+			break;
 		case eleType::INT32:
 			wdArray->insertChunk(this->chunkDecode<int32_t>(wdArray, chunkBundle, w, maxLevel, q));
 			break;
 		case eleType::INT64:
 			wdArray->insertChunk(this->chunkDecode<int64_t>(wdArray, chunkBundle, w, maxLevel, q));
 			break;
-		case eleType::DOUBLE:
-			wdArray->insertChunk(this->chunkDecode<double>(wdArray, chunkBundle, w, maxLevel, q));
+		case eleType::UINT8:
+			wdArray->insertChunk(this->chunkDecode<uint8_t>(wdArray, chunkBundle, w, maxLevel, q));
 			break;
-		case eleType::CHAR:
-			wdArray->insertChunk(this->chunkDecode<char>(wdArray, chunkBundle, w, maxLevel, q));
+		case eleType::UINT16:
+			wdArray->insertChunk(this->chunkDecode<uint16_t>(wdArray, chunkBundle, w, maxLevel, q));
 			break;
+		case eleType::UINT32:
+			wdArray->insertChunk(this->chunkDecode<uint32_t>(wdArray, chunkBundle, w, maxLevel, q));
+			break;
+		case eleType::UINT64:
+			wdArray->insertChunk(this->chunkDecode<uint64_t>(wdArray, chunkBundle, w, maxLevel, q));
+			break;
+		//case eleType::DOUBLE:
+		//	wdArray->insertChunk(this->chunkDecode<double>(wdArray, chunkBundle, w, maxLevel, q));
+		//	break;
 		default:
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 		}

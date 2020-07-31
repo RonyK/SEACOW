@@ -43,7 +43,7 @@ void mmt_build_test(pArray afterArray)
 	// Result check
 	for (auto attrDesc : afterArray->getDesc()->attrDescs_)
 	{
-		auto attrIndex = arrayMgr::instance()->getAttributeIndex(afterArray->getArrayId(), attrDesc->id_);
+		auto attrIndex = arrayMgr::instance()->getAttributeIndex(afterArray->getId(), attrDesc->id_);
 		EXPECT_TRUE(attrIndex != nullptr);
 
 		std::shared_ptr<MinMaxTreeImpl<dim_type, value_type>> mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<dim_type, value_type>>(attrIndex);
@@ -58,14 +58,14 @@ void mmt_build_test(pArray afterArray)
 		for (size_t l = 0; l <= level; l++)
 		{
 			auto levelNodes = nodes[l];
-			MinMaxTreeImpl<dim_type, value_type>::nodeItr nit(levelNodes.data(), 2, mmtIndex->getLevelDim(l).data());
+			MinMaxTreeImpl<dim_type, value_type>::nodeItr nit(2, mmtIndex->getLevelDim(l).data());
 			for (int y = 0; y < chunkNums[0] / pow(2, l); ++y)
 			{
 				for (int x = 0; x < chunkNums[1] / pow(2, l); ++x)
 				{
 					coor blockCoor({ y, x });
 					nit.moveTo(blockCoor);
-					auto node = *nit;
+					auto node = levelNodes.data()[nit.seqPos()];
 
 					std::cout << "[" << x << ", " << y << "] " << static_cast<int>(node->min_) << " ~ " << static_cast<int>(node->max_) << std::endl;
 
@@ -136,7 +136,7 @@ pArray mmt_delta_encode(std::vector<pArray> sourceArr)
 
 void mmt_delta_encode_test(std::shared_ptr<mmt_delta_encode_array> arr)
 {
-	auto arrId = arr->getArrayId();
+	auto arrId = arr->getId();
 
 	for (auto attr : arr->getDesc()->attrDescs_)
 	{
@@ -149,11 +149,11 @@ void mmt_delta_encode_test(std::shared_ptr<mmt_delta_encode_array> arr)
 		while (!cit.isEnd())
 		{
 			auto iit = (*cit)->getItemIterator();
-			for (size_t i = 0; i < iit.getCapacity(); ++i)
+			for (size_t i = 0; i < iit->getCapacity(); ++i)
 			{
-				std::cout << "[" << iit.coor()[0] << ", " << iit.coor()[1] << "] " << static_cast<int>((*iit).getChar()) << ", " << static_cast<int>(expected[i]) << std::endl;
-				EXPECT_EQ((*iit).getChar(), expected[i + iit.getCapacity() * c]);
-				++iit;
+				std::cout << "[" << iit->coor()[0] << ", " << iit->coor()[1] << "] " << static_cast<int>((**iit).getChar()) << ", " << static_cast<int>(expected[i]) << std::endl;
+				EXPECT_EQ((**iit).getChar(), expected[i + iit->getCapacity() * c]);
+				++(*iit);
 			}
 			++c;
 			++cit;
@@ -184,7 +184,7 @@ std::shared_ptr<mmt_delta_encode_array> get_mmt_delta_encode_array()
 
 void mmt_delta_decode_test(std::shared_ptr<mmt_delta_decode_array> arr)
 {
-	auto arrId = arr->getArrayId();
+	auto arrId = arr->getId();
 
 	for (auto attr : arr->getDesc()->attrDescs_)
 	{
@@ -197,11 +197,11 @@ void mmt_delta_decode_test(std::shared_ptr<mmt_delta_decode_array> arr)
 		while (!cit.isEnd())
 		{
 			auto iit = (*cit)->getItemIterator();
-			for (size_t i = 0; i < iit.getCapacity(); ++i)
+			for (size_t i = 0; i < iit->getCapacity(); ++i)
 			{
-				std::cout << "[" << iit.coor()[0] << ", " << iit.coor()[1] << "] " << static_cast<int>((*iit).getChar()) << ", " << static_cast<int>(expected[i]) << std::endl;
-				EXPECT_EQ((*iit).getChar(), expected[i + iit.getCapacity() * c]);
-				++iit;
+				std::cout << "[" << iit->coor()[0] << ", " << iit->coor()[1] << "] " << static_cast<int>((**iit).getChar()) << ", " << static_cast<int>(expected[i]) << std::endl;
+				EXPECT_EQ((**iit).getChar(), expected[i + iit->getCapacity() * c]);
+				++(*iit);
 			}
 			++c;
 			++cit;
@@ -209,5 +209,42 @@ void mmt_delta_decode_test(std::shared_ptr<mmt_delta_decode_array> arr)
 	}
 }
 }	// data2D_sc4x4
+
+namespace data2D_sc8x8
+{
+pArray mmt_build(std::vector<pArray> sourceArr)
+{
+	getSourceArrayIfEmpty(sourceArr);
+
+	eleDefault level = 1;
+	std::shared_ptr<mmt_build_plan> mmtPlan;
+	std::shared_ptr<mmt_build_action> mmtAction;
+	pQuery mmtQuery;
+	getMmtBuild(sourceArr[0]->getDesc(), level, mmtPlan, mmtAction, mmtQuery);
+
+	// Execute mmt build action
+	auto afterArray = mmtAction->execute(sourceArr, mmtQuery);
+
+	return afterArray;
+}
+
+pArray mmt_save(std::vector<pArray> sourceArr)
+{
+	// Should build mmt before
+	getSourceArrayIfEmpty(sourceArr);
+
+	std::shared_ptr<mmt_save_plan> mmtPlan;
+	std::shared_ptr<mmt_save_action> mmtAction;
+	pQuery mmtQuery;
+	getMmtSave(sourceArr[0]->getDesc(), mmtPlan, mmtAction, mmtQuery);
+
+	auto afterArray = mmtAction->execute(sourceArr, mmtQuery);
+
+	EXPECT_TRUE(std::filesystem::is_regular_file(
+		filePath("../storage/array/881/indies/0.msdbindex")));
+
+	return afterArray;
+}
+}
 }	// caDummy
 }	// msdb

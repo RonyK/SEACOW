@@ -46,8 +46,8 @@ using pWavelet = std::shared_ptr<wavelet>;
 				  size_t c, size_t offset, waveletType t);
 	};
 
-	int waveletEncode(const wavelet* w, const double* data, double* output,
-						size_t length, std::vector<int>* dims, size_t level = 1);
+	//int waveletEncode(const wavelet* w, const double* data, double* output,
+	//					size_t length, std::vector<int>* dims, size_t level = 1);
 
 	template <typename _Dty>
 	void getWaveletLevelDims(std::vector<_Dty>& output, const std::vector<_Dty>& dims, 
@@ -73,74 +73,74 @@ using pWavelet = std::shared_ptr<wavelet>;
 		return length;
 	}
 
-	template<class _Dty, class _Ty>
-	int waveletDecode(_Ty* output, const _Ty* data, const wavelet* w,
-					  size_t length, std::vector<_Dty>& dims, size_t level)
-	{
-		double* temp = new double[length];
-		memcpy(temp, data, sizeof(double) * length);
-		// init output stream as a zero.
-		memset(output, 0, sizeof(double) * length);
+	//template<class _Dty, class _Ty>
+	//int waveletDecode(_Ty* output, const _Ty* data, const wavelet* w,
+	//				  size_t length, std::vector<_Dty>& dims, size_t level)
+	//{
+	//	double* temp = new double[length];
+	//	memcpy(temp, data, sizeof(double) * length);
+	//	// init output stream as a zero.
+	//	memset(output, 0, sizeof(double) * length);
 
-		std::vector<_Dty> levelSize, sP(dims.size(), 0), eP;
-		getWaveletLevelDims<_Dty>(levelSize, dims, level);
-		eP = levelSize;
+	//	std::vector<_Dty> levelSize, sP(dims.size(), 0), eP;
+	//	getWaveletLevelDims<_Dty>(levelSize, dims, level);
+	//	eP = levelSize;
 
-		coorRangeIterator<int, double> iit(temp, dims.size(), dims.data(), sP.data(), eP.data());
-		coorRangeIterator<int, double> oit(output, dims.size(), dims.data(), sP.data(), eP.data());
+	//	coorRangeIterator<int, double> iit(temp, dims.size(), dims.data(), sP.data(), eP.data());
+	//	coorRangeIterator<int, double> oit(output, dims.size(), dims.data(), sP.data(), eP.data());
 
-		size_t levelDataLength = getDataLength(dims.size(), sP.data(), eP.data());
-		std::cout << "dataLength: " << levelDataLength << std::endl;
+	//	size_t levelDataLength = getDataLength(dims.size(), sP.data(), eP.data());
+	//	std::cout << "dataLength: " << levelDataLength << std::endl;
 
-		for (int d = 0; d < dims.size(); d++)
-		{
-			size_t half = eP[d] >> 1;
-			size_t rows = levelDataLength / (static_cast<size_t>(eP[d]) - static_cast<size_t>(sP[d]));
-			std::cout << sP[d] << ", " << eP[d] << ", half: " << half << ", rows: " << rows << std::endl;
+	//	for (int d = 0; d < dims.size(); d++)
+	//	{
+	//		size_t half = eP[d] >> 1;
+	//		size_t rows = levelDataLength / (static_cast<size_t>(eP[d]) - static_cast<size_t>(sP[d]));
+	//		std::cout << sP[d] << ", " << eP[d] << ", half: " << half << ", rows: " << rows << std::endl;
 
-			iit.setBasisDim(d);
-			iit.moveToStart();
-			oit.setBasisDim(d);
-			oit.moveToStart();
+	//		iit.setBasisDim(d);
+	//		iit.moveToStart();
+	//		oit.setBasisDim(d);
+	//		oit.moveToStart();
 
-			for (size_t r = 0; r < rows; r++)
-			{
-				for (int i = sP[d]; i < half; ++i)
-				{
-					_Ty left = iit[0];
-					_Ty right = iit[half];
-					for (int j = 0; (j < w->c_) && (i + j < eP[d]); j++)
-					{
-						oit[j] += w->h_1[j] * left + w->g_1[j] * right;
- 					}
+	//		for (size_t r = 0; r < rows; r++)
+	//		{
+	//			for (int i = sP[d]; i < half; ++i)
+	//			{
+	//				_Ty left = iit[0];
+	//				_Ty right = iit[half];
+	//				for (int j = 0; (j < w->c_) && (i + j < eP[d]); j++)
+	//				{
+	//					oit[j] += w->h_1[j] * left + w->g_1[j] * right;
+ //					}
 
-					oit += 2;
-					++iit;
-				}
-				std::cout << "-----" << std::endl;
-				iit += half;	// go to next row
-			}
+	//				oit += 2;
+	//				++iit;
+	//			}
+	//			std::cout << "-----" << std::endl;
+	//			iit += half;	// go to next row
+	//		}
 
-			for (int i = 0; i < length; i++)
-			{
-				std::cout << output[i] << ", ";
+	//		for (int i = 0; i < length; i++)
+	//		{
+	//			std::cout << output[i] << ", ";
 
-				if (length % eP[d] == 0)
-				{
-					std::cout << "/";
-				}
-			}
-			std::cout << std::endl;
+	//			if (length % eP[d] == 0)
+	//			{
+	//				std::cout << "/";
+	//			}
+	//		}
+	//		std::cout << std::endl;
 
-			memcpy(temp, output, sizeof(double) * length);
-			memset(output, 0, sizeof(double) * length);
-		}
+	//		memcpy(temp, output, sizeof(double) * length);
+	//		memset(output, 0, sizeof(double) * length);
+	//	}
 
-		memcpy(output, temp, sizeof(double) * length);
-		delete[] temp;
+	//	memcpy(output, temp, sizeof(double) * length);
+	//	delete[] temp;
 
-		return 0;
-	}
+	//	return 0;
+	//}
 }
 
 #endif
