@@ -19,7 +19,7 @@ pArray load_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 	assert(inputArrays.size() == 1);
 
 	pArray sourceArr = inputArrays[0];
-	arrayId arrId = sourceArr->getArrayId();
+	arrayId arrId = sourceArr->getId();
 
 	for (auto attr : sourceArr->getDesc()->attrDescs_)
 	{

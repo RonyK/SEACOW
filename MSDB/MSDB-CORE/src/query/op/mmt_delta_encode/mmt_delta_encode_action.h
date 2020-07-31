@@ -31,7 +31,7 @@ public:
 template<class Ty_>
 void mmt_delta_encode_action::saveAttribute(std::shared_ptr<mmt_delta_encode_array> outArr, pArray inArr, pAttributeDesc attrDesc)
 {
-	auto arrIndex = arrayMgr::instance()->getAttributeIndex(inArr->getArrayId(), attrDesc->id_);
+	auto arrIndex = arrayMgr::instance()->getAttributeIndex(inArr->getId(), attrDesc->id_);
 	if (arrIndex->getType() != attrIndexType::MMT)
 	{
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_USER_QUERY_ERROR, MSDB_ER_ATTR_INDEX_TYPE_DIFF));

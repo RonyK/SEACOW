@@ -45,7 +45,7 @@ TEST_F(query_op_mmt_save, mmt_serialize_sc4x4)
     // Should build mmt before
     std::vector<pArray> sourceArr = getSourceArray();
     pArray arr = sourceArr[0];
-    arrayId arrId = arr->getArrayId();
+    arrayId arrId = arr->getId();
 
     for (auto attr : arr->getDesc()->attrDescs_)
     {

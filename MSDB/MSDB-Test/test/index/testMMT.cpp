@@ -43,7 +43,7 @@ void mmt_build_test(pArray afterArray)
 	// Result check
 	for (auto attrDesc : afterArray->getDesc()->attrDescs_)
 	{
-		auto attrIndex = arrayMgr::instance()->getAttributeIndex(afterArray->getArrayId(), attrDesc->id_);
+		auto attrIndex = arrayMgr::instance()->getAttributeIndex(afterArray->getId(), attrDesc->id_);
 		EXPECT_TRUE(attrIndex != nullptr);
 
 		std::shared_ptr<MinMaxTreeImpl<dim_type, value_type>> mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<dim_type, value_type>>(attrIndex);
@@ -136,7 +136,7 @@ pArray mmt_delta_encode(std::vector<pArray> sourceArr)
 
 void mmt_delta_encode_test(std::shared_ptr<mmt_delta_encode_array> arr)
 {
-	auto arrId = arr->getArrayId();
+	auto arrId = arr->getId();
 
 	for (auto attr : arr->getDesc()->attrDescs_)
 	{
@@ -184,7 +184,7 @@ std::shared_ptr<mmt_delta_encode_array> get_mmt_delta_encode_array()
 
 void mmt_delta_decode_test(std::shared_ptr<mmt_delta_decode_array> arr)
 {
-	auto arrId = arr->getArrayId();
+	auto arrId = arr->getId();
 
 	for (auto attr : arr->getDesc()->attrDescs_)
 	{

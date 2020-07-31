@@ -30,10 +30,10 @@ public:
 	template<typename Ty_>
 	void compressAttribute(std::shared_ptr<wavelet_encode_array>inArr, pAttributeDesc attrDesc)
 	{
-		auto arrId = inArr->getArrayId();
+		auto arrId = inArr->getId();
 		auto cit = inArr->getChunkIterator(iterateMode::EXIST);
 
-		auto arrIndex = arrayMgr::instance()->getAttributeIndex(inArr->getArrayId(), attrDesc->id_);
+		auto arrIndex = arrayMgr::instance()->getAttributeIndex(inArr->getId(), attrDesc->id_);
 		if (arrIndex->getType() != attrIndexType::MMT)
 		{
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_USER_QUERY_ERROR, MSDB_ER_ATTR_INDEX_TYPE_DIFF));

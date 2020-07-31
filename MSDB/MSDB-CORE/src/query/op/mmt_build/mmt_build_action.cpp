@@ -29,7 +29,7 @@ pArray mmt_build_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 	ele->getData(&maxLevel);
 
 	// Setup array
-	arrayId arrId = arr->getArrayId();
+	arrayId arrId = arr->getId();
 	auto dims = arr->getDesc()->getDimDescs().getDims();
 	auto chunkDims = arr->getDesc()->getDimDescs().getChunkDims();
 

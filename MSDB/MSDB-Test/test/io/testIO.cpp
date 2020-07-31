@@ -79,7 +79,7 @@ pArray load(std::vector<pArray> sourceArr)
 
 void load_test(pArray arr)
 {
-	auto arrId = arr->getArrayId();
+	auto arrId = arr->getId();
 
 	size_t items = 0;
 	for (auto attr : arr->getDesc()->attrDescs_)

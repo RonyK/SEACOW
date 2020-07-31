@@ -24,7 +24,7 @@ pArray mmt_save_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 	assert(inputArrays.size() == 1);
 
 	pArray arr = inputArrays[0];
-	arrayId arrId = arr->getArrayId();
+	arrayId arrId = arr->getId();
 
 	for (auto attr : arr->getDesc()->attrDescs_)
 	{

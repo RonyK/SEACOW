@@ -47,9 +47,14 @@ pChunk arrayBase::getChunk(chunkId cId)
 	return this->chunks_[cId];
 }
 
-arrayId arrayBase::getArrayId()
+arrayId arrayBase::getId()
 {
 	return this->desc_->id_;
+}
+
+void arrayBase::setId(arrayId id)
+{
+	this->desc_->id_ = id;
 }
 
 chunkId arrayBase::getChunkId(pChunkDesc cDesc)
@@ -77,5 +82,15 @@ chunkId arrayBase::getChunkIdFromChunkCoor(coor& chunkCoor)
 		offset *= this->desc_->dimDescs_[d]->getChunkNum();
 	}
 	return id;
+}
+void arrayBase::print()
+{
+	auto cit = this->getChunkIterator();
+
+	while(!cit.isEnd())
+	{
+		(*cit)->print();
+		++cit;
+	}
 }
 }

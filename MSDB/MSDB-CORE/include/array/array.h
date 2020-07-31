@@ -78,7 +78,7 @@ public:
 	//////////////////////////////
 	// Getter
 	//////////////////////////////
-	arrayId getArrayId();
+	arrayId getId();
 	pArrayDesc getDesc();
 	size_type getNumChunks();
 
@@ -94,6 +94,7 @@ public:
 	//////////////////////////////
 	// Setter
 	//////////////////////////////
+	void setId(arrayId id);	// only used for test
 	void insertChunk(pChunk inputChunk);
 	void flush();
 
@@ -105,6 +106,8 @@ public:
 			this->chunks_.insert(chunkPair((*begin)->getId(), *begin));
 		}
 	}
+
+	void print();
 
 protected:
 	pArrayDesc desc_;

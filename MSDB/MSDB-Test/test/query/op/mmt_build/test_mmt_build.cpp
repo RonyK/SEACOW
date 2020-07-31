@@ -35,7 +35,7 @@ TEST(query_op_mmt_build, mmt_build_sc8x8)
 	// Result check
 	for(auto attrDesc : afterArray->getDesc()->attrDescs_)
 	{
-		auto attrIndex = arrayMgr::instance()->getAttributeIndex(afterArray->getArrayId(), attrDesc->id_);
+		auto attrIndex = arrayMgr::instance()->getAttributeIndex(afterArray->getId(), attrDesc->id_);
 		EXPECT_TRUE(attrIndex != nullptr);
 
 		std::shared_ptr<MinMaxTreeImpl<dim_type, value_type>> mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<dim_type, value_type>>(attrIndex);

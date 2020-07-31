@@ -21,7 +21,7 @@ pArray se_compression_action::execute(std::vector<pArray>& inputArrays, pQuery q
 	assert(inputArrays.size() == 1);
 
 	auto sourceArr = std::static_pointer_cast<wavelet_encode_array>(inputArrays[0]);
-	auto arrId = sourceArr->getArrayId();
+	auto arrId = sourceArr->getId();
 
 	for (auto attr : sourceArr->getDesc()->attrDescs_)
 	{
