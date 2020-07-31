@@ -32,6 +32,9 @@
     <ClCompile Include="test\query\op\save\test_save.cpp" />
     <ClCompile Include="test\query\op\load\test_load.cpp" />
     <ClCompile Include="test\io\testIO.cpp" />
+    <ClCompile Include="test\query\op\spiht_encode\test_spiht_encode.cpp" />
+    <ClCompile Include="test\dummy\spihtDummy.cpp" />
+    <ClCompile Include="test\compression\testSPIHT.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">
@@ -41,6 +44,8 @@
     <ClInclude Include="test\dummy\opDummy.h" />
     <ClInclude Include="test\index\testMMT.h" />
     <ClInclude Include="test\io\testIO.h" />
+    <ClInclude Include="test\dummy\spihtDummy.h" />
+    <ClInclude Include="test\compression\testSPIHT.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="test">

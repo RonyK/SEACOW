@@ -18,13 +18,18 @@ public:
 
 public:
 	pArray execute(std::vector<pArray>& inputArrays, pQuery q);
+	std::list<int> getCode();
 
 private:
 	void encode_init(size_t dSize, std::vector<size_t> bandSize);
 	template<class Ty_>
-	void encode_sigpass(size_t dSize, std::vector<position_t> cSize, std::vector<size_t> bandSize, chunkItemIterator itemItr, size_t curStep, size_t maxStep);
+	void encode_progress(size_t dSize, std::vector<position_t> cSize, std::vector<size_t> bandSize, chunkItemIterator itemItr);
+
 	template<class Ty_>
-	void encode_refinepass(chunkItemIterator itemItr, size_t curStep, size_t maxStep, size_t LSP_size);
+	void encode_sigpass(size_t dSize, std::vector<position_t> cSize, std::vector<size_t> bandSize, 
+		chunkItemIterator itemItr, Ty_ signBit, Ty_ stepBit);
+	template<class Ty_>
+	void encode_refinepass(chunkItemIterator itemItr, Ty_ stepBit, size_t LSP_size);
 
 private:
 	std::list<coor> LIP_;

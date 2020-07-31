@@ -1,445 +1,149 @@
-<?xml version="1.0" encoding="utf-8"?>
+癤�<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="소스 파일">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="헤더 파일">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="리소스 파일">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
+    <ClCompile Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.cpp" />
+    <ClCompile Include="src\array\memArray.cpp" />
+    <ClCompile Include="src\index\attributeIndex.cpp" />
+    <ClCompile Include="src\array\arrayMgr.cpp" />
+    <ClCompile Include="src\array\attributeDesc.cpp" />
+    <ClCompile Include="src\index\mmt.cpp" />
+    <ClCompile Include="src\io\serializable.cpp" />
+    <ClCompile Include="src\query\op\load\load_action.cpp" />
+    <ClCompile Include="src\query\op\load\load_plan.cpp" />
+    <ClCompile Include="src\query\op\mmt_build\mmt_build_action.cpp" />
+    <ClCompile Include="src\query\op\mmt_build\mmt_build_plan.cpp" />
+    <ClCompile Include="src\query\op\mmt_delta_decode\mmt_delta_decode_action.cpp" />
+    <ClCompile Include="src\query\op\mmt_delta_decode\mmt_delta_decode_array.cpp" />
+    <ClCompile Include="src\query\op\mmt_delta_decode\mmt_delta_decode_plan.cpp" />
+    <ClCompile Include="src\query\op\mmt_delta_encode\mmt_delta_encode_action.cpp" />
+    <ClCompile Include="src\query\op\mmt_delta_encode\mmt_delta_encode_array.cpp" />
+    <ClCompile Include="src\query\op\mmt_delta_encode\mmt_delta_encode_plan.cpp" />
+    <ClCompile Include="src\query\op\mmt_load\mmt_load_action.cpp" />
+    <ClCompile Include="src\query\op\mmt_load\mmt_load_plan.cpp" />
+    <ClCompile Include="src\query\op\mmt_save\mmt_save_action.cpp" />
+    <ClCompile Include="src\query\op\mmt_save\mmt_save_plan.cpp" />
+    <ClCompile Include="src\query\op\spiht_decode\spiht_decode_action.cpp" />
+    <ClCompile Include="src\query\op\spiht_decode\spiht_decode_plan.cpp" />
+    <ClCompile Include="src\query\op\spiht_encode\spiht_encode_action.cpp" />
+    <ClCompile Include="src\query\op\spiht_encode\spiht_encode_plan.cpp" />
+    <ClCompile Include="src\query\op\save\save_action.cpp" />
+    <ClCompile Include="src\query\op\save\save_plan.cpp" />
+    <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_action.cpp" />
+    <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_array.cpp" />
+    <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_plan.cpp" />
+    <ClCompile Include="src\util\math.cpp" />
+    <ClCompile Include="src\array\dimensionDesc.cpp" />
+    <ClCompile Include="src\query\opAction.cpp" />
+    <ClCompile Include="src\query\opParamSet.cpp" />
+    <ClCompile Include="src\query\opPlan.cpp" />
+    <ClCompile Include="src\query\opParam.cpp" />
+    <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_action.cpp" />
+    <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_array.cpp" />
+    <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_plan.cpp" />
+    <ClCompile Include="src\util\element.cpp" />
+    <ClCompile Include="src\array\chunk.cpp" />
+    <ClCompile Include="src\array\chunkBuffer.cpp" />
+    <ClCompile Include="src\array\memChunkBuffer.cpp" />
+    <ClCompile Include="src\array\arrayDesc.cpp" />
+    <ClCompile Include="src\array\configArrays.cpp" />
+    <ClCompile Include="src\system\config.cpp" />
+    <ClCompile Include="src\array\buffer.cpp" />
+    <ClCompile Include="src\io\file.cpp" />
+    <ClCompile Include="src\array\array.cpp" />
+    <ClCompile Include="src\array\compChunk.cpp" />
+    <ClCompile Include="src\array\chunkDesc.cpp" />
+    <ClCompile Include="src\io\bitstream.cpp" />
+    <ClCompile Include="src\system\errorCodes.cpp" />
+    <ClCompile Include="src\system\exceptions.cpp" />
+    <ClCompile Include="src\system\storageMgr.cpp" />
+    <ClCompile Include="src\util\singleton.cpp" />
+    <ClCompile Include="src\compression\compact.cpp" />
+    <ClCompile Include="src\compression\daubechies.cpp" />
+    <ClCompile Include="src\compression\haar.cpp" />
+    <ClCompile Include="src\compression\mmt_old.cpp" />
+    <ClCompile Include="src\compression\wavelet.cpp" />
+    <ClCompile Include="src\xml\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\system\errorCodes.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\system\exceptions.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\util\coordinate.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\util\singleton.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\util\stringUtil.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\util\waveletIterator.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\query\operator.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\query\query.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\io\bitstream.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\io\io.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\array.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\arrayDesc.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\attributeDesc.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\block.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\chunk.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\chunkDesc.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\chunkMgr.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\compBlock.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\compChunk.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\dimensionDesc.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\memBlock.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\system\storageMgr.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\io\file.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\buffer.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\arrayId.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\attributeId.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\dimensionId.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\chunkId.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\compression\compact.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\compression\haar.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\compression\wavelet.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xml\tinyxml2.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\arrayMgr.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\configArrays.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\system\config.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\chunkBuffer.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\compression\compression.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\util\element.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\query\opAction.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\query\opPlan.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\query\opParam.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\query\opParamSet.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_plan.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_action.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_array.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\util\math.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_action.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_plan.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_array.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\memChunkBuffer.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\index\attributeIndex.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\index\dimensionIndex.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\index\mmt.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\mmt_save\mmt_save_plan.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\mmt_save\mmt_save_action.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\io\serializable.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\mmt_load\mmt_load_action.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\mmt_load\mmt_load_plan.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\mmt_build\mmt_build_plan.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\mmt_build\mmt_build_action.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\spiht_encode\spiht_encode_plan.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\spiht_encode\spiht_encode_action.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\spiht_decode\spiht_decode_plan.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\spiht_decode\spiht_decode_action.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\spiht_decode\spiht_decode_array.h">
-    <ClInclude Include="src\query\op\mmt_delta_encode\mmt_delta_encode_plan.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\mmt_delta_encode\mmt_delta_encode_action.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\mmt_delta_encode\mmt_delta_encode_array.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\mmt_delta_decode\mmt_delta_decode_plan.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\mmt_delta_decode\mmt_delta_decode_action.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\mmt_delta_decode\mmt_delta_decode_array.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\save\save_action.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\save\save_plan.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="include\array\memArray.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\load\load_action.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="src\query\op\load\load_plan.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
+    <ClInclude Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.h" />
+    <ClInclude Include="include\array\array.h" />
+    <ClInclude Include="include\array\arrayDesc.h" />
+    <ClInclude Include="include\array\arrayId.h" />
+    <ClInclude Include="include\array\attributeDesc.h" />
+    <ClInclude Include="include\array\attributeId.h" />
+    <ClInclude Include="include\array\block.h" />
+    <ClInclude Include="include\array\buffer.h" />
+    <ClInclude Include="include\array\chunk.h" />
+    <ClInclude Include="include\array\chunkBuffer.h" />
+    <ClInclude Include="include\array\chunkDesc.h" />
+    <ClInclude Include="include\array\chunkId.h" />
+    <ClInclude Include="include\array\chunkMgr.h" />
+    <ClInclude Include="include\array\compBlock.h" />
+    <ClInclude Include="include\array\compChunk.h" />
+    <ClInclude Include="include\array\configArrays.h" />
+    <ClInclude Include="include\array\dimensionDesc.h" />
+    <ClInclude Include="include\array\dimensionId.h" />
+    <ClInclude Include="include\array\memArray.h" />
+    <ClInclude Include="include\array\memBlock.h" />
+    <ClInclude Include="include\array\memChunkBuffer.h" />
+    <ClInclude Include="include\compression\compression.h" />
+    <ClInclude Include="include\index\mmt.h" />
+    <ClInclude Include="include\index\attributeIndex.h" />
+    <ClInclude Include="include\index\dimensionIndex.h" />
+    <ClInclude Include="include\io\bitstream.h" />
+    <ClInclude Include="include\io\io.h" />
+    <ClInclude Include="include\io\serializable.h" />
+    <ClInclude Include="include\query\operator.h" />
+    <ClInclude Include="include\query\opParam.h" />
+    <ClInclude Include="include\query\opParamSet.h" />
+    <ClInclude Include="include\query\query.h" />
+    <ClInclude Include="include\array\arrayMgr.h" />
+    <ClInclude Include="include\query\opAction.h" />
+    <ClInclude Include="include\query\opPlan.h" />
+    <ClInclude Include="include\system\config.h" />
+    <ClInclude Include="include\system\errorCodes.h" />
+    <ClInclude Include="include\system\exceptions.h" />
+    <ClInclude Include="include\system\storageMgr.h" />
+    <ClInclude Include="include\util\coordinate.h" />
+    <ClInclude Include="include\io\file.h" />
+    <ClInclude Include="include\util\element.h" />
+    <ClInclude Include="include\util\math.h" />
+    <ClInclude Include="include\util\singleton.h" />
+    <ClInclude Include="include\util\stringUtil.h" />
+    <ClInclude Include="include\util\waveletIterator.h" />
+    <ClInclude Include="include\compression\compact.h" />
+    <ClInclude Include="include\compression\haar.h" />
+    <ClInclude Include="include\compression\wavelet.h" />
+    <ClInclude Include="include\xml\tinyxml2.h" />
+    <ClInclude Include="src\query\op\load\load_action.h" />
+    <ClInclude Include="src\query\op\load\load_plan.h" />
+    <ClInclude Include="src\query\op\mmt_build\mmt_build_action.h" />
+    <ClInclude Include="src\query\op\mmt_build\mmt_build_plan.h" />
+    <ClInclude Include="src\query\op\mmt_delta_decode\mmt_delta_decode_action.h" />
+    <ClInclude Include="src\query\op\mmt_delta_decode\mmt_delta_decode_array.h" />
+    <ClInclude Include="src\query\op\mmt_delta_decode\mmt_delta_decode_plan.h" />
+    <ClInclude Include="src\query\op\mmt_delta_encode\mmt_delta_encode_action.h" />
+    <ClInclude Include="src\query\op\mmt_delta_encode\mmt_delta_encode_array.h" />
+    <ClInclude Include="src\query\op\mmt_delta_encode\mmt_delta_encode_plan.h" />
+    <ClInclude Include="src\query\op\mmt_load\mmt_load_action.h" />
+    <ClInclude Include="src\query\op\mmt_load\mmt_load_plan.h" />
+    <ClInclude Include="src\query\op\mmt_save\mmt_save_action.h" />
+    <ClInclude Include="src\query\op\mmt_save\mmt_save_plan.h" />
+    <ClInclude Include="src\query\op\spiht_decode\spiht_decode_action.h" />
+    <ClInclude Include="src\query\op\spiht_decode\spiht_decode_plan.h" />
+    <ClInclude Include="src\query\op\spiht_encode\spiht_encode_action.h" />
+    <ClInclude Include="src\query\op\spiht_encode\spiht_encode_plan.h" />
+    <ClInclude Include="src\query\op\save\save_action.h" />
+    <ClInclude Include="src\query\op\save\save_plan.h" />
+    <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_action.h" />
+    <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_array.h" />
+    <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_plan.h" />
+    <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_action.h" />
+    <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_array.h" />
+    <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_plan.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\util\singleton.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\system\errorCodes.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\system\exceptions.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\io\bitstream.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\array\array.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\array\chunkDesc.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\array\compChunk.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\io\file.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\system\storageMgr.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\array\buffer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\compression\compact.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\compression\daubechies.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\compression\haar.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\compression\wavelet.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\xml\tinyxml2.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\array\arrayDesc.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\array\configArrays.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\system\config.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\array\chunkBuffer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\array\chunk.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\util\element.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\opParam.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\opPlan.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\opParamSet.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_plan.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\opAction.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_action.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_array.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\util\math.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\array\dimensionDesc.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\array\attributeDesc.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_action.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_plan.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_array.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\array\memChunkBuffer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\compression\mmt_old.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\array\arrayMgr.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\index\mmt.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\index\attributeIndex.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\mmt_save\mmt_save_action.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\mmt_save\mmt_save_plan.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\io\serializable.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\mmt_load\mmt_load_plan.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\mmt_load\mmt_load_action.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\mmt_build\mmt_build_plan.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\mmt_build\mmt_build_action.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\spiht_encode\spiht_encode_plan.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\spiht_encode\spiht_encode_action.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\spiht_decode\spiht_decode_plan.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\spiht_decode\spiht_decode_action.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\spiht_decode\spiht_decode_array.cpp">
-    <ClCompile Include="src\query\op\mmt_delta_encode\mmt_delta_encode_action.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\mmt_delta_encode\mmt_delta_encode_plan.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\mmt_delta_encode\mmt_delta_encode_array.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\mmt_delta_decode\mmt_delta_decode_action.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\mmt_delta_decode\mmt_delta_decode_plan.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\mmt_delta_decode\mmt_delta_decode_array.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\save\save_action.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\save\save_plan.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\array\memArray.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\load\load_action.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\query\op\load\load_plan.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="include\system\errorCategories.inc">
-      <Filter>헤더 파일</Filter>
-    </None>
-    <None Include="include\system\errors.inc">
-      <Filter>헤더 파일</Filter>
-    </None>
+    <None Include="include\system\errorCategories.inc" />
+    <None Include="include\system\errors.inc" />
   </ItemGroup>
 </Project>

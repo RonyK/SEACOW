@@ -16,41 +16,67 @@ const char* spiht_encode_action::name()
 	return "spiht_encode";
 }
 
+std::list<int> spiht_encode_action::getCode()
+{
+	return this->code;
+}
+
 pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 {
 	auto source = inputArrays[0];
 	auto wArray = std::static_pointer_cast<wavelet_encode_array>(source);
-
 	auto chunkItr = wArray->getChunkIterator();
-	auto itemItr = (*chunkItr)->getItemIterator();
-
-	// TODO: !(sign bit) abs
-
-	auto dSize = chunkItr.dSize();									// dimension size
-	auto cSize = wArray->getDesc()->dimDescs_.getChunkDims();		// chunk size
-	auto max_level = wArray->getMaxLevel();							// max level
-	std::vector<size_t> bandSize(dSize);							// band size in max level(?)
-	for (int d = (int)dSize - 1; d >= 0; d--)
+	while (!chunkItr.isEnd())
 	{
-		bandSize[d] = (size_t)(cSize[d] / pow(2, max_level + 1));
-	}
-
-	this->encode_init(dSize, bandSize);
-
-	auto maxStep = wArray->getDesc()->attrDescs_[0]->typeSize_ * 8;		// bit num
-	for (size_t curStep = 0; curStep < maxStep - 1; curStep++)
-	{
-		size_t LSP_size = this->LSP_.size();
-		switch (wArray->getDesc()->attrDescs_[0]->type_)
+		auto itemItr = (*chunkItr)->getItemIterator();
+		auto dSize = chunkItr.dSize();									// dimension size
+		auto cSize = wArray->getDesc()->dimDescs_.getChunkDims();		// chunk size
+		auto max_level = wArray->getMaxLevel();							// max level
+		std::vector<size_t> bandSize(dSize);							// band size in max level(?)
+		for (int d = (int)dSize - 1; d >= 0; d--)
 		{
-		case eleType::INT32:
-			this->encode_sigpass<int32_t>(dSize, cSize, bandSize, itemItr, curStep, maxStep);
-			this->encode_refinepass<int32_t>(itemItr, curStep, maxStep, LSP_size);
-		default:
-			break;
+			bandSize[d] = (size_t)(cSize[d] / pow(2, max_level + 1));
 		}
-		
+
+		this->encode_init(dSize, bandSize);
+
+		switch ((*chunkItr)->getDesc()->attrDesc_->type_)
+		{
+		case eleType::CHAR:
+			this->encode_progress<char>(dSize, cSize, bandSize, itemItr);
+			break;
+		case eleType::INT8:
+			this->encode_progress<int8_t>(dSize, cSize, bandSize, itemItr);
+			break;
+		case eleType::INT16:
+			this->encode_progress<int16_t>(dSize, cSize, bandSize, itemItr);
+			break;
+		case eleType::INT32:
+			this->encode_progress<int32_t>(dSize, cSize, bandSize, itemItr);
+			break;
+		case eleType::INT64:
+			this->encode_progress<int64_t>(dSize, cSize, bandSize, itemItr);
+			break;
+		case eleType::UINT8:
+			this->encode_progress<uint8_t>(dSize, cSize, bandSize, itemItr);
+			break;
+		case eleType::UINT16:
+			this->encode_progress<uint16_t>(dSize, cSize, bandSize, itemItr);
+			break;
+		case eleType::UINT32:
+			this->encode_progress<uint32_t>(dSize, cSize, bandSize, itemItr);
+			break;
+		case eleType::UINT64:
+			this->encode_progress<uint64_t>(dSize, cSize, bandSize, itemItr);
+			break;
+		default:
+			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
+		}
+
+
+		++chunkItr;
 	}
+
 	return source;
 }
 
@@ -61,22 +87,22 @@ void spiht_encode_action::encode_init(size_t dSize, std::vector<size_t> bandSize
 	this->LIS_TYPE_.clear();
 	this->LSP_.clear();
 	
-	coor init(dSize);	// {0, 0, ...}
+	coor init_coor(dSize);	// {0, 0, ...}
 	size_t init_num = 1;
 	for (int d = (int)dSize - 1; d >= 0; d--)
 	{
-		init[d] = 0;
+		init_coor[d] = 0;
 		init_num *= bandSize[d];
 	}
 	
 	for (size_t i = 0; i < init_num; i++)
 	{
-		this->LIP_.push_back(init);	
+		this->LIP_.push_back(init_coor);
 
 		bool haveChild = false;
 		for (int d = (int)dSize - 1; d >= 0; d--)
 		{
-			if (init[d] & 0x1)		// odd coordinate
+			if (init_coor[d] & 0x1)		// odd coordinate
 			{
 				haveChild = true;
 				break;
@@ -85,17 +111,17 @@ void spiht_encode_action::encode_init(size_t dSize, std::vector<size_t> bandSize
 
 		if (haveChild)
 		{
-			this->LIS_.push_back(init);
+			this->LIS_.push_back(init_coor);
 			this->LIS_TYPE_.push_back('A');
 		}
 
 
 		for (int d = (int)dSize - 1; d >= 0; d--)	// iteration(?)
 		{
-			init[d] = init[d] + 1;
-			if (init[d] == bandSize[d])
+			init_coor[d] = init_coor[d] + 1;
+			if (init_coor[d] == bandSize[d])
 			{
-				init[d] = 0;
+				init_coor[d] = 0;
 			}
 			else
 			{
@@ -106,18 +132,66 @@ void spiht_encode_action::encode_init(size_t dSize, std::vector<size_t> bandSize
 }
 
 template<class Ty_>
-void spiht_encode_action::encode_sigpass(size_t dSize, std::vector<position_t> cSize, std::vector<size_t> bandSize, chunkItemIterator itemItr, size_t curStep, size_t maxStep)
+void spiht_encode_action::encode_progress(size_t dSize, std::vector<position_t> cSize, std::vector<size_t> bandSize, chunkItemIterator itemItr)
 {
+	size_t maxStep = sizeof(Ty_) * 8;
 	Ty_ signBit = (Ty_)0x1 << (maxStep - 1);
-	Ty_ stepBit = (Ty_)0x1 << (maxStep - 2 - curStep);
+	Ty_ stepBit = (Ty_)0x1 << (maxStep - 2);
+	// abs
+	coor init_coor(dSize);	// {0, 0, ...}
+	size_t abs_num = 1;
+	for (int d = (int)dSize - 1; d >= 0; d--)
+	{
+		init_coor[d] = 0;
+		abs_num *= cSize[d];
+	}
+	
+	for (size_t i = 0; i < abs_num; i++)
+	{
+		itemItr.moveTo(init_coor);
+		auto data = (*itemItr).get<Ty_>();
+		if (data & signBit)
+		{
+			data = data * -1;
+			data = data ^ signBit;
+			(*itemItr).set<Ty_>(data);
+		}
 
+		for (int d = (int)dSize - 1; d >= 0; d--)	// iteration(?)
+		{
+			init_coor[d] = init_coor[d] + 1;
+			if (init_coor[d] == cSize[d])
+			{
+				init_coor[d] = 0;
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+
+	for (size_t curStep = 0; curStep < maxStep - 1; curStep++)
+	{
+		size_t LSP_size = this->LSP_.size();
+		this->encode_sigpass<Ty_>(dSize, cSize, bandSize, itemItr, signBit, stepBit);
+		this->encode_refinepass<Ty_>(itemItr, stepBit, LSP_size);
+		stepBit = stepBit >> 1;
+	}
+
+
+}
+
+template<class Ty_>
+void spiht_encode_action::encode_sigpass(size_t dSize, std::vector<position_t> cSize, std::vector<size_t> bandSize, 
+	chunkItemIterator itemItr, Ty_ signBit, Ty_ stepBit)
+{
 	// LIP
 	size_t LIP_size = this->LIP_.size();
 	for (size_t i = 0; i < LIP_size; i++)
 	{
 		auto LIP_coor = this->LIP_.front();
 		this->LIP_.pop_front();
-
 		itemItr.moveTo(LIP_coor);
 		auto LIP_data = (*itemItr).get<Ty_>();
 		
@@ -150,10 +224,7 @@ void spiht_encode_action::encode_sigpass(size_t dSize, std::vector<position_t> c
 	while (this->LIS_.size() != 0)
 	{
 		coor LIS_coor = this->LIS_.front();
-		char LIS_type = this->LIS_TYPE_.front();
 		this->LIS_.pop_front();
-		this->LIS_TYPE_.pop_front();
-
 		itemItr.moveTo(LIS_coor);
 		auto LIS_data = (*itemItr).get<Ty_>();
 
@@ -188,6 +259,8 @@ void spiht_encode_action::encode_sigpass(size_t dSize, std::vector<position_t> c
 		}
 		coor temp_coor = child_coor;
 
+		char LIS_type = this->LIS_TYPE_.front();
+		this->LIS_TYPE_.pop_front();
 		if (LIS_type == 'A')	// type A
 		{	
 			bool oneFlag = false;
@@ -211,7 +284,7 @@ void spiht_encode_action::encode_sigpass(size_t dSize, std::vector<position_t> c
 					}
 					else
 					{
-						child_coor[d] = child_coor[d] - 1;
+						child_coor[d] = child_coor[d] - 2;
 					}
 				}
 			}
@@ -254,12 +327,13 @@ void spiht_encode_action::encode_sigpass(size_t dSize, std::vector<position_t> c
 						}
 						else
 						{
-							child_coor[d] = child_coor[d] - 1;
+							child_coor[d] = child_coor[d] - 2;
 						}
 					}
 				}
 
 				bool haveGrand = true;
+				child_coor = temp_coor;
 				for (int d = (int)dSize - 1; d >= 0; d--)
 				{
 					if (child_coor[d]*2 >= cSize[d])
@@ -313,7 +387,7 @@ void spiht_encode_action::encode_sigpass(size_t dSize, std::vector<position_t> c
 						}
 						else
 						{
-							grand_coor[d] = grand_coor[d] - 1;
+							grand_coor[d] = grand_coor[d] - 2;
 						}
 					}
 				}
@@ -332,7 +406,7 @@ void spiht_encode_action::encode_sigpass(size_t dSize, std::vector<position_t> c
 					}
 					else
 					{
-						child_coor[d] = child_coor[d] - 1;
+						child_coor[d] = child_coor[d] - 2;
 					}
 				}
 			}
@@ -356,7 +430,7 @@ void spiht_encode_action::encode_sigpass(size_t dSize, std::vector<position_t> c
 						}
 						else
 						{
-							child_coor[d] = child_coor[d] - 1;
+							child_coor[d] = child_coor[d] - 2;
 						}
 					}
 				}
@@ -374,16 +448,12 @@ void spiht_encode_action::encode_sigpass(size_t dSize, std::vector<position_t> c
 }
 
 template<class Ty_>
-void spiht_encode_action::encode_refinepass(chunkItemIterator itemItr, size_t curStep, size_t maxStep, size_t LSP_size)
+void spiht_encode_action::encode_refinepass(chunkItemIterator itemItr, Ty_ stepBit, size_t LSP_size)
 {
-	Ty_ stepBit = (Ty_)0x1 << (maxStep - 2 - curStep);
-	std::list<coor> TMP_ = this->LSP_;
-
 	for (size_t i = 0; i < LSP_size; i++)
 	{
-		coor LSP_coor = TMP_.front();
-		TMP_.pop_front();
-
+		coor LSP_coor = this->LSP_.front();
+		this->LSP_.pop_front();
 		itemItr.moveTo(LSP_coor);
 		auto LSP_data = (*itemItr).get<Ty_>();
 
