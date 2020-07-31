@@ -4,8 +4,6 @@
 
 #include <array/blockChunk.h>
 #include <array/block.h>
-#include <array/blockContainer.h>
-#include <compression/seChunk.h>
 #include <vector>
 
 namespace msdb

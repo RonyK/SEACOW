@@ -102,4 +102,8 @@ pChunkItemRangeIterator memBlock::getItemRangeIterator(const coorRange& range)
 								  range,
 								  this->desc_->sp_);
 }
+void memBlock::makeBuffer()
+{
+	this->cached_ = std::make_shared<memBlockBuffer>();	// TODO::make mem block buffer
+}
 }	// msdb

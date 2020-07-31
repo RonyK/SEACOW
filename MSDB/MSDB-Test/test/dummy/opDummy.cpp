@@ -52,9 +52,9 @@ void getWaveletDecode(pArrayDesc sourceArrDesc, eleDefault level,
 }
 
 void getMmtBuild(pArrayDesc sourceArrDesc,
-				 eleDefault level, 
+				 eleDefault level,
 				 std::shared_ptr<mmt_build_plan>& plan,
-				 std::shared_ptr<mmt_build_action>& action, 
+				 std::shared_ptr<mmt_build_action>& action,
 				 pQuery& qry)
 {
 	pQuery mmtQuery_ = std::make_shared<query>();
@@ -75,7 +75,7 @@ void getMmtBuild(pArrayDesc sourceArrDesc,
 	qry = mmtQuery_;
 }
 void getMmtSave(pArrayDesc sourceArrDesc,
-				std::shared_ptr<mmt_save_plan>& plan, 
+				std::shared_ptr<mmt_save_plan>& plan,
 				std::shared_ptr<mmt_save_action>& action,
 				pQuery& qry)
 {
@@ -95,9 +95,9 @@ void getMmtSave(pArrayDesc sourceArrDesc,
 	action = mmtAction_;
 	qry = mmtQuery_;
 }
-void getMmtLoad(pArrayDesc sourceArrDesc, 
+void getMmtLoad(pArrayDesc sourceArrDesc,
 				std::shared_ptr<mmt_load_plan>& plan,
-				std::shared_ptr<mmt_load_action>& action, 
+				std::shared_ptr<mmt_load_action>& action,
 				pQuery& qry)
 {
 	pQuery mmtQuery_ = std::make_shared<query>();
@@ -118,8 +118,8 @@ void getMmtLoad(pArrayDesc sourceArrDesc,
 }
 
 void getMmtDeltaEncode(pArrayDesc sourceArrDesc,
-					   std::shared_ptr<mmt_delta_encode_plan>& plan, 
-					   std::shared_ptr<mmt_delta_encode_action>& action, 
+					   std::shared_ptr<mmt_delta_encode_plan>& plan,
+					   std::shared_ptr<mmt_delta_encode_action>& action,
 					   pQuery& qry)
 {
 	pQuery mmtQuery_ = std::make_shared<query>();
@@ -159,6 +159,28 @@ void getMmtDeltaDecode(pArrayDesc sourceArrDesc,
 	plan = mmtPlan_;
 	action = mmtAction_;
 	qry = mmtQuery_;
+}
+
+void getSeCompression(pArrayDesc sourceArrDesc,
+					  std::shared_ptr<se_compression_plan>& plan,
+					  std::shared_ptr<se_compression_action>& action,
+					  pQuery& qry)
+{
+	pQuery seQuery_ = std::make_shared<query>();
+	auto sePlan_ = std::make_shared<se_compression_plan>();
+	auto seAction_ = std::make_shared<se_compression_action>();
+	parameters params = {
+		std::make_shared<opParamArray>(sourceArrDesc)
+	};
+	auto pSet = std::make_shared<se_compression_pset>(params);
+
+	sePlan_->setParamSet(pSet);
+	seAction_->setArrayDesc(sePlan_->inferSchema());
+	seAction_->setParams(params);
+
+	plan = sePlan_;
+	action = seAction_;
+	qry = seQuery_;
 }
 }	// caDummy
 }	// msdb

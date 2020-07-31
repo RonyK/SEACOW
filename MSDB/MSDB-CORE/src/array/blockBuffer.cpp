@@ -10,4 +10,10 @@ blockBuffer::blockBuffer()
 blockBuffer::~blockBuffer()
 {
 }
+memBlockBuffer::memBlockBuffer()
+{
+}
+memBlockBuffer::~memBlockBuffer()
+{
+}
 }

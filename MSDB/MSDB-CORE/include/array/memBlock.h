@@ -48,6 +48,9 @@ public:
 
 	virtual pChunkItemIterator getItemIterator();
 	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range);
+
+protected:
+	virtual void makeBuffer() override;
 };
 }
 

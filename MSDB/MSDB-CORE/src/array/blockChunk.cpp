@@ -80,6 +80,11 @@ pChunkItemRangeIterator blockChunk::getItemRangeIterator(const coorRange& range)
 														 this->getBlockIterator());
 }
 
+void blockChunk::setBlock(pBlock b)
+{
+	this->blocks_[b->getId()] = b;
+}
+
 void blockChunk::flush()
 {
 	this->blocks_.clear();

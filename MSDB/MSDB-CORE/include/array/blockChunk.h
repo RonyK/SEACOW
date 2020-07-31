@@ -12,8 +12,6 @@
 
 namespace msdb
 {
-std::map<int, int> ma;
-auto a = ma.begin();
 class blockIterator;
 
 class blockChunk : public chunk
@@ -46,6 +44,7 @@ public:
 	//////////////////////////////
 	// Setter
 	//////////////////////////////
+	void setBlock(pBlock b);
 	void flush();
 
 public:

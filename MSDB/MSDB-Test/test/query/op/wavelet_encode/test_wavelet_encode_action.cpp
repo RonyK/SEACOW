@@ -2,8 +2,7 @@
 #include <array/memChunk.h>
 #include <array/memChunkBuffer.h>
 #include <array/dimensionDesc.h>
-#include <op/wavelet_encode/wavelet_encode_plan.h>
-#include <op/wavelet_encode/wavelet_encode_action.h>
+#include <compression/testCompression.h>
 #include <cmath>
 #include <vector>
 
@@ -167,70 +166,11 @@ namespace data2D_sc4x4
 {
 TEST(query_op_wavelet_encode, waveletHaarSimple_sc4x4)
 {
-	std::vector<pArray> sourceArr = getSourceArray();
+	auto weArr = wavelet_encode(std::vector<pArray>());
+	wavelet_encode_check(weArr);
 
-	eleDefault level = 0;
-	std::shared_ptr<wavelet_encode_plan> wePlan;
-	std::shared_ptr<wavelet_encode_action> weAction;
-	pQuery weQuery;
-	getWaveletEncode(sourceArr[0]->getDesc(), level, wePlan, weAction, weQuery);
-
-	auto weArray = weAction->execute(sourceArr, weQuery);
-
-	//////////////////////////////
-	// Check Encoded Result
-	{
-		std::cout << "##############################" << std::endl;
-		std::cout << "Check Encoded Result" << std::endl;
-		value_type expected[dataLength] = { 0 };
-		getWTChunkDummy(expected, dataLength);
-		size_t cId = 0;
-		for (size_t i = 0; i < dataLength; )
-		{
-			auto it = weArray->getChunk(cId)->getItemIterator();
-			if (it->getCapacity() == 0)
-			{
-				throw std::exception();
-			}
-			for (size_t j = 0; j < it->getCapacity(); ++j, ++i, ++(*it))
-			{
-				std::cout << static_cast<int>((**it).getChar()) << " <> " << static_cast<int>(expected[i]) << std::endl;
-				EXPECT_EQ(ROUNDING((**it).getChar(), 6), ROUNDING(expected[i], 6));
-			}
-			++cId;
-		}
-	}
-
-	//////////////////////////////
-	// Decoding
-	std::shared_ptr<wavelet_decode_plan> wdPlan;
-	std::shared_ptr<wavelet_decode_action> wdAction;
-	pQuery wdQuery;
-	getWaveletDecode(weArray->getDesc(), level, wdPlan, wdAction, wdQuery);
-
-	auto wdArray = wdAction->execute(std::vector({ weArray }), wdQuery);
-
-	////////////////////////////
-	// Check Decoded Result
-	{
-		std::cout << "##############################" << std::endl;
-		std::cout << "Check Decoded Result" << std::endl;
-		value_type deExpected[dataLength] = { 0 };
-		getChunkDummy(deExpected, dataLength);
-		size_t cId = 0;
-		for(size_t i = 0; i < dataLength;)
-		{
-			auto it = wdArray->getChunk(cId)->getItemIterator();
-			assert(it->getCapacity() == chunkDims[0] * chunkDims[1]);
-
-			for(size_t j = 0; j < it->getCapacity(); ++j, ++i, ++(*it))
-			{
-				std::cout << static_cast<int>((**it).getChar()) << " <> " << static_cast<int>(deExpected[i]) << std::endl;
-				EXPECT_EQ(ROUNDING((**it).getChar(), 6), ROUNDING(deExpected[i], 6));
-			}
-			++cId;
-		}
-	}
+	auto wdArr = wavelet_decode(std::vector<pArray>({ weArr }));
+	wavelet_decode_check(wdArr);
 }
 }	// data2D_sc4x4
 }	// caDummy

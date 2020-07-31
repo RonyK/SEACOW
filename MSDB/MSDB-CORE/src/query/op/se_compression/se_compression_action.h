@@ -3,6 +3,7 @@
 #define _MSDB_OP_SE_COMPRESSION_ACTION_H_
 
 #include <array/arrayMgr.h>
+#include <array/memBlock.h>
 #include <system/storageMgr.h>
 #include <compression/wtChunk.h>
 #include <compression/seChunk.h>
@@ -26,12 +27,11 @@ public:
 	virtual pArray execute(std::vector<pArray>& inputArrays, pQuery q) override;
 
 public:
-
 	template<typename Ty_>
 	void compressAttribute(std::shared_ptr<wavelet_encode_array>inArr, pAttributeDesc attrDesc)
 	{
 		auto arrId = inArr->getArrayId();
-		auto cit = inArr->getChunkIterator();
+		auto cit = inArr->getChunkIterator(iterateMode::EXIST);
 
 		auto arrIndex = arrayMgr::instance()->getAttributeIndex(inArr->getArrayId(), attrDesc->id_);
 		if (arrIndex->getType() != attrIndexType::MMT)
@@ -43,13 +43,19 @@ public:
 
 		while (!cit.isEnd())
 		{
-			auto cit = inArr->getChunkIterator(iterateMode::EXIST);
-
 			std::vector<pWtChunk> wtChunks;
 			std::vector<pSeChunk> outChunks;
 			// Combine all chunks derived from a single source chunk.
-			for (size_t i = 0; i < 1 + inArr->getMaxLevel() * (pow(2, inArr->getDesc()->getDSize()) - 1); ++i)
+
+			auto numChunks = 1 + (inArr->getMaxLevel() + 1) * (pow(2, inArr->getDesc()->getDSize()) - 1);
+			// approximate 1 + detail part
+
+			for (size_t i = 0; i < 1 + (inArr->getMaxLevel() + 1) * (pow(2, inArr->getDesc()->getDSize()) - 1); ++i)
 			{
+				if(cit.isEnd())
+				{
+					_MSDB_EXCEPTIONS_MSG(MSDB_EC_LOGIC_ERROR, MSDB_ER_OUT_OF_RANGE, "iterating chunk fail");
+				}
 				wtChunks.push_back(std::static_pointer_cast<wtChunk>(*cit));
 				++cit;
 			}
@@ -97,8 +103,28 @@ public:
 				coor blockEp = blockSp + blockDims;
 				coorRange bRange = coorRange(blockSp, blockEp);
 
+
+				pBlockDesc bDesc = std::make_shared<blockDesc>(
+					blockItr.seqPos(),					// id
+					c->getDesc()->attrDesc_->type_,		// eType
+					blockDims,							// dims
+					blockSp,							// sp
+					blockEp,							// ep
+					blockDims.area() * c->getDesc()->attrDesc_->typeSize_	// mSize
+					);
+				pBlock oBlock = std::make_shared<memBlock>(bDesc);
+				oChunk->setBlock(oBlock);
+				
+				//////////////////////////////
+				// TODO::Use materialize copy
+				// oBlock->materializeCopy(void*, blockDims.area() * c->getDesc()->attrDesc_->typeSize_);
+				oBlock->alloc();	// mSize is setted in the desc.
+				//////////////////////////////
+
 				// Find required bit for delta array
 				auto blockItemItr = c->getItemRangeIterator(bRange);
+				auto oBlockItemItr = oBlock->getItemIterator();
+
 				bit_cnt_type maxValueBits = 0;
 				while(!blockItemItr->isEnd())
 				{
@@ -107,7 +133,9 @@ public:
 					{
 						maxValueBits = valueBits;
 					}
+					(**oBlockItemItr) = (**blockItemItr);
 					++(*blockItemItr);
+					++(*oBlockItemItr);
 				}
 				oChunk->rBitFromDelta.push_back(maxValueBits);
 

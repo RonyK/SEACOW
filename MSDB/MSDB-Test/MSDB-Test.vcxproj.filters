@@ -33,6 +33,8 @@
     <ClCompile Include="test\query\op\load\test_load.cpp" />
     <ClCompile Include="test\io\testIO.cpp" />
     <ClCompile Include="test\array\testBlock.cpp" />
+    <ClCompile Include="test\query\op\se_compression\test_se_compression.cpp" />
+    <ClCompile Include="test\compression\testCompression.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">
@@ -42,6 +44,7 @@
     <ClInclude Include="test\dummy\opDummy.h" />
     <ClInclude Include="test\index\testMMT.h" />
     <ClInclude Include="test\io\testIO.h" />
+    <ClInclude Include="test\compression\testCompression.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="test">
