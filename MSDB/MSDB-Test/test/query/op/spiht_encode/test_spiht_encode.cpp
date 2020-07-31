@@ -61,10 +61,6 @@ namespace msdb
 				spihtAction->setArrayDesc(spihtPlan->inferSchema());
 				spihtAction->setParams(params);
 				auto weArray = spihtAction->execute(arrs, q);
-
-				auto code = spihtAction->getCode();
-
-				EXPECT_EQ(expect, code);
 			}
 
 			TEST(query_op_spiht_encode, spiht_2D_8x8)
@@ -113,8 +109,6 @@ namespace msdb
 				spihtAction->setArrayDesc(spihtPlan->inferSchema());
 				spihtAction->setParams(params);
 				auto weArray = spihtAction->execute(arrs, q);
-
-				auto code = spihtAction->getCode();
 
 				//EXPECT_EQ(expect, code);
 			}
