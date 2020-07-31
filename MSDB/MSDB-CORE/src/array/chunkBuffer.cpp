@@ -61,11 +61,19 @@ void chunkBuffer::realloc(bufferSize size)
 
 void chunkBuffer::copy(void* data, bufferSize size)
 {
-	this->free();
-	this->isAllocated_ = true;
-	this->data_ = new char[size];
+	assert(size <= this->bodySize_);
+	//this->free();
+	//this->isAllocated_ = true;
+	//this->data_ = new char[size];
 	memcpy(this->data_, data, size);
-	this->bodySize_ = size;
+	//this->bodySize_ = size;
+}
+
+void chunkBuffer::copy(void* data, bufferSize offset, bufferSize size)
+{
+	assert(offset + size <= this->bodySize_);
+	memcpy((char*)this->data_ + offset, data, size);
+
 }
 
 // WARNING:: data is deleted when the chunkBuffer is disappear in a destructor.

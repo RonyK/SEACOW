@@ -22,6 +22,7 @@ const char* spiht_encode_action::name()
 pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 {
 	auto source = inputArrays[0];
+	auto arrId = source->getId();
 	auto wArray = std::static_pointer_cast<wavelet_encode_array>(source);
 	auto chunkItr = wArray->getChunkIterator();
 	while (!chunkItr.isEnd())
@@ -71,10 +72,10 @@ pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 		}
 
+		auto attr = (*chunkItr)->getDesc()->attrDesc_;
 		pChunk oChunk = std::make_shared<memChunk>((*chunkItr)->getDesc());
-		// TODO::Save chunk
-		//storageMgr::instance()->saveChunk(arrId, attr->id_, (*cit)->getId(),
-		//	serialChunk);
+		oChunk->materializeAssign(this->codeBs_.data(), this->codeBs_.capacity());
+		storageMgr::instance()->saveChunk(arrId, attr->id_, (*chunkItr)->getId(), std::static_pointer_cast<serializable>(oChunk));
 
 		++chunkItr;
 	}

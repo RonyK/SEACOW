@@ -28,6 +28,7 @@ public:
 	virtual void alloc(bufferSize size);
 	virtual void materializeCopy(void* data, bufferSize size);
 	virtual void materializeAssign(void* data, bufferSize size);
+	//virtual void materializeCopy(bstream& bs);
 	bool isMaterialized() const;
 
 	chunkId getId() const;

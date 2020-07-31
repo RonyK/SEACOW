@@ -181,6 +181,7 @@
     <ClInclude Include="include\array\memChunkItemIterator.h" />
     <ClInclude Include="include\compression\compression.h" />
     <ClInclude Include="include\compression\seChunk.h" />
+    <ClInclude Include="include\compression\spihtChunk.h" />
     <ClInclude Include="include\compression\wtChunk.h" />
     <ClInclude Include="include\index\mmt.h" />
     <ClInclude Include="include\index\attributeIndex.h" />
@@ -218,6 +219,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="include\xml\tinyxml2.h" />
+    <ClInclude Include="src\compression\spihtChunk.cpp" />
     <ClInclude Include="src\query\op\load\load_action.h" />
     <ClInclude Include="src\query\op\load\load_plan.h" />
     <ClInclude Include="src\query\op\mmt_build\mmt_build_action.h" />

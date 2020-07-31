@@ -23,6 +23,7 @@ public:
 	virtual void alloc(bufferSize size) = 0;
 	virtual void realloc(bufferSize size) = 0;
 	virtual void copy(void* data, bufferSize size) = 0;			// copy input data
+	virtual void copy(void* data, bufferSize offset, bufferSize size) = 0;
 	virtual void assign(void* data, bufferSize size) = 0;
 	virtual void free();										// free binary data
 

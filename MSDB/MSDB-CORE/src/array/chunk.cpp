@@ -45,6 +45,14 @@ void chunk::materializeAssign(void* data, bufferSize size)
 	this->desc_->mSize_ = size;
 }
 
+//void chunk::materializeCopy(bstream& bs)
+//{
+//	bufferSize size = bs.capacity();
+//	this->alloc(size);
+//	this->cached_->copy(data, size);
+//	this->desc_->mSize_ = size;
+//}
+
 bool chunk::isMaterialized() const
 {
 	if (this->cached_ == nullptr)
