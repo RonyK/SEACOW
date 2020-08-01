@@ -14,7 +14,7 @@ spihtChunk::~spihtChunk()
 
 void spihtChunk::makeBuffer()
 {
-	this->cached_ = std::make_shared<spihtChunkBuffer>();
+	//this->cached_ = std::make_shared<spihtChunkBuffer>();
 }
 
 pChunkItemIterator spihtChunk::getItemIterator()

@@ -77,6 +77,7 @@ pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 		oChunk->materializeAssign(this->codeBs_.data(), this->codeBs_.capacity());
 		storageMgr::instance()->saveChunk(arrId, attr->id_, (*chunkItr)->getId(), std::static_pointer_cast<serializable>(oChunk));
 
+		this->codeBs_.flush();
 		++chunkItr;
 	}
 

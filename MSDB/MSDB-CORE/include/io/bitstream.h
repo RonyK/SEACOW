@@ -69,6 +69,15 @@ namespace msdb
 
 		vector_iobs(container_type* mem) : _container(mem), iobs_base() {};
 
+	public:
+		virtual void flush()
+		{
+			if(this->_container)
+			{
+				this->_container->clear();
+			}
+		}
+
 	private:
 		container_type* _container;		// memory space to store the data
 
@@ -173,6 +182,13 @@ namespace msdb
 		_NODISCARD const _Block* data() const noexcept
 		{
 			return this->_container->data();
+		}
+
+		virtual void flush()
+		{
+			_myBase::flush();
+			this->bitPos = 0;
+			this->bitWidth = 0;
 		}
 
 	protected:
@@ -340,6 +356,14 @@ namespace msdb
 			this->_container->resize(bytes);
 		}
 
+		virtual void flush()
+		{
+			_myBase::flush();
+			this->bitPos = 0;
+			this->blockPos = 0;
+			this->frontBlock = nullptr;
+		}
+
 	protected:
 		pos_type get(unsigned char& out, const pos_type length = CHAR_BIT)
 		{
@@ -451,6 +475,12 @@ namespace msdb
 		void resize(size_t bytes)
 		{
 			this->_concreateContainer.resize(bytes);
+		}
+
+		virtual void flush()
+		{
+			_myIs::flush();
+			_myOs::flush();
 		}
 
 	protected:
