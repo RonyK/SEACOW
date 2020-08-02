@@ -246,5 +246,40 @@ pArray mmt_save(std::vector<pArray> sourceArr)
 	return afterArray;
 }
 }
+
+namespace data2D_star1024x1024
+{
+pArray mmt_build(std::vector<pArray> sourceArr)
+{
+	getSourceArrayIfEmpty(sourceArr);
+
+	eleDefault level = 5;
+	std::shared_ptr<mmt_build_plan> mmtPlan;
+	std::shared_ptr<mmt_build_action> mmtAction;
+	pQuery mmtQuery;
+	getMmtBuild(sourceArr[0]->getDesc(), level, mmtPlan, mmtAction, mmtQuery);
+
+	// Execute mmt build action
+	auto afterArray = mmtAction->execute(sourceArr, mmtQuery);
+
+	return afterArray;
+}
+
+pArray mmt_delta_encode(std::vector<pArray> sourceArr)
+{
+	// Should build mmt before
+	getSourceArrayIfEmpty(sourceArr);
+
+	std::shared_ptr<mmt_delta_encode_plan> mmtPlan;
+	std::shared_ptr<mmt_delta_encode_action> mmtAction;
+	pQuery mmtQuery;
+	getMmtDeltaEncode(sourceArr[0]->getDesc(), mmtPlan, mmtAction, mmtQuery);
+
+	auto afterArray = mmtAction->execute(sourceArr, mmtQuery);
+	std::cout << "mmt delta encode" << std::endl;
+
+	return afterArray;
+}
+}	// data2D_star1024x1024
 }	// caDummy
 }	// msdb

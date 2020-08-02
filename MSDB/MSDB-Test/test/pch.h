@@ -14,3 +14,4 @@
 #include "gtest/gtest.h"
 #include "dummy/dummy.h"
 #include "dummy/opDummy.h"
+#include "dummy/dummy_astronomy.h"

@@ -31,7 +31,6 @@ pArray wavelet_encode(std::vector<pArray> sourceArr)
 
 void wavelet_encode_check(pArray arr)
 {
-	
 	//////////////////////////////
 	// Check Encoded Result
 	{
@@ -105,5 +104,49 @@ pArray se_compression(std::vector<pArray> sourceArr)
 	return afterArray;
 }
 }	// data2D_sc4x4
+
+namespace data2D_star1024x1024
+{
+pArray wavelet_encode(std::vector<pArray> sourceArr)
+{
+	getSourceArrayIfEmpty(sourceArr);
+
+	eleDefault level = 0;
+	std::shared_ptr<wavelet_encode_plan> wePlan;
+	std::shared_ptr<wavelet_encode_action> weAction;
+	pQuery weQuery;
+	getWaveletEncode(sourceArr[0]->getDesc(), level, wePlan, weAction, weQuery);
+
+	return weAction->execute(sourceArr, weQuery);
+}
+
+pArray wavelet_decode(std::vector<pArray> sourceArr)
+{
+	getSourceArrayIfEmpty(sourceArr);
+
+	eleDefault level = 0;
+	std::shared_ptr<wavelet_decode_plan> wdPlan;
+	std::shared_ptr<wavelet_decode_action> wdAction;
+	pQuery wdQuery;
+	getWaveletDecode(sourceArr[0]->getDesc(), level, wdPlan, wdAction, wdQuery);
+
+	return wdAction->execute(sourceArr, wdQuery);
+}
+
+pArray se_compression(std::vector<pArray> sourceArr)
+{
+	getSourceArrayIfEmpty(sourceArr);
+
+	std::shared_ptr<se_compression_plan> sePlan;
+	std::shared_ptr<se_compression_action> seAction;
+	pQuery seQuery;
+	getSeCompression(sourceArr[0]->getDesc(), sePlan, seAction, seQuery);
+
+	auto afterArray = seAction->execute(sourceArr, seQuery);
+
+	return afterArray;
+}
+
+}	// data2D_star1024x1024
 }	// caDummy
 }	// msdbk
