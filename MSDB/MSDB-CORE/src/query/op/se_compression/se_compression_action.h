@@ -106,7 +106,7 @@ public:
 
 				pBlockDesc bDesc = std::make_shared<blockDesc>(
 					blockItr.seqPos(),					// id
-					c->getDesc()->attrDesc_->type_,		// eType
+					iDesc->attrDesc_->type_,			// eType
 					blockDims,							// dims
 					blockSp,							// sp
 					blockEp,							// ep

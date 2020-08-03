@@ -1,3 +1,4 @@
+#include <array/memBlock.h>
 #include <array/memChunk.h>
 #include <array/memChunkBuffer.h>
 #include <array/memChunkItemIterator.h>
@@ -7,6 +8,15 @@ namespace msdb
 memChunk::memChunk(pChunkDesc desc)
 	: chunk(desc)
 {
+	this->block_ = std::make_shared<memBlock>(
+		std::make_shared<blockDesc>(
+		0,						// id
+		this->desc_->attrDesc_->type_,	// eType
+		this->desc_->getDim(),	// dims
+		this->desc_->sp_,		// sp
+		this->desc_->ep_,		// ep
+		this->desc_->mSize_		// mSize
+		));
 }
 
 memChunk::~memChunk()
@@ -21,17 +31,17 @@ void memChunk::makeBuffer()
 pChunkItemIterator memChunk::getItemIterator()
 {
 	return std::make_shared<memChunkItemIterator>(this->cached_->getData(),
-							this->desc_->attrDesc_->type_,
-							this->desc_->dims_,
-							this->desc_->sp_);
+												  this->desc_->attrDesc_->type_,
+												  this->desc_->dims_,
+												  this->desc_->sp_);
 }
 pChunkItemRangeIterator memChunk::getItemRangeIterator(const coorRange& range)
 {
 	return std::make_shared<memChunkItemRangeIterator>(this->cached_->getData(),
-								 this->desc_->attrDesc_->type_,
-								 this->desc_->dims_,
-								 range,
-								 this->desc_->sp_);
+													   this->desc_->attrDesc_->type_,
+													   this->desc_->dims_,
+													   range,
+													   this->desc_->sp_);
 }
 
 void memChunk::serialize(std::ostream& os)
@@ -115,5 +125,38 @@ void memChunk::deserialize(std::istream& is)
 	default:
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 	}
+}
+size_t memChunk::getBlockCapacity()
+{
+	return 1;
+}
+pBlock memChunk::getBlock(blockId bId)
+{
+	assert(bId == 0);
+	return this->block_;
+}
+blockId memChunk::getBlockId(pBlockDesc cDesc)
+{
+	// TODO::getBlockId
+	return 0;
+}
+blockId memChunk::getBlockIdFromItemCoor(coor& itemCoor)
+{
+	return 0;
+}
+blockId memChunk::getBlockIdFromBlockCoor(coor& blockCoor)
+{
+	assert(blockCoor == coor(this->desc_->getDimSize()));
+	return 0;
+}
+coor memChunk::itemCoorToBlockCoor(coor& itemCoor)
+{
+	return itemCoor;
+}
+pBlockIterator memChunk::getBlockIterator(iterateMode itMode)
+{
+	pBlockIterator bItr = std::make_shared<singleBlockIterator>(
+		this->block_, itMode);
+	return bItr;
 }
 }	// msdb

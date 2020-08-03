@@ -2,9 +2,6 @@
 #ifndef _MSDB_BLOCKEDCHUNK_H_
 #define _MSDB_BLOCKEDCHUNK_H_
 
-#include <array/block.h>
-#include <array/blockIterator.h>
-#include <array/blockContainer.h>
 #include <array/chunkIterator.h>
 #include <array/memChunkItemIterator.h>
 #include <util/coordinate.h>
@@ -31,21 +28,25 @@ public:
 	// Getter
 	//////////////////////////////
 	// Block
-	size_t getBlockCapacity();
-	pBlock getBlock(blockId bId);
-	blockId getBlockId(pBlockDesc cDesc);
-	blockId getBlockIdFromItemCoor(coor& itemCoor);
-	blockId getBlockIdFromBlockCoor(coor& chunkCoor);
-	virtual coor itemCoorToBlockCoor(coor& itemCoor);
+	virtual size_t getBlockCapacity();
+	virtual pBlock getBlock(blockId bId);
+	virtual blockId getBlockId(pBlockDesc cDesc);
+	virtual blockId getBlockIdFromItemCoor(coor& itemCoor);
+	virtual blockId getBlockIdFromBlockCoor(coor& chunkCoor);
+	virtual virtual coor itemCoorToBlockCoor(coor& itemCoor);
 	virtual pBlockIterator getBlockIterator(iterateMode itMode = iterateMode::ALL);
-	virtual pChunkItemIterator getItemIterator();
-	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range);
 
 	//////////////////////////////
 	// Setter
 	//////////////////////////////
 	void setBlock(pBlock b);
 	void flush();
+
+	//////////////////////////////
+	// Item Iterators
+	//////////////////////////////
+	virtual pChunkItemIterator getItemIterator();
+	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range);
 
 public:
 	virtual void serialize(std::ostream& os) override;

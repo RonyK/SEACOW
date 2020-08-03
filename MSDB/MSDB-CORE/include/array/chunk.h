@@ -5,6 +5,9 @@
 #include <array/chunkBuffer.h>
 #include <array/chunkDesc.h>
 #include <array/chunkItemIterator.h>
+#include <array/block.h>
+#include <array/blockIterator.h>
+#include <array/blockContainer.h>
 #include <io/serializable.h>
 #include <io/bitstream.h>
 #include <memory>
@@ -23,6 +26,27 @@ public:
 	chunk(pChunkDesc desc);
 	virtual ~chunk();
 
+//////////////////////////////
+// Desc
+//////////////////////////////
+public:
+	chunkId getId() const;
+	void setId(chunkId id);	// chunk id can be chnaged in query processing
+	const pChunkDesc getDesc() const;
+	size_type getDSize();
+	size_type numCells();
+	coor getChunkCoor();
+
+protected:
+	pChunkBuffer cached_;	// hold materialized chunk
+
+//////////////////////////////
+// Buffer
+//////////////////////////////
+protected:
+	void free();
+	virtual void makeBuffer() = 0;
+
 public:
 	virtual void alloc();
 	virtual void alloc(bufferSize size);
@@ -31,18 +55,33 @@ public:
 	//virtual void materializeCopy(bstream& bs);
 	bool isMaterialized() const;
 
-	chunkId getId() const;
-	// chunk id can be chnaged in query processing
-	void setId(chunkId id);
-	const pChunkDesc getDesc() const;
-	size_type numCells();
+protected:
+	pChunkDesc desc_;		// chunk desc
 
-	void print();
+//////////////////////////////
+// Blocks
+//////////////////////////////
+public:
+	virtual size_t getBlockCapacity() = 0;
+	virtual pBlock getBlock(blockId bId) = 0;
+	virtual blockId getBlockId(pBlockDesc cDesc) = 0;
+	virtual blockId getBlockIdFromItemCoor(coor& itemCoor) = 0;
+	virtual blockId getBlockIdFromBlockCoor(coor& blockCoor) = 0;
+	virtual virtual coor itemCoorToBlockCoor(coor& itemCoor) = 0;
+	virtual pBlockIterator getBlockIterator(iterateMode itMode = iterateMode::ALL) = 0;
 
-	coor getChunkCoor();
+//////////////////////////////
+// Item Iterators
+//////////////////////////////
+public:
 	virtual pChunkItemIterator getItemIterator() = 0;
 	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range) = 0;
 
+//////////////////////////////
+// Print
+//////////////////////////////
+public:
+	void print();
 	template <class Ty_>
 	void printImp()
 	{
@@ -54,7 +93,6 @@ public:
 		}
 		std::cout << std::endl << "==============================" << std::endl;
 	}
-
 	template<>
 	void printImp<char>()
 	{
@@ -67,18 +105,10 @@ public:
 		std::cout << std::endl << "==============================" << std::endl;
 	}
 
+//////////////////////////////
+// Serializable
+//////////////////////////////
 protected:
-	void free();
-	virtual void makeBuffer() = 0;
-
-protected:
-	pChunkBuffer cached_;	// hold materialized chunk
-	pChunkDesc desc_;		// chunk desc
-
-protected:
-	//////////////////////////////
-	// Chunk Header				//
-	//////////////////////////////
 	class chunkHeader : public serialHeader
 	{
 	public:
@@ -105,7 +135,6 @@ protected:
 	};
 
 public:
-	// inherit from serializable
 	virtual void updateToHeader() override;
 	virtual void updateFromHeader() override;
 };

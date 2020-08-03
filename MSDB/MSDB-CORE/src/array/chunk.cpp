@@ -77,6 +77,10 @@ const pChunkDesc chunk::getDesc() const
 {
 	return this->desc_;
 }
+chunk::size_type chunk::getDSize()
+{
+	return this->desc_->getDimSize();
+}
 chunk::size_type chunk::numCells()
 {
 	size_type output = 1;

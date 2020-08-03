@@ -88,6 +88,7 @@ void blockChunk::setBlock(pBlock b)
 void blockChunk::flush()
 {
 	this->blocks_.clear();
+	// TODO:: Flush cached
 }
 
 void blockChunk::serialize(std::ostream& os)
