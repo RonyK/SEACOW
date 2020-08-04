@@ -158,6 +158,7 @@
     <ClInclude Include="include\array\blockDesc.h" />
     <ClInclude Include="include\array\blockChunk.h" />
     <ClInclude Include="include\array\blockId.h" />
+    <ClInclude Include="include\array\blockItemIterator.h" />
     <ClInclude Include="include\array\blockIterator.h" />
     <ClInclude Include="include\array\buffer.h" />
     <ClInclude Include="include\array\chunk.h" />
@@ -251,6 +252,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.cpp" />
+    <ClCompile Include="src\array\blockItemIterator.cpp" />
     <ClCompile Include="src\array\chunkItemIterator.cpp" />
     <ClCompile Include="src\array\memBlock.cpp" />
     <ClCompile Include="src\array\block.cpp" />

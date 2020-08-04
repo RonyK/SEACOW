@@ -10,7 +10,7 @@ arrayBase::arrayBase(pArrayDesc desc)
 }
 arrayBase::~arrayBase()
 {
-	std::cout << "~arrayBase()" << std::endl;
+	//std::cout << "~arrayBase()" << std::endl;
 }
 pArrayDesc arrayBase::getDesc()
 {

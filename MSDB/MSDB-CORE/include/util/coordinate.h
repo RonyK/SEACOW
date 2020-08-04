@@ -915,8 +915,14 @@ public:
 	using dim_const_reference = const Dty_&;
 
 public:
-	itemIterator(void* ptr, eleType eType, const size_type dSize, dim_const_pointer dims)
+	itemIterator(void* ptr, const eleType eType, const size_type dSize, dim_const_pointer dims)
 		: base_type(dSize, dims), eType_(eType), eSize_(getEleSize(eType))
+	{
+		this->ptr_ = reinterpret_cast<char*>(ptr);
+	}
+
+	itemIterator(void* ptr, const eleType eType, const coordinate<Dty_> dims)
+		: base_type(dims), eType_(eType), eSize_(getEleSize(eType))
 	{
 		this->ptr_ = reinterpret_cast<char*>(ptr);
 	}
@@ -1034,8 +1040,12 @@ public:
 	using dim_const_reference = base_type::dim_const_reference;
 
 public:
-	itemRangeIterator(void* ptr, eleType eType, const size_type dSize, dim_const_pointer dim,
-					  dim_const_pointer sP, dim_const_pointer eP)
+	itemRangeIterator(void* ptr, 
+					  const eleType eType,
+					  const size_type dSize, 
+					  dim_const_pointer dim,
+					  dim_const_pointer sP,
+					  dim_const_pointer eP)
 		: base_type(ptr, eType, dSize, dim), coordinateIterator<Dty_>(dSize, dim)
 	{
 		assert(this->initCheckSpEp());
@@ -1044,9 +1054,11 @@ public:
 		this->moveToStart();
 	}
 
-	itemRangeIterator(void* ptr, eleType eType, const size_type dSize, dim_const_pointer dim,
+	itemRangeIterator(void* ptr, 
+					  const eleType eType,
+					  const coordinate<Dty_> dim,
 					  const coordinateRange<Dty_>& range)
-		: base_type(ptr, eType, dSize, dim), coordinateIterator<Dty_>(dSize, dim)
+		: base_type(ptr, eType, dim), coordinateIterator<Dty_>(dim)
 	{
 		assert(this->initCheckSpEp());
 		this->sP_ = range.getSp();
@@ -1054,7 +1066,8 @@ public:
 		this->moveToStart();
 	}
 
-	itemRangeIterator(const self_type& mit) : base_type(mit), coordinateIterator<Dty_>(mit)
+	itemRangeIterator(const self_type& mit) 
+		: base_type(mit), coordinateIterator<Dty_>(mit)
 	{
 		this->sP_ = mit.sP_;
 		this->eP_ = mit.eP_;
