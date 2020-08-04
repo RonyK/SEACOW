@@ -19,6 +19,8 @@ public:
 	std::vector<position_t> getDims();
 	std::vector<position_t> getChunkDims();
 	std::vector<position_t> getChunkContainerDims();
+	std::vector<position_t> getBlockDims();
+	std::vector<position_t> getBlockContainerDims();
 };
 
 class dimensionDesc
@@ -29,7 +31,7 @@ public:
 public:
 	dimensionDesc(dimensionId id, std::string name, 
 				  dimension_type start, dimension_type end,
-				  position_t chunkSize);
+				  position_t chunkSize, position_t blockSize = 0);
 
 public:
 	position_t getLength();
@@ -41,6 +43,7 @@ public:
 	dimension_type start_;
 	dimension_type end_;
 	position_t chunkSize_;
+	position_t blockSize_;
 };
 }
 

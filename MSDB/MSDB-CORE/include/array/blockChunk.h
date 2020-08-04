@@ -89,6 +89,7 @@ public:
 	virtual element operator*() override;
 
 protected:
+	void initBlockItemItr();
 	pBlockIterator bItr_;
 	pChunkItemIterator curBlockItemItr_;
 };

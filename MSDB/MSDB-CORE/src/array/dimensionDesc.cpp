@@ -5,8 +5,8 @@ namespace msdb
 {
 dimensionDesc::dimensionDesc(dimensionId id, std::string name,
 							 dimension_type start, dimension_type end, 
-							 position_t chunkSize)
-	: id_(id), name_(name), start_(start), end_(end), chunkSize_(chunkSize)
+							 position_t chunkSize, position_t blockSize)
+	: id_(id), name_(name), start_(start), end_(end), chunkSize_(chunkSize), blockSize_(blockSize_)
 {
 
 }

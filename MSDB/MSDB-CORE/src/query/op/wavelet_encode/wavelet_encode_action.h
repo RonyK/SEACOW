@@ -53,8 +53,8 @@ private:
 	std::list<pChunk> waveletTransform(pChunk inChunk, pWavelet w, dimensionId basisDim, pQuery q)
 	{
 		// Setting chunkDesc for band chunk
-		auto inChunkDesc = *inChunk->getDesc();
-		auto bandDesc = std::make_shared<chunkDesc>(inChunkDesc);
+		auto inChunkDesc = inChunk->getDesc();
+		auto bandDesc = std::make_shared<chunkDesc>(*inChunkDesc);
 		bandDesc->setDim(basisDim, intDivCeil(bandDesc->dims_[basisDim], 2));
 
 		// Make chunk

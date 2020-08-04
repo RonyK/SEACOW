@@ -7,6 +7,8 @@ namespace msdb
 memBlockChunk::memBlockChunk(pChunkDesc desc)
 	: chunk(desc)
 {
+	//this->blockCapacity_ = ;
+	this->blocks_.resize(this->getBlockCapacity(), nullptr);
 }
 
 memBlockChunk::~memBlockChunk()
@@ -16,16 +18,21 @@ memBlockChunk::~memBlockChunk()
 void memBlockChunk::makeBuffer()
 {
 	this->cached_ = std::make_shared<memChunkBuffer>();
+	if(this->blocks_.empty())
+	{
+		// TODO:: use block bitmap
+		this->makeAllBlocks();
+	}
 	this->referenceBufferToBlock();
 }
 
 void memBlockChunk::makeBlocks(std::vector<bool> bitmap)
 {
-	pBlockChunkDesc bcDesc = std::static_pointer_cast<blockChunkDesc>(this->desc_);
+	pChunkDesc bcDesc = std::static_pointer_cast<chunkDesc>(this->desc_);
 
 	blockId capacity = this->getBlockCapacity();
 	bufferSize mSizeBlock = bcDesc->blockDims_.area();
-	coorItr bCoorItr(bcDesc->blockSpace_);
+	coorItr bCoorItr(bcDesc->getBlockSpace());
 
 	for(blockId bid = 0; bid < capacity; ++bid, ++bCoorItr)
 	{
@@ -55,10 +62,10 @@ void memBlockChunk::referenceBufferToBlock()
 {
 	// Reference block buffers to the chunk buffer
 	blockId capacity = this->getBlockCapacity();
-	bufferSize mSizeBlock = std::static_pointer_cast<blockChunkDesc>(this->desc_)->blockDims_.area();
+	bufferSize mSizeBlock = this->desc_->getBlockDim().area();
 	for (blockId bid = 0; bid < capacity; ++bid)
 	{
-		// TODO::block bitmap
+		// TODO:: use block bitmap
 		if (this->blocks_[bid])
 		{
 			this->blocks_[bid]->reference(
@@ -100,15 +107,15 @@ blockId memBlockChunk::getBlockIdFromBlockCoor(coor& chunkCoor)
 coor memBlockChunk::itemCoorToBlockCoor(coor& itemCoor)
 {
 	coor blockCoor = itemCoor;
-	pBlockChunkDesc bDesc = std::static_pointer_cast<blockChunkDesc>(this->desc_);
-	blockCoor /= bDesc->blockDims_;
+	//pChunkDesc bDesc = std::static_pointer_cast<blockChunkDesc>(this->desc_);
+	blockCoor /= this->desc_->getBlockDim();
 	return blockCoor;
 }
 
 pBlockIterator memBlockChunk::getBlockIterator(iterateMode itMode)
 {
-	auto bChunkDesc = std::static_pointer_cast<blockChunkDesc>(this->desc_);
-	return std::make_shared<blockIterator>(bChunkDesc->blockDims_, &this->blocks_, itMode);
+	//auto bChunkDesc = std::static_pointer_cast<blockChunkDesc>(this->desc_);
+	return std::make_shared<blockIterator>(this->desc_->getBlockDim(), &this->blocks_, itMode);
 }
 
 pChunkItemIterator memBlockChunk::getItemIterator()
@@ -183,17 +190,8 @@ blockChunkItemIterator::blockChunkItemIterator(void* data, const eleType eType,
 	coorItr(dSize, dims),
 	bItr_(bItr), curBlockItemItr_(nullptr)
 {
-	// if iterMode all
-	if (bItr_->isExist())
-	{
-		auto it = (*bItr_)->getItemIterator();
-		//this->curBlockItemItr_ = std::make_shared<chunkItemIterator>
-	}
-	// TODO::set cur block item itr
+	this->initBlockItemItr();
 }
-
-
-
 
 blockChunkItemIterator::blockChunkItemIterator(void* data, const eleType eType,
 											   const dimension dims,
@@ -203,7 +201,7 @@ blockChunkItemIterator::blockChunkItemIterator(void* data, const eleType eType,
 	coorItr(dims.size(), dims.data()),
 	bItr_(bItr), curBlockItemItr_(nullptr)
 {
-	// TODO::set cur block item itr
+	this->initBlockItemItr();
 }
 
 // Only visits exist blocks
@@ -278,6 +276,18 @@ element blockChunkItemIterator::getAt(position_t pos)
 element blockChunkItemIterator::operator*()
 {
 	return (**this->curBlockItemItr_);
+}
+
+void blockChunkItemIterator::initBlockItemItr()
+{
+	while (!this->bItr_->isExist() || !this->bItr_->isEnd())
+	{
+		++(*this->bItr_);
+	}
+	if (this->bItr_->isExist())
+	{
+		this->curBlockItemItr_ = (**this->bItr_)->getItemIterator();
+	}
 }
 
 blockChunkItemRangeIterator::blockChunkItemRangeIterator(void* data, const eleType eType, const size_type dSize,

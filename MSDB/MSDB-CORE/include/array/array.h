@@ -73,6 +73,7 @@ public:
 
 public:
 	arrayBase(pArrayDesc desc);
+	virtual ~arrayBase();
 
 public:
 	//////////////////////////////

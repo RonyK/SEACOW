@@ -8,6 +8,10 @@ arrayBase::arrayBase(pArrayDesc desc)
 {
 	this->desc_ = desc;
 }
+arrayBase::~arrayBase()
+{
+	std::cout << "~arrayBase()" << std::endl;
+}
 pArrayDesc arrayBase::getDesc()
 {
 	return this->desc_;

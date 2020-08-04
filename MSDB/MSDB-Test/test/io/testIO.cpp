@@ -6,11 +6,9 @@ namespace msdb
 {
 namespace caDummy
 {
-namespace data2D_sc4x4
-{
-void getSave(pArrayDesc sourceArrDesc, 
-			 std::shared_ptr<save_plan>& plan, 
-			 std::shared_ptr<save_action>& action, 
+void getSave(pArrayDesc sourceArrDesc,
+			 std::shared_ptr<save_plan>& plan,
+			 std::shared_ptr<save_action>& action,
 			 pQuery& qry)
 {
 	pQuery saveQuery = std::make_shared<query>();
@@ -31,7 +29,7 @@ void getSave(pArrayDesc sourceArrDesc,
 }
 
 void getLoad(pArrayDesc sourceArrDesc,
-			 std::shared_ptr<load_plan>& plan, 
+			 std::shared_ptr<load_plan>& plan,
 			 std::shared_ptr<load_action>& action,
 			 pQuery& qry)
 {
@@ -52,9 +50,10 @@ void getLoad(pArrayDesc sourceArrDesc,
 	qry = loadQuery;
 }
 
-pArray save(std::vector<pArray> sourceArr)
+pArray save(std::vector<pArray> sourceArr,
+			void (*getArray)(std::vector<pArray>& sourceArr))
 {
-	getSourceArrayIfEmpty(sourceArr);
+	getArray(sourceArr);
 	std::shared_ptr<save_plan> savePlan;
 	std::shared_ptr<save_action> saveAction;
 	pQuery saveQuery;
@@ -64,9 +63,10 @@ pArray save(std::vector<pArray> sourceArr)
 
 	return afterArray;
 }
-pArray load(std::vector<pArray> sourceArr)
+pArray load(std::vector<pArray> sourceArr,
+			void (*getArray)(std::vector<pArray>& sourceArr))
 {
-	getSourceArrayIfEmpty(sourceArr);
+	getArray(sourceArr);
 	std::shared_ptr<load_plan> loadPlan;
 	std::shared_ptr<load_action> loadAction;
 	pQuery loadQuery;
@@ -77,6 +77,8 @@ pArray load(std::vector<pArray> sourceArr)
 	return afterArray;
 }
 
+namespace data2D_sc4x4
+{
 void load_test(pArray arr)
 {
 	auto arrId = arr->getId();

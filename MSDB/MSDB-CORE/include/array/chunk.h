@@ -74,6 +74,9 @@ public:
 	virtual virtual coor itemCoorToBlockCoor(coor& itemCoor) = 0;
 	virtual pBlockIterator getBlockIterator(iterateMode itMode = iterateMode::ALL) = 0;
 
+protected:
+	size_type blockCapacity_;
+
 //////////////////////////////
 // Item Iterators
 //////////////////////////////

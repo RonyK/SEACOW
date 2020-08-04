@@ -34,7 +34,7 @@ TEST(query_op_wavelet_encode, waveletHaar_1D)
 	pArray sourceArr = std::make_shared<arrayBase>(arrDesc);
 	std::vector<pArray> arrs = { sourceArr };
 
-	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, sP, eP);
+	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, dim, sP, eP);
 	pChunk sourceChunk = std::make_shared<memChunk>(cDesc);
 	sourceChunk->materializeCopy(data, sizeof(data));
 	sourceArr->insertChunk(sourceChunk);
@@ -116,7 +116,7 @@ TEST(query_op_wavelet_encode, waveletHaarSimple_2D)
 	pArray sourceArr = std::make_shared<arrayBase>(arrDesc);
 	std::vector<pArray> arrs = { sourceArr };
 
-	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, sP, eP);
+	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, dim, sP, eP);
 	pChunk sourceChunk = std::make_shared<memChunk>(cDesc);
 	sourceChunk->materializeCopy(data, sizeof(data));
 	sourceArr->insertChunk(sourceChunk);

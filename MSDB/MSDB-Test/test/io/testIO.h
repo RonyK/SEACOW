@@ -10,8 +10,6 @@ namespace msdb
 {
 namespace caDummy
 {
-namespace data2D_sc4x4
-{
 void getSave(pArrayDesc sourceArrDesc,
 			 std::shared_ptr<save_plan>& plan,
 			 std::shared_ptr<save_action>& action,
@@ -21,8 +19,13 @@ void getLoad(pArrayDesc sourceArrDesc,
 			 std::shared_ptr<load_action>& action,
 			 pQuery& qry);
 
-pArray save(std::vector<pArray> sourceArr);
-pArray load(std::vector<pArray> sourceArr);
+pArray save(std::vector<pArray> sourceArr,
+			void (*getArray)(std::vector<pArray>& sourceArr));
+pArray load(std::vector<pArray> sourceArr,
+			void (*getArray)(std::vector<pArray>& sourceArr));
+
+namespace data2D_sc4x4
+{
 void load_test(pArray arr);
 }	// data2D_sc4x4
 }	// caDummy

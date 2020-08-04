@@ -10,8 +10,11 @@ namespace caDummy
 namespace data2D_star1024x1024
 {
 std::vector<dim_type> dims = { dimY, dimX };
-std::vector<dim_type> chunkDims = { dimY, dimX };
-std::vector<dim_type> chunkNums = { 1, 1 };
+std::vector<dim_type> chunkNums = { 2, 2 };
+std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
+std::vector<dim_type> blockNums = {8, 8};
+std::vector<dim_type> blockDims = { chunkDims[0] / blockNums[0], chunkDims[1] / blockNums[1] };
+
 
 void getDummy(value_type* output, size_t length)
 {
@@ -32,7 +35,7 @@ void getDummy(value_type* output, size_t length)
 		//case ' ':
 		//	continue;
 		//}
-		std::cout << "[" << i << "]" << c << std::endl;
+		//std::cout << "[" << i << "]" << c << std::endl;
 		output[i++] = c;
 	}
 	in.close();

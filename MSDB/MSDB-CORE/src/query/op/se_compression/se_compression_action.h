@@ -52,7 +52,7 @@ public:
 
 			for (size_t i = 0; i < 1 + (inArr->getMaxLevel() + 1) * (pow(2, inArr->getDesc()->getDSize()) - 1); ++i)
 			{
-				if(cit->isEnd())
+				if (cit->isEnd())
 				{
 					_MSDB_EXCEPTIONS_MSG(MSDB_EC_LOGIC_ERROR, MSDB_ER_OUT_OF_RANGE, "iterating chunk fail");
 				}
@@ -80,21 +80,21 @@ public:
 		pWtChunk iChunk = in[0];	// approximate chunk, get tile dim
 		dimension blockDims = iChunk->getDesc()->getDim();	// TODO::FIX, now simple approch
 
-		for(auto c : in)
+		for (auto c : in)
 		{
 			auto iDesc = c->getDesc();
-			auto oDesc = std::make_shared<blockChunkDesc>(iDesc->id_,
-														  std::make_shared<attributeDesc>(*(iDesc->attrDesc_)),
-														  iDesc->dims_, blockDims,
-														  iDesc->sp_, iDesc->ep_,
-														  iDesc->mSize_);
+			auto oDesc = std::make_shared<chunkDesc>(iDesc->id_,
+													 std::make_shared<attributeDesc>(*(iDesc->attrDesc_)),
+													 iDesc->dims_, blockDims,
+													 iDesc->sp_, iDesc->ep_,
+													 iDesc->mSize_);
 			pSeChunk oChunk = std::make_shared<seChunk>(oDesc);
 			oChunk->setLevel(iChunk->getLevel());
 			oChunk->setBandId(iChunk->getBandId());
 			oChunk->setSourceChunkId(iChunk->getSourceChunkId());
 			oChunk->makeAllBlocks();
 			oChunk->alloc();
- 
+
 			//dimension blockSpace = c->getTileSpace(sourceChunkDim);
 			//dimension blockSpace = c->getDesc()->getBlockSpace();
 			//coorItr blockItr(blockSpace);
@@ -131,10 +131,10 @@ public:
 				auto oBlockItemItr = oChunk->getBlock((*ibItr)->getId())->getItemIterator();
 
 				bit_cnt_type maxValueBits = 0;
-				while(!iBlockItemItr->isEnd())
+				while (!iBlockItemItr->isEnd())
 				{
 					bit_cnt_type valueBits = msb<bit_cnt_type>(abs_((**iBlockItemItr).get<Ty_>()));
-					if(maxValueBits < valueBits)
+					if (maxValueBits < valueBits)
 					{
 						maxValueBits = valueBits;
 					}
@@ -142,8 +142,8 @@ public:
 					// As input/output block have same type, they can access the same coordinate using the next() operator.
 					(**oBlockItemItr) = (**iBlockItemItr);
 					++(*iBlockItemItr);
-					++(*oBlockItemItr);	 
-					
+					++(*oBlockItemItr);
+
 				}
 				oChunk->rBitFromDelta.push_back(maxValueBits);
 
