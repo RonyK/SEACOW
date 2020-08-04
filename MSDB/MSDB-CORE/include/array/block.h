@@ -2,7 +2,7 @@
 #ifndef _MSDB_BLOCK_H_
 #define _MSDB_BLOCK_H_
 
-#include <array/chunkItemIterator.h>
+#include <array/blockItemIterator.h>
 #include <array/blockBuffer.h>
 #include <array/blockDesc.h>
 #include <io/bitstream.h>

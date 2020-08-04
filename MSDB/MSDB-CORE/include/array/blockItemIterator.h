@@ -10,8 +10,6 @@ namespace msdb
 class blockItemIterator;
 class blockItemRangeIterator;
 using pBlockItemIterator = std::shared_ptr<blockItemIterator>;
-using pBlockItemIterator = std::shared_ptr<blockItemIterator>;
-using pBlockItemRangeIterator = std::shared_ptr<blockItemRangeIterator>;
 using pBlockItemRangeIterator = std::shared_ptr<blockItemRangeIterator>;
 
 template <typename Dty_>
@@ -30,8 +28,8 @@ public:
 public:
 	blockItemIteratorBase(void* data, 
 						  const eleType eType, 
-						  const dimension dims,
-						  const dimension bSp)
+						  const dimension& dims,
+						  const dimension& bSp)
 		: base_type(dims), bSp_(bSp)
 	{
 	}
@@ -80,7 +78,7 @@ public:
 
 public:
 	blockItemIterator(void* data, const eleType eType, 
-					  const dimension dims, const dimension bSp);
+					  const dimension& dims, const dimension& bSp);
 };
 
 class blockItemRangeIterator : public itemRangeItr, public blockItemItrBase
@@ -99,9 +97,9 @@ public:
 
 public:
 	blockItemRangeIterator(void* data, const eleType eType,
-						   const dimension dims,
+						   const dimension& dims,
 						   const coorRange& range,
-						   const dimension bSp);
+						   const dimension& bSp);
 };
 
 }	// msdb

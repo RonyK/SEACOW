@@ -79,6 +79,7 @@
     <ClCompile Include="src\query\op\se_compression\se_compression_action.cpp" />
     <ClCompile Include="src\query\op\se_compression\se_compression_plan.cpp" />
     <ClCompile Include="src\array\blockItemIterator.cpp" />
+    <ClCompile Include="src\array\memBlockItemIterator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.h" />
@@ -177,6 +178,7 @@
     <ClInclude Include="include\compression\spihtChunk.h" />
     <ClInclude Include="src\compression\spihtChunk.cpp" />
     <ClInclude Include="include\array\blockItemIterator.h" />
+    <ClInclude Include="include\array\memBlockItemIterator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">

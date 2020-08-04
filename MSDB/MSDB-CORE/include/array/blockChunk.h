@@ -71,14 +71,10 @@ public:
 	using dim_reference = base_type::dim_reference;
 	using dim_const_reference = base_type::dim_const_reference;
 public:
-	// csP : chunk start point
-	blockChunkItemIterator(void* data, const eleType eType, const size_type dSize, 
-						   dim_const_pointer dims,
-						   dim_const_pointer csP, pBlockIterator bItr);
-
 	blockChunkItemIterator(void* data, const eleType eType,
-						   const dimension dims,
-						   const dimension csP, pBlockIterator bItr);
+						   const dimension& dims,
+						   const dimension& csP,
+						   pBlockIterator bItr);
 
 public:
 	virtual void next() override;
@@ -90,22 +86,17 @@ public:
 protected:
 	void initBlockItemItr();
 	pBlockIterator bItr_;
-	pChunkItemIterator curBlockItemItr_;
+	pBlockItemIterator curBlockItemItr_;
 };
 
 class blockChunkItemRangeIterator : public chunkItemRangeIterator
 {
 public:
-
-	blockChunkItemRangeIterator(void* data, const eleType eType, const size_type dSize,
-								dim_const_pointer dims,
-								dim_const_pointer sP, dim_const_pointer eP,
-								dim_const_pointer csP, pBlockIterator bItr);
-
 	blockChunkItemRangeIterator(void* data, eleType eType, 
-								const dimension dims,
+								const dimension& dims,
 								const coorRange& range,
-								const dimension csP, pBlockIterator bItr);
+								const dimension& csP, 
+								pBlockIterator bItr);
 
 public:
 	virtual void next() override;
@@ -116,7 +107,7 @@ public:
 
 protected:
 	pBlockIterator bItr_;
-	pChunkItemIterator curBlockItemItr_;
+	pBlockItemRangeIterator curBlockItemItr_;
 };
 }
 #endif		// _MSDB_BLOCKEDCHUNK_H_

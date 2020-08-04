@@ -177,6 +177,7 @@
     <ClInclude Include="include\array\dimensionId.h" />
     <ClInclude Include="include\array\memArray.h" />
     <ClInclude Include="include\array\memBlock.h" />
+    <ClInclude Include="include\array\memBlockItemIterator.h" />
     <ClInclude Include="include\array\memChunk.h" />
     <ClInclude Include="include\array\memChunkBuffer.h" />
     <ClInclude Include="include\array\memChunkItemIterator.h" />
@@ -263,6 +264,7 @@
     <ClCompile Include="src\array\blockIterator.cpp" />
     <ClCompile Include="src\array\chunkIterator.cpp" />
     <ClCompile Include="src\array\memArray.cpp" />
+    <ClCompile Include="src\array\memBlockItemIterator.cpp" />
     <ClCompile Include="src\array\memChunk.cpp" />
     <ClCompile Include="src\array\memChunkItemIterator.cpp" />
     <ClCompile Include="src\compression\seChunk.cpp" />
