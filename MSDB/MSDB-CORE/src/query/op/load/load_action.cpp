@@ -25,13 +25,13 @@ pArray load_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 	{
 		auto cit = sourceArr->getChunkIterator(iterateMode::ALL);
 
-		while (!cit.isEnd())
+		while (!cit->isEnd())
 		{
 			pSerializable serialChunk
-				= std::static_pointer_cast<serializable>(*cit);
-			storageMgr::instance()->loadChunk(arrId, attr->id_, (*cit)->getId(),
+				= std::static_pointer_cast<serializable>(**cit);
+			storageMgr::instance()->loadChunk(arrId, attr->id_, (**cit)->getId(),
 											  serialChunk);
-			++cit;
+			++(*cit);
 		}
 	}
 

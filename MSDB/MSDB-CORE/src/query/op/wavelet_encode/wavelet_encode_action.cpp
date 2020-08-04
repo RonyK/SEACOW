@@ -20,8 +20,8 @@ pArray wavelet_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 {
 	pArray source = inputArrays[0];
 	auto cItr = source->getChunkIterator();
-	auto dSize = cItr.dSize();
-	auto cSize = cItr.getSeqEnd();
+	auto dSize = cItr->dSize();
+	auto cSize = cItr->getSeqEnd();
 
 	// Get parameters
 	pStableElement ele = std::static_pointer_cast<stableElement>(this->params_[1]->getParam());
@@ -35,12 +35,12 @@ pArray wavelet_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 	// which can be used for current array.
 	maxLevel = wArray->getMaxLevel();
 
-	for(chunkId id = 0; id < cSize; ++id, ++cItr)
+	for(chunkId id = 0; id < cSize; ++id, ++(*cItr))
 	{
-		auto cChunk = (*cItr);
+		auto cChunk = (**cItr);
 		// --------------------
 		// TODO::PARALLEL
-		auto convertedChunkList = this->chunkEncode(wArray, (*cItr), w, maxLevel, q);
+		auto convertedChunkList = this->chunkEncode(wArray, (**cItr), w, maxLevel, q);
 		// --------------------
 		//for(auto c : convertedChunkList)
 		//{

@@ -90,9 +90,9 @@ void load_test(pArray arr)
 		auto cit = arr->getChunkIterator();
 		size_t c = 0;
 
-		while (!cit.isEnd())
+		while (!cit->isEnd())
 		{
-			auto iit = (*cit)->getItemIterator();
+			auto iit = (**cit)->getItemIterator();
 			for (size_t i = 0; i < iit->getCapacity(); ++i)
 			{
 				std::cout << "[" << iit->coor()[0] << ", " << iit->coor()[1] << "] " << static_cast<int>((**iit).getChar()) << ", " << static_cast<int>(expected[i]) << std::endl;
@@ -101,7 +101,7 @@ void load_test(pArray arr)
 				++items;
 			}
 			++c;
-			++cit;
+			++(*cit);
 		}
 	}
 

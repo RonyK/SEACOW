@@ -88,7 +88,7 @@ public:
 	chunkId getChunkIdFromItemCoor(coor& itemCoor);
 	chunkId getChunkIdFromChunkCoor(coor& chunkCoor);
 	virtual coor itemCoorToChunkCoor(coor& itemCoor);
-	virtual chunkIterator getChunkIterator(
+	virtual pChunkIterator getChunkIterator(
 		iterateMode itMode = iterateMode::ALL);
 
 	//////////////////////////////

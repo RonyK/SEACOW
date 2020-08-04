@@ -22,8 +22,8 @@ pArray wavelet_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 
 	pArray source = inputArrays[0];
 	auto cItr = source->getChunkIterator();
-	auto dSize = cItr.dSize();
-	auto cSize = cItr.getSeqEnd();
+	auto dSize = cItr->dSize();
+	auto cSize = cItr->getSeqEnd();
 
 	// Get parameters
 	pStableElement ele = std::static_pointer_cast<stableElement>(this->params_[1]->getParam());

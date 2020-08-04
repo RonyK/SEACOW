@@ -22,10 +22,10 @@ pArray spiht_decode_action::execute(std::vector<pArray>& outputArrays, pQuery q)
 	auto source = outputArrays[0];
 	auto wArray = std::static_pointer_cast<wavelet_encode_array>(source);
 	auto chunkItr = wArray->getChunkIterator();
-	while (!chunkItr.isEnd())
+	while (!chunkItr->isEnd())
 	{
-		auto itemItr = (*chunkItr)->getItemIterator();
-		auto dSize = chunkItr.dSize();									// dimension size
+		auto itemItr = (**chunkItr)->getItemIterator();
+		auto dSize = chunkItr->dSize();									// dimension size
 		auto cSize = wArray->getDesc()->dimDescs_.getChunkDims();		// chunk size
 		auto max_level = wArray->getMaxLevel();							// max level
 		std::vector<size_t> bandSize(dSize);							// band size in max level(?)
@@ -36,7 +36,7 @@ pArray spiht_decode_action::execute(std::vector<pArray>& outputArrays, pQuery q)
 
 		this->decode_init(dSize, bandSize);
 
-		switch ((*chunkItr)->getDesc()->attrDesc_->type_)
+		switch ((**chunkItr)->getDesc()->attrDesc_->type_)
 		{
 		case eleType::CHAR:
 			this->decode_progress<char>(dSize, cSize, bandSize, itemItr);
@@ -68,7 +68,7 @@ pArray spiht_decode_action::execute(std::vector<pArray>& outputArrays, pQuery q)
 		default:
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 		}
-		++chunkItr;
+		++(*chunkItr);
 	}
 
 	return source;

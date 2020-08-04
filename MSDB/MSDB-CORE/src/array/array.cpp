@@ -12,9 +12,9 @@ pArrayDesc arrayBase::getDesc()
 {
 	return this->desc_;
 }
-chunkIterator arrayBase::getChunkIterator(iterateMode itMode)
+pChunkIterator arrayBase::getChunkIterator(iterateMode itMode)
 {
-	return chunkIterator(this->desc_->dimDescs_.size(), 
+	return std::make_shared<chunkIterator>(this->desc_->dimDescs_.size(), 
 						 this->desc_->dimDescs_.getChunkContainerDims().data(), 
 						 &this->chunks_,
 						 itMode);
@@ -87,10 +87,10 @@ void arrayBase::print()
 {
 	auto cit = this->getChunkIterator();
 
-	while(!cit.isEnd())
+	while(!cit->isEnd())
 	{
-		(*cit)->print();
-		++cit;
+		(**cit)->print();
+		++(*cit);
 	}
 }
 }

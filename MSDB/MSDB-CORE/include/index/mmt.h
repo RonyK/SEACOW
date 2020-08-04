@@ -74,7 +74,7 @@ public:
 	MinMaxTree(eleType eType, size_const maxLevel = 0);
 
 public:
-	virtual void build(chunkIterator& it) = 0;
+	virtual void build(pChunkIterator& it) = 0;
 	virtual void serialize(std::ostream& os) = 0;
 	virtual void deserialize(std::istream& is) = 0;
 
@@ -218,9 +218,9 @@ public:
 public:
 	// deprecated
 	// forwardBuildLeaft -> insertLeaf
-	void build(chunkIterator& it)
+	void build(pChunkIterator& it)
 	{
-		assert(it.getIterateMode() == iterateMode::EXIST);
+		assert(it->getIterateMode() == iterateMode::EXIST);
 
 		this->nodes_.clear();
 
@@ -335,31 +335,32 @@ protected:
 	//////////////////////////////
 	// MMT Build Functions
 	// For level 0
-	void forwardBuildLeaf(chunkIterator& it)
+	void forwardBuildLeaf(pChunkIterator& it)
 	{
 		////////////////////////////////////////
 		// Create new mmtNodes
-		size_type blockCnt = calcNumItems(
-			this->levelDims_[0].data(), this->levelDims_[0].size());	// block numbers
-		this->nodes_.push_back(std::vector<pNode>(blockCnt));			// make new node
+		//size_type blockCnt = calcNumItems(
+		//	this->levelDims_[0].data(), this->levelDims_[0].size());	// block numbers
+		//this->nodes_.push_back(std::vector<pNode>(blockCnt));			// make new node
 
-		while (!it.isEnd())
+		while (!it->isEnd())
 		{
 			// Setup a start point of blockCoor for blocks in a chunk
-			coorItr bit(this->leafInChunkLevelDim_);
-			while (!bit.isEnd())
+			//coorItr bit(this->leafInChunkLevelDim_);
+			auto bit = (**it)->getBlockIterator();
+			while (!bit->isEnd())
 			{
-				auto bItemBdy = this->getBlockItemBoundary(bit.coor());
-				auto iit = (*it)->getItemRangeIterator(bItemBdy);
+				auto bItemBdy = this->getBlockItemBoundary(bit->coor());
+				auto iit = (**it)->getItemRangeIterator(bItemBdy);
 				auto lNode = this->forwardBuildLeafNode(iit);
-				this->setNode(lNode, it.coor(), bit.coor());
+				this->setNode(lNode, it->coor(), bit->coor());
 
 				//std::cout << "leaf forward-" << std::endl;
 				//std::cout << "[" << blockCoor[0] << ", " << blockCoor[1] << "] : " << static_cast<int>(lNode->min_) << "~" << static_cast<int>(lNode->max_) << std::endl;
-				++bit;	// Move on a next block in the chunk
+				++(*bit);	// Move on a next block in the chunk
 			}
 
-			++it;	// Move on a next chunk
+			++(*it);	// Move on a next chunk
 		}
 	}
 

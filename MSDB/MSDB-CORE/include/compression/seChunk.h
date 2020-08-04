@@ -35,9 +35,9 @@ public:
 	template<typename Ty_>
 	void serialize(bstream& bs)
 	{
-		auto it = this->getBlockIterator();
+		auto bit = this->getBlockIterator();
 		blockId bid = 0;
-		while (!it->isEnd())
+		while (!bit->isEnd())
 		{
 			// Set block bit
 			size_t gap = this->rBitFromMMT[bid] - this->rBitFromDelta[bid];
@@ -46,14 +46,14 @@ public:
 
 			// Write value
 			bs << setw(this->rBitFromDelta[bid]);
-			auto bItemItr = (**it)->getItemIterator();
+			auto bItemItr = (**bit)->getItemIterator();
 			while (!bItemItr->isEnd())
 			{
 				bs << (**bItemItr).get<Ty_>();
 				++(*bItemItr);
 			}
 
-			++(*it);
+			++(*bit);
 			++bid;
 		}
 	}
@@ -65,7 +65,7 @@ public:
 		blockId bid = 0;
 		while (!it->isEnd())
 		{
-			//(*it)->deserialize(bs);
+			//(*bit)->deserialize(bs);
 			bs >> setw(1);
 			size_t gap = 0;
 			char gapBit = 0;

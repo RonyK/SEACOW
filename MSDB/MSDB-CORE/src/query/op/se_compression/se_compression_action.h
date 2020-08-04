@@ -41,7 +41,7 @@ public:
 		auto mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
 		dimension chunkDim(inArr->getDesc()->getDimDescs().getChunkDims());
 
-		while (!cit.isEnd())
+		while (!cit->isEnd())
 		{
 			std::vector<pWtChunk> wtChunks;
 			std::vector<pSeChunk> outChunks;
@@ -52,12 +52,12 @@ public:
 
 			for (size_t i = 0; i < 1 + (inArr->getMaxLevel() + 1) * (pow(2, inArr->getDesc()->getDSize()) - 1); ++i)
 			{
-				if(cit.isEnd())
+				if(cit->isEnd())
 				{
 					_MSDB_EXCEPTIONS_MSG(MSDB_EC_LOGIC_ERROR, MSDB_ER_OUT_OF_RANGE, "iterating chunk fail");
 				}
-				wtChunks.push_back(std::static_pointer_cast<wtChunk>(*cit));
-				++cit;
+				wtChunks.push_back(std::static_pointer_cast<wtChunk>(**cit));
+				++(*cit);
 			}
 
 			this->compressChunk<Ty_>(outChunks, wtChunks, mmtIndex, chunkDim);

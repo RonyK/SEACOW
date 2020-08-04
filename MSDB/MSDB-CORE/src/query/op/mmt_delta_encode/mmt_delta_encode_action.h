@@ -39,16 +39,16 @@ void mmt_delta_encode_action::saveAttribute(std::shared_ptr<mmt_delta_encode_arr
 	auto mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
 	auto cit = inArr->getChunkIterator(iterateMode::EXIST);
 
-	while (!cit.isEnd())
+	while (!cit->isEnd())
 	{
 		// Make new chunk
-		auto cDesc = (*cit)->getDesc();
+		auto cDesc = (**cit)->getDesc();
 		pChunk deltaChunk = std::make_shared<memChunk>(std::make_shared<chunkDesc>(*cDesc));
 		deltaChunk->alloc();
 
-		this->chunkEncode(deltaChunk, *cit, mmtIndex);
+		this->chunkEncode(deltaChunk, **cit, mmtIndex);
 		outArr->insertChunk(deltaChunk);
-		++cit;
+		++(*cit);
 	}
 
 	outArr->setMMT(attrDesc->id_, mmtIndex);
