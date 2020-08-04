@@ -8,6 +8,8 @@ namespace msdb
 memChunk::memChunk(pChunkDesc desc)
 	: chunk(desc)
 {
+	this->blockCapacity_ = 1;
+	this->makeAllBlocks();
 }
 
 memChunk::~memChunk()
@@ -17,8 +19,6 @@ memChunk::~memChunk()
 void memChunk::makeBuffer()
 {
 	this->cached_ = std::make_shared<memChunkBuffer>();
-
-
 }
 
 void memChunk::makeBlocks(std::vector<bool> bitmap)
@@ -143,10 +143,6 @@ void memChunk::deserialize(std::istream& is)
 	default:
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 	}
-}
-size_t memChunk::getBlockCapacity()
-{
-	return 1;
 }
 pBlock memChunk::getBlock(blockId bId)
 {

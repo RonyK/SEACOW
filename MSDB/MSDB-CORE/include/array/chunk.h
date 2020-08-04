@@ -66,7 +66,7 @@ protected:
 public:
 	virtual void makeBlocks(std::vector<bool> bitmap) = 0;
 	virtual void makeAllBlocks();
-	virtual size_t getBlockCapacity() = 0;
+	size_t getBlockCapacity();
 	virtual pBlock getBlock(blockId bId) = 0;
 	virtual blockId getBlockId(pBlockDesc cDesc) = 0;
 	virtual blockId getBlockIdFromItemCoor(coor& itemCoor) = 0;

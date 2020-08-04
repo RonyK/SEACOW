@@ -22,7 +22,6 @@ protected:
 // Blocks
 //////////////////////////////
 public:
-	virtual size_t getBlockCapacity() override;
 	virtual pBlock getBlock(blockId bId) override;
 	virtual blockId getBlockId(pBlockDesc cDesc) override;
 	virtual blockId getBlockIdFromItemCoor(coor& itemCoor) override;

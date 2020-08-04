@@ -18,6 +18,7 @@ void chunk::alloc()
 	this->free();
 	this->makeBuffer();
 	this->cached_->alloc(this->desc_->mSize_);
+	this->referenceBufferToBlock();
 }
 
 void chunk::alloc(bufferSize size)
@@ -25,6 +26,7 @@ void chunk::alloc(bufferSize size)
 	this->free();
 	this->makeBuffer();
 	this->cached_->alloc(size);
+	this->referenceBufferToBlock();
 	this->desc_->mSize_ = size;
 }
 
@@ -42,6 +44,7 @@ void chunk::materializeAssign(void* data, bufferSize size)
 	this->free();
 	this->makeBuffer();
 	this->cached_->reference(data, size);
+	this->referenceBufferToBlock();
 	this->desc_->mSize_ = size;
 }
 
@@ -139,6 +142,11 @@ void chunk::free()
 void chunk::makeAllBlocks()
 {
 	this->makeBlocks(std::vector<bool>(this->getBlockCapacity(), true));
+}
+
+size_t chunk::getBlockCapacity()
+{
+	return this->blockCapacity_;
 }
 
 void chunk::updateToHeader()

@@ -29,6 +29,9 @@ blockIterator::size_type blockIterator::getSeqEnd()
 
 bool blockIterator::isExist()
 {
+	if ((this->blocks_->size() > this->seqPos_) && (this->blocks_->at(this->seqPos_) != nullptr))
+		return true;
+
 	return false;
 }
 

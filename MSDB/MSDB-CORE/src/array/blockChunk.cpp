@@ -7,8 +7,9 @@ namespace msdb
 memBlockChunk::memBlockChunk(pChunkDesc desc)
 	: chunk(desc)
 {
-	//this->blockCapacity_ = ;
+	this->blockCapacity_ = this->desc_->getBlockSpace().area();
 	this->blocks_.resize(this->getBlockCapacity(), nullptr);
+	this->makeAllBlocks();
 }
 
 memBlockChunk::~memBlockChunk()
@@ -18,12 +19,6 @@ memBlockChunk::~memBlockChunk()
 void memBlockChunk::makeBuffer()
 {
 	this->cached_ = std::make_shared<memChunkBuffer>();
-	if(this->blocks_.empty())
-	{
-		// TODO:: use block bitmap
-		this->makeAllBlocks();
-	}
-	this->referenceBufferToBlock();
 }
 
 void memBlockChunk::makeBlocks(std::vector<bool> bitmap)
@@ -75,12 +70,6 @@ void memBlockChunk::referenceBufferToBlock()
 	}
 }
 
-size_t memBlockChunk::getBlockCapacity()
-{
-	auto bItr = this->getBlockIterator();
-	return bItr->getCapacity();
-}
-
 pBlock memBlockChunk::getBlock(blockId bId)
 {
 	return this->blocks_[bId];
@@ -115,7 +104,7 @@ coor memBlockChunk::itemCoorToBlockCoor(coor& itemCoor)
 pBlockIterator memBlockChunk::getBlockIterator(iterateMode itMode)
 {
 	//auto bChunkDesc = std::static_pointer_cast<blockChunkDesc>(this->desc_);
-	return std::make_shared<blockIterator>(this->desc_->getBlockDim(), &this->blocks_, itMode);
+	return std::make_shared<blockIterator>(this->desc_->getBlockSpace(), &this->blocks_, itMode);
 }
 
 pChunkItemIterator memBlockChunk::getItemIterator()
@@ -280,7 +269,7 @@ element blockChunkItemIterator::operator*()
 
 void blockChunkItemIterator::initBlockItemItr()
 {
-	while (!this->bItr_->isExist() || !this->bItr_->isEnd())
+	while (!this->bItr_->isExist() && !this->bItr_->isEnd())
 	{
 		++(*this->bItr_);
 	}

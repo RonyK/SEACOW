@@ -30,7 +30,6 @@ public:
 	// Getter
 	//////////////////////////////
 	// Block
-	virtual size_t getBlockCapacity();
 	virtual pBlock getBlock(blockId bId);
 	virtual blockId getBlockId(pBlockDesc cDesc);
 	virtual blockId getBlockIdFromItemCoor(coor& itemCoor);
