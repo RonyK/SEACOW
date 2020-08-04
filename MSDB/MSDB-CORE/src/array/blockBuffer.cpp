@@ -2,15 +2,17 @@
 
 namespace msdb
 {
-blockBuffer::blockBuffer()
+blockBuffer::blockBuffer(void* data, bufferSize size)
 	: chunkBuffer()
 {
+	this->reference(data, size);
 }
 
 blockBuffer::~blockBuffer()
 {
 }
-memBlockBuffer::memBlockBuffer()
+memBlockBuffer::memBlockBuffer(void* data, bufferSize size)
+	: blockBuffer(data, size)
 {
 }
 memBlockBuffer::~memBlockBuffer()

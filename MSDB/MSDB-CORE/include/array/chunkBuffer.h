@@ -27,7 +27,7 @@ public:
 	virtual void realloc(bufferSize size);
 	virtual void copy(void* data, bufferSize size);
 	virtual void copy(void* data, bufferSize offset, bufferSize size);
-	virtual void assign(void* data, bufferSize size);
+	virtual void reference(void* data, bufferSize size);
 	virtual void free();
 	
 protected:

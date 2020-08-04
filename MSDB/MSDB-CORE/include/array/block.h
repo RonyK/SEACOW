@@ -20,6 +20,9 @@ public:
 	block(pBlockDesc desc);
 	virtual ~block();
 
+//////////////////////////////
+// Desc
+//////////////////////////////
 public:
 	blockId getId();
 	pBlockDesc getDesc();
@@ -27,26 +30,28 @@ public:
 	virtual void serialize(bstream& os) = 0;
 	virtual void deserialize(bstream& is) = 0;
 
-	virtual pChunkItemIterator getItemIterator() = 0;
-	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range) = 0;
+protected:
+	pBlockDesc desc_;
 
+//////////////////////////////
+// Buffer
+//////////////////////////////
 public:
-	virtual void alloc();
-	virtual void alloc(bufferSize size);
-	// Deep copy
-	virtual void materializeCopy(void* data, bufferSize size);
 	// Shallow copy
-	// Used for performance
-	virtual void materializeAssign(void* data, bufferSize size);	
+	// A block buffer only references a part of a chunk buffer memory.
+	virtual void unreference();
+	virtual void reference(void* data, const bufferSize size) = 0;
 	bool isMaterialized() const;
 
 protected:
-	void free();
-	virtual void makeBuffer() = 0;
-
-protected:
 	pBlockBuffer cached_;	// hold materialized block
-	pBlockDesc desc_;
+	
+//////////////////////////////
+// Item Iterators
+//////////////////////////////
+public:
+	virtual pChunkItemIterator getItemIterator() = 0;
+	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range) = 0;
 };
 };
 

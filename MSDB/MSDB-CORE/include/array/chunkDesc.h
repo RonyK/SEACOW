@@ -45,6 +45,9 @@ public:
 public:
 	void setDim(dimensionId dId, position_t value);
 	dimension getDim();
+	virtual dimension getBlockDim();
+	virtual dimension getBlockSpace();
+
 	size_t getDimSize();
 
 public:
@@ -89,7 +92,12 @@ public:
 	blockChunkDesc(const blockChunkDesc& mit);
 
 public:
+	virtual dimension getBlockDim();
+	virtual dimension getBlockSpace();
+
+public:
 	dimension blockDims_;		// block dimensions
+	dimension blockSpace_;
 };
 }
 #endif		// _MSDB_CHUNKDESC_H_

@@ -16,6 +16,22 @@ public:
 	memBlock(pBlockDesc desc);
 	virtual ~memBlock();
 
+//////////////////////////////
+// Item Iterators
+//////////////////////////////
+public:
+	virtual pChunkItemIterator getItemIterator();
+	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range);
+
+//////////////////////////////
+// Buffer
+//////////////////////////////
+protected:
+	virtual void reference(void* data, bufferSize size) override;
+
+//////////////////////////////
+// Serializable
+//////////////////////////////
 public:
 	virtual void serialize(bstream& os) override;
 	virtual void deserialize(bstream& is) override;
@@ -31,7 +47,6 @@ public:
 			++(*it);
 		}
 	}
-
 	template<typename Ty_>
 	void deserializeTy(bstream& bs)
 	{
@@ -45,12 +60,6 @@ public:
 			++(*it);
 		}
 	}
-
-	virtual pChunkItemIterator getItemIterator();
-	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range);
-
-protected:
-	virtual void makeBuffer() override;
 };
 }
 

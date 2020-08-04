@@ -12,14 +12,14 @@ using pBlockBuffer = std::shared_ptr<blockBuffer>;
 class blockBuffer : public chunkBuffer
 {
 public:
-	blockBuffer();
+	blockBuffer(void* data, bufferSize size);
 	virtual ~blockBuffer();
 };
 
 class memBlockBuffer : public blockBuffer
 {
 public:
-	memBlockBuffer();
+	memBlockBuffer(void* data, bufferSize size);
 	virtual ~memBlockBuffer();
 };
 }	// msdb

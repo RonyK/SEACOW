@@ -27,7 +27,7 @@ public:
 	virtual void alloc(bufferSize size) override;
 	virtual void realloc(bufferSize size) override;
 	virtual void copy(void* data, bufferSize size) override;
-	virtual void assign(void* data, bufferSize size);
+	virtual void reference(void* data, bufferSize size);
 	virtual void free() override;
 
 protected:

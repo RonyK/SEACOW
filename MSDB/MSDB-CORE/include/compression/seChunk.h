@@ -11,7 +11,7 @@ namespace msdb
 class seChunk;
 using pSeChunk = std::shared_ptr<seChunk>;
 
-class seChunk : public blockChunk
+class seChunk : public memBlockChunk
 {
 public:
 	seChunk(pChunkDesc desc);

@@ -8,15 +8,6 @@ namespace msdb
 memChunk::memChunk(pChunkDesc desc)
 	: chunk(desc)
 {
-	this->block_ = std::make_shared<memBlock>(
-		std::make_shared<blockDesc>(
-		0,						// id
-		this->desc_->attrDesc_->type_,	// eType
-		this->desc_->getDim(),	// dims
-		this->desc_->sp_,		// sp
-		this->desc_->ep_,		// ep
-		this->desc_->mSize_		// mSize
-		));
 }
 
 memChunk::~memChunk()
@@ -26,6 +17,33 @@ memChunk::~memChunk()
 void memChunk::makeBuffer()
 {
 	this->cached_ = std::make_shared<memChunkBuffer>();
+
+
+}
+
+void memChunk::makeBlocks(std::vector<bool> bitmap)
+{
+	if(bitmap[0])
+	{
+		this->block_ = std::make_shared<memBlock>(
+			std::make_shared<blockDesc>(
+			0,						// id
+			this->desc_->attrDesc_->type_,	// eType
+			this->desc_->getDim(),	// dims
+			this->desc_->sp_,		// sp
+			this->desc_->ep_,		// ep
+			this->desc_->mSize_		// mSize
+			));
+	}
+}
+
+void memChunk::referenceBufferToBlock()
+{
+	if (this->block_)
+	{
+		bufferSize mSizeBlock = this->desc_->dims_.area();
+		this->block_->reference(this->cached_->getData(), mSizeBlock);
+	}
 }
 
 pChunkItemIterator memChunk::getItemIterator()

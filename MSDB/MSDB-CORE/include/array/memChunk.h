@@ -15,6 +15,8 @@ public:
 
 protected:
 	virtual void makeBuffer();
+	virtual void makeBlocks(std::vector<bool> bitmap);
+	virtual void referenceBufferToBlock();
 
 //////////////////////////////
 // Blocks

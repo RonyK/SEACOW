@@ -41,7 +41,7 @@ void chunk::materializeAssign(void* data, bufferSize size)
 {
 	this->free();
 	this->makeBuffer();
-	this->cached_->assign(data, size);
+	this->cached_->reference(data, size);
 	this->desc_->mSize_ = size;
 }
 
@@ -134,6 +134,11 @@ void chunk::free()
 	{
 		this->cached_ = nullptr;
 	}
+}
+
+void chunk::makeAllBlocks()
+{
+	this->makeBlocks(std::vector<bool>(this->getBlockCapacity(), true));
 }
 
 void chunk::updateToHeader()

@@ -35,7 +35,7 @@ void chunkBuffer::alloc(bufferSize size)
 {
 	assert(size > 0);
 
-	if(this->isAllocated())
+	if(this->data_ != nullptr)
 	{
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_MEMORY_ERROR, MSDB_ER_MEMORY_ALLOC_FAIL));
 	}
@@ -77,9 +77,8 @@ void chunkBuffer::copy(void* data, bufferSize offset, bufferSize size)
 }
 
 // WARNING:: data is deleted when the chunkBuffer is disappear in a destructor.
-void chunkBuffer::assign(void* data, bufferSize size)
+void chunkBuffer::reference(void* data, bufferSize size)
 {
-	this->free();
 	this->isAllocated_ = false;
 	this->data_ = data;
 	this->bodySize_ = size;

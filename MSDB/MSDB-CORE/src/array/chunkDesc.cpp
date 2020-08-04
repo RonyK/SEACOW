@@ -55,6 +55,16 @@ dimension chunkDesc::getDim()
 	return this->dims_;
 }
 
+dimension chunkDesc::getBlockDim()
+{
+	return this->dims_;
+}
+
+dimension chunkDesc::getBlockSpace()
+{
+	return dimension(this->getDimSize());
+}
+
 size_t chunkDesc::getDimSize()
 {
 	return this->dims_.size();
@@ -91,7 +101,7 @@ blockChunkDesc::blockChunkDesc(const chunkId id,
 							   const dimension& dims, const dimension& blockDims,
 							   const coor sp, const coor ep, 
 							   const chunkSize mSize)
-	: chunkDesc(id, attrDesc, dims, sp, ep, mSize), blockDims_(blockDims)
+	: chunkDesc(id, attrDesc, dims, sp, ep, mSize), blockDims_(blockDims), blockSpace_(dims / blockDims)
 {
 }
 blockChunkDesc::blockChunkDesc(const chunkId id, 
@@ -100,11 +110,19 @@ blockChunkDesc::blockChunkDesc(const chunkId id,
 							   const coor sp, const coor ep, 
 							   const chunkSize mSize, const chunkSize cSize,
 							   const CompressionMethod cType)
-	: chunkDesc(id, attrDesc, dims, sp, ep, mSize, cSize, cType), blockDims_(blockDims)
+	: chunkDesc(id, attrDesc, dims, sp, ep, mSize, cSize, cType), blockDims_(blockDims), blockSpace_(dims / blockDims)
 {
 }
 blockChunkDesc::blockChunkDesc(const blockChunkDesc& mit)
-	: chunkDesc(mit), blockDims_(mit.blockDims_)
+	: chunkDesc(mit), blockDims_(mit.blockDims_), blockSpace_(mit.blockSpace_)
 {
+}
+dimension blockChunkDesc::getBlockDim()
+{
+	return this->blockDims_;
+}
+dimension blockChunkDesc::getBlockSpace()
+{
+	return this->blockSpace_;
 }
 }

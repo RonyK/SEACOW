@@ -5,7 +5,7 @@
 namespace msdb
 {
 seChunk::seChunk(pChunkDesc desc)
-	: blockChunk(desc), level_(0), 
+	: memBlockChunk(desc), level_(0), 
 	bandId_(INVALID_CHUNK_ID), sourceChunkId_(INVALID_CHUNK_ID)
 {
 	//auto chunkDim = this->desc_->dims_;

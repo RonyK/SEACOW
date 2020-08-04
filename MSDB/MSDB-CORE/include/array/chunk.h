@@ -45,7 +45,9 @@ protected:
 //////////////////////////////
 protected:
 	void free();
+	// NOTE::Call a referenceBufferToBlock() in a makeBuffer()
 	virtual void makeBuffer() = 0;
+	virtual void referenceBufferToBlock() = 0;
 
 public:
 	virtual void alloc();
@@ -62,6 +64,8 @@ protected:
 // Blocks
 //////////////////////////////
 public:
+	virtual void makeBlocks(std::vector<bool> bitmap) = 0;
+	virtual void makeAllBlocks();
 	virtual size_t getBlockCapacity() = 0;
 	virtual pBlock getBlock(blockId bId) = 0;
 	virtual blockId getBlockId(pBlockDesc cDesc) = 0;

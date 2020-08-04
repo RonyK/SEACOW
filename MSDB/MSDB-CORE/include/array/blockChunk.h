@@ -11,17 +11,19 @@ namespace msdb
 {
 class blockIterator;
 
-class blockChunk : public chunk
+class memBlockChunk : public chunk
 {
 public:
 	using size_type = chunk::size_type;
 
 public:
-	blockChunk(pChunkDesc desc);
-	virtual ~blockChunk();
+	memBlockChunk(pChunkDesc desc);
+	virtual ~memBlockChunk();
 
 protected:
 	virtual void makeBuffer();
+	virtual void makeBlocks(std::vector<bool> bitmap);
+	virtual void referenceBufferToBlock();
 
 public:
 	//////////////////////////////
