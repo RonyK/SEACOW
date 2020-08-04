@@ -206,7 +206,7 @@ public:
 	MinMaxTreeImpl(eleType eType, dim_vector_reference dim, dim_vector_reference chunkDim, dim_vector_reference blockDim,
 				   size_const maxLevel = 0)
 		: MinMaxTree(eType, maxLevel), dim_(dim), dSize_(dim.size()), leafBlockDim_(blockDim),
-		leafInChunkLevelDim_(dim.size()), TySize_(getEleSize(eType)), 
+		leafInChunkBlockSpace_(dim.size()), TySize_(getEleSize(eType)), 
 		TyBits_(getEleSize(eType)* CHAR_BIT)
 	{
 		this->initLevelDims(dim, blockDim, maxLevel);
@@ -317,7 +317,7 @@ public:
 
 	nodeItr getNodeIterator(size_type level)
 	{
-		return nodeItr(this->dSize_, this->levelDims_[level].data());
+		return nodeItr(this->dSize_, this->nodeSpace_[level].data());
 	}
 
 public:
@@ -335,36 +335,38 @@ protected:
 	//////////////////////////////
 	// MMT Build Functions
 	// For level 0
-	void forwardBuildLeaf(pChunkIterator& it)
+	void forwardBuildLeaf(pChunkIterator& cItr)
 	{
 		////////////////////////////////////////
 		// Create new mmtNodes
 		//size_type blockCnt = calcNumItems(
-		//	this->levelDims_[0].data(), this->levelDims_[0].size());	// block numbers
+		//	this->nodeSpace_[0].data(), this->nodeSpace_[0].size());	// block numbers
 		//this->nodes_.push_back(std::vector<pNode>(blockCnt));			// make new node
 
-		while (!it->isEnd())
+		while (!cItr->isEnd())
 		{
 			// Setup a start point of blockCoor for blocks in a chunk
-			//coorItr bit(this->leafInChunkLevelDim_);
-			auto bit = (**it)->getBlockIterator();
-			while (!bit->isEnd())
+			//coorItr bit(this->leafInChunkBlockSpace_);
+			auto bItr = (**cItr)->getBlockIterator();
+			while (!bItr->isEnd())
 			{
-				auto bItemBdy = this->getBlockItemBoundary(bit->coor());
-				auto iit = (**it)->getItemRangeIterator(bItemBdy);
-				auto lNode = this->forwardBuildLeafNode(iit);
-				this->setNode(lNode, it->coor(), bit->coor());
+				//auto bItemBdy = this->getBlockItemBoundary(bit->coor());
+				//auto iit = (**cItr)->getItemRangeIterator(bItemBdy);
+				
+				auto bItemItr = (**bItr)->getItemIterator();
+				auto lNode = this->forwardBuildLeafNode(bItemItr);
+				this->setNode(lNode, cItr->coor(), bItr->coor());
 
 				//std::cout << "leaf forward-" << std::endl;
 				//std::cout << "[" << blockCoor[0] << ", " << blockCoor[1] << "] : " << static_cast<int>(lNode->min_) << "~" << static_cast<int>(lNode->max_) << std::endl;
-				++(*bit);	// Move on a next block in the chunk
+				++(*bItr);	// Move on a next block in the chunk
 			}
 
-			++(*it);	// Move on a next chunk
+			++(*cItr);	// Move on a next chunk
 		}
 	}
 
-	pNode forwardBuildLeafNode(std::shared_ptr<itemItr> iit)
+	pNode forwardBuildLeafNode(pBlockItemIterator iit)
 	{
 		pNode node = std::make_shared<mmtNode>();
 
@@ -403,8 +405,8 @@ protected:
 
 		////////////////////////////////////////
 		// Create new mmtNodes
-		dim_vector prevLevelDim = this->levelDims_[level - 1];
-		dim_vector levelDim = this->levelDims_[level];
+		dim_vector prevLevelDim = this->nodeSpace_[level - 1];
+		dim_vector levelDim = this->nodeSpace_[level];
 		const size_type blockCnt = calcNumItems(levelDim.data(), levelDim.size());
 		this->nodes_.push_back(std::vector<pNode>(blockCnt));
 
@@ -485,8 +487,8 @@ protected:
 		// Calc chunk num of prev and current level
 		//
 		// Notes: In this method, prev is a upper level nodes (coarse)
-		dim_vector prevLevelDim = this->levelDims_[level + 1];
-		dim_vector levelDim = this->levelDims_[level];
+		dim_vector prevLevelDim = this->nodeSpace_[level + 1];
+		dim_vector levelDim = this->nodeSpace_[level];
 
 		////////////////////////////////////////
 		// Update nit order for chunks in current level
@@ -594,7 +596,7 @@ protected:
 	{
 		////////////////////////////////////////
 		// Create new mmtNodes
-		auto chunksInDim = this->levelDims_[this->maxLevel_];
+		auto chunksInDim = this->nodeSpace_[this->maxLevel_];
 		size_type chunkCnt = calcNumItems(chunksInDim.data(), chunksInDim.size());
 		this->nodes_[this->maxLevel_].resize(chunkCnt);	// TODO::If generating Nodes are complete, remove this line.
 		pNode* rootNodes = this->nodes_[this->maxLevel_].data();
@@ -610,8 +612,8 @@ protected:
 	void deserializeNonRoot(bstream& bs, size_type level)
 	{
 		// Calc chunk num of prev and current level
-		dim_vector pChunksInDim = this->levelDims_[level + 1];
-		dim_vector chunksInDim = this->levelDims_[level];
+		dim_vector pChunksInDim = this->nodeSpace_[level + 1];
+		dim_vector chunksInDim = this->nodeSpace_[level];
 		size_type chunkCnt = calcNumItems(chunksInDim.data(), chunksInDim.size());
 		this->nodes_[level].resize(chunkCnt);
 
@@ -682,10 +684,10 @@ protected:
 					   dim_vector_const_reference leafBlockDim,
 					   size_type maxLevel)
 	{
-		this->levelDims_.clear();
+		this->nodeSpace_.clear();
 		for (size_type level = 0; level <= maxLevel; level++)
 		{
-			this->levelDims_.push_back(calcChunkNums(dims.data(), leafBlockDim.data(), dims.size(), level));
+			this->nodeSpace_.push_back(calcChunkNums(dims.data(), leafBlockDim.data(), dims.size(), level));
 		}
 	}
 
@@ -694,7 +696,7 @@ protected:
 	{
 		for (dimensionId d = 0; d < this->dSize_; d++)
 		{
-			this->leafInChunkLevelDim_[d] = intDivCeil(chunkDim[d], leafBlockDim[d]);
+			this->leafInChunkBlockSpace_[d] = intDivCeil(chunkDim[d], leafBlockDim[d]);
 		}
 	}
 
@@ -726,7 +728,7 @@ public:
 		coordinate<Dty_> blockCoor(inner);
 		for (dimensionId d = 0; d < this->dSize_; ++d)
 		{
-			blockCoor[d] += chunkCoor[d] * this->leafInChunkLevelDim_[d];
+			blockCoor[d] += chunkCoor[d] * this->leafInChunkBlockSpace_[d];
 		}
 		return blockCoor;
 	}
@@ -761,7 +763,7 @@ public:
 		coor nodeCoor(inner);
 		for (dimensionId d = 0; d < this->dSize_; ++d)
 		{
-			nodeCoor[d] += chunkCoor[d] * this->leafInChunkLevelDim_[d];
+			nodeCoor[d] += chunkCoor[d] * this->leafInChunkBlockSpace_[d];
 		}
 		return this->nodes_[level][nit.coorToSeq(nodeCoor)];
 	}
@@ -802,14 +804,14 @@ public:
 		coor nodeCoor(inner);
 		for (dimensionId d = 0; d < this->dSize_; ++d)
 		{
-			nodeCoor[d] += chunkCoor[d] * this->leafInChunkLevelDim_[d];
+			nodeCoor[d] += chunkCoor[d] * this->leafInChunkBlockSpace_[d];
 		}
 		this->nodes_[level][nit.coorToSeq(nodeCoor)] = node;
 	}
 
 	dim_vector getLevelDim(size_type level)
 	{
-		return this->levelDims_[level];
+		return this->nodeSpace_[level];
 	}
 
 	dim_vector getLeaftBlockDim()
@@ -826,8 +828,8 @@ private:
 	dim_vector dim_;					// dimensions
 	//dim_vector chunkDim_;
 	dim_vector leafBlockDim_;			// leaf block dimension (num of items)
-	dim_vector leafInChunkLevelDim_;	// level dim in chunk (num of blocks)
-	std::vector<dim_vector> levelDims_;	// level dim (num of blocks)
+	dim_vector leafInChunkBlockSpace_;	// level dim in chunk (num of blocks)
+	std::vector<dim_vector> nodeSpace_;	// level dim (num of blocks)
 	std::vector<std::vector<pNode>> nodes_;	// mmt
 	/*
 	* Here is an example of a 'nodes_' with size 4 (has 0~3 levels).

@@ -10,7 +10,9 @@ namespace msdb
 class chunkItemIterator;
 class chunkItemRangeIterator;
 using pChunkItemIterator = std::shared_ptr<chunkItemIterator>;
+using pBlockItemIterator = std::shared_ptr<chunkItemIterator>;
 using pChunkItemRangeIterator = std::shared_ptr<chunkItemRangeIterator>;
+using pBlockItemRangeIterator = std::shared_ptr<chunkItemRangeIterator>;
 
 template <typename Dty_>
 class chunkItemIteratorBase : virtual public coordinateIterator<Dty_>

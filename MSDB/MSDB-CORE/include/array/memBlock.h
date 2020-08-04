@@ -20,8 +20,8 @@ public:
 // Item Iterators
 //////////////////////////////
 public:
-	virtual pChunkItemIterator getItemIterator();
-	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range);
+	virtual pBlockItemIterator getItemIterator();
+	virtual pBlockItemRangeIterator getItemRangeIterator(const coorRange& range);
 
 //////////////////////////////
 // Buffer

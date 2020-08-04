@@ -50,8 +50,8 @@ protected:
 // Item Iterators
 //////////////////////////////
 public:
-	virtual pChunkItemIterator getItemIterator() = 0;
-	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range) = 0;
+	virtual pBlockItemIterator getItemIterator() = 0;
+	virtual pBlockItemRangeIterator getItemRangeIterator(const coorRange& range) = 0;
 };
 };
 
