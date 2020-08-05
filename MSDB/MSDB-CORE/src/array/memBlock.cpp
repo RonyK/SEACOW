@@ -86,8 +86,6 @@ void memBlock::deserialize(bstream& bs)
 
 pBlockItemIterator memBlock::getItemIterator()
 {
-	//void* data, eleType eType, const size_type dSize,
-	//	position_t* dims, dim_pointer csP
 	return std::make_shared<memBlockItemIterator>(this->cached_->getData(),
 												  this->desc_->eType_,
 												  this->desc_->dims_,

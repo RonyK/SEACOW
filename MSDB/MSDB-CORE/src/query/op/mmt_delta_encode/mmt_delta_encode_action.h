@@ -58,18 +58,13 @@ template<class Ty_>
 void mmt_delta_encode_action::chunkEncode(pChunk outChunk, pChunk inChunk,
 										  std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex)
 {
-	auto nit = mmtIndex->getNodeIterator(0);	// get level 0 node iterator
-	auto chunkDim = inChunk->getDesc()->dims_.data();
-	auto blockDimInChunk = calcChunkNums(chunkDim,
-										 mmtIndex->getLeaftBlockDim().data(), 
-										 inChunk->getDesc()->getDimSize());
-	coorItr bit(blockDimInChunk);
-	while(!bit.isEnd())
+	auto ibItr = inChunk->getBlockIterator();
+	auto obItr = outChunk->getBlockIterator();
+	while (!ibItr->isEnd())
 	{
-		auto bItemBdy = mmtIndex->getBlockItemBoundary(bit.coor());
-		auto iit = inChunk->getItemRangeIterator(bItemBdy);
-		auto oit = outChunk->getItemRangeIterator(bItemBdy);
-		auto node = mmtIndex->getNode(inChunk->getDesc()->chunkCoor_, bit.coor());
+		auto iit = (**ibItr)->getItemIterator();
+		auto oit = (**obItr)->getItemIterator();
+		auto node = mmtIndex->getNode(inChunk->getDesc()->chunkCoor_, ibItr->coor());
 
 		// Block encode
 		while (!iit->isEnd())
@@ -81,8 +76,35 @@ void mmt_delta_encode_action::chunkEncode(pChunk outChunk, pChunk inChunk,
 			++(*oit);
 		}
 
-		++bit;
+		++(*ibItr);
+		++(*obItr);
 	}
+
+	//auto nit = mmtIndex->getNodeIterator(0);	// get level 0 node iterator
+	//auto chunkDim = inChunk->getDesc()->dims_.data();
+	//auto blockDimInChunk = calcChunkNums(chunkDim,
+	//									 mmtIndex->getBlockDims().data(), 
+	//									 inChunk->getDesc()->getDimSize());
+	//coorItr bit(blockDimInChunk);
+	//while(!bit.isEnd())
+	//{
+	//	auto bItemBdy = mmtIndex->getBlockItemBoundary(bit.coor());
+	//	auto iit = inChunk->getItemRangeIterator(bItemBdy);
+	//	auto oit = outChunk->getItemRangeIterator(bItemBdy);
+	//	auto node = mmtIndex->getNode(inChunk->getDesc()->chunkCoor_, bit.coor());
+
+	//	// Block encode
+	//	while (!iit->isEnd())
+	//	{
+	//		auto inValue = (**iit).get<Ty_>();
+	//		auto outValue = inValue - node->min_;
+	//		(**oit).set<Ty_>(outValue);
+	//		++(*iit);
+	//		++(*oit);
+	//	}
+
+	//	++bit;
+	//}
 }
 }	// msdb
 

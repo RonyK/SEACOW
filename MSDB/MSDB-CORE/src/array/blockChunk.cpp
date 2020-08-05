@@ -57,7 +57,7 @@ void memBlockChunk::referenceBufferToBlock()
 {
 	// Reference block buffers to the chunk buffer
 	blockId capacity = this->getBlockCapacity();
-	bufferSize mSizeBlock = this->desc_->getBlockDim().area();
+	bufferSize mSizeBlock = this->desc_->getBlockDims().area();
 	for (blockId bid = 0; bid < capacity; ++bid)
 	{
 		// TODO:: use block bitmap
@@ -97,7 +97,7 @@ coor memBlockChunk::itemCoorToBlockCoor(coor& itemCoor)
 {
 	coor blockCoor = itemCoor;
 	//pChunkDesc bDesc = std::static_pointer_cast<blockChunkDesc>(this->desc_);
-	blockCoor /= this->desc_->getBlockDim();
+	blockCoor /= this->desc_->getBlockDims();
 	return blockCoor;
 }
 

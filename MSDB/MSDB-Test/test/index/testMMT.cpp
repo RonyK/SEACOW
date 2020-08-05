@@ -58,7 +58,7 @@ void mmt_build_test(pArray afterArray)
 		for (size_t l = 0; l <= level; l++)
 		{
 			auto levelNodes = nodes[l];
-			MinMaxTreeImpl<dim_type, value_type>::nodeItr nit(2, mmtIndex->getLevelDim(l).data());
+			MinMaxTreeImpl<dim_type, value_type>::nodeItr nit(2, mmtIndex->getNodeSpace(l).data());
 			for (int y = 0; y < chunkNums[0] / pow(2, l); ++y)
 			{
 				for (int x = 0; x < chunkNums[1] / pow(2, l); ++x)

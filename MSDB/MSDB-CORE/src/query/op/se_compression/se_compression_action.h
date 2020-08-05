@@ -78,7 +78,7 @@ public:
 	{
 		assert(in.size() >= 2);
 		pWtChunk iChunk = in[0];	// approximate chunk, get tile dim
-		dimension blockDims = iChunk->getDesc()->getDim();	// TODO::FIX, now simple approch
+		dimension blockDims = iChunk->getDesc()->getDims();	// TODO::FIX, now simple approch
 
 		for (auto c : in)
 		{

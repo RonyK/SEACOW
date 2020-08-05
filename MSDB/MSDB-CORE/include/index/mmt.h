@@ -17,8 +17,8 @@ class MinMaxTree;
 using mmt = MinMaxTree;
 using pMMT = std::shared_ptr<mmt>;
 
-template <typename Ty_>
-bit_cnt_type getPrefixPosForPrevLimit(Ty_, bit_cnt_type);
+//template <typename Ty_>
+//bit_cnt_type getPrefixPosForPrevLimit(Ty_, bit_cnt_type);
 
 class MinMaxTree : public attributeIndex, public serializable
 {
@@ -65,13 +65,13 @@ protected:
 		}
 
 	public:
-		//eleType dType_;	// dimension type, not used, fixed now.
-		eleType eType_;		// element type
+		//eleType dType_;	// dimension eType, not used, fixed now.
+		eleType eType_;		// element eType
 		size_type maxLevel_;
 	};
 
 public:
-	MinMaxTree(eleType eType, size_const maxLevel = 0);
+	MinMaxTree(const eleType eType, size_const maxLevel = 0);
 
 public:
 	virtual void build(pChunkIterator& it) = 0;
@@ -83,9 +83,10 @@ public:
 	size_type getMaxLevel();
 
 public:
-	template <typename Dty_>
-	static pMMT createMMT(eleType type, std::vector<Dty_>& dim,
-						  std::vector<Dty_>& chunkDim, std::vector<Dty_>& blockDim,
+	static pMMT createMMT(const eleType eType,
+						  const dimension& dim,
+						  const dimension& chunkDim,
+						  const dimension& blockDim,
 						  size_const maxLevel = 0);
 
 protected:
@@ -107,12 +108,6 @@ public:
 	using dim_const_pointer = const Dty_*;
 	using dim_reference = Dty_&;
 	using dim_const_reference = const Dty_;
-
-	using dim_vector = std::vector<Dty_>;
-	using dim_vector_pointer = std::vector<Dty_>*;
-	using dim_vector_reference = std::vector<Dty_>&;
-	using dim_vector_const_pointer = const std::vector<Dty_>*;
-	using dim_vector_const_reference = std::vector<Dty_>&;
 
 	//////////////////////////////
 	// MMT NODE					//
@@ -196,21 +191,21 @@ protected:
 		this->serializedSize_ = curHeader->bodySize_;
 		this->eType_ = curHeader->eType_;
 
-		this->initLevelDims(this->dim_, this->leafBlockDim_, this->maxLevel_);
+		this->initNodeSpace(this->dims_, this->chunkDims_, this->blockDims_, this->maxLevel_);
 	}
 
 	//////////////////////////////
 	// MMT Constructor			//
 	//////////////////////////////
 public:
-	MinMaxTreeImpl(eleType eType, dim_vector_reference dim, dim_vector_reference chunkDim, dim_vector_reference blockDim,
+	MinMaxTreeImpl(const eleType eType, 
+				   const dimension& dim, const dimension& chunkDim, const dimension& blockDim,
 				   size_const maxLevel = 0)
-		: MinMaxTree(eType, maxLevel), dim_(dim), dSize_(dim.size()), leafBlockDim_(blockDim),
-		leafInChunkBlockSpace_(dim.size()), TySize_(getEleSize(eType)), 
+		: MinMaxTree(eType, maxLevel), dims_(dim), dSize_(dim.size()), chunkDims_(chunkDim), blockDims_(blockDim),
+		leafInChunkBlockSpace_(chunkDim / blockDim), TySize_(getEleSize(eType)), 
 		TyBits_(getEleSize(eType)* CHAR_BIT)
 	{
-		this->initLevelDims(dim, blockDim, maxLevel);
-		this->initLeafInChunkLevelDim(chunkDim, blockDim);
+		this->initNodeSpace(dim, chunkDim, blockDim, maxLevel);
 	}
 
 	~MinMaxTreeImpl() {}
@@ -405,8 +400,8 @@ protected:
 
 		////////////////////////////////////////
 		// Create new mmtNodes
-		dim_vector prevLevelDim = this->nodeSpace_[level - 1];
-		dim_vector levelDim = this->nodeSpace_[level];
+		dimension prevLevelDim = this->nodeSpace_[level - 1];
+		dimension levelDim = this->nodeSpace_[level];
 		const size_type blockCnt = calcNumItems(levelDim.data(), levelDim.size());
 		this->nodes_.push_back(std::vector<pNode>(blockCnt));
 
@@ -481,14 +476,14 @@ protected:
 		assert(level != -1);
 
 		size_type pLevel = level + 1;
-		size_type childs = (size_type)pow(2, this->dim_.size());
+		size_type childs = (size_type)pow(2, this->dims_.size());
 
 		////////////////////////////////////////
 		// Calc chunk num of prev and current level
 		//
 		// Notes: In this method, prev is a upper level nodes (coarse)
-		dim_vector prevLevelDim = this->nodeSpace_[level + 1];
-		dim_vector levelDim = this->nodeSpace_[level];
+		dimension prevLevelDim = this->nodeSpace_[level + 1];
+		dimension levelDim = this->nodeSpace_[level];
 
 		////////////////////////////////////////
 		// Update nit order for chunks in current level
@@ -612,8 +607,8 @@ protected:
 	void deserializeNonRoot(bstream& bs, size_type level)
 	{
 		// Calc chunk num of prev and current level
-		dim_vector pChunksInDim = this->nodeSpace_[level + 1];
-		dim_vector chunksInDim = this->nodeSpace_[level];
+		dimension pChunksInDim = this->nodeSpace_[level + 1];
+		dimension chunksInDim = this->nodeSpace_[level];
 		size_type chunkCnt = calcNumItems(chunksInDim.data(), chunksInDim.size());
 		this->nodes_[level].resize(chunkCnt);
 
@@ -680,23 +675,15 @@ protected:
 	// UTILS					//
 	//////////////////////////////
 	// Calculate number of chunk on each dimension using the dimension sizes and chunk sizes
-	void initLevelDims(dim_vector_const_reference dims,
-					   dim_vector_const_reference leafBlockDim,
-					   size_type maxLevel)
+	void initNodeSpace(const dimension& dims,
+					   const dimension& chunkDims,
+					   const dimension& blockDims,
+					   const size_type maxLevel)
 	{
 		this->nodeSpace_.clear();
 		for (size_type level = 0; level <= maxLevel; level++)
 		{
-			this->nodeSpace_.push_back(calcChunkNums(dims.data(), leafBlockDim.data(), dims.size(), level));
-		}
-	}
-
-	void initLeafInChunkLevelDim(dim_vector_const_reference chunkDim,
-								 dim_vector_const_reference leafBlockDim)
-	{
-		for (dimensionId d = 0; d < this->dSize_; d++)
-		{
-			this->leafInChunkBlockSpace_[d] = intDivCeil(chunkDim[d], leafBlockDim[d]);
+			this->nodeSpace_.push_back(dims / chunkDims * blockDims / pow(2, level));
 		}
 	}
 
@@ -738,8 +725,8 @@ public:
 		coordinate<Dty_> spOut(this->dSize_), epOut(this->dSize_);
 		for (dimensionId d = 0; d < this->dSize_; ++d)
 		{
-			spOut[d] = this->leafBlockDim_[d] * inner[d];
-			epOut[d] = this->leafBlockDim_[d] * (inner[d] + 1);
+			spOut[d] = this->blockDims_[d] * inner[d];
+			epOut[d] = this->blockDims_[d] * (inner[d] + 1);
 		}
 		return coorRange(spOut, epOut);
 	}
@@ -772,7 +759,7 @@ public:
 	pNode getNode(const coorRange qRange)
 	{
 		auto rangeDim = qRange.width();
-		coor blockDim(this->leafBlockDim_);
+		coor blockDim(this->blockDims_);
 
 		for (size_type level = 0; level <= this->maxLevel_; ++level)
 		{
@@ -809,14 +796,14 @@ public:
 		this->nodes_[level][nit.coorToSeq(nodeCoor)] = node;
 	}
 
-	dim_vector getLevelDim(size_type level)
+	dimension getNodeSpace(size_type level)
 	{
 		return this->nodeSpace_[level];
 	}
 
-	dim_vector getLeaftBlockDim()
+	dimension getBlockDims()
 	{
-		return this->leafBlockDim_;
+		return this->blockDims_;
 	}
 
 private:
@@ -825,11 +812,11 @@ private:
 
 private:
 	size_type dSize_;
-	dim_vector dim_;					// dimensions
-	//dim_vector chunkDim_;
-	dim_vector leafBlockDim_;			// leaf block dimension (num of items)
-	dim_vector leafInChunkBlockSpace_;	// level dim in chunk (num of blocks)
-	std::vector<dim_vector> nodeSpace_;	// level dim (num of blocks)
+	dimension dims_;						// dimensions
+	dimension chunkDims_;
+	dimension blockDims_;			// leaf block dimension (num of items)
+	dimension leafInChunkBlockSpace_;	// level dim in chunk (num of blocks)
+	std::vector<dimension> nodeSpace_;	// level dim (num of blocks)
 	std::vector<std::vector<pNode>> nodes_;	// mmt
 	/*
 	* Here is an example of a 'nodes_' with size 4 (has 0~3 levels).
@@ -845,36 +832,6 @@ private:
 	*
 	*/
 };
-
-template<typename Dty_>
-inline pMMT MinMaxTree::createMMT(eleType type, std::vector<Dty_>& dim,
-								  std::vector<Dty_>& chunkDim, std::vector<Dty_>& blockDim,
-								  size_const maxLevel)
-{
-	switch (type)
-	{
-	case eleType::CHAR:
-		return std::make_shared<MinMaxTreeImpl<Dty_, char>>(type, dim, chunkDim, blockDim, maxLevel);
-	case eleType::INT8:
-		return std::make_shared<MinMaxTreeImpl<Dty_, int8_t>>(type, dim, chunkDim, blockDim, maxLevel);
-	case eleType::INT16:
-		return std::make_shared<MinMaxTreeImpl<Dty_, int16_t>>(type, dim, chunkDim, blockDim, maxLevel);
-	case eleType::INT32:
-		return std::make_shared<MinMaxTreeImpl<Dty_, int32_t>>(type, dim, chunkDim, blockDim, maxLevel);
-	case eleType::INT64:
-		return std::make_shared<MinMaxTreeImpl<Dty_, int64_t>>(type, dim, chunkDim, blockDim, maxLevel);
-	case eleType::UINT8:
-		return std::make_shared<MinMaxTreeImpl<Dty_, uint8_t>>(type, dim, chunkDim, blockDim, maxLevel);
-	case eleType::UINT16:
-		return std::make_shared<MinMaxTreeImpl<Dty_, uint16_t>>(type, dim, chunkDim, blockDim, maxLevel);
-	case eleType::UINT32:
-		return std::make_shared<MinMaxTreeImpl<Dty_, uint32_t>>(type, dim, chunkDim, blockDim, maxLevel);
-	case eleType::UINT64:
-		return std::make_shared<MinMaxTreeImpl<Dty_, uint64_t>>(type, dim, chunkDim, blockDim, maxLevel);
-	}
-
-	_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_UNKNOWN_ERROR, MSDB_ER_NOT_IMPLEMENTED));
-}
 }
 
 #endif		// _MSDB_MMT_H_

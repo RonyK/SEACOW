@@ -55,7 +55,7 @@ private:
 		// Setting chunkDesc for band chunk
 		auto inChunkDesc = inChunk->getDesc();
 		auto bandDesc = std::make_shared<chunkDesc>(*inChunkDesc);
-		bandDesc->setDim(basisDim, intDivCeil(bandDesc->dims_[basisDim], 2));
+		bandDesc->setDims(basisDim, intDivCeil(bandDesc->dims_[basisDim], 2));
 
 		// Make chunk
 		pWtChunk approximateChunk = std::make_shared<wtChunk>(std::make_shared<chunkDesc>(*bandDesc));

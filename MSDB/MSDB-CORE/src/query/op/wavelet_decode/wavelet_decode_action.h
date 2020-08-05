@@ -84,7 +84,7 @@ private:
 		// Setting outChunkDesc through bandDesc
 		auto bandDesc = *(approximateChunk->getDesc());
 		auto outChunkDesc = std::make_shared<chunkDesc>(bandDesc);
-		outChunkDesc->setDim(basisDim, outChunkDesc->dims_[basisDim] * 2);
+		outChunkDesc->setDims(basisDim, outChunkDesc->dims_[basisDim] * 2);
 
 		// Make chunk
 		pChunk outChunk = std::make_shared<memChunk>(outChunkDesc);

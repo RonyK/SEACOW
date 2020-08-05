@@ -29,7 +29,7 @@ void memChunk::makeBlocks(std::vector<bool> bitmap)
 			std::make_shared<blockDesc>(
 			0,						// id
 			this->desc_->attrDesc_->type_,	// eType
-			this->desc_->getDim(),	// dims
+			this->desc_->getDims(),	// dims
 			this->desc_->sp_,		// sp
 			this->desc_->ep_,		// ep
 			this->desc_->mSize_		// mSize
