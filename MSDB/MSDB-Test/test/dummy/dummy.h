@@ -50,18 +50,36 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 				sP, eP);
 			pChunk sourceChunk = std::make_shared<memBlockChunk>(cDesc);
 			sourceChunk->alloc();
-
+			
 			// Insert data into chunk
-			auto it = sourceChunk->getItemIterator();
-			for (int iy = 0; iy < chunkDims[0]; iy++)
+			auto bItr = sourceChunk->getBlockIterator();
+			while(!bItr->isEnd())
 			{
-				for (int ix = 0; ix < chunkDims[1]; ix++)
+				auto blockCoor = bItr->coor();
+				auto it = (**bItr)->getItemIterator();
+				for(int iy = 0; iy < blockDims[0]; ++iy)
 				{
-					(**it).setChar(static_cast<char>(data[(y * chunkDims[0] + iy) * dims[1] + (x * chunkDims[1] + ix)]));
-					++(*it);
+					for(int ix = 0; ix < blockDims[1]; ++ix)
+					{
+						(**it).setChar(static_cast<char>(
+							data[(y * chunkDims[0] + blockCoor[0] * blockDims[0] + iy) * dims[1] + (x * chunkDims[1] + blockCoor[1] * blockDims[1] + ix)]));
+						++(*it);
+					}
 				}
+				++(*bItr);
+				sourceArr->insertChunk(sourceChunk);
 			}
-			sourceArr->insertChunk(sourceChunk);
+
+			//auto it = sourceChunk->getItemIterator();
+			//for (int iy = 0; iy < chunkDims[0]; iy++)
+			//{
+			//	for (int ix = 0; ix < chunkDims[1]; ix++)
+			//	{
+			//		(**it).setChar(static_cast<char>(data[(y * chunkDims[0] + iy) * dims[1] + (x * chunkDims[1] + ix)]));
+			//		++(*it);
+			//	}
+			//}
+			//sourceArr->insertChunk(sourceChunk);
 		}
 	}
 
@@ -143,66 +161,6 @@ std::vector<std::shared_ptr<Aty_>> getSourceArray()
 		{ get2DCharArray<Aty_>(data, aid, "data2D_sc8x8", dims, chunkDims, blockDims, eleType::CHAR) });
 	return arrs;
 }
-
-//template<class Aty_ = arrayBase>
-//std::vector<std::shared_ptr<Aty_>> getSourceArray()
-//{
-//	// Get Dummy data
-//	value_type data[dataLength];
-//	getDummy(data, dataLength);
-//
-//	// Build Array
-//	dimensionDescs arrDimDescs;
-//	dimensionId dimId = 0;
-//	arrDimDescs.push_back(std::make_shared<dimensionDesc>(dimId++, "X", 0, dims[1], chunkDims[1]));
-//	arrDimDescs.push_back(std::make_shared<dimensionDesc>(dimId++, "Y", 0, dims[0], chunkDims[0]));
-//
-//	attributeDescs attrDescs;
-//	attributeId attrId = 0;
-//	attrDescs.push_back(std::make_shared<attributeDesc>(attrId++, "ATTR_1", eleType::CHAR));		// SIGNED CHAR
-//
-//	pArrayDesc arrDesc = std::make_shared<arrayDesc>(aid, "data2D_sc8x8", arrDimDescs, attrDescs);
-//	std::shared_ptr<Aty_> sourceArr = std::make_shared<Aty_>(arrDesc);
-//
-//	// Build Chunk
-//	auto a = chunkDims.data();
-//	auto s = chunkDims.size();
-//	dimension dimChunk(s, a);
-//	for (int y = 0; y < chunkNums[0]; y++)
-//	{
-//		for (int x = 0; x < chunkNums[1]; x++)
-//		{
-//			coor sP = { y * chunkDims[0], x * chunkDims[1] };
-//			coor eP = { sP[0] + chunkDims[0], sP[1] + chunkDims[1] };
-//
-//			pChunkDesc cDesc = std::make_shared<chunkDesc>(
-//				sourceArr->getChunkIdFromItemCoor(sP), attrDescs[0], dimChunk, sP, eP);
-//			pChunk sourceChunk = std::make_shared<memChunk>(cDesc);
-//			sourceChunk->alloc();
-//
-//			// Insert data into chunk
-//			auto it = sourceChunk->getItemIterator();
-//			//std::cout << "-----" << std::endl;
-//			for (int iy = 0; iy < chunkDims[0]; iy++)
-//			{
-//				for (int ix = 0; ix < chunkDims[1]; ix++)
-//				{
-//					(**it).setChar(data[(y * chunkDims[0] + iy) * dimX + (x * chunkDims[1] + ix)]);
-//					//char c = (*it).getChar();
-//					//std::cout << static_cast<int>(c) << ", ";
-//					++(*it);
-//				}
-//				//std::cout << std::endl;
-//			}
-//			//std::cout << std::endl << "-----" << std::endl;
-//			sourceArr->insertChunk(sourceChunk);
-//		}
-//	}
-//
-//	// Build source array
-//	std::vector<std::shared_ptr<Aty_>> arrs({ sourceArr });
-//	return arrs;
-//}
 
 void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
 }

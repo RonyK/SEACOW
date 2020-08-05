@@ -7,7 +7,7 @@ TEST(arrayBase, arrayCreate)
 {
 	//////////////////////////////
 	// Set up array
-	pDimensionDesc dimDesc = std::make_shared<dimensionDesc>(0, "x", 0, 8, 8);
+	pDimensionDesc dimDesc = std::make_shared<dimensionDesc>(0, "x", 0, 8, 8, 8);
 	pAttributeDesc attrDesc = std::make_shared<attributeDesc>(0, "a1", eleType::DOUBLE);
 
 	dimensionDescs dimDescs;

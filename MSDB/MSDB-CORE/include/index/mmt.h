@@ -338,6 +338,7 @@ protected:
 		//	this->nodeSpace_[0].data(), this->nodeSpace_[0].size());	// block numbers
 		//this->nodes_.push_back(std::vector<pNode>(blockCnt));			// make new node
 
+		this->nodes_.push_back(std::vector<pNode>(this->nodeSpace_[0].area()));
 		while (!cItr->isEnd())
 		{
 			// Setup a start point of blockCoor for blocks in a chunk
@@ -400,10 +401,11 @@ protected:
 
 		////////////////////////////////////////
 		// Create new mmtNodes
-		dimension prevLevelDim = this->nodeSpace_[level - 1];
-		dimension levelDim = this->nodeSpace_[level];
-		const size_type blockCnt = calcNumItems(levelDim.data(), levelDim.size());
-		this->nodes_.push_back(std::vector<pNode>(blockCnt));
+		dimension prevNodeSpace = this->nodeSpace_[level - 1];
+		dimension nodeSpace = this->nodeSpace_[level];
+		size_type blockCnt = nodeSpace.area();
+		//const size_type blockCnt = calcNumItems(nodeSpace.data(), nodeSpace.size());
+		this->nodes_.push_back(std::vector<pNode>(this->nodeSpace_[level].area()));
 
 		for (size_t i = 0; i < blockCnt; ++i)
 		{
@@ -413,9 +415,9 @@ protected:
 		////////////////////////////////////////
 		// Update min/max values
 		itemIterator<Dty_, pNode> pcit(this->nodes_[level - 1].data(), this->dSize_,
-									   prevLevelDim.data());
+									   prevNodeSpace.data());
 		itemIterator<Dty_, pNode> cit(this->nodes_[level].data(), this->dSize_,
-									  levelDim.data());
+									  nodeSpace.data());
 
 		for (size_type i = 0; i < this->nodes_[level - 1].size(); i++)
 		{
@@ -683,7 +685,9 @@ protected:
 		this->nodeSpace_.clear();
 		for (size_type level = 0; level <= maxLevel; level++)
 		{
-			this->nodeSpace_.push_back(dims / chunkDims * blockDims / pow(2, level));
+			dimension chunkSpace = dims / chunkDims;
+			dimension blockSpace = chunkDims / blockDims;
+			this->nodeSpace_.push_back(chunkSpace * blockSpace / pow(2, level));
 		}
 	}
 
