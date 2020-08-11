@@ -43,7 +43,7 @@ TEST(query_op_spiht_encode, spiht_2D_4x4)
 
 	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, dim, sP, eP);
 	pChunk sourceChunk = std::make_shared<memChunk>(cDesc);
-	sourceChunk->materializeCopy(data, sizeof(data));
+	sourceChunk->bufferCopy(data, sizeof(data));
 	sourceArr->insertChunk(sourceChunk);
 
 	//////////////////////////////
@@ -92,7 +92,7 @@ TEST(query_op_spiht_encode, spiht_2D_8x8)
 
 	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, dim, sP, eP);
 	pChunk sourceChunk = std::make_shared<memChunk>(cDesc);
-	sourceChunk->materializeCopy(data, sizeof(data));
+	sourceChunk->bufferCopy(data, sizeof(data));
 	sourceArr->insertChunk(sourceChunk);
 
 	//////////////////////////////

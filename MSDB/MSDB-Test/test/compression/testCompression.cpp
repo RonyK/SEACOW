@@ -41,15 +41,24 @@ void wavelet_encode_check(pArray arr)
 		size_t cId = 0;
 		for (size_t i = 0; i < dataLength; )
 		{
-			auto it = arr->getChunk(cId)->getItemIterator();
-			if (it->getCapacity() == 0)
+			auto chk = arr->getChunk(cId);
+			auto bItr = chk->getBlockIterator();
+
+			while(!bItr->isEnd())
 			{
-				throw std::exception();
-			}
-			for (size_t j = 0; j < it->getCapacity(); ++j, ++i, ++(*it))
-			{
-				std::cout << static_cast<int>((**it).getChar()) << " <> " << static_cast<int>(expected[i]) << std::endl;
-				EXPECT_EQ(ROUNDING((**it).getChar(), 6), ROUNDING(expected[i], 6));
+				auto bit = (**bItr)->getItemIterator();
+
+				while(!bit->isEnd())
+				{
+					std::cout << "[" << bit->coor()[0] << ", " << bit->coor()[1] << "(" << bit->seqPos() << ")]" << std::endl;
+					std::cout <<  static_cast<int>((**bit).getChar()) << " <> " << static_cast<int>(expected[i]) << std::endl;
+					EXPECT_EQ(ROUNDING((**bit).getChar(), 6), ROUNDING(expected[i], 6));
+
+					++(*bit);
+					++i;
+				}
+
+				++(*bItr);
 			}
 			++cId;
 		}

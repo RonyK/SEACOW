@@ -44,7 +44,7 @@ public:
 	chunkDesc(const chunkDesc& mit);
 
 public:
-	void setDims(dimensionId dId, position_t value);
+	void setDim(dimensionId dId, position_t value);
 	dimension getDims();
 	virtual dimension getBlockDims();
 	virtual dimension getBlockSpace();

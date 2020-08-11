@@ -31,7 +31,7 @@ bufferSize msdb::chunkBuffer::size() const
 	return this->bodySize_;
 }
 
-void chunkBuffer::alloc(bufferSize size)
+void chunkBuffer::bufferAlloc(bufferSize size)
 {
 	assert(size > 0);
 

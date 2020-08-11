@@ -397,6 +397,12 @@ public:
 		assert(sP.size() == eP.size());
 	}
 
+	coordinateRange(const coordinate<Dty_>& eP)
+		: dSize_(eP.size()), sP_(coordinate<Dty_>(eP.size())), eP_(eP)
+	{
+
+	}
+
 	coordinateRange(const self_type& mit)
 		: dSize_(mit.dSize_), sP_(mit.sP_), eP_(mit.eP_)
 	{

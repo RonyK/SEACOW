@@ -74,7 +74,7 @@ pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 
 		auto attr = (**chunkItr)->getDesc()->attrDesc_;
 		pChunk oChunk = std::make_shared<memChunk>((**chunkItr)->getDesc());
-		oChunk->materializeAssign(this->codeBs_.data(), this->codeBs_.capacity());
+		oChunk->bufferRef(this->codeBs_.data(), this->codeBs_.capacity());
 		storageMgr::instance()->saveChunk(arrId, attr->id_, (**chunkItr)->getId(), std::static_pointer_cast<serializable>(oChunk));
 
 		this->codeBs_.flush();

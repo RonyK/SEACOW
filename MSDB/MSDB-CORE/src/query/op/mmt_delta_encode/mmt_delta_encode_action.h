@@ -44,7 +44,7 @@ void mmt_delta_encode_action::saveAttribute(std::shared_ptr<mmt_delta_encode_arr
 		// Make new chunk
 		auto cDesc = (**cit)->getDesc();
 		pChunk deltaChunk = std::make_shared<memChunk>(std::make_shared<chunkDesc>(*cDesc));
-		deltaChunk->alloc();
+		deltaChunk->bufferAlloc();
 
 		this->chunkEncode(deltaChunk, **cit, mmtIndex);
 		outArr->insertChunk(deltaChunk);

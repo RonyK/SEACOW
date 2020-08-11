@@ -53,7 +53,7 @@ void mmt_delta_decode_action::attributeDecode(std::shared_ptr<mmt_delta_decode_a
 		// Make new chunk
 		auto cDesc = (**cit)->getDesc();
 		pChunk deltaChunk = std::make_shared<memChunk>(std::make_shared<chunkDesc>(*cDesc));
-		deltaChunk->alloc();
+		deltaChunk->bufferAlloc();
 
 		this->chunkDecode(deltaChunk, **cit, mmtIndex);
 		outArr->insertChunk(deltaChunk);

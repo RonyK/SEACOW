@@ -90,10 +90,10 @@ public:
 													 iDesc->mSize_);
 			pSeChunk oChunk = std::make_shared<seChunk>(oDesc);
 			oChunk->setLevel(iChunk->getLevel());
-			oChunk->setBandId(iChunk->getBandId());
+			//oChunk->setBandId(iChunk->getBandId());
 			oChunk->setSourceChunkId(iChunk->getSourceChunkId());
 			oChunk->makeAllBlocks();
-			oChunk->alloc();
+			oChunk->bufferAlloc();
 
 			//dimension blockSpace = c->getTileSpace(sourceChunkDim);
 			//dimension blockSpace = c->getDesc()->getBlockSpace();
@@ -122,8 +122,8 @@ public:
 
 				//////////////////////////////
 				// TODO::Use materialize copy
-				// oBlock->materializeCopy(void*, blockDims.area() * c->getDesc()->attrDesc_->typeSize_);
-				//oBlock->alloc();	// mSize is setted in the desc.
+				// oBlock->bufferCopy(void*, blockDims.area() * c->getDesc()->attrDesc_->typeSize_);
+				//oBlock->bufferAlloc();	// mSize is setted in the desc.
 				//////////////////////////////
 
 				// Find required bit for delta array

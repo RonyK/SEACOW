@@ -27,7 +27,7 @@ bufferSize blockChunkBuffer::size() const
 	return this->bodySize_;
 }
 
-void blockChunkBuffer::alloc(bufferSize size)
+void blockChunkBuffer::bufferAlloc(bufferSize size)
 {
 	assert(size > 0);
 

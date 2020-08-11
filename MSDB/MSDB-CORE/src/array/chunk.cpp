@@ -13,33 +13,45 @@ chunk::~chunk()
 	this->free();
 }
 
-void chunk::alloc()
+void chunk::bufferAlloc()
 {
 	this->free();
 	this->makeBuffer();
-	this->cached_->alloc(this->desc_->mSize_);
+	this->cached_->bufferAlloc(this->desc_->mSize_);
 	this->referenceBufferToBlock();
 }
 
-void chunk::alloc(bufferSize size)
+void chunk::bufferAlloc(bufferSize size)
 {
 	this->free();
 	this->makeBuffer();
-	this->cached_->alloc(size);
+	this->cached_->bufferAlloc(size);
 	this->referenceBufferToBlock();
 	this->desc_->mSize_ = size;
 }
 
 // Deep copy
-void chunk::materializeCopy(void* data, bufferSize size)
+void chunk::bufferCopy(void* data, bufferSize size)
 {
-	this->alloc(size);
+	this->bufferAlloc(size);
 	this->cached_->copy(data, size);
 	this->desc_->mSize_ = size;
 }
 
+void chunk::bufferCopy(pChunk source)
+{
+	bufferSize size = source->getDesc()->mSize_;
+	this->bufferCopy(source->getBuffer()->getData(), size);
+}
+
+void chunk::bufferCopy(pBlock source)
+{
+	bufferSize size = source->getDesc()->mSize_;
+	this->bufferCopy(source->getBuffer()->getData(), size);
+}
+
 // Copy pointer
-void chunk::materializeAssign(void* data, bufferSize size)
+void chunk::bufferRef(void* data, bufferSize size)
 {
 	this->free();
 	this->makeBuffer();
@@ -48,10 +60,16 @@ void chunk::materializeAssign(void* data, bufferSize size)
 	this->desc_->mSize_ = size;
 }
 
-//void chunk::materializeCopy(bstream& bs)
+void chunk::bufferRef(pBlock source)
+{
+	bufferSize size = source->getDesc()->mSize_;
+	this->bufferRef(source->getBuffer()->getData(), size);
+}
+
+//void chunk::bufferCopy(bstream& bs)
 //{
 //	bufferSize size = bs.capacity();
-//	this->alloc(size);
+//	this->bufferAlloc(size);
 //	this->cached_->copy(data, size);
 //	this->desc_->mSize_ = size;
 //}
@@ -64,6 +82,11 @@ bool chunk::isMaterialized() const
 	}
 
 	return true;
+}
+
+pChunkBuffer chunk::getBuffer()
+{
+	return this->cached_;
 }
 
 chunkId chunk::getId() const

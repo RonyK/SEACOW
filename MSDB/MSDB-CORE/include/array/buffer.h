@@ -20,7 +20,7 @@ public:
 
 	virtual bufferSize size() const = 0;						// buffer size
 
-	virtual void alloc(bufferSize size) = 0;
+	virtual void bufferAlloc(bufferSize size) = 0;
 	virtual void realloc(bufferSize size) = 0;
 	virtual void copy(void* data, bufferSize size) = 0;			// copy input data
 	virtual void copy(void* data, bufferSize offset, bufferSize size) = 0;

@@ -67,7 +67,7 @@ public:
 //
 //	virtual bufferSize size() const;
 //
-//	virtual void alloc(bufferSize size);
+//	virtual void bufferAlloc(bufferSize size);
 //	virtual void realloc(bufferSize size);
 //	virtual void copy(void* data, bufferSize size);
 //	virtual void copy(void* data, bufferSize offset, bufferSize size);

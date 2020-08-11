@@ -36,7 +36,7 @@ TEST(query_op_wavelet_encode, waveletHaar_1D)
 
 	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, dim, sP, eP);
 	pChunk sourceChunk = std::make_shared<memChunk>(cDesc);
-	sourceChunk->materializeCopy(data, sizeof(data));
+	sourceChunk->bufferCopy(data, sizeof(data));
 	sourceArr->insertChunk(sourceChunk);
 
 	//////////////////////////////
@@ -118,7 +118,7 @@ TEST(query_op_wavelet_encode, waveletHaarSimple_2D)
 
 	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, dim, sP, eP);
 	pChunk sourceChunk = std::make_shared<memChunk>(cDesc);
-	sourceChunk->materializeCopy(data, sizeof(data));
+	sourceChunk->bufferCopy(data, sizeof(data));
 	sourceArr->insertChunk(sourceChunk);
 
 	//////////////////////////////
@@ -169,8 +169,8 @@ TEST(query_op_wavelet_encode, waveletHaarSimple_sc4x4)
 	auto weArr = wavelet_encode(std::vector<pArray>());
 	wavelet_encode_check(weArr);
 
-	auto wdArr = wavelet_decode(std::vector<pArray>({ weArr }));
-	wavelet_decode_check(wdArr);
+	//auto wdArr = wavelet_decode(std::vector<pArray>({ weArr }));
+	//wavelet_decode_check(wdArr);
 }
 }	// data2D_sc4x4
 }	// caDummy

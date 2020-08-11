@@ -24,7 +24,7 @@ public:
 
 	virtual bufferSize size() const override;
 
-	virtual void alloc(bufferSize size) override;
+	virtual void bufferAlloc(bufferSize size) override;
 	virtual void realloc(bufferSize size) override;
 	virtual void copy(void* data, bufferSize size) override;
 	virtual void reference(void* data, bufferSize size);

@@ -44,7 +44,7 @@ chunkDesc::chunkDesc(const chunkDesc& mit)
 {
 }
 
-void chunkDesc::setDims(dimensionId dId, position_t value)
+void chunkDesc::setDim(dimensionId dId, position_t value)
 {
 	this->dims_[dId] = value;
 	this->initPhysicalChunkSizeFromDims();

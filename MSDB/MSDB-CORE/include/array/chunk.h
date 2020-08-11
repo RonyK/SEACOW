@@ -38,7 +38,7 @@ public:
 	coor getChunkCoor();
 
 protected:
-	pChunkBuffer cached_;	// hold materialized chunk
+	pChunkDesc desc_;		// chunk desc
 
 //////////////////////////////
 // Buffer
@@ -50,15 +50,21 @@ protected:
 	virtual void referenceBufferToBlock() = 0;
 
 public:
-	virtual void alloc();
-	virtual void alloc(bufferSize size);
-	virtual void materializeCopy(void* data, bufferSize size);
-	virtual void materializeAssign(void* data, bufferSize size);
-	//virtual void materializeCopy(bstream& bs);
+	virtual void bufferAlloc();
+	virtual void bufferAlloc(bufferSize size);
+	virtual void bufferCopy(void* data, bufferSize size);
+	virtual void bufferCopy(pChunk source);
+	virtual void bufferCopy(pBlock source);
+	virtual void bufferRef(void* data, bufferSize size);
+	virtual void bufferRef(pBlock source);
+	//virtual void bufferCopy(bstream& bs);
 	bool isMaterialized() const;
 
 protected:
-	pChunkDesc desc_;		// chunk desc
+	pChunkBuffer getBuffer();
+
+protected:
+	pChunkBuffer cached_;	// hold materialized chunk
 
 //////////////////////////////
 // Blocks
@@ -89,6 +95,8 @@ public:
 //////////////////////////////
 public:
 	void print();
+
+protected:
 	template <class Ty_>
 	void printImp()
 	{

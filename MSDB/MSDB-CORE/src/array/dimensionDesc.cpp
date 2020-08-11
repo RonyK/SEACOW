@@ -60,7 +60,7 @@ dimension dimensionDescs::getBlockDims()
 	dimension blockDims(this->size());
 	for (dimensionId d = 0; d < this->size(); ++d)
 	{
-		blockDims[d] = this->at(d)->blockSize_;
+		blockDims[d] = this->at(d)->chunkSize_ / this->at(d)->blockSize_;
 	}
 	return blockDims;
 }

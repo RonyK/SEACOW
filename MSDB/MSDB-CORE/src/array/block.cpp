@@ -32,4 +32,8 @@ bool block::isMaterialized() const
 
 	return true;
 }
+pBlockBuffer block::getBuffer()
+{
+	return this->cached_;
+}
 }

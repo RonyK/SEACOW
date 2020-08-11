@@ -10,6 +10,7 @@
 
 namespace msdb
 {
+class chunk;
 class block;
 class blockItemIterator;
 using pBlock = std::shared_ptr<block>;
@@ -43,6 +44,9 @@ public:
 	virtual void reference(void* data, const bufferSize size) = 0;
 	bool isMaterialized() const;
 
+protected:
+	pBlockBuffer getBuffer();
+	friend class chunk;
 protected:
 	pBlockBuffer cached_;	// hold materialized block
 	
