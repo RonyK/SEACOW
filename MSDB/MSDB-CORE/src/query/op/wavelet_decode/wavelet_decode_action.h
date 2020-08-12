@@ -2,7 +2,7 @@
 #ifndef _MSDB_OP_WAVELET_DECODE_ACTION_H_
 #define _MSDB_OP_WAVELET_DECODE_ACTION_H_
 
-#include <array/memChunk.h>
+#include <array/blockChunk.h>
 #include <compression/wavelet.h>
 #include <query/opAction.h>
 #include <util/math.h>
@@ -23,140 +23,151 @@ public:
 
 private:
 	template <class Ty_>
-	pChunk chunkDecode(pArray wArray, std::list<pChunk>& sourceChunks,
-								  pWavelet w, size_t maxLevel, pQuery q)
+	void attributeDecode(pArray outArr, pArray inArr, pAttributeDesc attrDesc,
+						 pWavelet w, size_t maxLevel, pQuery q)
 	{
-		std::list<pChunk> levelChunks;
-		auto sit = sourceChunks.begin();
-	
-		// Insert an approximate chunk
-		levelChunks.push_back(*sit);
-		++sit;
+		auto cItr = inArr->getChunkIterator();
+		auto chunkDims = outArr->getDesc()->getDimDescs().getChunkDims();
+		auto blockSpace = outArr->getDesc()->getDimDescs().getBlockSpace();
+		size_t numBlocks = blockSpace.area();
 
-		size_t numLevelChunks = pow(2, wArray->getDesc()->dimDescs_.size()) - 1;
-
-		for (size_t level = maxLevel; level != (size_t)-1; --level)
+		while (!cItr->isEnd())
 		{
-			// Insert detail chunks
-			for (size_t i = 0; i < numLevelChunks; i++)
+			std::vector<pChunk> chunks;
+			for (size_t i = 0; i < numBlocks; ++i)
 			{
-				levelChunks.push_back(*sit);
-				++sit;
+				chunks.push_back((**cItr));
+				++(*cItr);
 			}
-			levelChunks.push_front(this->waveletLevelDecode<Ty_>(levelChunks, w, q));
+			// --------------------
+			// TODO::PARALLEL
+			auto outChunk = this->chunkDecode<Ty_>(chunks, chunkDims, w, maxLevel, q);
+			// --------------------
+			outArr->insertChunk(outChunk);
 		}
-
-		// Assign new chunk Id through its item start point coordinate
-		levelChunks.front()->setId(wArray->getChunkIdFromItemCoor(levelChunks.front()->getDesc()->sp_));
-		return levelChunks.front();
 	}
+
 	template <class Ty_>
-	pChunk waveletLevelDecode(std::list<pChunk>& levelChunks, pWavelet w, pQuery q)
+	pChunk chunkDecode(std::vector<pChunk>& inChunkList, dimension chunkDims,
+					   pWavelet w, size_t maxLevel, pQuery q)
 	{
-		for (dimensionId d = this->aDesc_->dimDescs_.size() - 1; d != (dimensionId)-1 ; --d)
-		{
-			size_t numLevelChunks = levelChunks.size();
-			assert(numLevelChunks % 2 == 0);		// number of level chunks should be odd.
+		auto inChunkDesc = inChunkList[0]->getDesc();
+		pChunkDesc outChunkDesc = std::make_shared<chunkDesc>(*inChunkDesc);
+		dimension blockSpace = chunkDims / inChunkDesc->dims_;	// chunkDims == blockDims in outBlock
+		size_t numBlocks = blockSpace.area();
 
-			try
-			{
-				for (size_t i = 0; i < numLevelChunks / 2; ++i)
-				{
-					pChunk appChunk = levelChunks.front();
-					levelChunks.pop_front();
-					pChunk detailChunk = levelChunks.front();
-					levelChunks.pop_front();
-					pChunk convChunk = this->waveletDeTransform<Ty_>(appChunk, detailChunk, w, d, q);
-					levelChunks.push_back(convChunk);
-				}
-			}catch(...)
-			{
-				std::cout << "exception" << std::endl;
-			}
+		outChunkDesc->dims_ = chunkDims;
+		outChunkDesc->chunkCoor_ = inChunkDesc->sp_ / chunkDims;
+		outChunkDesc->sp_ = inChunkDesc->sp_;
+		outChunkDesc->ep_ = inChunkDesc->sp_ + chunkDims;
+		outChunkDesc->mSize_ *= numBlocks;
+
+		pChunk outChunk = std::make_shared<memBlockChunk>(outChunkDesc);
+		outChunk->bufferAlloc();
+		outChunk->makeAllBlocks();
+		auto obItr = outChunk->getBlockIterator();
+
+		for (auto inChunk : inChunkList)
+		{
+			coor chunkCoor = inChunk->getChunkCoor();
+			coor blockCoor = chunkCoor / blockSpace;
+			obItr->moveTo(blockCoor);
+
+			//coordinate outBlock->;
+			this->blockDecode<Ty_>((**obItr), inChunk->getBlock(0), w, maxLevel, q);
 		}
 
-		return levelChunks.front();
+		return outChunk;
 	}
 
-	template<class Ty_>
-	pChunk waveletDeTransform(pChunk approximateChunk, pChunk detailChunk, pWavelet w, dimensionId basisDim, pQuery q)
+	template <class Ty_>
+	void blockDecode(pBlock outBlock, pBlock inBlock,
+					 pWavelet w, size_t maxLevel, pQuery q)
 	{
-		// Setting outChunkDesc through bandDesc
-		auto bandDesc = *(approximateChunk->getDesc());
-		auto outChunkDesc = std::make_shared<chunkDesc>(bandDesc);
-		outChunkDesc->setDim(basisDim, outChunkDesc->dims_[basisDim] * 2);
+		// Copy data from inBlock
+		outBlock->copy(inBlock);
+		for (size_t level = 0; level <= maxLevel; ++level)
+		{
+			this->levelDecode<Ty_>(outBlock, w, level, q);
+		}
+	}
 
-		// Make chunk
-		pChunk outChunk = std::make_shared<memChunk>(outChunkDesc);
-		outChunk->alloc();
+	template <class Ty_>
+	void levelDecode(pBlock outBlock, pWavelet w, size_t level, pQuery q)
+	{
+		dimensionId dSize = outBlock->getDSize();
+		for (dimensionId d = 0; d < dSize; ++d)
+		{
+			coorRange arrRange = outBlock->getDesc()->dims_ / pow(2, level);
+			this->dimensionDecode<Ty_>(outBlock, arrRange, d, w, q);
+		}
+	}
 
-		auto ait = approximateChunk->getItemIterator();
-		auto dit = detailChunk->getItemIterator();
-		auto oit = outChunk->getItemIterator();
+	template <class Ty_>
+	void dimensionDecode(pBlock outBlock,
+						 coorRange encodeRange, dimensionId basisDim,
+						 pWavelet w, pQuery q)
+	{
+		size_t length = encodeRange.getEp()[basisDim];
+		size_t halfLength = length / 2;
+		bool oddLength = (length % 2) != 0;
+		bool singleConvFlag = (length % 4) >= 2;
+		size_t rows = encodeRange.getEp().area() / length;
 
+		auto approximateRange = encodeRange;
+		auto detailRange = encodeRange;
+		approximateRange.getEp()[basisDim] /= 2;
+		detailRange.getSp()[basisDim] = approximateRange.getEp()[basisDim];
+
+		assert(approximateRange.getEp()[basisDim] == length / 2);
+		assert(detailRange.getSp()[basisDim] == approximateRange.getEp()[basisDim]);
+
+		auto iit = outBlock->getItemIterator();
+		auto ait = outBlock->getItemRangeIterator(approximateRange);
+		auto dit = outBlock->getItemRangeIterator(detailRange);
+
+		iit->setBasisDim(basisDim);
 		ait->setBasisDim(basisDim);
 		dit->setBasisDim(basisDim);
-		oit->setBasisDim(basisDim);
 
+		iit->moveToStart();
 		ait->moveToStart();
 		dit->moveToStart();
-		oit->moveToStart();
 
-		// Iterate data
-		size_t bandBasisDimLength = approximateChunk->getDesc()->dims_[basisDim];
-		size_t decodedBasisDimLength = bandBasisDimLength << 1;
-		size_t filterSize = w->c_;
-		size_t rows = intDivCeil(approximateChunk->numCells(), bandBasisDimLength);
+		// convert to ty
+		double* row = new double[length];
 
-		for(size_t r = 0; r < rows; r++)
+		for (size_t r = 0; r < rows; ++r)
 		{
-			std::vector<double> intermediate(filterSize, 0);
-			for(size_t i = 0; i < bandBasisDimLength; i++)
+			for (size_t i = 0; i < halfLength * 2; i += 2)
 			{
-				Ty_ vApproximate, vDetail;
-				(**ait).getData(&vApproximate);
-				(**dit).getData(&vDetail);
+				row[i] = (**ait).get<Ty_>() + (**dit).get<Ty_>();
+				row[i + 1] = (**ait).get<Ty_>() - (**dit).get<Ty_>();
+				++(*ait);
+				++(*dit);
+			}
 
-				for(size_t j = 0; (j < filterSize) && (i + j < decodedBasisDimLength); ++j)
-				{
-					intermediate[(i + j) % filterSize] += w->h_1[j] * vApproximate + w->g_1[j] * vDetail;
-					std::cout << intermediate[(i + j) % filterSize] << std::endl;
-				}
+			// halfLength * 2 -> Even number
+			for (size_t i = 0; i < halfLength * 2; ++i)
+			{
+				(**iit).set<Ty_>(static_cast<Ty_>(row[i]));
+				++(*iit);
+			}
 
-				(**oit).set<Ty_>(intermediate[i]);
-				++(*oit);
-				(**oit).set<Ty_>(intermediate[(i + 1) % filterSize]);
-				++(*oit);
-
-				//std::cout << "------" << std::endl;
-				//std::cout << "Intermediate" << std::endl;
-				//for(int im = 0; im < filterSize; im++)
-				//{
-				//	std::cout << intermediate[im] << ", ";
-				//}
-				//std::cout << std::endl << "------" << std::endl;
-
-				intermediate[i] = intermediate[(i + 1) % filterSize] = 0;
+			if (oddLength)
+			{
+				++(*iit);
 				++(*ait);
 				++(*dit);
 			}
 		}
 
-		std::cout << "approximate chunk:" << std::endl;
-		approximateChunk->print();
-
-		std::cout << "detail chunk:" << std::endl;
-		detailChunk->print();
-
-		std::cout << "outChunk:" << std::endl;
-		outChunk->print();
-		return outChunk;
+		delete[] row;
 	}
 
 public:
 	std::string waveletName_;	// This for the testing various wavelet functions.
 };
-
 }
 
 #endif		// _MSDB_OP_WAVELET_DECODE_ACTION_H_

@@ -26,7 +26,7 @@ TEST(query_op_wavelet_encode, waveletHaar_1D)
 	//////////////////////////////
 	// Set up array
 	dimensionDescs dimDescs;
-	dimDescs.push_back(std::make_shared<dimensionDesc>(0, "X", 0, 8, 8));
+	dimDescs.push_back(std::make_shared<dimensionDesc>(0, "X", 0, 8, 8, 8));
 	attributeDescs attrDescs;
 	attrDescs.push_back(std::make_shared<attributeDesc>(0, "A1", eleType::DOUBLE));
 
@@ -34,9 +34,9 @@ TEST(query_op_wavelet_encode, waveletHaar_1D)
 	pArray sourceArr = std::make_shared<arrayBase>(arrDesc);
 	std::vector<pArray> arrs = { sourceArr };
 
-	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, sP, eP);
+	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, dim, sP, eP);
 	pChunk sourceChunk = std::make_shared<memChunk>(cDesc);
-	sourceChunk->materializeCopy(data, sizeof(data));
+	sourceChunk->bufferCopy(data, sizeof(data));
 	sourceArr->insertChunk(sourceChunk);
 
 	//////////////////////////////
@@ -107,8 +107,8 @@ TEST(query_op_wavelet_encode, waveletHaarSimple_2D)
 	//////////////////////////////
 	// Set up array
 	dimensionDescs dimDescs;
-	dimDescs.push_back(std::make_shared<dimensionDesc>(0, "X", 0, 4, 4));
-	dimDescs.push_back(std::make_shared<dimensionDesc>(0, "Y", 0, 4, 4));
+	dimDescs.push_back(std::make_shared<dimensionDesc>(0, "X", 0, 4, 4, 4));
+	dimDescs.push_back(std::make_shared<dimensionDesc>(0, "Y", 0, 4, 4, 4));
 	attributeDescs attrDescs;
 	attrDescs.push_back(std::make_shared<attributeDesc>(0, "A1", eleType::DOUBLE));
 
@@ -116,9 +116,9 @@ TEST(query_op_wavelet_encode, waveletHaarSimple_2D)
 	pArray sourceArr = std::make_shared<arrayBase>(arrDesc);
 	std::vector<pArray> arrs = { sourceArr };
 
-	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, sP, eP);
+	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, dim, sP, eP);
 	pChunk sourceChunk = std::make_shared<memChunk>(cDesc);
-	sourceChunk->materializeCopy(data, sizeof(data));
+	sourceChunk->bufferCopy(data, sizeof(data));
 	sourceArr->insertChunk(sourceChunk);
 
 	//////////////////////////////

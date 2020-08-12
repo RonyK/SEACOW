@@ -100,4 +100,24 @@ opParamType opParamArrayPlaceholder::type()
 {
 	return opParamType::ARRAY;
 }
+opParamIntListPlaceholder::opParamIntListPlaceholder()
+	: opParamPlaceholder(), opParamIntList(nullptr)
+{
+}
+opParamType opParamIntListPlaceholder::type()
+{
+	return opParamType::INTLIST;
+}
+opParamIntList::opParamIntList(std::shared_ptr<std::vector<int64_t>> eleList)
+	: eleList_(eleList)
+{
+}
+opParam::void_pointer opParamIntList::getParam()
+{
+	return this->eleList_;
+}
+opParamType opParamIntList::type()
+{
+	return opParamType::INTLIST;
+}
 }

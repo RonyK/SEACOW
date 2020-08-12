@@ -18,7 +18,7 @@ TEST(memChunkBuffer, initRawChunk_sc8x8)
 	getDummy(data, dataLength);
 
 	memChunkBuffer chunk;
-	chunk.alloc(dataLength);
+	chunk.bufferAlloc(dataLength);
 	chunk.copy(data, dataLength);
 
 	//EXPECT_TRUE(chunk.isAllocated());

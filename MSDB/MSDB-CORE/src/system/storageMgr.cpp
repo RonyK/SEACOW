@@ -39,6 +39,7 @@ storageMgr::storageMgr()
 
 storageMgr::~storageMgr()
 {
+	std::cout << "~storageMgr()" << std::endl;
 }
 
 config* storageMgr::loadConfigFile(ConfigType type)

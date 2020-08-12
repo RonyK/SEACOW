@@ -32,18 +32,18 @@ TEST(query_op_spiht_encode, spiht_2D_4x4)
 	// Set up array
 	arrayId aid = 99441;
 	dimensionDescs dimDescs;
-	dimDescs.push_back(std::make_shared<dimensionDesc>(0, "X", 0, 4, 4));
-	dimDescs.push_back(std::make_shared<dimensionDesc>(0, "Y", 0, 4, 4));
+	dimDescs.push_back(std::make_shared<dimensionDesc>(0, "X", 0, 4, 4, 4));
+	dimDescs.push_back(std::make_shared<dimensionDesc>(0, "Y", 0, 4, 4, 4));
 	attributeDescs attrDescs;
 	attrDescs.push_back(std::make_shared<attributeDesc>(0, "A1", eleType::CHAR));
 
 	pArrayDesc arrDesc = std::make_shared<arrayDesc>(aid, "spiht_test_array", dimDescs, attrDescs);
-	auto sourceArr = std::make_shared<wavelet_encode_array>(arrDesc, 0);
+	auto sourceArr = std::make_shared<wavelet_encode_array>(arrDesc, 0, chunkDims);
 	std::vector<pArray> arrs = { sourceArr };
 
-	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, sP, eP);
+	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, dim, sP, eP);
 	pChunk sourceChunk = std::make_shared<memChunk>(cDesc);
-	sourceChunk->materializeCopy(data, sizeof(data));
+	sourceChunk->bufferCopy(data, sizeof(data));
 	sourceArr->insertChunk(sourceChunk);
 
 	//////////////////////////////
@@ -81,18 +81,18 @@ TEST(query_op_spiht_encode, spiht_2D_8x8)
 	// Set up array
 	arrayId aid = 99881;
 	dimensionDescs dimDescs;
-	dimDescs.push_back(std::make_shared<dimensionDesc>(1, "X", 0, 8, 8));
-	dimDescs.push_back(std::make_shared<dimensionDesc>(1, "Y", 0, 8, 8));
+	dimDescs.push_back(std::make_shared<dimensionDesc>(1, "X", 0, 8, 8, 8));
+	dimDescs.push_back(std::make_shared<dimensionDesc>(1, "Y", 0, 8, 8, 8));
 	attributeDescs attrDescs;
 	attrDescs.push_back(std::make_shared<attributeDesc>(1, "A1", eleType::CHAR));
 
 	pArrayDesc arrDesc = std::make_shared<arrayDesc>(aid, "spiht_test_array", dimDescs, attrDescs);
-	auto sourceArr = std::make_shared<wavelet_encode_array>(arrDesc, 0);
+	auto sourceArr = std::make_shared<wavelet_encode_array>(arrDesc, 0, chunkDims);
 	std::vector<pArray> arrs = { sourceArr };
 
-	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, sP, eP);
+	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, dim, sP, eP);
 	pChunk sourceChunk = std::make_shared<memChunk>(cDesc);
-	sourceChunk->materializeCopy(data, sizeof(data));
+	sourceChunk->bufferCopy(data, sizeof(data));
 	sourceArr->insertChunk(sourceChunk);
 
 	//////////////////////////////

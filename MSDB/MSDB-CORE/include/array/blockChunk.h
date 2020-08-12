@@ -2,9 +2,6 @@
 #ifndef _MSDB_BLOCKEDCHUNK_H_
 #define _MSDB_BLOCKEDCHUNK_H_
 
-#include <array/block.h>
-#include <array/blockIterator.h>
-#include <array/blockContainer.h>
 #include <array/chunkIterator.h>
 #include <array/memChunkItemIterator.h>
 #include <util/coordinate.h>
@@ -14,38 +11,43 @@ namespace msdb
 {
 class blockIterator;
 
-class blockChunk : public chunk
+class memBlockChunk : public chunk
 {
 public:
 	using size_type = chunk::size_type;
 
 public:
-	blockChunk(pChunkDesc desc);
-	virtual ~blockChunk();
+	memBlockChunk(pChunkDesc desc);
+	virtual ~memBlockChunk();
 
 protected:
 	virtual void makeBuffer();
+	virtual void makeBlocks(std::vector<bool> bitmap);
+	virtual void referenceBufferToBlock();
 
 public:
 	//////////////////////////////
 	// Getter
 	//////////////////////////////
 	// Block
-	size_t getBlockCapacity();
-	pBlock getBlock(blockId bId);
-	blockId getBlockId(pBlockDesc cDesc);
-	blockId getBlockIdFromItemCoor(coor& itemCoor);
-	blockId getBlockIdFromBlockCoor(coor& chunkCoor);
-	virtual coor itemCoorToBlockCoor(coor& itemCoor);
+	virtual pBlock getBlock(blockId bId);
+	virtual blockId getBlockId(pBlockDesc cDesc);
+	virtual blockId getBlockIdFromItemCoor(coor& itemCoor);
+	virtual blockId getBlockIdFromBlockCoor(coor& chunkCoor);
+	virtual virtual coor itemCoorToBlockCoor(coor& itemCoor);
 	virtual pBlockIterator getBlockIterator(iterateMode itMode = iterateMode::ALL);
-	virtual pChunkItemIterator getItemIterator();
-	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range);
 
 	//////////////////////////////
 	// Setter
 	//////////////////////////////
 	void setBlock(pBlock b);
 	void flush();
+
+	//////////////////////////////
+	// Item Iterators
+	//////////////////////////////
+	virtual pChunkItemIterator getItemIterator();
+	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range);
 
 public:
 	virtual void serialize(std::ostream& os) override;
@@ -69,14 +71,10 @@ public:
 	using dim_reference = base_type::dim_reference;
 	using dim_const_reference = base_type::dim_const_reference;
 public:
-	// csP : chunk start point
-	blockChunkItemIterator(void* data, const eleType eType, const size_type dSize, 
-						   dim_const_pointer dims,
-						   dim_const_pointer csP, pBlockIterator bItr);
-
 	blockChunkItemIterator(void* data, const eleType eType,
-						   const dimension dims,
-						   const dimension csP, pBlockIterator bItr);
+						   const dimension& dims,
+						   const dimension& csP,
+						   pBlockIterator bItr);
 
 public:
 	virtual void next() override;
@@ -86,23 +84,19 @@ public:
 	virtual element operator*() override;
 
 protected:
+	void initBlockItemItr();
 	pBlockIterator bItr_;
-	pChunkItemIterator curBlockItemItr_;
+	pBlockItemIterator curBlockItemItr_;
 };
 
 class blockChunkItemRangeIterator : public chunkItemRangeIterator
 {
 public:
-
-	blockChunkItemRangeIterator(void* data, const eleType eType, const size_type dSize,
-								dim_const_pointer dims,
-								dim_const_pointer sP, dim_const_pointer eP,
-								dim_const_pointer csP, pBlockIterator bItr);
-
 	blockChunkItemRangeIterator(void* data, eleType eType, 
-								const dimension dims,
+								const dimension& dims,
 								const coorRange& range,
-								const dimension csP, pBlockIterator bItr);
+								const dimension& csP, 
+								pBlockIterator bItr);
 
 public:
 	virtual void next() override;
@@ -113,7 +107,7 @@ public:
 
 protected:
 	pBlockIterator bItr_;
-	pChunkItemIterator curBlockItemItr_;
+	pBlockItemRangeIterator curBlockItemItr_;
 };
 }
 #endif		// _MSDB_BLOCKEDCHUNK_H_

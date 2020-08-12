@@ -1,5 +1,5 @@
 #include <array/memBlock.h>
-#include <array/memChunkItemIterator.h>
+#include <array/memBlockItemIterator.h>
 
 namespace msdb
 {
@@ -84,26 +84,24 @@ void memBlock::deserialize(bstream& bs)
 	}
 }
 
-pChunkItemIterator memBlock::getItemIterator()
+pBlockItemIterator memBlock::getItemIterator()
 {
-	//void* data, eleType eType, const size_type dSize,
-	//	position_t* dims, dim_pointer csP
-	return std::make_shared<memChunkItemIterator>(this->cached_->getData(),
-							 this->desc_->eType_,
-							 this->desc_->dims_,
-							 this->desc_->sp_);
+	return std::make_shared<memBlockItemIterator>(this->cached_->getData(),
+												  this->desc_->eType_,
+												  this->desc_->dims_,
+												  this->desc_->sp_);
 }
 
-pChunkItemRangeIterator memBlock::getItemRangeIterator(const coorRange& range)
+pBlockItemRangeIterator memBlock::getItemRangeIterator(const coorRange& range)
 {
-	return std::make_shared<memChunkItemRangeIterator>(this->cached_->getData(),
-								  this->desc_->eType_,
-								  this->desc_->dims_,
-								  range,
-								  this->desc_->sp_);
+	return std::make_shared<memBlockItemRangeIterator>(this->cached_->getData(),
+													   this->desc_->eType_,
+													   this->desc_->dims_,
+													   range,
+													   this->desc_->sp_);
 }
-void memBlock::makeBuffer()
+void memBlock::reference(void* data, bufferSize size)
 {
-	this->cached_ = std::make_shared<memBlockBuffer>();	// TODO::make mem block buffer
+	this->cached_ = std::make_shared<memBlockBuffer>(data, size);	// TODO::make mem block buffer
 }
 }	// msdb

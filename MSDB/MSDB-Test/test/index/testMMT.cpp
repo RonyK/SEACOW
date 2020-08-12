@@ -58,7 +58,7 @@ void mmt_build_test(pArray afterArray)
 		for (size_t l = 0; l <= level; l++)
 		{
 			auto levelNodes = nodes[l];
-			MinMaxTreeImpl<dim_type, value_type>::nodeItr nit(2, mmtIndex->getLevelDim(l).data());
+			MinMaxTreeImpl<dim_type, value_type>::nodeItr nit(2, mmtIndex->getNodeSpace(l).data());
 			for (int y = 0; y < chunkNums[0] / pow(2, l); ++y)
 			{
 				for (int x = 0; x < chunkNums[1] / pow(2, l); ++x)
@@ -146,9 +146,9 @@ void mmt_delta_encode_test(std::shared_ptr<mmt_delta_encode_array> arr)
 		auto cit = arr->getChunkIterator();
 		size_t c = 0;
 
-		while (!cit.isEnd())
+		while (!cit->isEnd())
 		{
-			auto iit = (*cit)->getItemIterator();
+			auto iit = (**cit)->getItemIterator();
 			for (size_t i = 0; i < iit->getCapacity(); ++i)
 			{
 				std::cout << "[" << iit->coor()[0] << ", " << iit->coor()[1] << "] " << static_cast<int>((**iit).getChar()) << ", " << static_cast<int>(expected[i]) << std::endl;
@@ -156,7 +156,7 @@ void mmt_delta_encode_test(std::shared_ptr<mmt_delta_encode_array> arr)
 				++(*iit);
 			}
 			++c;
-			++cit;
+			++(*cit);
 		}
 	}
 }
@@ -194,9 +194,9 @@ void mmt_delta_decode_test(std::shared_ptr<mmt_delta_decode_array> arr)
 		auto cit = arr->getChunkIterator();
 		size_t c = 0;
 
-		while (!cit.isEnd())
+		while (!cit->isEnd())
 		{
-			auto iit = (*cit)->getItemIterator();
+			auto iit = (**cit)->getItemIterator();
 			for (size_t i = 0; i < iit->getCapacity(); ++i)
 			{
 				std::cout << "[" << iit->coor()[0] << ", " << iit->coor()[1] << "] " << static_cast<int>((**iit).getChar()) << ", " << static_cast<int>(expected[i]) << std::endl;
@@ -204,7 +204,7 @@ void mmt_delta_decode_test(std::shared_ptr<mmt_delta_decode_array> arr)
 				++(*iit);
 			}
 			++c;
-			++cit;
+			++(*cit);
 		}
 	}
 }
@@ -246,5 +246,40 @@ pArray mmt_save(std::vector<pArray> sourceArr)
 	return afterArray;
 }
 }
+
+namespace data2D_star1024x1024
+{
+pArray mmt_build(std::vector<pArray> sourceArr)
+{
+	getSourceArrayIfEmpty(sourceArr);
+
+	eleDefault level = 5;
+	std::shared_ptr<mmt_build_plan> mmtPlan;
+	std::shared_ptr<mmt_build_action> mmtAction;
+	pQuery mmtQuery;
+	getMmtBuild(sourceArr[0]->getDesc(), level, mmtPlan, mmtAction, mmtQuery);
+
+	// Execute mmt build action
+	auto afterArray = mmtAction->execute(sourceArr, mmtQuery);
+
+	return afterArray;
+}
+
+pArray mmt_delta_encode(std::vector<pArray> sourceArr)
+{
+	// Should build mmt before
+	getSourceArrayIfEmpty(sourceArr);
+
+	std::shared_ptr<mmt_delta_encode_plan> mmtPlan;
+	std::shared_ptr<mmt_delta_encode_action> mmtAction;
+	pQuery mmtQuery;
+	getMmtDeltaEncode(sourceArr[0]->getDesc(), mmtPlan, mmtAction, mmtQuery);
+
+	auto afterArray = mmtAction->execute(sourceArr, mmtQuery);
+	std::cout << "mmt delta encode" << std::endl;
+
+	return afterArray;
+}
+}	// data2D_star1024x1024
 }	// caDummy
 }	// msdb

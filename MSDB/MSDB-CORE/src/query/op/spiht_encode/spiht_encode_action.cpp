@@ -25,10 +25,10 @@ pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 	auto arrId = source->getId();
 	auto wArray = std::static_pointer_cast<wavelet_encode_array>(source);
 	auto chunkItr = wArray->getChunkIterator();
-	while (!chunkItr.isEnd())
+	while (!chunkItr->isEnd())
 	{
-		auto itemItr = (*chunkItr)->getItemIterator();
-		auto dSize = chunkItr.dSize();									// dimension size
+		auto itemItr = (**chunkItr)->getItemIterator();
+		auto dSize = chunkItr->dSize();									// dimension size
 		auto cSize = wArray->getDesc()->dimDescs_.getChunkDims();		// chunk size
 		auto max_level = wArray->getMaxLevel();							// max level
 		std::vector<size_t> bandSize(dSize);							// band size in max level(?)
@@ -39,7 +39,7 @@ pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 
 		this->encode_init(dSize, bandSize);
 
-		switch ((*chunkItr)->getDesc()->attrDesc_->type_)
+		switch ((**chunkItr)->getDesc()->attrDesc_->type_)
 		{
 		case eleType::CHAR:
 			this->encode_progress<char>(dSize, cSize, bandSize, itemItr);
@@ -72,13 +72,13 @@ pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 		}
 
-		auto attr = (*chunkItr)->getDesc()->attrDesc_;
-		pChunk oChunk = std::make_shared<memChunk>((*chunkItr)->getDesc());
-		oChunk->materializeAssign(this->codeBs_.data(), this->codeBs_.capacity());
-		storageMgr::instance()->saveChunk(arrId, attr->id_, (*chunkItr)->getId(), std::static_pointer_cast<serializable>(oChunk));
+		auto attr = (**chunkItr)->getDesc()->attrDesc_;
+		pChunk oChunk = std::make_shared<memChunk>((**chunkItr)->getDesc());
+		oChunk->bufferRef(this->codeBs_.data(), this->codeBs_.capacity());
+		storageMgr::instance()->saveChunk(arrId, attr->id_, (**chunkItr)->getId(), std::static_pointer_cast<serializable>(oChunk));
 
 		this->codeBs_.flush();
-		++chunkItr;
+		++(*chunkItr);
 	}
 
 	return source;

@@ -41,7 +41,7 @@ public:
 		auto mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
 		dimension chunkDim(inArr->getDesc()->getDimDescs().getChunkDims());
 
-		while (!cit.isEnd())
+		while (!cit->isEnd())
 		{
 			std::vector<pWtChunk> wtChunks;
 			std::vector<pSeChunk> outChunks;
@@ -52,12 +52,12 @@ public:
 
 			for (size_t i = 0; i < 1 + (inArr->getMaxLevel() + 1) * (pow(2, inArr->getDesc()->getDSize()) - 1); ++i)
 			{
-				if(cit.isEnd())
+				if (cit->isEnd())
 				{
 					_MSDB_EXCEPTIONS_MSG(MSDB_EC_LOGIC_ERROR, MSDB_ER_OUT_OF_RANGE, "iterating chunk fail");
 				}
-				wtChunks.push_back(std::static_pointer_cast<wtChunk>(*cit));
-				++cit;
+				wtChunks.push_back(std::static_pointer_cast<wtChunk>(**cit));
+				++(*cit);
 			}
 
 			this->compressChunk<Ty_>(outChunks, wtChunks, mmtIndex, chunkDim);
@@ -78,71 +78,79 @@ public:
 	{
 		assert(in.size() >= 2);
 		pWtChunk iChunk = in[0];	// approximate chunk, get tile dim
-		dimension blockDims = iChunk->getDesc()->getDim();	// TODO::FIX, now simple approch
+		dimension blockDims = iChunk->getDesc()->getDims();	// TODO::FIX, now simple approch
 
-		for(auto c : in)
+		for (auto c : in)
 		{
 			auto iDesc = c->getDesc();
-			auto oDesc = std::make_shared<blockChunkDesc>(iDesc->id_,
-														  std::make_shared<attributeDesc>(*(iDesc->attrDesc_)),
-														  iDesc->dims_, blockDims,
-														  iDesc->sp_, iDesc->ep_,
-														  iDesc->mSize_);
+			auto oDesc = std::make_shared<chunkDesc>(iDesc->id_,
+													 std::make_shared<attributeDesc>(*(iDesc->attrDesc_)),
+													 iDesc->dims_, blockDims,
+													 iDesc->sp_, iDesc->ep_,
+													 iDesc->mSize_);
 			pSeChunk oChunk = std::make_shared<seChunk>(oDesc);
 			oChunk->setLevel(iChunk->getLevel());
-			oChunk->setBandId(iChunk->getBandId());
+			//oChunk->setBandId(iChunk->getBandId());
 			oChunk->setSourceChunkId(iChunk->getSourceChunkId());
+			oChunk->makeAllBlocks();
+			oChunk->bufferAlloc();
 
-			dimension blockSpace = c->getTileSpace(sourceChunkDim);
-			coorItr blockItr(blockSpace);
+			//dimension blockSpace = c->getTileSpace(sourceChunkDim);
+			//dimension blockSpace = c->getDesc()->getBlockSpace();
+			//coorItr blockItr(blockSpace);
+			// TODO::Use block iterator
+			auto ibItr = c->getBlockIterator();
+			//auto obItr = oChunk->getBlockIterator();
 
-			while(!blockItr.isEnd())
+			while (!(ibItr->isEnd()))
 			{
-				coor blockCoor = blockItr.coor();
+				coor blockCoor = ibItr->coor();
 				coor blockSp = blockCoor * blockDims;
 				coor blockEp = blockSp + blockDims;
 				coorRange bRange = coorRange(blockSp, blockEp);
 
+				//pBlockDesc bDesc = std::make_shared<blockDesc>(
+				//	blockItr.seqPos(),					// id
+				//	iDesc->attrDesc_->type_,			// eType
+				//	blockDims,							// dims
+				//	blockSp,							// sp
+				//	blockEp,							// ep
+				//	blockDims.area() * c->getDesc()->attrDesc_->typeSize_	// mSize
+				//	);
+				//pBlock oBlock = std::make_shared<memBlock>(bDesc);
+				//oChunk->setBlock(oBlock);
 
-				pBlockDesc bDesc = std::make_shared<blockDesc>(
-					blockItr.seqPos(),					// id
-					c->getDesc()->attrDesc_->type_,		// eType
-					blockDims,							// dims
-					blockSp,							// sp
-					blockEp,							// ep
-					blockDims.area() * c->getDesc()->attrDesc_->typeSize_	// mSize
-					);
-				pBlock oBlock = std::make_shared<memBlock>(bDesc);
-				oChunk->setBlock(oBlock);
-				
 				//////////////////////////////
 				// TODO::Use materialize copy
-				// oBlock->materializeCopy(void*, blockDims.area() * c->getDesc()->attrDesc_->typeSize_);
-				oBlock->alloc();	// mSize is setted in the desc.
+				// oBlock->bufferCopy(void*, blockDims.area() * c->getDesc()->attrDesc_->typeSize_);
+				//oBlock->bufferAlloc();	// mSize is setted in the desc.
 				//////////////////////////////
 
 				// Find required bit for delta array
-				auto blockItemItr = c->getItemRangeIterator(bRange);
-				auto oBlockItemItr = oBlock->getItemIterator();
+				auto iBlockItemItr = (*ibItr)->getItemIterator();
+				auto oBlockItemItr = oChunk->getBlock((*ibItr)->getId())->getItemIterator();
 
 				bit_cnt_type maxValueBits = 0;
-				while(!blockItemItr->isEnd())
+				while (!iBlockItemItr->isEnd())
 				{
-					bit_cnt_type valueBits = msb<bit_cnt_type>(abs_((**blockItemItr).get<Ty_>()));
-					if(maxValueBits < valueBits)
+					bit_cnt_type valueBits = msb<bit_cnt_type>(abs_((**iBlockItemItr).get<Ty_>()));
+					if (maxValueBits < valueBits)
 					{
 						maxValueBits = valueBits;
 					}
-					(**oBlockItemItr) = (**blockItemItr);
-					++(*blockItemItr);
+
+					// As input/output block have same type, they can access the same coordinate using the next() operator.
+					(**oBlockItemItr) = (**iBlockItemItr);
+					++(*iBlockItemItr);
 					++(*oBlockItemItr);
+
 				}
 				oChunk->rBitFromDelta.push_back(maxValueBits);
 
 				auto mmtNode = mmtIndex->getNode(bRange);
 				oChunk->rBitFromMMT.push_back(mmtNode->bits_);
 
-				++blockItr;
+				++(*ibItr);
 			}
 
 			out.push_back(oChunk);

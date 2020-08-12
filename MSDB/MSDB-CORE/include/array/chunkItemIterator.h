@@ -137,7 +137,6 @@ public:
 						   const coorRange& range,
 						   const dimension csP);
 };
-
 }
 
 #endif		// _MSDB_CHUNKITEMITERATOR_H_

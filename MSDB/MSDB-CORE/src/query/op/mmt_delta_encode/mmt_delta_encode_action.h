@@ -39,16 +39,16 @@ void mmt_delta_encode_action::saveAttribute(std::shared_ptr<mmt_delta_encode_arr
 	auto mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
 	auto cit = inArr->getChunkIterator(iterateMode::EXIST);
 
-	while (!cit.isEnd())
+	while (!cit->isEnd())
 	{
 		// Make new chunk
-		auto cDesc = (*cit)->getDesc();
+		auto cDesc = (**cit)->getDesc();
 		pChunk deltaChunk = std::make_shared<memChunk>(std::make_shared<chunkDesc>(*cDesc));
-		deltaChunk->alloc();
+		deltaChunk->bufferAlloc();
 
-		this->chunkEncode(deltaChunk, *cit, mmtIndex);
+		this->chunkEncode(deltaChunk, **cit, mmtIndex);
 		outArr->insertChunk(deltaChunk);
-		++cit;
+		++(*cit);
 	}
 
 	outArr->setMMT(attrDesc->id_, mmtIndex);
@@ -58,18 +58,13 @@ template<class Ty_>
 void mmt_delta_encode_action::chunkEncode(pChunk outChunk, pChunk inChunk,
 										  std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex)
 {
-	auto nit = mmtIndex->getNodeIterator(0);	// get level 0 node iterator
-	auto chunkDim = inChunk->getDesc()->dims_.data();
-	auto blockDimInChunk = calcChunkNums(chunkDim,
-										 mmtIndex->getLeaftBlockDim().data(), 
-										 inChunk->getDesc()->getDimSize());
-	coorItr bit(blockDimInChunk);
-	while(!bit.isEnd())
+	auto ibItr = inChunk->getBlockIterator();
+	auto obItr = outChunk->getBlockIterator();
+	while (!ibItr->isEnd())
 	{
-		auto bItemBdy = mmtIndex->getBlockItemBoundary(bit.coor());
-		auto iit = inChunk->getItemRangeIterator(bItemBdy);
-		auto oit = outChunk->getItemRangeIterator(bItemBdy);
-		auto node = mmtIndex->getNode(inChunk->getDesc()->chunkCoor_, bit.coor());
+		auto iit = (**ibItr)->getItemIterator();
+		auto oit = (**obItr)->getItemIterator();
+		auto node = mmtIndex->getNode(inChunk->getDesc()->chunkCoor_, ibItr->coor());
 
 		// Block encode
 		while (!iit->isEnd())
@@ -81,8 +76,35 @@ void mmt_delta_encode_action::chunkEncode(pChunk outChunk, pChunk inChunk,
 			++(*oit);
 		}
 
-		++bit;
+		++(*ibItr);
+		++(*obItr);
 	}
+
+	//auto nit = mmtIndex->getNodeIterator(0);	// get level 0 node iterator
+	//auto chunkDim = inChunk->getDesc()->dims_.data();
+	//auto blockDimInChunk = calcChunkNums(chunkDim,
+	//									 mmtIndex->getBlockDims().data(), 
+	//									 inChunk->getDesc()->getDimSize());
+	//coorItr bit(blockDimInChunk);
+	//while(!bit.isEnd())
+	//{
+	//	auto bItemBdy = mmtIndex->getBlockItemBoundary(bit.coor());
+	//	auto iit = inChunk->getItemRangeIterator(bItemBdy);
+	//	auto oit = outChunk->getItemRangeIterator(bItemBdy);
+	//	auto node = mmtIndex->getNode(inChunk->getDesc()->chunkCoor_, bit.coor());
+
+	//	// Block encode
+	//	while (!iit->isEnd())
+	//	{
+	//		auto inValue = (**iit).get<Ty_>();
+	//		auto outValue = inValue - node->min_;
+	//		(**oit).set<Ty_>(outValue);
+	//		++(*iit);
+	//		++(*oit);
+	//	}
+
+	//	++bit;
+	//}
 }
 }	// msdb
 

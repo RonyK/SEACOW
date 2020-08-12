@@ -5,6 +5,9 @@
 #include <array/chunkBuffer.h>
 #include <array/chunkDesc.h>
 #include <array/chunkItemIterator.h>
+#include <array/block.h>
+#include <array/blockIterator.h>
+#include <array/blockContainer.h>
 #include <io/serializable.h>
 #include <io/bitstream.h>
 #include <memory>
@@ -23,26 +26,77 @@ public:
 	chunk(pChunkDesc desc);
 	virtual ~chunk();
 
+//////////////////////////////
+// Desc
+//////////////////////////////
 public:
-	virtual void alloc();
-	virtual void alloc(bufferSize size);
-	virtual void materializeCopy(void* data, bufferSize size);
-	virtual void materializeAssign(void* data, bufferSize size);
-	//virtual void materializeCopy(bstream& bs);
+	chunkId getId() const;
+	void setId(chunkId id);	// chunk id can be chnaged in query processing
+	const pChunkDesc getDesc() const;
+	size_type getDSize();
+	size_type numCells();
+	coor getChunkCoor();
+
+protected:
+	pChunkDesc desc_;		// chunk desc
+
+//////////////////////////////
+// Buffer
+//////////////////////////////
+protected:
+	void free();
+	// NOTE::Call a referenceBufferToBlock() in a makeBuffer()
+	virtual void makeBuffer() = 0;
+	virtual void referenceBufferToBlock() = 0;
+
+public:
+	virtual void bufferAlloc();
+	virtual void bufferAlloc(bufferSize size);
+	virtual void bufferCopy(void* data, bufferSize size);
+	virtual void bufferCopy(pChunk source);
+	virtual void bufferCopy(pBlock source);
+	virtual void bufferRef(void* data, bufferSize size);
+	virtual void bufferRef(pBlock source);
+	//virtual void bufferCopy(bstream& bs);
 	bool isMaterialized() const;
 
-	chunkId getId() const;
-	// chunk id can be chnaged in query processing
-	void setId(chunkId id);
-	const pChunkDesc getDesc() const;
-	size_type numCells();
+protected:
+	pChunkBuffer getBuffer();
 
-	void print();
+protected:
+	pChunkBuffer cached_;	// hold materialized chunk
 
-	coor getChunkCoor();
+//////////////////////////////
+// Blocks
+//////////////////////////////
+public:
+	virtual void makeBlocks(std::vector<bool> bitmap) = 0;
+	virtual void makeAllBlocks();
+	size_t getBlockCapacity();
+	virtual pBlock getBlock(blockId bId) = 0;
+	virtual blockId getBlockId(pBlockDesc cDesc) = 0;
+	virtual blockId getBlockIdFromItemCoor(coor& itemCoor) = 0;
+	virtual blockId getBlockIdFromBlockCoor(coor& blockCoor) = 0;
+	virtual virtual coor itemCoorToBlockCoor(coor& itemCoor) = 0;
+	virtual pBlockIterator getBlockIterator(iterateMode itMode = iterateMode::ALL) = 0;
+
+protected:
+	size_type blockCapacity_;
+
+//////////////////////////////
+// Item Iterators
+//////////////////////////////
+public:
 	virtual pChunkItemIterator getItemIterator() = 0;
 	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range) = 0;
 
+//////////////////////////////
+// Print
+//////////////////////////////
+public:
+	void print();
+
+protected:
 	template <class Ty_>
 	void printImp()
 	{
@@ -54,7 +108,6 @@ public:
 		}
 		std::cout << std::endl << "==============================" << std::endl;
 	}
-
 	template<>
 	void printImp<char>()
 	{
@@ -67,18 +120,10 @@ public:
 		std::cout << std::endl << "==============================" << std::endl;
 	}
 
+//////////////////////////////
+// Serializable
+//////////////////////////////
 protected:
-	void free();
-	virtual void makeBuffer() = 0;
-
-protected:
-	pChunkBuffer cached_;	// hold materialized chunk
-	pChunkDesc desc_;		// chunk desc
-
-protected:
-	//////////////////////////////
-	// Chunk Header				//
-	//////////////////////////////
 	class chunkHeader : public serialHeader
 	{
 	public:
@@ -105,7 +150,6 @@ protected:
 	};
 
 public:
-	// inherit from serializable
 	virtual void updateToHeader() override;
 	virtual void updateFromHeader() override;
 };

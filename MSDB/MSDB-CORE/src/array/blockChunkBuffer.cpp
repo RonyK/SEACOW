@@ -27,7 +27,7 @@ bufferSize blockChunkBuffer::size() const
 	return this->bodySize_;
 }
 
-void blockChunkBuffer::alloc(bufferSize size)
+void blockChunkBuffer::bufferAlloc(bufferSize size)
 {
 	assert(size > 0);
 
@@ -63,7 +63,7 @@ void blockChunkBuffer::copy(void* data, bufferSize size)
 	this->bodySize_ = size;
 }
 
-void blockChunkBuffer::assign(void* data, bufferSize size)
+void blockChunkBuffer::reference(void* data, bufferSize size)
 {
 	this->free();
 	this->isAllocated_ = false;

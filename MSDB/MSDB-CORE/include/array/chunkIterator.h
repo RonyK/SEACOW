@@ -8,6 +8,9 @@
 
 namespace msdb
 {
+class chunkIterator;
+using pChunkIterator = std::shared_ptr<chunkIterator>;
+
 class chunkIterator : public coorItr
 {
 public:

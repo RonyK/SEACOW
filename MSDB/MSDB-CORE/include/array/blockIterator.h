@@ -69,12 +69,33 @@ public:
 	//////////////////////////////
 	// If 'seqPos_' does not match the key of any block in the container,
 	// the function throws an 'std::out_of_range' exception.
-	pBlock operator*() { return this->blocks_->at(this->seqPos_); }
-	pBlock operator->() { return this->blocks_->at(this->seqPos_); }
+	virtual pBlock operator*() { return this->blocks_->at(this->seqPos_); }
+	virtual pBlock operator->() { return this->blocks_->at(this->seqPos_); }
 
 protected:
 	blockContainer* blocks_;
 	iterateMode itMode_;
+};
+
+class singleBlockIterator : public blockIterator
+{
+public:
+	singleBlockIterator(pBlock blk, iterateMode itMode);
+	singleBlockIterator(const singleBlockIterator& mit);
+
+public:
+	size_type getSeqEnd();
+	bool isExist();
+	bool isExist(blockId bid);
+
+	virtual void next();
+	virtual void prev();
+
+	virtual pBlock operator*() { return (this->seqPos_ == 0) ? this->block_ : throw std::out_of_range("blockIterator seq pos > 0"); }
+	virtual pBlock operator->() { return (this->seqPos_ == 0) ? this->block_ : throw std::out_of_range("blockIterator seq pos > 0"); }
+
+protected:
+	pBlock block_;
 };
 }
 

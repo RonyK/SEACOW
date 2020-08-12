@@ -28,14 +28,14 @@ protected:
 	void initBlockCoor();
 
 public:
-	blockId id_;
-	blockSize mSize_;	// materialized size
+	blockId id_;				// in chunk
+	blockSize mSize_;			// materialized size
 	eleType eType_;
 
 	dimension dims_;			// dimensions
-	coor sp_;
-	coor ep_;
-	coor blockCoor_;
+	coor sp_;					// in chunk
+	coor ep_;					// in chunk
+	coor blockCoor_;			// in chunk
 };
 }
 #endif		// _MSDB_BLOCK_DESC_H_

@@ -18,136 +18,65 @@ wavelet_encode_action::~wavelet_encode_action()
 
 pArray wavelet_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 {
-	pArray source = inputArrays[0];
-	auto cItr = source->getChunkIterator();
-	auto dSize = cItr.dSize();
-	auto cSize = cItr.getSeqEnd();
+	assert(inputArrays.size() == 1);
 
+	pArray inArr = inputArrays[0];
+
+	//////////////////////////////
 	// Get parameters
 	pStableElement ele = std::static_pointer_cast<stableElement>(this->params_[1]->getParam());
 	eleDefault maxLevel;
 	ele->getData(&maxLevel);
 	pWavelet w = std::make_shared<wavelet>(this->waveletName_.c_str());
 
+	//////////////////////////////
 	// Build wavelet_encode_array
-	auto wArray = std::make_shared<wavelet_encode_array>(this->getArrayDesc(), maxLevel);
+	auto outArr = std::make_shared<wavelet_encode_array>(
+		this->getArrayDesc(), maxLevel, inArr->getDesc()->getDimDescs().getChunkDims());
 	// maxLevel value is checked in wavelet_encode_array constructor
 	// which can be used for current array.
-	maxLevel = wArray->getMaxLevel();
+	maxLevel = outArr->getMaxLevel();
 
-	for(chunkId id = 0; id < cSize; ++id, ++cItr)
+	for(auto attrDesc : inArr->getDesc()->getAttrDescs())
 	{
-		auto cChunk = (*cItr);
-		// --------------------
-		// TODO::PARALLEL
-		auto convertedChunkList = this->chunkEncode(wArray, (*cItr), w, maxLevel, q);
-		// --------------------
-		//for(auto c : convertedChunkList)
-		//{
-		//	c->print();
-		//}
-		//std::cout << "-----" << std::endl;
-
-		wArray->insertChunk(convertedChunkList.begin(), convertedChunkList.end());
-	}
-
-	return wArray;
-}
-
-std::list<pChunk> wavelet_encode_action::chunkEncode(pArray wArray, pChunk sourceChunk,
-													 pWavelet w, size_t maxLevel, pQuery q)
-{
-	std::list<pChunk> chunks;
-	chunks.push_back(sourceChunk);
-	chunkId sourceChunkId = sourceChunk->getId();
-
-	for(size_t level = 0; level <= maxLevel; level++)
-	{
-		auto l = this->waveletLevelEncode(chunks.front(), w, q);
-		chunks.pop_front();
-
-		chunkId bandId = 0;
-		for(auto c : l)
+		switch (attrDesc->type_)
 		{
-			pWtChunk wtChunk_ = std::static_pointer_cast<wtChunk>(c);
-			wtChunk_->setBandId(bandId);
-			wtChunk_->setLevel(level);
-			wtChunk_->setSourceChunkId(sourceChunkId);
-			++bandId;
+		case eleType::CHAR:
+			attributeEncode<char>(outArr, inArr, attrDesc, w, maxLevel, q);
+			break;
+		case eleType::INT8:
+			attributeEncode<int8_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			break;
+		case eleType::INT16:
+			attributeEncode<int16_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			break;
+		case eleType::INT32:
+			attributeEncode<int32_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			break;
+		case eleType::INT64:
+			attributeEncode<int64_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			break;
+		case eleType::UINT8:
+			attributeEncode<uint8_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			break;
+		case eleType::UINT16:
+			attributeEncode<uint16_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			break;
+		case eleType::UINT32:
+			attributeEncode<uint32_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			break;
+		case eleType::UINT64:
+			attributeEncode<uint64_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			break;
+		//case eleType::DOUBLE:
+		//	attributeEncode<double>(inChunk, arrRange,w, d, q);
+		//	break;
+		default:
+			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 		}
-		chunks.insert(chunks.begin(), l.begin(), l.end());
 	}
 
-	// Set new chunk IDs
-	chunkId newId = sourceChunk->getId() * pow(pow(2, maxLevel + 1), wArray->getDesc()->dimDescs_.size());
-	chunkId band = 0;
-	for (auto c : chunks)
-	{
-		c->setId(newId + band);
-		band++;
-	}
-
-	return chunks;
-}
-
-std::list<pChunk> wavelet_encode_action::waveletLevelEncode(pChunk wChunk, pWavelet w, pQuery q)
-{
-	std::list<pChunk> levelChunks;
-	levelChunks.push_back(wChunk);
-	size_t numOfLevelChunks = 1;
-
-	for(dimensionId d = 0; d < this->aDesc_->dimDescs_.size(); ++d)
-	{
-		for(size_t i = 0; i < numOfLevelChunks; i++)
-		{
-			pChunk chunkBands = levelChunks.front();
-			levelChunks.pop_front();
-			std::list<pChunk> newChunkBands;
-
-			switch(wChunk->getDesc()->attrDesc_->type_)
-			{
-			case eleType::CHAR:
-				newChunkBands = waveletTransform<char>(chunkBands, w, d, q);
-				break;
-			case eleType::INT8:
-				newChunkBands = waveletTransform<int8_t>(chunkBands, w, d, q);
-				break;
-			case eleType::INT16:
-				newChunkBands = waveletTransform<int16_t>(chunkBands, w, d, q);
-				break;
-			case eleType::INT32:
-				newChunkBands = waveletTransform<int32_t>(chunkBands, w, d, q);
-				break;
-			case eleType::INT64:
-				newChunkBands = waveletTransform<int64_t>(chunkBands, w, d, q);
-				break;
-			case eleType::UINT8:
-				newChunkBands = waveletTransform<uint8_t>(chunkBands, w, d, q);
-				break;
-			case eleType::UINT16:
-				newChunkBands = waveletTransform<uint16_t>(chunkBands, w, d, q);
-				break;
-			case eleType::UINT32:
-				newChunkBands = waveletTransform<uint32_t>(chunkBands, w, d, q);
-				break;
-			case eleType::UINT64:
-				newChunkBands = waveletTransform<uint64_t>(chunkBands, w, d, q);
-				break;
-			//case eleType::DOUBLE:
-			//	newChunkBands = waveletTransform<double>(chunkBands, w, d, q);
-			//	break;
-			default:
-				_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
-			}
-
-			levelChunks.insert(
-				levelChunks.end(), newChunkBands.begin(), newChunkBands.end());
-		}
-
-		numOfLevelChunks *= 2;
-	}
-
-	return levelChunks;
+	return outArr;
 }
 
 const char* msdb::wavelet_encode_action::name()

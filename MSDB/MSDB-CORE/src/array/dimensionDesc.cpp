@@ -5,10 +5,16 @@ namespace msdb
 {
 dimensionDesc::dimensionDesc(dimensionId id, std::string name,
 							 dimension_type start, dimension_type end, 
-							 position_t chunkSize)
-	: id_(id), name_(name), start_(start), end_(end), chunkSize_(chunkSize)
+							 position_t chunkSize, position_t blockSize)
+	: id_(id), name_(name), start_(start), end_(end), 
+	chunkSize_(chunkSize), blockSize_(blockSize)
 {
+}
 
+dimensionDesc::dimensionDesc(const dimensionDesc& mit)
+	: id_(mit.id_), name_(mit.name_), start_(mit.start_), end_(mit.end_),
+	chunkSize_(mit.chunkSize_), blockSize_(mit.blockSize_)
+{
 }
 
 position_t msdb::dimensionDesc::getLength()
@@ -55,4 +61,23 @@ std::vector<position_t> dimensionDescs::getChunkContainerDims()
 	return dims;
 }
 
+dimension dimensionDescs::getBlockDims()
+{
+	dimension blockDims(this->size());
+	for (dimensionId d = 0; d < this->size(); ++d)
+	{
+		blockDims[d] = this->at(d)->chunkSize_ / this->at(d)->blockSize_;
+	}
+	return blockDims;
+}
+
+dimension dimensionDescs::getBlockSpace()
+{
+	return dimension(this->getChunkDims()) / this->getBlockDims();
+}
+
+//dimension dimensionDescs::getBlockContainerDims()
+//{
+//	return std::vector<position_t>();
+//}
 }	// msdb

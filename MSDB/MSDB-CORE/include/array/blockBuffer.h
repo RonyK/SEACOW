@@ -9,17 +9,18 @@ namespace msdb
 class blockBuffer;
 using pBlockBuffer = std::shared_ptr<blockBuffer>;
 
+// Note: block buffer only holds a pointer to a chunk buffer memory.
 class blockBuffer : public chunkBuffer
 {
 public:
-	blockBuffer();
+	blockBuffer(void* data, bufferSize size);
 	virtual ~blockBuffer();
 };
 
 class memBlockBuffer : public blockBuffer
 {
 public:
-	memBlockBuffer();
+	memBlockBuffer(void* data, bufferSize size);
 	virtual ~memBlockBuffer();
 };
 }	// msdb

@@ -15,11 +15,33 @@ public:
 
 protected:
 	virtual void makeBuffer();
+	virtual void makeBlocks(std::vector<bool> bitmap);
+	virtual void referenceBufferToBlock();
 
+//////////////////////////////
+// Blocks
+//////////////////////////////
+public:
+	virtual pBlock getBlock(blockId bId) override;
+	virtual blockId getBlockId(pBlockDesc cDesc) override;
+	virtual blockId getBlockIdFromItemCoor(coor& itemCoor) override;
+	virtual blockId getBlockIdFromBlockCoor(coor& blockCoor) override;
+	virtual coor itemCoorToBlockCoor(coor& itemCoor) override;
+	virtual pBlockIterator getBlockIterator(iterateMode itMode = iterateMode::ALL) override;
+
+protected:
+	pBlock block_;	// memChunk has single block.
+
+//////////////////////////////
+// Item Iterators
+//////////////////////////////
 public:
 	virtual pChunkItemIterator getItemIterator();
 	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range);
 
+//////////////////////////////
+// Serializable
+//////////////////////////////
 public:
 	virtual void serialize(std::ostream& os) override;
 	virtual void deserialize(std::istream& is) override;
@@ -36,7 +58,6 @@ public:
 			++(*it);
 		}
 	}
-
 	template<class Ty_>
 	void deserialize(bstream& bs)
 	{

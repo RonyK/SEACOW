@@ -19,31 +19,21 @@ pBlockDesc block::getDesc()
 {
 	return this->desc_;
 }
-void block::alloc()
+dimensionId block::getDSize()
 {
-	this->free();
-	this->makeBuffer();
-	this->cached_->alloc(this->desc_->mSize_);
+	return this->desc_->dims_.size();
 }
-void block::alloc(bufferSize size)
+void block::unreference()
 {
-	this->free();
-	this->makeBuffer();
-	this->cached_->alloc(size);
-	this->desc_->mSize_ = size;
+	this->cached_ = nullptr;
 }
-void block::materializeCopy(void* data, bufferSize size)
+void block::copy(pBlock srcBlock)
 {
-	this->alloc(size);
-	this->cached_->copy(data, size);
-	this->desc_->mSize_ = size;
-}
-void block::materializeAssign(void* data, bufferSize size)
-{
-	this->free();
-	this->makeBuffer();
-	this->cached_->assign(data, size);
-	this->desc_->mSize_ = size;
+	assert(srcBlock->getDesc()->mSize_ <= this->getDesc()->mSize_);
+	assert(this->isMaterialized() == true);
+
+	auto offset = this->getId() * this->getDesc()->mSize_;
+	this->cached_->copy(srcBlock->getBuffer()->getData(), offset, srcBlock->getDesc()->mSize_);
 }
 bool block::isMaterialized() const
 {
@@ -54,11 +44,8 @@ bool block::isMaterialized() const
 
 	return true;
 }
-void block::free()
+pBlockBuffer block::getBuffer()
 {
-	if(this->isMaterialized())
-	{
-		this->cached_ = nullptr;
-	}
+	return this->cached_;
 }
 }

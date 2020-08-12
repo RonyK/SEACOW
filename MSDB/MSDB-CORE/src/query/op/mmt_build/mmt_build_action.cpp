@@ -32,13 +32,14 @@ pArray mmt_build_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 	arrayId arrId = arr->getId();
 	auto dims = arr->getDesc()->getDimDescs().getDims();
 	auto chunkDims = arr->getDesc()->getDimDescs().getChunkDims();
+	auto blockDims = arr->getDesc()->getDimDescs().getBlockDims();
 
 	for (auto attr : arr->getDesc()->getAttrDescs())
 	{
 		//pMMT mmtIndex = std::make_shared<mmt>(attr->type_, dims, chunkDims, maxLevel);
-		pMMT mmtIndex = MinMaxTree::createMMT(attr->type_, dims, chunkDims, chunkDims, maxLevel);
-		auto it = arr->getChunkIterator(iterateMode::EXIST);
-		mmtIndex->build(it);
+		pMMT mmtIndex = MinMaxTree::createMMT(attr->type_, dims, chunkDims, blockDims, maxLevel);
+		auto cit = arr->getChunkIterator(iterateMode::EXIST);
+		mmtIndex->build(cit);
 		arrayMgr::instance()->setAttributeIndex(arrId, attr->id_, mmtIndex);
 	}
 
