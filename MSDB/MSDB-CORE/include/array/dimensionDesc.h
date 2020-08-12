@@ -13,6 +13,9 @@ namespace msdb
 class dimensionDesc;
 using pDimensionDesc = std::shared_ptr<dimensionDesc>;
 
+class dimensionDescs;
+using pDimensionDescs = std::shared_ptr<dimensionDescs>;
+
 class dimensionDescs : public std::vector<pDimensionDesc>, public std::enable_shared_from_this<dimensionDescs>
 {
 public:
@@ -20,7 +23,7 @@ public:
 	std::vector<position_t> getChunkDims();
 	std::vector<position_t> getChunkContainerDims();
 	dimension getBlockDims();
-	//dimension getBlockContainerDims();
+	dimension getBlockSpace();
 };
 
 class dimensionDesc
@@ -32,6 +35,8 @@ public:
 	dimensionDesc(dimensionId id, std::string name, 
 				  dimension_type start, dimension_type end,
 				  position_t chunkSize, position_t blockSize);
+
+	dimensionDesc(const dimensionDesc& mit);
 
 public:
 	position_t getLength();

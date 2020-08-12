@@ -46,6 +46,13 @@ void memBlockChunk::makeBlocks(std::vector<bool> bitmap)
 				blockSp, blockEp,	// sp, ep
 				mSizeBlock);		// mSize
 			this->blocks_[bid] = std::make_shared<memBlock>(bDesc);
+			
+			if(this->isMaterialized())
+			{
+				this->blocks_[bid]->reference(
+					(char*)this->cached_->getData() + mSizeBlock * bid,
+					mSizeBlock);
+			}
 		}else
 		{
 			this->blocks_[bid] = nullptr;

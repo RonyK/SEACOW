@@ -169,8 +169,8 @@ TEST(query_op_wavelet_encode, waveletHaarSimple_sc4x4)
 	auto weArr = wavelet_encode(std::vector<pArray>());
 	wavelet_encode_check(weArr);
 
-	//auto wdArr = wavelet_decode(std::vector<pArray>({ weArr }));
-	//wavelet_decode_check(wdArr);
+	auto wdArr = wavelet_decode(std::vector<pArray>({ weArr }));
+	wavelet_decode_check(wdArr);
 }
 }	// data2D_sc4x4
 }	// caDummy

@@ -23,7 +23,8 @@ enum class opParamType
 	ARRAY,
 	ATTRIBUTE,
 	DIMENSION,
-	CONST
+	CONST,
+	INTLIST
 };
 
 class opParam : public std::enable_shared_from_this<opParam>
@@ -50,7 +51,6 @@ public:
 public:
 	virtual opParam::void_pointer getParam();
 	virtual opParamType type();
-
 
 private:
 	pArrayDesc desc_;
@@ -104,6 +104,22 @@ private:
 	pStableElement ele_;
 };
 
+class opParamIntList : public opParam
+{
+public:
+	using paramType = std::vector<int64_t>;
+
+public:
+	opParamIntList(std::shared_ptr<std::vector<int64_t>> eleList);
+
+public:
+	virtual opParam::void_pointer getParam();
+	virtual opParamType type();
+
+private:
+	std::shared_ptr<std::vector<int64_t>> eleList_;
+};
+
 //////////////////////////////
 // Placeholder classes
 class opParamPlaceholder
@@ -146,6 +162,15 @@ class opParamConstPlaceholder : public opParamPlaceholder, public opParamConst
 {
 public:
 	opParamConstPlaceholder();
+
+public:
+	virtual opParamType type();
+};
+
+class opParamIntListPlaceholder : public opParamPlaceholder, public opParamIntList
+{
+public:
+	opParamIntListPlaceholder();
 
 public:
 	virtual opParamType type();

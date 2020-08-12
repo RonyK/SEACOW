@@ -12,7 +12,7 @@ public:
 	using base_type = arrayBase;
 
 public:
-	wavelet_encode_array(pArrayDesc desc, const size_t maxLevel);
+	wavelet_encode_array(pArrayDesc desc, const size_t maxLevel, const dimension originalChunkSize);
 
 	/*
 	 * In wavelet_encode_array,
@@ -53,12 +53,14 @@ public:
 
 public:
 	size_t getMaxLevel();
+	dimension getOrigianlChunkDims();
 
 private:
 	bool isMaxLevelAvailable(size_t maxLevel);
 
 protected:
 	size_t maxLevel_;
+	dimension originalChunkDims_;
 };
 }
 

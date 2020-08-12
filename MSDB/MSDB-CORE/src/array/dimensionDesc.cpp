@@ -11,6 +11,12 @@ dimensionDesc::dimensionDesc(dimensionId id, std::string name,
 {
 }
 
+dimensionDesc::dimensionDesc(const dimensionDesc& mit)
+	: id_(mit.id_), name_(mit.name_), start_(mit.start_), end_(mit.end_),
+	chunkSize_(mit.chunkSize_), blockSize_(mit.blockSize_)
+{
+}
+
 position_t msdb::dimensionDesc::getLength()
 {
 	return this->end_ - this->start_;
@@ -63,6 +69,11 @@ dimension dimensionDescs::getBlockDims()
 		blockDims[d] = this->at(d)->chunkSize_ / this->at(d)->blockSize_;
 	}
 	return blockDims;
+}
+
+dimension dimensionDescs::getBlockSpace()
+{
+	return dimension(this->getChunkDims()) / this->getBlockDims();
 }
 
 //dimension dimensionDescs::getBlockContainerDims()

@@ -27,6 +27,7 @@ public:
 public:
 	blockId getId();
 	pBlockDesc getDesc();
+	dimensionId getDSize();
 
 	virtual void serialize(bstream& os) = 0;
 	virtual void deserialize(bstream& is) = 0;
@@ -42,11 +43,13 @@ public:
 	// A block buffer only references a part of a chunk buffer memory.
 	virtual void unreference();
 	virtual void reference(void* data, const bufferSize size) = 0;
+	virtual void copy(pBlock sBlock);
 	bool isMaterialized() const;
 
 protected:
 	pBlockBuffer getBuffer();
 	friend class chunk;
+
 protected:
 	pBlockBuffer cached_;	// hold materialized block
 	
