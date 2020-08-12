@@ -244,6 +244,7 @@
     <ClInclude Include="src\query\op\save\save_plan.h" />
     <ClInclude Include="src\query\op\se_compression\se_compression_action.h" />
     <ClInclude Include="src\query\op\se_compression\se_compression_plan.h" />
+    <ClInclude Include="src\query\op\spiht_encode\timer.h" />
     <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_action.h" />
     <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_array.h" />
     <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_plan.h" />
@@ -296,6 +297,7 @@
     <ClCompile Include="src\query\op\save\save_plan.cpp" />
     <ClCompile Include="src\query\op\se_compression\se_compression_action.cpp" />
     <ClCompile Include="src\query\op\se_compression\se_compression_plan.cpp" />
+    <ClCompile Include="src\query\op\spiht_encode\timer.cpp" />
     <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_action.cpp" />
     <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_array.cpp" />
     <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_plan.cpp" />
