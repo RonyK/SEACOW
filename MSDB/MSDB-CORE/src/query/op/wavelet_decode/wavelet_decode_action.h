@@ -70,7 +70,7 @@ private:
 		for (auto inChunk : inChunkList)
 		{
 			coor chunkCoor = inChunk->getChunkCoor();
-			coor blockCoor = chunkCoor / blockSpace;
+			coor blockCoor = chunkCoor % blockSpace;
 			obItr->moveTo(blockCoor);
 
 			//coordinate outBlock->;

@@ -32,8 +32,7 @@ void block::copy(pBlock srcBlock)
 	assert(srcBlock->getDesc()->mSize_ <= this->getDesc()->mSize_);
 	assert(this->isMaterialized() == true);
 
-	auto offset = this->getId() * this->getDesc()->mSize_;
-	this->cached_->copy(srcBlock->getBuffer()->getData(), offset, srcBlock->getDesc()->mSize_);
+	this->cached_->copy(srcBlock->getBuffer()->getData(), srcBlock->getDesc()->mSize_);
 }
 bool block::isMaterialized() const
 {
