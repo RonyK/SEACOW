@@ -144,7 +144,7 @@ void mmt_delta_encode_test(std::shared_ptr<mmt_delta_encode_array> arr)
 		getExDelta(expected, dataLength);
 
 		auto cit = arr->getChunkIterator();
-		size_t c = 0;
+		size_t c = 0, numCheckedItems = 0;
 
 		while (!cit->isEnd())
 		{
@@ -154,10 +154,14 @@ void mmt_delta_encode_test(std::shared_ptr<mmt_delta_encode_array> arr)
 				std::cout << "[" << iit->coor()[0] << ", " << iit->coor()[1] << "] " << static_cast<int>((**iit).getChar()) << ", " << static_cast<int>(expected[i]) << std::endl;
 				EXPECT_EQ((**iit).getChar(), expected[i + iit->getCapacity() * c]);
 				++(*iit);
+				++numCheckedItems;
 			}
 			++c;
 			++(*cit);
 		}
+
+		EXPECT_EQ(c, 4);		// chunk num
+		EXPECT_EQ(numCheckedItems, dataLength);
 	}
 }
 
