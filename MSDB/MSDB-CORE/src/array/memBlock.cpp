@@ -100,7 +100,7 @@ pBlockItemRangeIterator memBlock::getItemRangeIterator(const coorRange& range)
 													   range,
 													   this->desc_->sp_);
 }
-void memBlock::reference(void* data, bufferSize size)
+void memBlock::linkToChunkBuffer(void* data, bufferSize size)
 {
 	this->cached_ = std::make_shared<memBlockBuffer>(data, size);	// TODO::make mem block buffer
 }

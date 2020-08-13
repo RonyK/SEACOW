@@ -303,7 +303,7 @@ const char* StrPair::GetStr()
                 else if ( (_flags & NEEDS_ENTITY_PROCESSING) && *p == '&' ) {
                     // Entities handled by tinyXML2:
                     // - special entities in the entity table [in/out]
-                    // - numeric character reference [in]
+                    // - numeric character linkToChunkBuffer [in]
                     //   &#20013; or &#x4e2d;
 
                     if ( *(p+1) == '#' ) {

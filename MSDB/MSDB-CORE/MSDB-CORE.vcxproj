@@ -184,6 +184,7 @@
     <ClInclude Include="include\compression\compression.h" />
     <ClInclude Include="include\compression\seChunk.h" />
     <ClInclude Include="include\compression\spihtChunk.h" />
+    <ClInclude Include="include\compression\waveletUtil.h" />
     <ClInclude Include="include\compression\wtChunk.h" />
     <ClInclude Include="include\index\mmt.h" />
     <ClInclude Include="include\index\attributeIndex.h" />
@@ -268,6 +269,7 @@
     <ClCompile Include="src\array\memChunk.cpp" />
     <ClCompile Include="src\array\memChunkItemIterator.cpp" />
     <ClCompile Include="src\compression\seChunk.cpp" />
+    <ClCompile Include="src\compression\waveletUtil.cpp" />
     <ClCompile Include="src\compression\wtChunk.cpp" />
     <ClCompile Include="src\index\attributeIndex.cpp" />
     <ClCompile Include="src\array\arrayMgr.cpp" />

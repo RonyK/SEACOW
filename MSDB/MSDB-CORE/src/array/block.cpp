@@ -23,7 +23,7 @@ dimensionId block::getDSize()
 {
 	return this->desc_->dims_.size();
 }
-void block::unreference()
+void block::unlinkFromChunkBuffer()
 {
 	this->cached_ = nullptr;
 }

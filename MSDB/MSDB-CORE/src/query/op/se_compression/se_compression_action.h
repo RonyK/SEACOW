@@ -7,10 +7,10 @@
 #include <system/storageMgr.h>
 #include <compression/wtChunk.h>
 #include <compression/seChunk.h>
+#include <compression/waveletUtil.h>
 #include <query/opAction.h>
 #include <index/mmt.h>
 #include <op/wavelet_encode/wavelet_encode_array.h>
-
 #include <memory>
 #include <list>
 
@@ -26,7 +26,9 @@ public:
 	virtual const char* name() override;
 	virtual pArray execute(std::vector<pArray>& inputArrays, pQuery q) override;
 
-public:
+private:
+	pSeChunk makeOutChunk(pWtChunk inChunk);
+
 	template<typename Ty_>
 	void compressAttribute(std::shared_ptr<wavelet_encode_array>inArr, pAttributeDesc attrDesc)
 	{
@@ -43,118 +45,66 @@ public:
 
 		while (!cit->isEnd())
 		{
-			std::vector<pWtChunk> wtChunks;
-			std::vector<pSeChunk> outChunks;
-			// Combine all chunks derived from a single source chunk.
+			pChunk outChunk = this->compressChunk<Ty_>(
+				std::static_pointer_cast<wtChunk>(**cit), mmtIndex, chunkDim);
 
-			auto numChunks = 1 + (inArr->getMaxLevel() + 1) * (pow(2, inArr->getDesc()->getDSize()) - 1);
-			// approximate 1 + detail part
-
-			for (size_t i = 0; i < 1 + (inArr->getMaxLevel() + 1) * (pow(2, inArr->getDesc()->getDSize()) - 1); ++i)
-			{
-				if (cit->isEnd())
-				{
-					_MSDB_EXCEPTIONS_MSG(MSDB_EC_LOGIC_ERROR, MSDB_ER_OUT_OF_RANGE, "iterating chunk fail");
-				}
-				wtChunks.push_back(std::static_pointer_cast<wtChunk>(**cit));
-				++(*cit);
-			}
-
-			this->compressChunk<Ty_>(outChunks, wtChunks, mmtIndex, chunkDim);
-
-			for (auto outChunk : outChunks)
-			{
-				auto attr = outChunk->getDesc()->attrDesc_;
-				storageMgr::instance()->saveChunk(arrId, attr->id_, (outChunk)->getId(),
-												  std::static_pointer_cast<serializable>(outChunk));
-			}
+			auto attr = outChunk->getDesc()->attrDesc_;
+			storageMgr::instance()->saveChunk(arrId, attr->id_, (outChunk)->getId(),
+											  std::static_pointer_cast<serializable>(outChunk));
+			++(*cit);
 		}
 	}
 
 	template<typename Ty_>
-	void compressChunk(std::vector<pSeChunk>& out, std::vector<pWtChunk>& in,
-					   std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex,
-					   dimension& sourceChunkDim)
+	pSeChunk compressChunk(pWtChunk inChunk,
+						   std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex,
+						   dimension& sourceChunkDim)
 	{
-		assert(in.size() >= 2);
-		pWtChunk iChunk = in[0];	// approximate chunk, get tile dim
-		dimension blockDims = iChunk->getDesc()->getDims();	// TODO::FIX, now simple approch
+		size_t dSize = inChunk->getDSize();
+		pSeChunk outChunk = this->makeOutChunk(inChunk);
+		pBlock outBlock = outChunk->getBlock(0);
 
-		for (auto c : in)
+		size_t numBandsInLevel = std::pow(2, dSize) - 1;
+		dimension inBlockDims = inChunk->getDesc()->getBlockDims();
+		dimension bandDims = inBlockDims / std::pow(2, inChunk->getLevel() + 1);
+
+		// Do band 0 in max level
 		{
-			auto iDesc = c->getDesc();
-			auto oDesc = std::make_shared<chunkDesc>(iDesc->id_,
-													 std::make_shared<attributeDesc>(*(iDesc->attrDesc_)),
-													 iDesc->dims_, blockDims,
-													 iDesc->sp_, iDesc->ep_,
-													 iDesc->mSize_);
-			pSeChunk oChunk = std::make_shared<seChunk>(oDesc);
-			oChunk->setLevel(iChunk->getLevel());
-			//oChunk->setBandId(iChunk->getBandId());
-			oChunk->setSourceChunkId(iChunk->getSourceChunkId());
-			oChunk->makeAllBlocks();
-			oChunk->bufferAlloc();
-
-			//dimension blockSpace = c->getTileSpace(sourceChunkDim);
-			//dimension blockSpace = c->getDesc()->getBlockSpace();
-			//coorItr blockItr(blockSpace);
-			// TODO::Use block iterator
-			auto ibItr = c->getBlockIterator();
-			//auto obItr = oChunk->getBlockIterator();
-
-			while (!(ibItr->isEnd()))
-			{
-				coor blockCoor = ibItr->coor();
-				coor blockSp = blockCoor * blockDims;
-				coor blockEp = blockSp + blockDims;
-				coorRange bRange = coorRange(blockSp, blockEp);
-
-				//pBlockDesc bDesc = std::make_shared<blockDesc>(
-				//	blockItr.seqPos(),					// id
-				//	iDesc->attrDesc_->type_,			// eType
-				//	blockDims,							// dims
-				//	blockSp,							// sp
-				//	blockEp,							// ep
-				//	blockDims.area() * c->getDesc()->attrDesc_->typeSize_	// mSize
-				//	);
-				//pBlock oBlock = std::make_shared<memBlock>(bDesc);
-				//oChunk->setBlock(oBlock);
-
-				//////////////////////////////
-				// TODO::Use materialize copy
-				// oBlock->bufferCopy(void*, blockDims.area() * c->getDesc()->attrDesc_->typeSize_);
-				//oBlock->bufferAlloc();	// mSize is setted in the desc.
-				//////////////////////////////
-
-				// Find required bit for delta array
-				auto iBlockItemItr = (*ibItr)->getItemIterator();
-				auto oBlockItemItr = oChunk->getBlock((*ibItr)->getId())->getItemIterator();
-
-				bit_cnt_type maxValueBits = 0;
-				while (!iBlockItemItr->isEnd())
-				{
-					bit_cnt_type valueBits = msb<bit_cnt_type>(abs_((**iBlockItemItr).get<Ty_>()));
-					if (maxValueBits < valueBits)
-					{
-						maxValueBits = valueBits;
-					}
-
-					// As input/output block have same type, they can access the same coordinate using the next() operator.
-					(**oBlockItemItr) = (**iBlockItemItr);
-					++(*iBlockItemItr);
-					++(*oBlockItemItr);
-
-				}
-				oChunk->rBitFromDelta.push_back(maxValueBits);
-
-				auto mmtNode = mmtIndex->getNode(bRange);
-				oChunk->rBitFromMMT.push_back(mmtNode->bits_);
-
-				++(*ibItr);
-			}
-
-			out.push_back(oChunk);
+			bit_cnt_type requiredBits = this->compressBand<Ty_>(outBlock, getBandRange(0, bandDims));
+			outChunk->rBitFromDelta.push_back(requiredBits);
 		}
+		
+		for(size_t level = 0; level <= inChunk->getLevel(); ++level)
+		{
+			for(size_t band = 1; band <= numBandsInLevel; ++band)
+			{
+				bit_cnt_type requiredBits = this->compressBand<Ty_>(outBlock, getBandRange(band, bandDims));
+				outChunk->rBitFromDelta.push_back(requiredBits);
+			}
+			
+			bandDims *= 2;
+		}
+
+		return outChunk;
+	}
+
+	template <class Ty_>
+	bit_cnt_type compressBand(pBlock curBlock, const coorRange bandRange)
+	{
+		auto bItemItr = curBlock->getItemRangeIterator(bandRange);
+		bit_cnt_type maxValueBits = 0;
+
+		while(!bItemItr->isEnd())
+		{
+			bit_cnt_type valueBits = msb<bit_cnt_type>(abs_((**bItemItr).get<Ty_>()));
+			if (maxValueBits < valueBits)
+			{
+				maxValueBits = valueBits;
+			}
+			++(*bItemItr);
+		}
+
+		return maxValueBits;
 	}
 };
 }	// msdb

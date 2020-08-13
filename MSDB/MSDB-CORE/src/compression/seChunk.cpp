@@ -6,13 +6,8 @@ namespace msdb
 {
 seChunk::seChunk(pChunkDesc desc)
 	: memBlockChunk(desc), level_(0), 
-	bandId_(INVALID_CHUNK_ID), sourceChunkId_(INVALID_CHUNK_ID)
+	 sourceChunkId_(INVALID_CHUNK_ID)
 {
-	//auto chunkDim = this->desc_->dims_;
-	//auto blockDim = std::static_pointer_cast<blockChunkDesc>(this->desc_)->blockDims_;
-	//auto blockSpace = chunkDim / blockDim;
-	//this->rBitFromMMT.resize(blockSpace.area());
-	//this->rBitFromDelta.resize(blockSpace.area());
 }
 
 inline seChunk::~seChunk()
@@ -23,14 +18,6 @@ size_t seChunk::getLevel()
 {
 	return this->level_;
 }
-chunkId seChunk::getBandId()
-{
-	return this->bandId_;
-}
-//chunkId seChunk::getTileId()
-//{
-//	return this->tileId_;
-//}
 chunkId seChunk::getSourceChunkId()
 {
 	return this->sourceChunkId_;
@@ -39,14 +26,6 @@ void seChunk::setLevel(size_t level)
 {
 	this->level_ = level;
 }
-void seChunk::setBandId(chunkId bid)
-{
-	this->bandId_ = bid;
-}
-//void seChunk::setTileId(chunkId tid)
-//{
-//	this->tileId_ = tid;
-//}
 void seChunk::setSourceChunkId(chunkId cid)
 {
 	this->sourceChunkId_ = cid;
@@ -133,5 +112,22 @@ void seChunk::deserialize(std::istream& is)
 	default:
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 	}
+}
+void seChunk::serializeGap(bstream& bs, size_t gap)
+{
+	bs << setw(gap - 1) << (uint64_t)0;
+	bs << setw(1) << 0x1;
+}
+bit_cnt_type seChunk::deserializeGap(bstream& bs)
+{
+	bs >> setw(1);
+	size_t gap = 0;
+	char gapBit = 0;
+	do
+	{
+		bs >> gapBit;
+		++gap;
+	} while (gapBit = 1);
+	return gap;
 }
 }	// msdb

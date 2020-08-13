@@ -55,24 +55,16 @@ void chunk::bufferRef(void* data, bufferSize size)
 {
 	this->free();
 	this->makeBuffer();
-	this->cached_->reference(data, size);
+	this->cached_->linkToChunkBuffer(data, size);
 	this->referenceBufferToBlock();
 	this->desc_->mSize_ = size;
 }
 
-void chunk::bufferRef(pBlock source)
+void chunk::bufferRef(pChunk source)
 {
 	bufferSize size = source->getDesc()->mSize_;
 	this->bufferRef(source->getBuffer()->getData(), size);
 }
-
-//void chunk::bufferCopy(bstream& bs)
-//{
-//	bufferSize size = bs.capacity();
-//	this->bufferAlloc(size);
-//	this->cached_->copy(data, size);
-//	this->desc_->mSize_ = size;
-//}
 
 bool chunk::isMaterialized() const
 {

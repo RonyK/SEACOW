@@ -28,7 +28,14 @@ TEST(query_op_se_compression, se_compression_sc4x4)
     arr_delta_encode->print();
 
     auto arr_wavelet_encode = wavelet_encode(std::vector<pArray>({ arr_delta_encode }));
+    std::cout << "##############################" << std::endl;
+    std::cout << "Wavelet Encode Arr" << std::endl;
+    arr_wavelet_encode->print();
+
     auto arr_se_compression = se_compression(std::vector<pArray>({ arr_wavelet_encode }));
+    std::cout << "##############################" << std::endl;
+    std::cout << "Se Compression Arr" << std::endl;
+    arr_se_compression->print();
 }
 }   // data2D_sc4x4
 

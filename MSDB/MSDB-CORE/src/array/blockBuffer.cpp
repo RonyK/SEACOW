@@ -5,7 +5,7 @@ namespace msdb
 blockBuffer::blockBuffer(void* data, bufferSize size)
 	: chunkBuffer()
 {
-	this->reference(data, size);
+	this->linkToChunkBuffer(data, size);
 }
 
 blockBuffer::~blockBuffer()

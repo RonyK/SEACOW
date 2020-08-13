@@ -77,7 +77,7 @@ void chunkBuffer::copy(void* data, bufferSize offset, bufferSize size)
 }
 
 // WARNING:: data is deleted when the chunkBuffer is disappear in a destructor.
-void chunkBuffer::reference(void* data, bufferSize size)
+void chunkBuffer::linkToChunkBuffer(void* data, bufferSize size)
 {
 	this->isAllocated_ = false;
 	this->data_ = data;

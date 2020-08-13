@@ -56,8 +56,7 @@ public:
 	virtual void bufferCopy(pChunk source);
 	virtual void bufferCopy(pBlock source);
 	virtual void bufferRef(void* data, bufferSize size);
-	virtual void bufferRef(pBlock source);
-	//virtual void bufferCopy(bstream& bs);
+	virtual void bufferRef(pChunk source);
 	bool isMaterialized() const;
 
 protected:
