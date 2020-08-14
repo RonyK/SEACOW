@@ -5,8 +5,7 @@
 namespace msdb
 {
 seChunk::seChunk(pChunkDesc desc)
-	: memBlockChunk(desc), level_(0), 
-	 sourceChunkId_(INVALID_CHUNK_ID)
+	: memBlockChunk(desc), level_(0)
 {
 }
 
@@ -18,18 +17,18 @@ size_t seChunk::getLevel()
 {
 	return this->level_;
 }
-chunkId seChunk::getSourceChunkId()
-{
-	return this->sourceChunkId_;
-}
+//chunkId seChunk::getSourceChunkId()
+//{
+//	return this->sourceChunkId_;
+//}
 void seChunk::setLevel(size_t level)
 {
 	this->level_ = level;
 }
-void seChunk::setSourceChunkId(chunkId cid)
-{
-	this->sourceChunkId_ = cid;
-}
+//void seChunk::setSourceChunkId(chunkId cid)
+//{
+//	this->sourceChunkId_ = cid;
+//}
 
 void seChunk::serialize(std::ostream& os)
 {
@@ -76,6 +75,7 @@ void seChunk::deserialize(std::istream& is)
 {
 	this->getHeader()->deserialize(is);
 	this->updateFromHeader();
+
 	bstream bs;
 	bs.resize(this->serializedSize_);
 	is.read(bs.data(), this->serializedSize_);
@@ -127,7 +127,7 @@ bit_cnt_type seChunk::deserializeGap(bstream& bs)
 	{
 		bs >> gapBit;
 		++gap;
-	} while (gapBit = 1);
+	} while (gapBit == 1);
 	return gap;
 }
 }	// msdb

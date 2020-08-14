@@ -237,6 +237,8 @@
     <ClInclude Include="src\query\op\mmt_load\mmt_load_plan.h" />
     <ClInclude Include="src\query\op\mmt_save\mmt_save_action.h" />
     <ClInclude Include="src\query\op\mmt_save\mmt_save_plan.h" />
+    <ClInclude Include="src\query\op\se_decompression\se_decompression_action.h" />
+    <ClInclude Include="src\query\op\se_decompression\se_decompression_plan.h" />
     <ClInclude Include="src\query\op\spiht_decode\spiht_decode_action.h" />
     <ClInclude Include="src\query\op\spiht_decode\spiht_decode_plan.h" />
     <ClInclude Include="src\query\op\spiht_encode\spiht_encode_action.h" />
@@ -290,6 +292,8 @@
     <ClCompile Include="src\query\op\mmt_load\mmt_load_plan.cpp" />
     <ClCompile Include="src\query\op\mmt_save\mmt_save_action.cpp" />
     <ClCompile Include="src\query\op\mmt_save\mmt_save_plan.cpp" />
+    <ClCompile Include="src\query\op\se_decompression\se_decompression_action.cpp" />
+    <ClCompile Include="src\query\op\se_decompression\se_decompression_plan.cpp" />
     <ClCompile Include="src\query\op\spiht_decode\spiht_decode_action.cpp" />
     <ClCompile Include="src\query\op\spiht_decode\spiht_decode_plan.cpp" />
     <ClCompile Include="src\query\op\spiht_encode\spiht_encode_action.cpp" />

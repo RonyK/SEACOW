@@ -20,10 +20,10 @@ public:
 
 public:
 	size_t getLevel();
-	chunkId getSourceChunkId();
+	//chunkId getSourceChunkId();
 
 	void setLevel(size_t level);
-	void setSourceChunkId(chunkId cid);
+	//void setSourceChunkId(chunkId cid);
 
 public:
 	virtual void serialize(std::ostream& os) override;
@@ -175,7 +175,7 @@ public:
 	}
 protected:
 	size_t level_;
-	chunkId sourceChunkId_;
+	//chunkId sourceChunkId_;
 
 public:
 	bit_cnt_type rBitFromMMT;	// required bits from MMT node

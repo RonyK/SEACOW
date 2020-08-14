@@ -81,6 +81,8 @@
     <ClCompile Include="src\array\blockItemIterator.cpp" />
     <ClCompile Include="src\array\memBlockItemIterator.cpp" />
     <ClCompile Include="src\compression\waveletUtil.cpp" />
+    <ClCompile Include="src\query\op\se_decompression\se_decompression_action.cpp" />
+    <ClCompile Include="src\query\op\se_decompression\se_decompression_plan.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.h" />
@@ -181,6 +183,8 @@
     <ClInclude Include="include\array\blockItemIterator.h" />
     <ClInclude Include="include\array\memBlockItemIterator.h" />
     <ClInclude Include="include\compression\waveletUtil.h" />
+    <ClInclude Include="src\query\op\se_decompression\se_decompression_action.h" />
+    <ClInclude Include="src\query\op\se_decompression\se_decompression_plan.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">

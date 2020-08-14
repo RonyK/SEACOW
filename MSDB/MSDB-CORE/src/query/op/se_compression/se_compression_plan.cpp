@@ -18,8 +18,7 @@ const char* se_compression_plan::name()
 
 pAction se_compression_plan::getAction()
 {
-	//return std::make_shared<se_compression_action>();
-	return nullptr;
+	return std::make_shared<se_compression_action>();
 }
 
 se_compression_pset::se_compression_pset(parameters& pSet)

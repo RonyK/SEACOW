@@ -3,12 +3,13 @@
 
 #include <op/wavelet_encode/wavelet_encode_plan.h>
 #include <op/wavelet_encode/wavelet_encode_action.h>
-
 #include <op/wavelet_decode/wavelet_decode_plan.h>
 #include <op/wavelet_decode/wavelet_decode_action.h>
 
 #include <op/se_compression/se_compression_plan.h>
 #include <op/se_compression/se_compression_action.h>
+#include <op/se_decompression/se_decompression_plan.h>
+#include <op/se_decompression/se_decompression_action.h>
 
 namespace msdb
 {
@@ -39,6 +40,7 @@ void wavelet_encode_check(pArray arr)
 		value_type expected[dataLength] = { 0 };
 		getWTChunkDummy(expected, dataLength);
 		size_t cId = 0;
+		size_t numItems = 0;
 		for (size_t i = 0; i < dataLength; )
 		{
 			auto chk = arr->getChunk(cId);
@@ -56,12 +58,15 @@ void wavelet_encode_check(pArray arr)
 
 					++(*bit);
 					++i;
+					++numItems;
 				}
 
 				++(*bItr);
 			}
 			++cId;
 		}
+
+		EXPECT_EQ(numItems, dataLength);
 	}
 }
 
@@ -111,6 +116,24 @@ pArray se_compression(std::vector<pArray> sourceArr)
 	auto afterArray = seAction->execute(sourceArr, seQuery);
 
 	return afterArray;
+}
+
+pArray se_decompression(std::vector<pArray> sourceArr)
+{
+	getSourceArrayIfEmpty(sourceArr);
+
+	std::shared_ptr<se_decompression_plan> sePlan;
+	std::shared_ptr<se_decompression_action> seAction;
+	pQuery seQuery;
+	getSeDecompression(sourceArr[0]->getDesc(), sePlan, seAction, seQuery);
+
+	auto afterArray = seAction->execute(sourceArr, seQuery);
+
+	return afterArray;
+}
+void se_decompression_check(pArray arr)
+{
+
 }
 }	// data2D_sc4x4
 

@@ -12,7 +12,7 @@ public:
 	using base_type = arrayBase;
 
 public:
-	wavelet_encode_array(pArrayDesc desc, const size_t maxLevel, const dimension originalChunkSize);
+	wavelet_encode_array(pArrayDesc desc);
 
 	/*
 	 * In wavelet_encode_array,
@@ -54,6 +54,8 @@ public:
 public:
 	size_t getMaxLevel();
 	dimension getOrigianlChunkDims();
+	void setMaxLevel(const size_t maxLevel);
+	void setOrigianlChunkDims(const dimension originalChunkDims);
 
 private:
 	bool isMaxLevelAvailable(size_t maxLevel);

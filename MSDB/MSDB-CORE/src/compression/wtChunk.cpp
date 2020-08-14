@@ -19,10 +19,10 @@ size_t wtChunk::getLevel()
 //{
 //	return this->bandId_;
 //}
-chunkId wtChunk::getSourceChunkId()
-{
-	return this->sourceChunkId_;
-}
+//chunkId wtChunk::getSourceChunkId()
+//{
+//	return this->sourceChunkId_;
+//}
 
 void wtChunk::setLevel(size_t level)
 {
@@ -32,10 +32,10 @@ void wtChunk::setLevel(size_t level)
 //{
 //	this->bandId_ = bid;
 //}
-void wtChunk::setSourceChunkId(chunkId cid)
-{
-	this->sourceChunkId_ = cid;
-}
+//void wtChunk::setSourceChunkId(chunkId cid)
+//{
+//	this->sourceChunkId_ = cid;
+//}
 dimension wtChunk::getTileSpace(dimension sourceChunkDim)
 {
 	dimension tileSpace(sourceChunkDim);

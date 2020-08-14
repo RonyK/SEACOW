@@ -38,7 +38,9 @@ TEST(query_op_spiht_encode, spiht_2D_4x4)
 	attrDescs.push_back(std::make_shared<attributeDesc>(0, "A1", eleType::CHAR));
 
 	pArrayDesc arrDesc = std::make_shared<arrayDesc>(aid, "spiht_test_array", dimDescs, attrDescs);
-	auto sourceArr = std::make_shared<wavelet_encode_array>(arrDesc, 0, chunkDims);
+	auto sourceArr = std::make_shared<wavelet_encode_array>(arrDesc);
+	sourceArr->setMaxLevel(0);
+	sourceArr->setOrigianlChunkDims(chunkDims);
 	std::vector<pArray> arrs = { sourceArr };
 
 	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, dim, sP, eP);
@@ -87,7 +89,9 @@ TEST(query_op_spiht_encode, spiht_2D_8x8)
 	attrDescs.push_back(std::make_shared<attributeDesc>(1, "A1", eleType::CHAR));
 
 	pArrayDesc arrDesc = std::make_shared<arrayDesc>(aid, "spiht_test_array", dimDescs, attrDescs);
-	auto sourceArr = std::make_shared<wavelet_encode_array>(arrDesc, 0, chunkDims);
+	auto sourceArr = std::make_shared<wavelet_encode_array>(arrDesc);
+	sourceArr->setMaxLevel(0);
+	sourceArr->setOrigianlChunkDims(chunkDims);
 	std::vector<pArray> arrs = { sourceArr };
 
 	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, dim, sP, eP);
