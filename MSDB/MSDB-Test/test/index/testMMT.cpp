@@ -165,7 +165,7 @@ void mmt_delta_encode_test(std::shared_ptr<mmt_delta_encode_array> arr)
 	}
 }
 
-pArray mmt_delta_decode(std::vector<std::shared_ptr<mmt_delta_encode_array>>& sourceArr)
+pArray mmt_delta_decode(std::vector<pArray> sourceArr)
 {
 	// Should build mmt before
 	std::shared_ptr<mmt_delta_decode_plan> mmtPlan;

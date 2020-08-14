@@ -3,11 +3,16 @@
 namespace msdb
 {
 mmt_delta_encode_array::mmt_delta_encode_array(pArrayDesc desc)
-	: arrayBase(desc)
+	: arrayBase(desc), attrMMT()
 {
 }
 pMMT mmt_delta_encode_array::getMMT(attributeId attrId)
 {
+	auto mmtIt = this->attrMMT.find(attrId);
+	if(mmtIt == this->attrMMT.end())
+	{
+		return nullptr;
+	}
 	return this->attrMMT[attrId];
 }
 void mmt_delta_encode_array::setMMT(attributeId attrId, pMMT myMMT)
