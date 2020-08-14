@@ -27,8 +27,49 @@ public:
 	virtual pArray execute(std::vector<pArray>& inputArrays, pQuery q) override;
 
 private:
-	pWtChunk makeOutChunk(std::shared_ptr<wavelet_encode_array> arr, pAttributeDesc attrDesc,
+	pSeChunk makeInChunk(std::shared_ptr<wavelet_encode_array> arr, pAttributeDesc attrDesc,
 						  chunkId cid, coor chunkCoor);
+
+	template <typename Ty_>
+	void decompressAttribute(std::shared_ptr<wavelet_encode_array>outArr, pAttributeDesc attrDesc)
+	{
+		auto arrIndex = arrayMgr::instance()->getAttributeIndex(outArr->getId(), attrDesc->id_);
+		if (arrIndex->getType() != attrIndexType::MMT)
+		{
+			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_USER_QUERY_ERROR, MSDB_ER_ATTR_INDEX_TYPE_DIFF));
+		}
+		auto mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
+		auto cit = outArr->getChunkIterator(iterateMode::ALL);
+
+		while (!cit->isEnd())
+		{
+			// make chunk
+			chunkId cid = cit->seqPos();
+			coor chunkCoor = cit->coor();
+			auto inChunk = this->makeInChunk(outArr, attrDesc, cid, chunkCoor);
+			inChunk->bufferAlloc();
+			inChunk->makeAllBlocks();
+
+			auto curMMTNode = mmtIndex->getNode(chunkCoor, 0);
+			inChunk->rBitFromMMT = curMMTNode->bits_;
+
+			pSerializable serialChunk
+				= std::static_pointer_cast<serializable>(inChunk);
+			storageMgr::instance()->loadChunk(outArr->getId(), attrDesc->id_, inChunk->getId(),
+											  serialChunk);
+
+			std::cout << "inChunk:: " << std::endl;
+			inChunk->print();
+
+			auto outChunk = std::make_shared<wtChunk>(inChunk->getDesc());
+			outChunk->setLevel(inChunk->getLevel());
+			outChunk->makeAllBlocks();
+			outChunk->bufferCopy(inChunk);
+			outArr->insertChunk(outChunk);
+
+			++(*cit);
+		}
+	}
 
 	//template<typename Ty_>
 	//void decompressAttribute(std::shared_ptr<wavelet_encode_array>inArr, pAttributeDesc attrDesc)

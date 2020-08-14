@@ -32,31 +32,44 @@ pArray se_decompression_action::execute(std::vector<pArray>& inputArrays, pQuery
 
 	for (auto attrDesc : outArr->getDesc()->attrDescs_)
 	{
-		auto cit = outArr->getChunkIterator(iterateMode::ALL);
-
-		while(!cit->isEnd())
+		switch (attrDesc->type_)
 		{
-			// make chunk
-			chunkId cid = cit->seqPos();
-			coor chunkCoor = cit->coor();
-			auto outChunk = this->makeOutChunk(outArr, attrDesc, cid, chunkCoor);
-			outChunk->bufferAlloc();
-			outChunk->makeAllBlocks();
-
-			outArr->insertChunk(outChunk);
-			
-			pSerializable serialChunk
-				= std::static_pointer_cast<serializable>(**cit);
-			storageMgr::instance()->loadChunk(arrId, attrDesc->id_, (**cit)->getId(),
-											  serialChunk);
-			++(*cit);
+		case eleType::CHAR:
+			decompressAttribute<char>(outArr, attrDesc);
+			break;
+		case eleType::INT8:
+			decompressAttribute<int8_t>(outArr, attrDesc);
+			break;
+		case eleType::INT16:
+			decompressAttribute<int16_t>(outArr, attrDesc);
+			break;
+		case eleType::INT32:
+			decompressAttribute<int32_t>(outArr, attrDesc);
+			break;
+		case eleType::INT64:
+			decompressAttribute<int64_t>(outArr, attrDesc);
+			break;
+		case eleType::UINT8:
+			decompressAttribute<uint8_t>(outArr, attrDesc);
+			break;
+		case eleType::UINT16:
+			decompressAttribute<uint16_t>(outArr, attrDesc);
+			break;
+		case eleType::UINT32:
+			decompressAttribute<uint32_t>(outArr, attrDesc);
+			break;
+		case eleType::UINT64:
+			decompressAttribute<uint64_t>(outArr, attrDesc);
+			break;
+		default:
+			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 		}
 	}
 
 	return std::static_pointer_cast<arrayBase>(outArr);;
 }
 
-pWtChunk se_decompression_action::makeOutChunk(std::shared_ptr<wavelet_encode_array> arr, pAttributeDesc attrDesc,
+pSeChunk se_decompression_action::makeInChunk(std::shared_ptr<wavelet_encode_array> arr, pAttributeDesc attrDesc,
 											   chunkId cid, coor chunkCoor)
 {
 	dimension chunkDims = arr->getDesc()->getDimDescs().getChunkDims();
@@ -72,9 +85,9 @@ pWtChunk se_decompression_action::makeOutChunk(std::shared_ptr<wavelet_encode_ar
 	auto outDesc = std::make_shared<chunkDesc>(cid, attrDesc, 
 											   chunkDims, blockDims, 
 											   sp, ep, mSize);
-	pWtChunk outChunk = std::make_shared<wtChunk>(outDesc);
+	pSeChunk outChunk = std::make_shared<seChunk>(outDesc);
 	outChunk->setLevel(arr->getMaxLevel());
-	//outChunk->setSourceChunkId(sourceChunkId);
+	//inChunk->setSourceChunkId(sourceChunkId);
 	outChunk->bufferAlloc();
 	outChunk->makeAllBlocks();
 

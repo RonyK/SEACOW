@@ -62,6 +62,11 @@ private:
 	{
 		size_t dSize = inChunk->getDSize();
 		pSeChunk outChunk = this->makeOutChunk(inChunk);
+
+		coor chunkCoor = inChunk->getChunkCoor();
+		auto mNode = mmtIndex->getNode(chunkCoor, 0);
+		outChunk->rBitFromMMT = mNode->bits_;
+
 		pBlock outBlock = outChunk->getBlock(0);
 
 		size_t numBandsInLevel = std::pow(2, dSize) - 1;

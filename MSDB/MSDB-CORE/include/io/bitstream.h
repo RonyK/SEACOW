@@ -483,6 +483,17 @@ namespace msdb
 			_myOs::flush();
 		}
 
+		void print()
+		{
+			std::cout << std::hex;
+			for(size_t i = 0; i < this->_concreateContainer.size(); ++i)
+			{
+				std::cout << static_cast<uint8_t>(_concreateContainer[i]);
+			}
+			std::cout << std::endl;
+			std::cout << std::dec;
+		}
+
 	protected:
 		container_type _concreateContainer;
 	};

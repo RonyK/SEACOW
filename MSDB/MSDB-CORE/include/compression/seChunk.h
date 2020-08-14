@@ -35,6 +35,7 @@ public:
 	template<typename Ty_>
 	void serialize(bstream& bs)
 	{
+		std::cout << "Serialize Chunk" << std::endl;
 		pBlock myBlock = this->blocks_.at(0);
 
 		size_t dSize = this->getDSize();
@@ -64,21 +65,28 @@ public:
 	void serializeBand(bstream& bs, pBlock myBlock,
 					   size_t bandSeqId, size_t bandId, dimension bandDims)
 	{
+		std::cout << "==SerializeBand==" << std::endl;
 		bit_cnt_type requiredBits = this->rBitFromDelta[bandSeqId];
+		std::cout << "rBit: " << static_cast<int>(requiredBits) << " / gap : " << static_cast<int>(this->rBitFromMMT - requiredBits) << std::endl;;
+		bs.print();
 		this->serializeGap(bs, this->rBitFromMMT - requiredBits);
+		bs.print();
 
 		bs << setw(requiredBits);
 		auto bItemItr = myBlock->getItemRangeIterator(getBandRange(bandId, bandDims));
 		while (!bItemItr->isEnd())
 		{
+			Ty_ value = (**bItemItr).get<Ty_>();
 			bs << (**bItemItr).get<Ty_>();
 			++(*bItemItr);
+			std::cout << "Value: " << static_cast<int>(value) << std::endl;
+			bs.print();
 		}
 	}
 
 	template <typename Ty_>
 	void deserializeBand(bstream& bs, pBlock myBlock,
-						 size_t bandSeqId, size_t bandId, dimension bandDims)
+						 const size_t bandSeqId, const size_t bandId, dimension& bandDims)
 	{
 		size_t gap = this->deserializeGap(bs);
 		size_t requiredBit = this->rBitFromMMT - gap;

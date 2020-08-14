@@ -115,7 +115,11 @@ void seChunk::deserialize(std::istream& is)
 }
 void seChunk::serializeGap(bstream& bs, size_t gap)
 {
-	bs << setw(gap - 1) << (uint64_t)0;
+	if(gap)
+	{
+		bs << setw(gap);
+		bs << (uint64_t)0;
+	}
 	bs << setw(1) << 0x1;
 }
 bit_cnt_type seChunk::deserializeGap(bstream& bs)
@@ -127,7 +131,7 @@ bit_cnt_type seChunk::deserializeGap(bstream& bs)
 	{
 		bs >> gapBit;
 		++gap;
-	} while (gapBit == 1);
-	return gap;
+	} while (gapBit != 1);
+	return gap - 1;
 }
 }	// msdb
