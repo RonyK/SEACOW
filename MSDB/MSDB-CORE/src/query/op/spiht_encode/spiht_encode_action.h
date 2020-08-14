@@ -22,7 +22,7 @@ public:
 private:
 	void encode_init(size_t dSize, std::vector<size_t> bandSize);
 	template<class Ty_>
-	void encode_progress(size_t dSize, std::vector<position_t> cSize, std::vector<size_t> bandSize, pChunkItemIterator itemItr)
+	void encode_progress(size_t dSize, dimension blockDims, std::vector<size_t> bandSize, pBlockItemIterator itemItr)
 	{
 		size_t maxStep = sizeof(Ty_) * 8;
 		Ty_ signBit = (Ty_)0x1 << (maxStep - 1);
@@ -33,7 +33,7 @@ private:
 		for (int d = (int)dSize - 1; d >= 0; d--)
 		{
 			init_coor[d] = 0;
-			abs_num *= cSize[d];
+			abs_num *= blockDims[d];
 		}
 
 		for (size_t i = 0; i < abs_num; i++)
@@ -50,7 +50,7 @@ private:
 			for (int d = (int)dSize - 1; d >= 0; d--)	// iteration(?)
 			{
 				init_coor[d] = init_coor[d] + 1;
-				if (init_coor[d] == cSize[d])
+				if (init_coor[d] == blockDims[d])
 				{
 					init_coor[d] = 0;
 				}
@@ -64,15 +64,15 @@ private:
 		for (size_t curStep = 0; curStep < maxStep - 1; curStep++)
 		{
 			size_t LSP_size = this->LSP_.size();
-			this->encode_sigpass<Ty_>(dSize, cSize, bandSize, itemItr, signBit, stepBit);
+			this->encode_sigpass<Ty_>(dSize, blockDims, bandSize, itemItr, signBit, stepBit);
 			this->encode_refinepass<Ty_>(itemItr, stepBit, LSP_size);
 			stepBit = stepBit >> 1;
 		}
 	}
 
 	template<class Ty_>
-	void encode_sigpass(size_t dSize, std::vector<position_t> cSize, std::vector<size_t> bandSize,
-		pChunkItemIterator itemItr, Ty_ signBit, Ty_ stepBit)
+	void encode_sigpass(size_t dSize, dimension blockDims, std::vector<size_t> bandSize,
+		pBlockItemIterator itemItr, Ty_ signBit, Ty_ stepBit)
 	{
 		// LIP
 		size_t LIP_size = this->LIP_.size();
@@ -233,7 +233,7 @@ private:
 					child_coor = temp_coor;
 					for (int d = (int)dSize - 1; d >= 0; d--)
 					{
-						if (child_coor[d] * 2 >= cSize[d])
+						if (child_coor[d] * 2 >= blockDims[d])
 						{
 							haveGrand = false;
 							break;
@@ -348,7 +348,7 @@ private:
 	}
 
 	template<class Ty_>
-	void encode_refinepass(pChunkItemIterator itemItr, Ty_ stepBit, size_t LSP_size)
+	void encode_refinepass(pBlockItemIterator itemItr, Ty_ stepBit, size_t LSP_size)
 	{
 		for (size_t i = 0; i < LSP_size; i++)
 		{

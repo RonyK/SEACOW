@@ -37,7 +37,6 @@
     <IncludePath>$(SolutionDir)MSDB-CORE\include;$(ProjectDir)test;$(SolutionDir)MSDB-CORE\src\query;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemGroup>
-    <ClInclude Include="test\compression\testSPIHT.h" />
     <ClInclude Include="test\compression\testCompression.h" />
     <ClInclude Include="test\dummy\dummy.h" />
     <ClInclude Include="test\dummy\dummy_astronomy.h" />
@@ -51,7 +50,6 @@
     <ClCompile Include="test\array\testArray.cpp" />
     <ClCompile Include="test\array\testBlock.cpp" />
     <ClCompile Include="test\array\testMemChunk.cpp" />
-    <ClCompile Include="test\compression\testSPIHT.cpp" />
     <ClCompile Include="test\compression\testCompression.cpp" />
     <ClCompile Include="test\dummy\dummy.cpp" />
     <ClCompile Include="test\dummy\dummy_astronomy.cpp" />

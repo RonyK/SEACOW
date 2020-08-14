@@ -27,57 +27,65 @@ pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 	auto chunkItr = wArray->getChunkIterator();
 	while (!chunkItr->isEnd())
 	{
-		auto itemItr = (**chunkItr)->getItemIterator();
-		auto dSize = chunkItr->dSize();									// dimension size
-		auto cSize = wArray->getDesc()->dimDescs_.getChunkDims();		// chunk size
-		auto max_level = wArray->getMaxLevel();							// max level
-		std::vector<size_t> bandSize(dSize);							// band size in max level(?)
-		for (int d = (int)dSize - 1; d >= 0; d--)
+		auto blockItr = (**chunkItr)->getBlockIterator();
+		while (!blockItr->isEnd())
 		{
-			bandSize[d] = (size_t)(cSize[d] / pow(2, max_level + 1));
+			auto itemItr = (**blockItr)->getItemIterator();
+			auto blockDims = wArray->getDesc()->dimDescs_.getBlockDims();		// chunk size
+			auto dSize = blockDims.size();								// dimension size
+			auto max_level = wArray->getMaxLevel();							// max level
+			std::vector<size_t> bandSize(dSize);							// band size in max level(?)
+			for (int d = (int)dSize - 1; d >= 0; d--)
+			{
+				bandSize[d] = (size_t)(blockDims[d] / pow(2, max_level + 1));
+			}
+
+			this->encode_init(dSize, bandSize);
+
+			switch ((**chunkItr)->getDesc()->attrDesc_->type_)
+			{
+			case eleType::CHAR:
+				this->encode_progress<char>(dSize, blockDims, bandSize, itemItr);
+				break;
+			case eleType::INT8:
+				this->encode_progress<int8_t>(dSize, blockDims, bandSize, itemItr);
+				break;
+			case eleType::INT16:
+				this->encode_progress<int16_t>(dSize, blockDims, bandSize, itemItr);
+				break;
+			case eleType::INT32:
+				this->encode_progress<int32_t>(dSize, blockDims, bandSize, itemItr);
+				break;
+			case eleType::INT64:
+				this->encode_progress<int64_t>(dSize, blockDims, bandSize, itemItr);
+				break;
+			case eleType::UINT8:
+				this->encode_progress<uint8_t>(dSize, blockDims, bandSize, itemItr);
+				break;
+			case eleType::UINT16:
+				this->encode_progress<uint16_t>(dSize, blockDims, bandSize, itemItr);
+				break;
+			case eleType::UINT32:
+				this->encode_progress<uint32_t>(dSize, blockDims, bandSize, itemItr);
+				break;
+			case eleType::UINT64:
+				this->encode_progress<uint64_t>(dSize, blockDims, bandSize, itemItr);
+				break;
+			default:
+				_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
+			}
+
+			/*
+			auto attr = (**chunkItr)->getDesc()->attrDesc_;
+			pChunk oChunk = std::make_shared<memChunk>((**chunkItr)->getDesc());
+			oChunk->bufferRef(this->codeBs_.data(), this->codeBs_.capacity());
+			storageMgr::instance()->saveChunk(arrId, attr->id_, (**chunkItr)->getId(), std::static_pointer_cast<serializable>(oChunk));
+			*/
+
+			this->codeBs_.flush();
+
+			++(*blockItr);
 		}
-
-		this->encode_init(dSize, bandSize);
-
-		switch ((**chunkItr)->getDesc()->attrDesc_->type_)
-		{
-		case eleType::CHAR:
-			this->encode_progress<char>(dSize, cSize, bandSize, itemItr);
-			break;
-		case eleType::INT8:
-			this->encode_progress<int8_t>(dSize, cSize, bandSize, itemItr);
-			break;
-		case eleType::INT16:
-			this->encode_progress<int16_t>(dSize, cSize, bandSize, itemItr);
-			break;
-		case eleType::INT32:
-			this->encode_progress<int32_t>(dSize, cSize, bandSize, itemItr);
-			break;
-		case eleType::INT64:
-			this->encode_progress<int64_t>(dSize, cSize, bandSize, itemItr);
-			break;
-		case eleType::UINT8:
-			this->encode_progress<uint8_t>(dSize, cSize, bandSize, itemItr);
-			break;
-		case eleType::UINT16:
-			this->encode_progress<uint16_t>(dSize, cSize, bandSize, itemItr);
-			break;
-		case eleType::UINT32:
-			this->encode_progress<uint32_t>(dSize, cSize, bandSize, itemItr);
-			break;
-		case eleType::UINT64:
-			this->encode_progress<uint64_t>(dSize, cSize, bandSize, itemItr);
-			break;
-		default:
-			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
-		}
-
-		auto attr = (**chunkItr)->getDesc()->attrDesc_;
-		pChunk oChunk = std::make_shared<memChunk>((**chunkItr)->getDesc());
-		oChunk->bufferRef(this->codeBs_.data(), this->codeBs_.capacity());
-		storageMgr::instance()->saveChunk(arrId, attr->id_, (**chunkItr)->getId(), std::static_pointer_cast<serializable>(oChunk));
-
-		this->codeBs_.flush();
 		++(*chunkItr);
 	}
 

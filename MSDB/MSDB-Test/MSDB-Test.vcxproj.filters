@@ -33,11 +33,11 @@
     <ClCompile Include="test\query\op\load\test_load.cpp" />
     <ClCompile Include="test\io\testIO.cpp" />
     <ClCompile Include="test\query\op\spiht_encode\test_spiht_encode.cpp" />
-    <ClCompile Include="test\dummy\spihtDummy.cpp" />
-    <ClCompile Include="test\compression\testSPIHT.cpp" />
     <ClCompile Include="test\array\testBlock.cpp" />
     <ClCompile Include="test\query\op\se_compression\test_se_compression.cpp" />
     <ClCompile Include="test\compression\testCompression.cpp" />
+    <ClCompile Include="test\dummy\dummy_astronomy.cpp" />
+    <ClCompile Include="test\dummy\spihtDummy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">
@@ -47,9 +47,9 @@
     <ClInclude Include="test\dummy\opDummy.h" />
     <ClInclude Include="test\index\testMMT.h" />
     <ClInclude Include="test\io\testIO.h" />
-    <ClInclude Include="test\dummy\spihtDummy.h" />
-    <ClInclude Include="test\compression\testSPIHT.h" />
     <ClInclude Include="test\compression\testCompression.h" />
+    <ClInclude Include="test\dummy\dummy_astronomy.h" />
+    <ClInclude Include="test\dummy\spihtDummy.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="test">
