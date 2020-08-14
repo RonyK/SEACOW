@@ -1,6 +1,8 @@
 #include <op/load/load_action.h>
 #include <array/memArray.h>
+#include <array/blockChunk.h>
 #include <system/storageMgr.h>
+#include <array/arrayMgr.h>
 
 namespace msdb
 {
@@ -18,15 +20,18 @@ pArray load_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 {
 	assert(inputArrays.size() == 1);
 
-	pArray sourceArr = inputArrays[0];
-	arrayId arrId = sourceArr->getId();
+	pArray outArr = arrayMgr::instance()->makeArray<arrayBase>(this->getArrayDesc());
+	arrayId arrId = outArr->getId();
 
-	for (auto attr : sourceArr->getDesc()->attrDescs_)
+	for (auto attr : outArr->getDesc()->attrDescs_)
 	{
-		auto cit = sourceArr->getChunkIterator(iterateMode::ALL);
+		auto cit = outArr->getChunkIterator(iterateMode::ALL);
 
 		while (!cit->isEnd())
 		{
+			chunkId cId = cit->seqPos();
+			outArr->insertChunk(std::make_shared<memBlockChunk>(outArr->getChunkDesc(cId, attr->id_)));
+
 			pSerializable serialChunk
 				= std::static_pointer_cast<serializable>(**cit);
 			storageMgr::instance()->loadChunk(arrId, attr->id_, (**cit)->getId(),
@@ -35,6 +40,6 @@ pArray load_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 		}
 	}
 
-	return sourceArr;
+	return outArr;
 }
 }	// msdb

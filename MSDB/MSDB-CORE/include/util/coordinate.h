@@ -684,6 +684,23 @@ public:
 		}
 		return seq;
 	}
+	coordinate<Dty_> seqToCoor(const size_type seq)
+	{
+		assert(seq <= this->getCapacity());
+
+		size_type remain = seq;
+		coordinate<Dty_> outCoor(this->dSize_);
+		size_type offset = this->getCapacity();
+
+		for (dimensionId d = 0; d < this->dSize(); ++d)
+		{
+			offset /= this->dims_[d];
+			outCoor[d] = remain / offset;
+			remain %= offset;
+		}
+		return outCoor;
+	}
+
 	//////////////////////////////
 
 	//////////////////////////////

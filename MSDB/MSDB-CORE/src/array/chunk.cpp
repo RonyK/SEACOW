@@ -173,5 +173,8 @@ void chunk::updateToHeader()
 
 void chunk::updateFromHeader()
 {
+	auto curHeader = std::static_pointer_cast<chunkHeader>(this->getHeader());
+	this->setSerializedSize(curHeader->bodySize_);
+	this->bufferAlloc();
 }
 }
