@@ -27,6 +27,8 @@ void spihtChunk::makeBlocks(std::vector<bool> bitmap)
 			this->desc_->ep_,		// ep
 			this->desc_->mSize_		// mSize
 			));
+		pSpihtBlock spBlock = std::static_pointer_cast<spihtBlock>(this->block_);
+		spBlock->setMaxLevel(this->maxLevel_);
 	}
 }
 
@@ -128,5 +130,9 @@ void spihtChunk::deserialize(std::istream& is)
 	default:
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 	}
+}
+void spihtChunk::setMaxLevel(size_t maxLevel)
+{
+	this->maxLevel_ = maxLevel;
 }
 }	// msdb

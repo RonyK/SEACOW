@@ -25,6 +25,7 @@ pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 	assert(inputArrays.size() == 1);
 
 	pArray sourceArr = inputArrays[0];
+	auto wArray = std::static_pointer_cast<wavelet_encode_array>(sourceArr);
 	arrayId arrId = sourceArr->getId();
 
 	for (auto attr : sourceArr->getDesc()->attrDescs_)
@@ -35,6 +36,7 @@ pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 			pChunk inChunk = (**cit);
 			auto outChunkDesc = std::make_shared<chunkDesc>(*inChunk->getDesc());
 			pSpihtChunk outChunk = std::make_shared<spihtChunk>(outChunkDesc);
+			outChunk->setMaxLevel(wArray->getMaxLevel());
 			outChunk->makeAllBlocks();
 			outChunk->bufferRef(inChunk);
 

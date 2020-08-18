@@ -24,6 +24,7 @@ public:
 	template<typename Ty_>
 	void serializeTy(bstream& bs)
 	{
+		bs << setw(1);
 		dimension bandDims(this->desc_->dims_);
 		bandDims /= pow(2, this->maxLevel_ + 1);
 
