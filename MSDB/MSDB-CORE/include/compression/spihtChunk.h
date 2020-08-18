@@ -39,15 +39,6 @@ public:
 			this->blockSerialize<Ty_>(bs, (**blockItr));
 			++(*blockItr);
 		}
-		// TODO::serialize
-		//bs << setw(sizeof(Ty_) * CHAR_BIT);
-		//auto it = this->getItemIterator();
-
-		//while (!it->isEnd())
-		//{
-		//	bs << (**it).get<Ty_>();
-		//	++(*it);
-		//}
 	}
 
 	template <typename Ty_>
@@ -60,18 +51,26 @@ public:
 	template<class Ty_>
 	void deserialize(bstream& bs)
 	{
-		// TODO::deserialize
-		//bs >> setw(sizeof(Ty_) * CHAR_BIT);
-		//auto it = this->getItemIterator();
-
-		//while (!it->isEnd())
-		//{
-		//	Ty_ value;
-		//	bs >> value;
-		//	(**it).set<Ty_>(value);
-		//	++(*it);
-		//}
+		auto blockItr = this->getBlockIterator();
+		while (!blockItr->isEnd())
+		{
+			this->blockDeserialize<Ty_>(bs, (**blockItr));
+			++(*blockItr);
+		}
 	}
+
+	template <typename Ty_>
+	void blockDeserialize(bstream& bs, pBlock curBlock)
+	{
+		pSpihtBlock spBlock = std::static_pointer_cast<spihtBlock>(curBlock);
+		spBlock->deserializeTy<Ty_>(bs);
+	}
+
+public:
+	void setMaxLevel(size_t maxLevel);
+
+protected:
+	size_t maxLevel_;
 };
 }
 #endif	// _MSDB_SPIHTCHUNK_H_
