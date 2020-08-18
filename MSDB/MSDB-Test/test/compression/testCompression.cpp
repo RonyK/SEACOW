@@ -135,6 +135,21 @@ void se_decompression_check(pArray arr)
 {
 
 }
+
+pArray spiht_encode(std::vector<pArray> sourceArr)
+{
+	// Should build mmt before
+	getSourceArrayIfEmpty(sourceArr);
+
+	std::shared_ptr<spiht_encode_plan> spihtPlan;
+	std::shared_ptr<spiht_encode_action> spihtAction;
+	pQuery spihtQuery;
+	getSPIHTEncode(sourceArr[0]->getDesc(), spihtPlan, spihtAction, spihtQuery);
+
+	auto afterArray = spihtAction->execute(sourceArr, spihtQuery);
+
+	return afterArray;
+}
 }	// data2D_sc4x4
 
 namespace data2D_star1024x1024

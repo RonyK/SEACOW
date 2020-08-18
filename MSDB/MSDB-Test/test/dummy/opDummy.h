@@ -23,6 +23,9 @@
 #include <op/se_decompression/se_decompression_plan.h>
 #include <op/se_decompression/se_decompression_action.h>
 
+#include <op/spiht_encode/spiht_encode_plan.h>
+#include <op/spiht_encode/spiht_encode_action.h>
+
 namespace msdb
 {
 namespace caDummy
@@ -72,27 +75,32 @@ void getSeDecompression(pArrayDesc sourceArrDesc,
 						std::shared_ptr<se_decompression_action>& action,
 						pQuery& qry);
 
-  //template <typename plan_, typename action_, typename pset_>
-  //void getPlanAction(pArrayDesc sourceArrDesc,
-  //                   std::shared_ptr<plan_>& plan,
-  //                   std::shared_ptr<action_>& action,
-  //                   pQuery& qry)
-  //{
-  //    pQuery myQuery = std::make_shared<query>();
-  //    auto myPlan = std::make_shared<plan>();
-  //    auto myAction = std::make_shared<action>();
-  //    parameters params = {
-  //        std::make_shared<opParamArray>(sourceArrDesc)
-  //    };
-  //    auto pSet = std::make_shared<pset_>(params);
-  //
-  //    myPlan->setParamSet(pSet);
-  //    myAction->setArrayDesc(myPlan->inferSchema());
-  //    myAction->setParams(params);
-  //
-  //    plan = myPlan;
-  //    action = myAction;
-  //    qry = myQuery;
-  //}
+void getSPIHTEncode(pArrayDesc sourceArrDesc,
+					std::shared_ptr<spiht_encode_plan>& plan,
+					std::shared_ptr<spiht_encode_action>& action,
+					pQuery& qry);
+
+//template <typename plan_, typename action_, typename pset_>
+//void getPlanAction(pArrayDesc sourceArrDesc,
+//                   std::shared_ptr<plan_>& plan,
+//                   std::shared_ptr<action_>& action,
+//                   pQuery& qry)
+//{
+//    pQuery myQuery = std::make_shared<query>();
+//    auto myPlan = std::make_shared<plan>();
+//    auto myAction = std::make_shared<action>();
+//    parameters params = {
+//        std::make_shared<opParamArray>(sourceArrDesc)
+//    };
+//    auto pSet = std::make_shared<pset_>(params);
+//
+//    myPlan->setParamSet(pSet);
+//    myAction->setArrayDesc(myPlan->inferSchema());
+//    myAction->setParams(params);
+//
+//    plan = myPlan;
+//    action = myAction;
+//    qry = myQuery;
+//}
 }
 }

@@ -204,5 +204,24 @@ void getSeDecompression(pArrayDesc sourceArrDesc,
 	action = seAction_;
 	qry = seQuery_;
 }
+
+void getSPIHTEncode(pArrayDesc sourceArrDesc, std::shared_ptr<spiht_encode_plan>& plan, std::shared_ptr<spiht_encode_action>& action, pQuery& qry)
+{
+	pQuery spihtQuery_ = std::make_shared<query>();
+	auto spihtPlan_ = std::make_shared<spiht_encode_plan>();
+	auto spihtAction_ = std::make_shared<spiht_encode_action>();
+	parameters params = {
+		std::make_shared<opParamArray>(sourceArrDesc)
+	};
+	auto pSet = std::make_shared<spiht_encode_pset>(params);
+
+	spihtPlan_->setParamSet(pSet);
+	spihtAction_->setArrayDesc(spihtPlan_->inferSchema());
+	spihtAction_->setParams(params);
+
+	plan = spihtPlan_;
+	action = spihtAction_;
+	qry = spihtQuery_;
+}
 }	// caDummy
 }	// msdb

@@ -12,6 +12,8 @@
 #include <op/mmt_delta_encode/mmt_delta_encode_action.h>
 #include <op/mmt_delta_decode/mmt_delta_decode_plan.h>
 #include <op/mmt_delta_decode/mmt_delta_decode_action.h>
+#include <op/spiht_encode/spiht_encode_plan.h>
+#include <op/spiht_encode/spiht_encode_action.h>
 
 #include <string>
 #include <memory>
@@ -151,7 +153,7 @@ void mmt_delta_encode_test(std::shared_ptr<mmt_delta_encode_array> arr)
 			auto iit = (**cit)->getItemIterator();
 			for (size_t i = 0; i < iit->getCapacity(); ++i)
 			{
-				std::cout << "[" << iit->coor()[0] << ", " << iit->coor()[1] << "] " << static_cast<int>((**iit).getChar()) << ", " << static_cast<int>(expected[i]) << std::endl;
+				//std::cout << "[" << iit->coor()[0] << ", " << iit->coor()[1] << "] " << static_cast<int>((**iit).getChar()) << ", " << static_cast<int>(expected[i]) << std::endl;
 				EXPECT_EQ((**iit).getChar(), expected[i + iit->getCapacity() * c]);
 				++(*iit);
 				++numCheckedItems;
@@ -203,7 +205,7 @@ void mmt_delta_decode_test(std::shared_ptr<mmt_delta_decode_array> arr)
 			auto iit = (**cit)->getItemIterator();
 			for (size_t i = 0; i < iit->getCapacity(); ++i)
 			{
-				std::cout << "[" << iit->coor()[0] << ", " << iit->coor()[1] << "] " << static_cast<int>((**iit).getChar()) << ", " << static_cast<int>(expected[i]) << std::endl;
+				//std::cout << "[" << iit->coor()[0] << ", " << iit->coor()[1] << "] " << static_cast<int>((**iit).getChar()) << ", " << static_cast<int>(expected[i]) << std::endl;
 				EXPECT_EQ((**iit).getChar(), expected[i + iit->getCapacity() * c]);
 				++(*iit);
 			}
