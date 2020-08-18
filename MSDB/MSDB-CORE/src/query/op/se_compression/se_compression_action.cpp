@@ -1,6 +1,4 @@
 #include <op/se_compression/se_compression_action.h>
-
-
 #include <array/memArray.h>
 #include <system/storageMgr.h>
 
@@ -60,5 +58,16 @@ pArray se_compression_action::execute(std::vector<pArray>& inputArrays, pQuery q
 	}
 
 	return std::static_pointer_cast<arrayBase>(sourceArr);
+}
+pSeChunk se_compression_action::makeOutChunk(pWtChunk inChunk)
+{
+	auto outDesc = std::make_shared<chunkDesc>(*inChunk->getDesc());
+	pSeChunk outChunk = std::make_shared<seChunk>(outDesc);
+	outChunk->setLevel(inChunk->getLevel());
+	//outChunk->setSourceChunkId(inChunk->getSourceChunkId());
+	outChunk->bufferRef(inChunk);
+	outChunk->makeAllBlocks();
+
+	return outChunk;
 }
 }	// msdb

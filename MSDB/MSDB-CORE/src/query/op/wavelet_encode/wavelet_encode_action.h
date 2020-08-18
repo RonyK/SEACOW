@@ -72,7 +72,8 @@ private:
 		outChunkDesc->ep_ = inChunkDesc->sp_ + inBlockDesc->ep_;		// csp + bep
 		outChunkDesc->mSize_ = inBlockDesc->mSize_;
 
-		pChunk outChunk = std::make_shared<wtChunk>(outChunkDesc);
+		pWtChunk outChunk = std::make_shared<wtChunk>(outChunkDesc);
+		outChunk->setLevel(maxLevel);
 		outChunk->bufferCopy(inBlock);
 
 		for (size_t level = 0; level <= maxLevel; ++level)

@@ -42,7 +42,7 @@ void memChunk::referenceBufferToBlock()
 	if (this->block_)
 	{
 		bufferSize mSizeBlock = this->desc_->dims_.area();
-		this->block_->reference(this->cached_->getData(), mSizeBlock);
+		this->block_->linkToChunkBuffer(this->cached_->getData(), mSizeBlock);
 	}
 }
 

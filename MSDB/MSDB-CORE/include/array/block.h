@@ -39,15 +39,16 @@ protected:
 // Buffer
 //////////////////////////////
 public:
-	// Shallow copy
-	// A block buffer only references a part of a chunk buffer memory.
-	virtual void unreference();
-	virtual void reference(void* data, const bufferSize size) = 0;
 	virtual void copy(pBlock sBlock);
 	bool isMaterialized() const;
 
+	// Shallow copy
+	// A block buffer only references a part of a chunk buffer memory.
+	virtual void unlinkFromChunkBuffer();
+	virtual void linkToChunkBuffer(void* data, const bufferSize size) = 0;	// used in chunk
 protected:
 	pBlockBuffer getBuffer();
+
 	friend class chunk;
 
 protected:

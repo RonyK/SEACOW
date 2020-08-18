@@ -2,12 +2,10 @@
 
 namespace msdb
 {
-wavelet_encode_array::wavelet_encode_array(pArrayDesc desc, 
-										   const size_t maxLevel, 
-										   const dimension originalChunkSize)
-	: base_type(desc), originalChunkDims_(originalChunkSize)
+wavelet_encode_array::wavelet_encode_array(pArrayDesc desc)
+	: base_type(desc), originalChunkDims_(desc->getDSize())
 {
-	this->maxLevel_ = this->isMaxLevelAvailable(maxLevel);
+	//this->maxLevel_ = this->isMaxLevelAvailable(maxLevel);
 	for(pDimensionDesc desc : this->desc_->dimDescs_)
 	{
 		desc->chunkSize_ = desc->blockSize_;
@@ -22,6 +20,16 @@ size_t wavelet_encode_array::getMaxLevel()
 dimension wavelet_encode_array::getOrigianlChunkDims()
 {
 	return this->originalChunkDims_;
+}
+
+void wavelet_encode_array::setMaxLevel(const size_t maxLevel)
+{
+	this->maxLevel_ = maxLevel;
+}
+
+void wavelet_encode_array::setOrigianlChunkDims(const dimension originalChunkSize)
+{
+	this->originalChunkDims_ = originalChunkSize;
 }
 
 bool wavelet_encode_array::isMaxLevelAvailable(const size_t maxLevel)

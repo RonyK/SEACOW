@@ -32,7 +32,10 @@ pArray wavelet_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 	//////////////////////////////
 	// Build wavelet_encode_array
 	auto outArr = std::make_shared<wavelet_encode_array>(
-		this->getArrayDesc(), maxLevel, inArr->getDesc()->getDimDescs().getChunkDims());
+		this->getArrayDesc());
+	outArr->setMaxLevel(maxLevel);
+	outArr->setOrigianlChunkDims(inArr->getDesc()->getDimDescs().getChunkDims());
+
 	// maxLevel value is checked in wavelet_encode_array constructor
 	// which can be used for current array.
 	maxLevel = outArr->getMaxLevel();

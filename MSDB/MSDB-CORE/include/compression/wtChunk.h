@@ -19,18 +19,18 @@ public:
 public:
 	size_t getLevel();
 	//chunkId getBandId();
-	chunkId getSourceChunkId();
+	//chunkId getSourceChunkId();
 
 	void setLevel(size_t level);
 	//void setBandId(chunkId bid);
-	void setSourceChunkId(chunkId cid);
+	//void setSourceChunkId(chunkId cid);
 
 	dimension getTileSpace(dimension sourceChunkDim);
 
 protected:
 	size_t level_;
 	//chunkId bandId_;
-	chunkId sourceChunkId_;
+	//chunkId sourceChunkId_;
 };
 }	// msdb
 #endif		// _MSDB_WT_CHUNK_H_

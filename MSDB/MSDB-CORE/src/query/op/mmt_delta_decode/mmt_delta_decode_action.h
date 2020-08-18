@@ -23,7 +23,7 @@ public:
 
 	template<class Ty_>
 	void attributeDecode(std::shared_ptr<mmt_delta_decode_array> outArr, 
-						 std::shared_ptr< mmt_delta_encode_array> inArr,
+						 pArray inArr,
 						 pAttributeDesc attrDesc);
 
 	template<class Ty_>
@@ -34,18 +34,19 @@ public:
 
 template<class Ty_>
 void mmt_delta_decode_action::attributeDecode(std::shared_ptr<mmt_delta_decode_array> outArr, 
-											  std::shared_ptr<mmt_delta_encode_array> inArr,
+											  pArray inArr,
 											  pAttributeDesc attrDesc)
 {
 	// Get MMT from mmt_delta_encode_array
 	//auto arrIndex = arrayMgr::instance()->getAttributeIndex(inArr->getArrayId(), attrDesc->id_);
-	auto arrIndex = inArr->getMMT(attrDesc->id_);
-
-	if (arrIndex->getType() != attrIndexType::MMT)
+	auto attrIndex = arrayMgr::instance()->getAttributeIndex(inArr->getId(), attrDesc->id_);
+	if (attrIndex->getType() != attrIndexType::MMT)
 	{
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_USER_QUERY_ERROR, MSDB_ER_ATTR_INDEX_TYPE_DIFF));
 	}
-	auto mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
+	auto arrMMTIndex = std::static_pointer_cast<mmt>(attrIndex);
+	//inArr->setMMT(attrDesc->id_, arrMMTIndex);
+	auto mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrMMTIndex);
 	auto cit = inArr->getChunkIterator(iterateMode::EXIST);
 
 	while (!cit->isEnd())

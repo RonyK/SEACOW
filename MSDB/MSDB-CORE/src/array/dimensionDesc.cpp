@@ -46,7 +46,6 @@ std::vector<position_t> dimensionDescs::getChunkDims()
 	{
 		dims.push_back((*it)->chunkSize_);
 	}
-
 	return dims;
 }
 

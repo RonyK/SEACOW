@@ -182,5 +182,27 @@ void getSeCompression(pArrayDesc sourceArrDesc,
 	action = seAction_;
 	qry = seQuery_;
 }
+
+void getSeDecompression(pArrayDesc sourceArrDesc,
+						std::shared_ptr<se_decompression_plan>& plan,
+						std::shared_ptr<se_decompression_action>& action,
+						pQuery& qry)
+{
+	pQuery seQuery_ = std::make_shared<query>();
+	auto sePlan_ = std::make_shared<se_decompression_plan>();
+	auto seAction_ = std::make_shared<se_decompression_action>();
+	parameters params = {
+		std::make_shared<opParamArray>(sourceArrDesc)
+	};
+	auto pSet = std::make_shared<se_decompression_pset>(params);
+
+	sePlan_->setParamSet(pSet);
+	seAction_->setArrayDesc(sePlan_->inferSchema());
+	seAction_->setParams(params);
+
+	plan = sePlan_;
+	action = seAction_;
+	qry = seQuery_;
+}
 }	// caDummy
 }	// msdb

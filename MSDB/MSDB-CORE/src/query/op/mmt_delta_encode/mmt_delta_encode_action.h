@@ -3,7 +3,7 @@
 #define _MSDB_OP_MMT_DELTA_ENCODE_ACTION_H_
 
 #include <array/arrayMgr.h>
-#include <array/memChunk.h>
+#include <array/blockChunk.h>
 #include <index/mmt.h>
 #include <query/opAction.h>
 #include <op/mmt_delta_encode/mmt_delta_encode_array.h>
@@ -43,7 +43,7 @@ void mmt_delta_encode_action::saveAttribute(std::shared_ptr<mmt_delta_encode_arr
 	{
 		// Make new chunk
 		auto cDesc = (**cit)->getDesc();
-		pChunk deltaChunk = std::make_shared<memChunk>(std::make_shared<chunkDesc>(*cDesc));
+		pChunk deltaChunk = std::make_shared<memBlockChunk>(std::make_shared<chunkDesc>(*cDesc));
 		deltaChunk->bufferAlloc();
 
 		this->chunkEncode(deltaChunk, **cit, mmtIndex);

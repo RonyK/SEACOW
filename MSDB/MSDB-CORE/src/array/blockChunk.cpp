@@ -49,7 +49,7 @@ void memBlockChunk::makeBlocks(std::vector<bool> bitmap)
 			
 			if(this->isMaterialized())
 			{
-				this->blocks_[bid]->reference(
+				this->blocks_[bid]->linkToChunkBuffer(
 					(char*)this->cached_->getData() + mSizeBlock * bid,
 					mSizeBlock);
 			}
@@ -70,7 +70,7 @@ void memBlockChunk::referenceBufferToBlock()
 		// TODO:: use block bitmap
 		if (this->blocks_[bid])
 		{
-			this->blocks_[bid]->reference(
+			this->blocks_[bid]->linkToChunkBuffer(
 				(char*)this->cached_->getData() + (bid * mSizeBlock),
 				mSizeBlock);
 		}

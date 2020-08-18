@@ -238,12 +238,30 @@ public:
 
 		return *this;
 	}
-
 	self_type& operator/= (const int64_t mit)
 	{
 		for (dimensionId d = 0; d < this->dSize_; ++d)
 		{
 			this->coor_[d] /= mit;
+		}
+
+		return *this;
+	}
+
+	self_type& operator%= (const self_type& mit)
+	{
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			this->coor_[d] %= mit[d];
+		}
+
+		return *this;
+	}
+	self_type& operator %= (const int64_t mit)
+	{
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			this->coor_[d] %= mit;
 		}
 
 		return *this;
@@ -361,6 +379,23 @@ coordinate<Dty_> operator/ (const coordinate<Dty_>& left, const int right)
 	output /= right;
 	return output;
 }
+
+template <typename Dty_>
+coordinate<Dty_> operator% (const coordinate<Dty_>& left, const coordinate<Dty_>& right)
+{
+	coordinate<Dty_> output(left);
+	output %= right;
+	return output;
+}
+
+template <typename Dty_>
+coordinate<Dty_> operator% (const coordinate<Dty_>& left, const int right)
+{
+	coordinate<Dty_> output(left);
+	output %= right;
+	return output;
+}
+
 
 template <typename Dty_>
 class coordinateRange
@@ -649,6 +684,23 @@ public:
 		}
 		return seq;
 	}
+	coordinate<Dty_> seqToCoor(const size_type seq)
+	{
+		assert(seq <= this->getCapacity());
+
+		size_type remain = seq;
+		coordinate<Dty_> outCoor(this->dSize_);
+		size_type offset = this->getCapacity();
+
+		for (dimensionId d = 0; d < this->dSize(); ++d)
+		{
+			offset /= this->dims_[d];
+			outCoor[d] = remain / offset;
+			remain %= offset;
+		}
+		return outCoor;
+	}
+
 	//////////////////////////////
 
 	//////////////////////////////

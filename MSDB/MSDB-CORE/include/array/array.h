@@ -84,6 +84,7 @@ public:
 	size_type getNumChunks();
 
 	// Chunk
+	pChunkDesc getChunkDesc(chunkId cId, attributeId attrId);
 	pChunk getChunk(chunkId cId);
 	chunkId getChunkId(pChunkDesc cDesc);
 	chunkId getChunkIdFromItemCoor(coor& itemCoor);
