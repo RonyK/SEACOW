@@ -84,6 +84,8 @@
     <ClCompile Include="src\compression\waveletUtil.cpp" />
     <ClCompile Include="src\query\op\se_decompression\se_decompression_action.cpp" />
     <ClCompile Include="src\query\op\se_decompression\se_decompression_plan.cpp" />
+    <ClCompile Include="src\compression\spihtBlock.cpp" />
+    <ClCompile Include="src\compression\spihtChunk.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.h" />
@@ -180,12 +182,12 @@
     <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_array.h" />
     <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_plan.h" />
     <ClInclude Include="include\compression\spihtChunk.h" />
-    <ClInclude Include="src\compression\spihtChunk.cpp" />
     <ClInclude Include="include\array\blockItemIterator.h" />
     <ClInclude Include="include\array\memBlockItemIterator.h" />
     <ClInclude Include="include\compression\waveletUtil.h" />
     <ClInclude Include="src\query\op\se_decompression\se_decompression_action.h" />
     <ClInclude Include="src\query\op\se_decompression\se_decompression_plan.h" />
+    <ClInclude Include="include\compression\spihtBlock.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">

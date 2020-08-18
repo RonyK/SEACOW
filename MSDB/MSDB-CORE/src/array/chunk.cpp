@@ -157,6 +157,10 @@ void chunk::free()
 void chunk::makeAllBlocks()
 {
 	this->makeBlocks(std::vector<bool>(this->getBlockCapacity(), true));
+	if(this->cached_)
+	{
+		this->referenceBufferToBlock();
+	}
 }
 
 size_t chunk::getBlockCapacity()

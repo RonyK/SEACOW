@@ -29,7 +29,7 @@ TEST(query_op_spiht_encode, spiht_2D_4x4)
 
 	//////////////////////////////
 	// Set up array
-	arrayId aid = 99441;
+	arrayId aid = 99445;
 	dimensionDescs dimDescs;
 	dimDescs.push_back(std::make_shared<dimensionDesc>(0, "X", 0, 4, 4, 4));
 	dimDescs.push_back(std::make_shared<dimensionDesc>(0, "Y", 0, 4, 4, 4));
