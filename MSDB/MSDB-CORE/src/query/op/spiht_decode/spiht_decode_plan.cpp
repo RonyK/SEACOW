@@ -11,7 +11,7 @@ spiht_decode_plan::spiht_decode_plan()
 
 const char* spiht_decode_plan::name()
 {
-	return "spiht_decode";
+	return "spiht_decode_plan";
 }
 
 pAction spiht_decode_plan::getAction()

@@ -8,7 +8,6 @@ namespace msdb
 {
 spiht_encode_action::spiht_encode_action()
 {
-	//codeBs_ << setw(1);
 }
 
 spiht_encode_action::~spiht_encode_action()
@@ -17,7 +16,7 @@ spiht_encode_action::~spiht_encode_action()
 
 const char* spiht_encode_action::name()
 {
-	return "spiht_encode";
+	return "spiht_encode_action";
 }
 
 pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)

@@ -21,6 +21,8 @@ public:
 // Serializable
 //////////////////////////////
 public:
+	void init(dimension& bandDims);
+
 	template<typename Ty_>
 	void serializeTy(bstream& bs)
 	{
@@ -28,11 +30,9 @@ public:
 		dimension bandDims(this->desc_->dims_);
 		bandDims /= pow(2, this->maxLevel_ + 1);
 
-		this->encode_init(bandDims);
+		this->init(bandDims);
 		this->encode_progress<Ty_>(bs, bandDims);
 	}
-
-	void encode_init(dimension& bandDims);
 
 	template<class Ty_>
 	void encode_progress(bstream& bs, dimension& bandDims)
@@ -45,17 +45,17 @@ public:
 		Ty_ signBit = (Ty_)0x1 << (maxStep - 1);
 		Ty_ stepBit = (Ty_)0x1 << (maxStep - 2);
 		// abs
-		coor init_coor(dSize);	// {0, 0, ...}
+		coor abs_coor(dSize);	// {0, 0, ...}
 		size_t abs_num = 1;
 		for (int d = (int)dSize - 1; d >= 0; d--)
 		{
-			init_coor[d] = 0;
+			abs_coor[d] = 0;
 			abs_num *= blockDims[d];
 		}
 
 		for (size_t i = 0; i < abs_num; i++)
 		{
-			itemItr->moveTo(init_coor);
+			itemItr->moveTo(abs_coor);
 			auto data = (**itemItr).get<Ty_>();
 			if (data & signBit)
 			{
@@ -66,10 +66,10 @@ public:
 
 			for (int d = (int)dSize - 1; d >= 0; d--)	// iteration(?)
 			{
-				init_coor[d] = init_coor[d] + 1;
-				if (init_coor[d] == blockDims[d])
+				abs_coor[d] = abs_coor[d] + 1;
+				if (abs_coor[d] == blockDims[d])
 				{
-					init_coor[d] = 0;
+					abs_coor[d] = 0;
 				} else
 				{
 					break;
@@ -80,16 +80,19 @@ public:
 		for (size_t curStep = 0; curStep < maxStep - 1; curStep++)
 		{
 			size_t LSP_size = this->LSP_.size();
-			this->encode_sigpass<Ty_>(bs, dSize, blockDims, bandDims, itemItr, signBit, stepBit);
-			this->encode_refinepass<Ty_>(bs, itemItr, stepBit, LSP_size);
+			this->encode_sigpass<Ty_>(bs, bandDims, signBit, stepBit);
+			this->encode_refinepass<Ty_>(bs, stepBit, LSP_size);
 			stepBit = stepBit >> 1;
 		}
 	}
 
 	template<class Ty_>
-	void encode_sigpass(bstream& bs, size_t dSize, dimension& blockDims, dimension& bandDims,
-						pBlockItemIterator itemItr, Ty_ signBit, Ty_ stepBit)
+	void encode_sigpass(bstream& bs, dimension& bandDims, Ty_ signBit, Ty_ stepBit)
 	{
+		auto itemItr = this->getItemIterator();
+		size_t dSize = this->getDSize();
+		dimension blockDims = this->desc_->dims_;
+
 		// LIP
 		size_t LIP_size = this->LIP_.size();
 		for (size_t i = 0; i < LIP_size; i++)
@@ -101,21 +104,17 @@ public:
 
 			if (LIP_data & stepBit)
 			{
-				//this->code.push_back(1);	// TODO
 				bs << 1;
 				if (LIP_data & signBit)  // -
 				{
-					//this->code.push_back(1);	// TODO
 					bs << 1;
 				} else  // +
 				{
-					//this->code.push_back(0);	// TODO
 					bs << 0;
 				}
 				this->LSP_.push_back(LIP_coor);
 			} else
 			{
-				//this->code.push_back(0);	// TODO
 				bs << 0;
 				this->LIP_.push_back(LIP_coor);
 			}
@@ -124,8 +123,6 @@ public:
 		// LIS
 		std::list<coor> TMP_;
 		std::list<char> TMP_TYPE_;
-		coor child_coor(dSize);
-		coor grand_coor(dSize);
 		while (this->LIS_.size() != 0)
 		{
 			coor LIS_coor = this->LIS_.front();
@@ -144,11 +141,13 @@ public:
 				}
 			}
 
+			coor child_coor(LIS_coor);
 			if (firstBand)
 			{
+				child_coor /= 2;
+				child_coor *= 2;
 				for (int d = (int)dSize - 1; d >= 0; d--)
 				{
-					child_coor[d] = (LIS_coor[d] / 2) * 2;
 					if (LIS_coor[d] & 0x1)
 					{
 						child_coor[d] = child_coor[d] + bandDims[d];
@@ -156,12 +155,9 @@ public:
 				}
 			} else    // other level bands
 			{
-				for (int d = (int)dSize - 1; d >= 0; d--)
-				{
-					child_coor[d] = LIS_coor[d] * 2;
-				}
+				child_coor *= 2;
 			}
-			coor temp_coor = child_coor;
+			coor tmp_coor = child_coor;
 
 			char LIS_type = this->LIS_TYPE_.front();
 			this->LIS_TYPE_.pop_front();
@@ -194,10 +190,9 @@ public:
 
 				if (oneFlag)
 				{
-					// this->code.push_back(1);	// TODO
 					bs << 1;
 
-					child_coor = temp_coor;
+					child_coor = tmp_coor;
 					for (size_t i = 0; i < (size_t)pow(2, dSize); i++)
 					{
 						itemItr->moveTo(child_coor);
@@ -205,21 +200,17 @@ public:
 
 						if (child_data & stepBit)
 						{
-							// this->code.push_back(1);	// TODO
 							bs << 1;
 							if (child_data & signBit)  // -
 							{
-								// this->code.push_back(1);	// TODO
 								bs << 1;
 							} else  // +
 							{
-								// this->code.push_back(0);	// TODO
 								bs << 0;
 							}
 							this->LSP_.push_back(child_coor);
 						} else
 						{
-							// this->code.push_back(0);	// TODO
 							bs << 0;
 							this->LIP_.push_back(child_coor);
 						}
@@ -238,7 +229,7 @@ public:
 					}
 
 					bool haveGrand = true;
-					child_coor = temp_coor;
+					child_coor = tmp_coor;
 					for (int d = (int)dSize - 1; d >= 0; d--)
 					{
 						if (child_coor[d] * 2 >= blockDims[d])
@@ -255,21 +246,18 @@ public:
 					}
 				} else
 				{
-					// this->code.push_back(0);	// TODO
-					bs << 0x0;
+					bs << 0;
 					TMP_.push_back(LIS_coor);
 					TMP_TYPE_.push_back(LIS_type);
 				}
 			} else    // type B
 			{
-				child_coor = temp_coor;
+				child_coor = tmp_coor;
 				bool oneFlag = false;
 				for (size_t i = 0; i < (size_t)pow(2, dSize); i++)
 				{
-					for (int d = (int)dSize - 1; d >= 0; d--)
-					{
-						grand_coor[d] = child_coor[d] * 2;
-					}
+					coor grand_coor(child_coor);
+					grand_coor *= 2;
 
 					for (size_t j = 0; j < (size_t)pow(2, dSize); j++)
 					{
@@ -315,10 +303,9 @@ public:
 
 				if (oneFlag)
 				{
-					// this->code.push_back(1);	// TODO
-					bs << 0x1;
+					bs << 1;
 
-					child_coor = temp_coor;
+					child_coor = tmp_coor;
 					for (size_t i = 0; i < (size_t)pow(2, dSize); i++)
 					{
 						this->LIS_.push_back(child_coor);
@@ -338,8 +325,7 @@ public:
 					}
 				} else
 				{
-					// this->code.push_back(0);	// TODO
-					bs << 0x0;
+					bs << 0;
 					TMP_.push_back(LIS_coor);
 					TMP_TYPE_.push_back(LIS_type);
 				}
@@ -350,8 +336,10 @@ public:
 	}
 
 	template<class Ty_>
-	void encode_refinepass(bstream& bs, pBlockItemIterator itemItr, Ty_ stepBit, size_t LSP_size)
+	void encode_refinepass(bstream& bs, Ty_ stepBit, size_t LSP_size)
 	{
+		auto itemItr = this->getItemIterator();
+
 		for (size_t i = 0; i < LSP_size; i++)
 		{
 			coor LSP_coor = this->LSP_.front();
@@ -361,12 +349,10 @@ public:
 
 			if (LSP_data & stepBit)
 			{
-				// this->code.push_back(1);	// TODO
-				bs << 0x1;
+				bs << 1;
 			} else
 			{
-				// this->code.push_back(0);	// TODO
-				bs << 0x0;
+				bs << 0;
 			}
 		}
 	}
@@ -374,276 +360,268 @@ public:
 	template<typename Ty_>
 	void deserializeTy(bstream& bs)
 	{
+		bs >> setw(1);
 		dimension bandDims(this->desc_->dims_);
 		bandDims /= pow(2, this->maxLevel_ + 1);
 
-		this->decode_init(bandDims);
-		//this->decode_progress<Ty_>(bs, bandDims);
+		this->init(bandDims);
+		this->decode_progress<Ty_>(bs, bandDims);
 	}
 
-	void decode_init(dimension& bandDims);
+	template<class Ty_>
+	void decode_progress(bstream& bs, dimension& bandDims)
+	{
+		auto itemItr = this->getItemIterator();
+		size_t dSize = this->getDSize();
+		dimension blockDims = this->desc_->dims_;
+		
+		size_t maxStep = sizeof(Ty_) * 8;
+		Ty_ signBit = (Ty_)0x1 << (maxStep - 1);
+		Ty_ stepBit = (Ty_)0x1 << (maxStep - 2);
 
-	//template<class Ty_>
-	//void decode_progress(bstream& bs, dimension& bandDims)
-	//{
-	//	dimension blockDims = this->desc_->dims_;
-	//	size_t dSize = this->getDSize();
-	//	auto itemItr = this->getItemIterator();
+		for (size_t curStep = 0; curStep < maxStep - 1; curStep++)
+		{
+			size_t LSP_size = this->LSP_.size();
+			this->decode_sigpass<Ty_>(bs, bandDims, signBit, stepBit);
+			this->decode_refinepass<Ty_>(bs, stepBit, LSP_size);
+			stepBit = stepBit >> 1;
+		}
 
-	//	size_t maxStep = sizeof(Ty_) * 8;
-	//	Ty_ signBit = (Ty_)0x1 << (maxStep - 1);
-	//	Ty_ stepBit = (Ty_)0x1 << (maxStep - 2);
+		// abs
+		coor abs_coor(dSize);	// {0, 0, ...}
+		size_t abs_num = 1;
+		for (int d = (int)dSize - 1; d >= 0; d--)
+		{
+			abs_coor[d] = 0;
+			abs_num *= blockDims[d];
+		}
 
-	//	for (size_t curStep = 0; curStep < maxStep - 1; curStep++)
-	//	{
-	//		size_t LSP_size = this->LSP_.size();
-	//		this->decode_sigpass<Ty_>(bs, bandDims, itemItr, signBit, stepBit);
-	//		this->decode_refinepass<Ty_>(bs, itemItr, stepBit, LSP_size);
-	//		stepBit = stepBit >> 1;
-	//	}
+		for (size_t i = 0; i < abs_num; i++)
+		{
+			itemItr->moveTo(abs_coor);
+			auto data = (**itemItr).get<Ty_>();
+			if (data & signBit)
+			{
+				data = data * -1;
+				data = data ^ signBit;
+				(**itemItr).set<Ty_>(data);
+			}
 
-	//	// abs
-	//	coor init_coor(dSize);	// {0, 0, ...}
-	//	size_t abs_num = 1;
-	//	for (int d = (int)dSize - 1; d >= 0; d--)
-	//	{
-	//		init_coor[d] = 0;
-	//		abs_num *= blockDims[d];
-	//	}
+			for (int d = (int)dSize - 1; d >= 0; d--)	// iteration(?)
+			{
+				abs_coor[d] = abs_coor[d] + 1;
+				if (abs_coor[d] == blockDims[d])
+				{
+					abs_coor[d] = 0;
+				} else
+				{
+					break;
+				}
+			}
+		}
+	}
 
-	//	for (size_t i = 0; i < abs_num; i++)
-	//	{
-	//		itemItr->moveTo(init_coor);
-	//		auto data = (**itemItr).get<Ty_>();
-	//		if (data & signBit)
-	//		{
-	//			data = data * -1;
-	//			data = data ^ signBit;
-	//			(**itemItr).set<Ty_>(data);
-	//		}
+	template<class Ty_>
+	void decode_sigpass(bstream& bs, dimension& bandDims, Ty_ signBit, Ty_ stepBit)
+	{
+		auto itemItr = this->getItemIterator();
+		size_t dSize = this->getDSize();
+		dimension blockDims = this->desc_->dims_;
+		char codeBit;
 
-	//		for (int d = (int)dSize - 1; d >= 0; d--)	// iteration(?)
-	//		{
-	//			init_coor[d] = init_coor[d] + 1;
-	//			if (init_coor[d] == blockDims[d])
-	//			{
-	//				init_coor[d] = 0;
-	//			} else
-	//			{
-	//				break;
-	//			}
-	//		}
-	//	}
-	//}
+		// LIP
+		size_t LIP_size = this->LIP_.size();
+		for (size_t i = 0; i < LIP_size; i++)
+		{
+			auto LIP_coor = this->LIP_.front();
+			this->LIP_.pop_front();
+			itemItr->moveTo(LIP_coor);
+			auto LIP_data = (**itemItr).get<Ty_>();
 
-	//template<class Ty_>
-	//void decode_sigpass(bstream& bs, dimension& bandDims,
-	//					pBlockItemIterator itemItr, Ty_ signBit, Ty_ stepBit)
-	//{
-	//	dimension blockDims = this->desc_->dims_;
+			bs >> codeBit;
 
-	//	size_t dSize = this->getDSize();
-	//	int codeBit; // TODO
+			if (codeBit)
+			{
+				LIP_data = LIP_data ^ stepBit;
 
-	//	// LIP
-	//	size_t LIP_size = this->LIP_.size();
-	//	for (size_t i = 0; i < LIP_size; i++)
-	//	{
-	//		auto LIP_coor = this->LIP_.front();
-	//		this->LIP_.pop_front();
-	//		itemItr->moveTo(LIP_coor);
-	//		auto LIP_data = (**itemItr).get<Ty_>();
+				bs >> codeBit;
 
-	//		codeBit = this->code.front();	// TODO
-	//		this->code.pop_front();			// TODO
+				if (codeBit)  // -
+				{
+					LIP_data = LIP_data ^ signBit;
+				}
 
-	//		if (codeBit)
-	//		{
-	//			LIP_data = LIP_data ^ stepBit;
+				(**itemItr).set<Ty_>(LIP_data);
+				this->LSP_.push_back(LIP_coor);
+			} else
+			{
+				this->LIP_.push_back(LIP_coor);
+			}
+		}
 
-	//			codeBit = this->code.front();	// TODO
-	//			this->code.pop_front();			// TODO
+		// LIS
+		std::list<coor> TMP_;
+		std::list<char> TMP_TYPE_;
+		coor grand_coor(dSize);
+		while (this->LIS_.size() != 0)
+		{
+			coor LIS_coor = this->LIS_.front();
+			this->LIS_.pop_front();
+			itemItr->moveTo(LIS_coor);
+			auto LIS_data = (**itemItr).get<Ty_>();
 
-	//			if (codeBit)  // -
-	//			{
-	//				LIP_data = LIP_data ^ signBit;
-	//			}
+			// set child_coor
+			bool firstBand = true;
+			for (int d = (int)dSize - 1; d >= 0; d--)
+			{
+				if (LIS_coor[d] >= bandDims[d])
+				{
+					firstBand = false;
+					break;
+				}
+			}
 
-	//			(**itemItr).set<Ty_>(LIP_data);
-	//			this->LSP_.push_back(LIP_coor);
-	//		} else
-	//		{
-	//			this->LIP_.push_back(LIP_coor);
-	//		}
-	//	}
+			coor child_coor(LIS_coor);
+			if (firstBand)
+			{
+				child_coor /= 2;
+				child_coor *= 2;
+				for (int d = (int)dSize - 1; d >= 0; d--)
+				{
+					if (LIS_coor[d] & 0x1)
+					{
+						child_coor[d] = child_coor[d] + bandDims[d];
+					}
+				}
+			} else    // other level bands
+			{
+				child_coor *= 2;
+			}
+			coor tmp_coor = child_coor;
 
-	//	// LIS
-	//	std::list<coor> TMP_;
-	//	std::list<char> TMP_TYPE_;
-	//	coor child_coor(dSize);
-	//	coor grand_coor(dSize);
-	//	while (this->LIS_.size() != 0)
-	//	{
-	//		coor LIS_coor = this->LIS_.front();
-	//		this->LIS_.pop_front();
-	//		itemItr->moveTo(LIS_coor);
-	//		auto LIS_data = (**itemItr).get<Ty_>();
+			char LIS_type = this->LIS_TYPE_.front();
+			this->LIS_TYPE_.pop_front();
+			if (LIS_type == 'A')	// type A
+			{
+				bs >> codeBit;
 
-	//		// set child_coor
-	//		bool firstBand = true;
-	//		for (int d = (int)dSize - 1; d >= 0; d--)
-	//		{
-	//			if (LIS_coor[d] >= bandDims[d])
-	//			{
-	//				firstBand = false;
-	//				break;
-	//			}
-	//		}
+				if (codeBit)
+				{
+					for (size_t i = 0; i < (size_t)pow(2, dSize); i++)
+					{
+						itemItr->moveTo(child_coor);
+						auto child_data = (**itemItr).get<Ty_>();
 
-	//		if (firstBand)
-	//		{
-	//			for (int d = (int)dSize - 1; d >= 0; d--)
-	//			{
-	//				child_coor[d] = (LIS_coor[d] / 2) * 2;
-	//				if (LIS_coor[d] & 0x1)
-	//				{
-	//					child_coor[d] = child_coor[d] + bandDims[d];
-	//				}
-	//			}
-	//		} else    // other level bands
-	//		{
-	//			for (int d = (int)dSize - 1; d >= 0; d--)
-	//			{
-	//				child_coor[d] = LIS_coor[d] * 2;
-	//			}
-	//		}
-	//		coor temp_coor = child_coor;
+						bs >> codeBit;
 
-	//		char LIS_type = this->LIS_TYPE_.front();
-	//		this->LIS_TYPE_.pop_front();
-	//		if (LIS_type == 'A')	// type A
-	//		{
-	//			codeBit = this->code.front();	// TODO
-	//			this->code.pop_front();			// TODO
+						if (codeBit)
+						{
+							child_data = child_data ^ stepBit;
 
-	//			if (codeBit)
-	//			{
-	//				for (size_t i = 0; i < (size_t)pow(2, dSize); i++)
-	//				{
-	//					itemItr->moveTo(child_coor);
-	//					auto child_data = (**itemItr).get<Ty_>();
+							bs >> codeBit;
 
-	//					codeBit = this->code.front();	// TODO
-	//					this->code.pop_front();			// TODO
+							if (codeBit)  // -
+							{
+								child_data = child_data ^ signBit;
+							}
 
-	//					if (codeBit)
-	//					{
-	//						child_data = child_data ^ stepBit;
+							(**itemItr).set<Ty_>(child_data);
+							this->LSP_.push_back(child_coor);
+						} else
+						{
+							this->LIP_.push_back(child_coor);
+						}
 
-	//						codeBit = this->code.front();	// TODO
-	//						this->code.pop_front();			// TODO
+						for (int d = (int)dSize - 1; d >= 0; d--)	// iteration(?)
+						{
+							child_coor[d] = child_coor[d] + 1;
+							if (child_coor[d] & 0x1)
+							{
+								break;
+							} else
+							{
+								child_coor[d] = child_coor[d] - 2;
+							}
+						}
+					}
 
-	//						if (codeBit)  // -
-	//						{
-	//							child_data = child_data ^ signBit;
-	//						}
+					bool haveGrand = true;
+					child_coor = tmp_coor;
+					for (int d = (int)dSize - 1; d >= 0; d--)
+					{
+						if (child_coor[d] * 2 >= blockDims[d])
+						{
+							haveGrand = false;
+							break;
+						}
+					}
 
-	//						(**itemItr).set<Ty_>(child_data);
-	//						this->LSP_.push_back(child_coor);
-	//					} else
-	//					{
-	//						this->LIP_.push_back(child_coor);
-	//					}
+					if (haveGrand)
+					{
+						this->LIS_.push_back(LIS_coor);
+						this->LIS_TYPE_.push_back('B');
+					}
+				} else
+				{
+					TMP_.push_back(LIS_coor);
+					TMP_TYPE_.push_back(LIS_type);
+				}
+			} else    // type B
+			{
+				bs >> codeBit;
 
-	//					for (int d = (int)dSize - 1; d >= 0; d--)	// iteration(?)
-	//					{
-	//						child_coor[d] = child_coor[d] + 1;
-	//						if (child_coor[d] & 0x1)
-	//						{
-	//							break;
-	//						} else
-	//						{
-	//							child_coor[d] = child_coor[d] - 2;
-	//						}
-	//					}
-	//				}
+				if (codeBit)
+				{
+					for (size_t i = 0; i < (size_t)pow(2, dSize); i++)
+					{
+						this->LIS_.push_back(child_coor);
+						this->LIS_TYPE_.push_back('A');
 
-	//				bool haveGrand = true;
-	//				child_coor = temp_coor;
-	//				for (int d = (int)dSize - 1; d >= 0; d--)
-	//				{
-	//					if (child_coor[d] * 2 >= blockDims[d])
-	//					{
-	//						haveGrand = false;
-	//						break;
-	//					}
-	//				}
+						for (int d = (int)dSize - 1; d >= 0; d--)	// iteration(?)
+						{
+							child_coor[d] = child_coor[d] + 1;
+							if (child_coor[d] & 0x1)
+							{
+								break;
+							} else
+							{
+								child_coor[d] = child_coor[d] - 2;
+							}
+						}
+					}
+				} else
+				{
+					TMP_.push_back(LIS_coor);
+					TMP_TYPE_.push_back(LIS_type);
+				}
+			}
+		}
+		this->LIS_ = TMP_;
+		this->LIS_TYPE_ = TMP_TYPE_;
+	}
 
-	//				if (haveGrand)
-	//				{
-	//					this->LIS_.push_back(LIS_coor);
-	//					this->LIS_TYPE_.push_back('B');
-	//				}
-	//			} else
-	//			{
-	//				TMP_.push_back(LIS_coor);
-	//				TMP_TYPE_.push_back(LIS_type);
-	//			}
-	//		} else    // type B
-	//		{
-	//			codeBit = this->code.front();	// TODO
-	//			this->code.pop_front();			// TODO
+	template<class Ty_>
+	void decode_refinepass(bstream& bs, Ty_ stepBit, size_t LSP_size)
+	{
+		auto itemItr = this->getItemIterator();
+		char codeBit;
 
-	//			if (codeBit)
-	//			{
-	//				for (size_t i = 0; i < (size_t)pow(2, dSize); i++)
-	//				{
-	//					this->LIS_.push_back(child_coor);
-	//					this->LIS_TYPE_.push_back('A');
+		for (size_t i = 0; i < LSP_size; i++)
+		{
+			coor LSP_coor = this->LSP_.front();
+			this->LSP_.pop_front();
+			itemItr->moveTo(LSP_coor);
+			auto LSP_data = (**itemItr).get<Ty_>();
 
-	//					for (int d = (int)dSize - 1; d >= 0; d--)	// iteration(?)
-	//					{
-	//						child_coor[d] = child_coor[d] + 1;
-	//						if (child_coor[d] & 0x1)
-	//						{
-	//							break;
-	//						} else
-	//						{
-	//							child_coor[d] = child_coor[d] - 2;
-	//						}
-	//					}
-	//				}
-	//			} else
-	//			{
-	//				TMP_.push_back(LIS_coor);
-	//				TMP_TYPE_.push_back(LIS_type);
-	//			}
-	//		}
-	//	}
-	//	this->LIS_ = TMP_;
-	//	this->LIS_TYPE_ = TMP_TYPE_;
-	//}
+			bs >> codeBit;
 
-	//template<class Ty_>
-	//void decode_refinepass(bstream& bs, pBlockItemIterator itemItr, Ty_ stepBit, size_t LSP_size)
-	//{
-	//	for (size_t i = 0; i < LSP_size; i++)
-	//	{
-	//		coor LSP_coor = this->LSP_.front();
-	//		this->LSP_.pop_front();
-	//		itemItr->moveTo(LSP_coor);
-	//		auto LSP_data = (**itemItr).get<Ty_>();
-
-	//		auto codeBit = this->code.front();	// TODO
-	//		this->code.pop_front();			// TODO
-
-	//		if (codeBit)
-	//		{
-	//			LSP_data = LSP_data ^ stepBit;
-	//			(**itemItr).set<Ty_>(LSP_data);
-	//		}
-	//	}
-	//}
+			if (codeBit)
+			{
+				LSP_data = LSP_data ^ stepBit;
+				(**itemItr).set<Ty_>(LSP_data);
+			}
+		}
+	}
 
 public:
 	void setMaxLevel(size_t maxLevel);
