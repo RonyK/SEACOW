@@ -10,22 +10,10 @@ void getWaveletEncode(pArrayDesc sourceArrDesc, eleDefault level,
 					  std::shared_ptr<wavelet_encode_action>& action,
 					  pQuery& qry)
 {
-	pQuery weQuery_ = std::make_shared<query>();
-	auto wePlan_ = std::make_shared<wavelet_encode_plan>();
-	auto weAction_ = std::make_shared<wavelet_encode_action>();
-	parameters params = {
-		std::make_shared<opParamArray>(sourceArrDesc),
-		std::make_shared<opParamConst>(std::make_shared<stableElement>(&level, _ELE_DEFAULT_TYPE))
-	};
-	auto pSet = std::make_shared<wavelet_encode_pset>(params);
-
-	wePlan_->setParamSet(pSet);
-	weAction_->setArrayDesc(wePlan_->inferSchema());
-	weAction_->setParams(params);
-
-	plan = wePlan_;
-	action = weAction_;
-	qry = weQuery_;
+	auto planAction = getLevelArrayParamOperator<wavelet_encode_plan, wavelet_encode_action, wavelet_encode_pset>(sourceArrDesc, level);
+	plan = std::get<0>(planAction);
+	action = std::get<1>(planAction);
+	qry = std::get<2>(planAction);
 }
 
 void getWaveletDecode(pArrayDesc sourceArrDesc, eleDefault level,
@@ -33,88 +21,42 @@ void getWaveletDecode(pArrayDesc sourceArrDesc, eleDefault level,
 					  std::shared_ptr<wavelet_decode_action>& action,
 					  pQuery& qry)
 {
-	pQuery wdQuery_ = std::make_shared<query>();
-	auto wdPlan_ = std::make_shared<wavelet_decode_plan>();
-	auto wdAction_ = std::make_shared<wavelet_decode_action>();
-	parameters params = {
-		std::make_shared<opParamArray>(sourceArrDesc),
-		std::make_shared<opParamConst>(std::make_shared<stableElement>(&level, _ELE_DEFAULT_TYPE))
-	};
-	auto pSet = std::make_shared<wavelet_encode_pset>(params);
-
-	wdPlan_->setParamSet(pSet);
-	wdAction_->setArrayDesc(wdPlan_->inferSchema());
-	wdAction_->setParams(params);
-
-	plan = wdPlan_;
-	action = wdAction_;
-	qry = wdQuery_;
+	auto planAction = getLevelArrayParamOperator<wavelet_decode_plan, wavelet_decode_action, wavelet_decode_pset>(sourceArrDesc, level);
+	plan = std::get<0>(planAction);
+	action = std::get<1>(planAction);
+	qry = std::get<2>(planAction);
 }
 
 void getMmtBuild(pArrayDesc sourceArrDesc,
-				 eleDefault level,
+				 eleDefault& level,
 				 std::shared_ptr<mmt_build_plan>& plan,
 				 std::shared_ptr<mmt_build_action>& action,
 				 pQuery& qry)
 {
-	pQuery mmtQuery_ = std::make_shared<query>();
-	auto mmtPlan_ = std::make_shared<mmt_build_plan>();
-	auto mmtAction_ = std::make_shared<mmt_build_action>();
-	parameters params = {
-		std::make_shared<opParamArray>(sourceArrDesc),
-		std::make_shared<opParamConst>(std::make_shared<stableElement>(&level, _ELE_DEFAULT_TYPE))
-	};
-	auto pSet = std::make_shared<mmt_build_pset>(params);
-
-	mmtPlan_->setParamSet(pSet);
-	mmtAction_->setArrayDesc(mmtPlan_->inferSchema());
-	mmtAction_->setParams(params);
-
-	plan = mmtPlan_;
-	action = mmtAction_;
-	qry = mmtQuery_;
+	auto planAction = getLevelArrayParamOperator<mmt_build_plan, mmt_build_action, mmt_build_pset>(sourceArrDesc, level);
+	plan = std::get<0>(planAction);
+	action = std::get<1>(planAction);
+	qry = std::get<2>(planAction);
 }
 void getMmtSave(pArrayDesc sourceArrDesc,
 				std::shared_ptr<mmt_save_plan>& plan,
 				std::shared_ptr<mmt_save_action>& action,
 				pQuery& qry)
 {
-	pQuery mmtQuery_ = std::make_shared<query>();
-	auto mmtPlan_ = std::make_shared<mmt_save_plan>();
-	auto mmtAction_ = std::make_shared<mmt_save_action>();
-	parameters params = {
-		std::make_shared<opParamArray>(sourceArrDesc)
-	};
-	auto pSet = std::make_shared<mmt_save_pset>(params);
-
-	mmtPlan_->setParamSet(pSet);
-	mmtAction_->setArrayDesc(mmtPlan_->inferSchema());
-	mmtAction_->setParams(params);
-
-	plan = mmtPlan_;
-	action = mmtAction_;
-	qry = mmtQuery_;
+	auto planAction = getSingleArrayParamOperator<mmt_save_plan, mmt_save_action, mmt_save_pset>(sourceArrDesc);
+	plan = std::get<0>(planAction);
+	action = std::get<1>(planAction);
+	qry = std::get<2>(planAction);
 }
 void getMmtLoad(pArrayDesc sourceArrDesc,
 				std::shared_ptr<mmt_load_plan>& plan,
 				std::shared_ptr<mmt_load_action>& action,
 				pQuery& qry)
 {
-	pQuery mmtQuery_ = std::make_shared<query>();
-	auto mmtPlan_ = std::make_shared<mmt_load_plan>();
-	auto mmtAction_ = std::make_shared<mmt_load_action>();
-	parameters params = {
-		std::make_shared<opParamArray>(sourceArrDesc)
-	};
-	auto pSet = std::make_shared<mmt_load_pset>(params);
-
-	mmtPlan_->setParamSet(pSet);
-	mmtAction_->setArrayDesc(mmtPlan_->inferSchema());
-	mmtAction_->setParams(params);
-
-	plan = mmtPlan_;
-	action = mmtAction_;
-	qry = mmtQuery_;
+	auto planAction = getSingleArrayParamOperator<mmt_load_plan, mmt_load_action, mmt_load_pset>(sourceArrDesc);
+	plan = std::get<0>(planAction);
+	action = std::get<1>(planAction);
+	qry = std::get<2>(planAction);
 }
 
 void getMmtDeltaEncode(pArrayDesc sourceArrDesc,
@@ -122,21 +64,10 @@ void getMmtDeltaEncode(pArrayDesc sourceArrDesc,
 					   std::shared_ptr<mmt_delta_encode_action>& action,
 					   pQuery& qry)
 {
-	pQuery mmtQuery_ = std::make_shared<query>();
-	auto mmtPlan_ = std::make_shared<mmt_delta_encode_plan>();
-	auto mmtAction_ = std::make_shared<mmt_delta_encode_action>();
-	parameters params = {
-		std::make_shared<opParamArray>(sourceArrDesc)
-	};
-	auto pSet = std::make_shared<mmt_delta_encode_pset>(params);
-
-	mmtPlan_->setParamSet(pSet);
-	mmtAction_->setArrayDesc(mmtPlan_->inferSchema());
-	mmtAction_->setParams(params);
-
-	plan = mmtPlan_;
-	action = mmtAction_;
-	qry = mmtQuery_;
+	auto planAction = getSingleArrayParamOperator<mmt_delta_encode_plan, mmt_delta_encode_action, mmt_delta_encode_pset>(sourceArrDesc);
+	plan = std::get<0>(planAction);
+	action = std::get<1>(planAction);
+	qry = std::get<2>(planAction);
 }
 
 void getMmtDeltaDecode(pArrayDesc sourceArrDesc,
@@ -144,21 +75,10 @@ void getMmtDeltaDecode(pArrayDesc sourceArrDesc,
 					   std::shared_ptr<mmt_delta_decode_action>& action,
 					   pQuery& qry)
 {
-	pQuery mmtQuery_ = std::make_shared<query>();
-	auto mmtPlan_ = std::make_shared<mmt_delta_decode_plan>();
-	auto mmtAction_ = std::make_shared<mmt_delta_decode_action>();
-	parameters params = {
-		std::make_shared<opParamArray>(sourceArrDesc)
-	};
-	auto pSet = std::make_shared<mmt_delta_decode_pset>(params);
-
-	mmtPlan_->setParamSet(pSet);
-	mmtAction_->setArrayDesc(mmtPlan_->inferSchema());
-	mmtAction_->setParams(params);
-
-	plan = mmtPlan_;
-	action = mmtAction_;
-	qry = mmtQuery_;
+	auto planAction = getSingleArrayParamOperator<mmt_delta_decode_plan, mmt_delta_decode_action, mmt_delta_decode_pset>(sourceArrDesc);
+	plan = std::get<0>(planAction);
+	action = std::get<1>(planAction);
+	qry = std::get<2>(planAction);
 }
 
 void getSeCompression(pArrayDesc sourceArrDesc,
@@ -166,62 +86,29 @@ void getSeCompression(pArrayDesc sourceArrDesc,
 					  std::shared_ptr<se_compression_action>& action,
 					  pQuery& qry)
 {
-	pQuery seQuery_ = std::make_shared<query>();
-	auto sePlan_ = std::make_shared<se_compression_plan>();
-	auto seAction_ = std::make_shared<se_compression_action>();
-	parameters params = {
-		std::make_shared<opParamArray>(sourceArrDesc)
-	};
-	auto pSet = std::make_shared<se_compression_pset>(params);
-
-	sePlan_->setParamSet(pSet);
-	seAction_->setArrayDesc(sePlan_->inferSchema());
-	seAction_->setParams(params);
-
-	plan = sePlan_;
-	action = seAction_;
-	qry = seQuery_;
+	auto planAction = getSingleArrayParamOperator<se_compression_plan, se_compression_action, se_compression_pset>(sourceArrDesc);
+	plan = std::get<0>(planAction);
+	action = std::get<1>(planAction);
+	qry = std::get<2>(planAction);
 }
 
-void getSeDecompression(pArrayDesc sourceArrDesc,
+void getSeDecompression(pArrayDesc sourceArrDesc, eleDefault level,
 						std::shared_ptr<se_decompression_plan>& plan,
 						std::shared_ptr<se_decompression_action>& action,
 						pQuery& qry)
 {
-	pQuery seQuery_ = std::make_shared<query>();
-	auto sePlan_ = std::make_shared<se_decompression_plan>();
-	auto seAction_ = std::make_shared<se_decompression_action>();
-	parameters params = {
-		std::make_shared<opParamArray>(sourceArrDesc)
-	};
-	auto pSet = std::make_shared<se_decompression_pset>(params);
-
-	sePlan_->setParamSet(pSet);
-	seAction_->setArrayDesc(sePlan_->inferSchema());
-	seAction_->setParams(params);
-
-	plan = sePlan_;
-	action = seAction_;
-	qry = seQuery_;
+	auto planAction = getLevelArrayParamOperator<se_decompression_plan, se_decompression_action, se_decompression_pset>(sourceArrDesc, level);
+	plan = std::get<0>(planAction);
+	action = std::get<1>(planAction);
+	qry = std::get<2>(planAction);
 }
 
 void getSPIHTEncode(pArrayDesc sourceArrDesc, std::shared_ptr<spiht_encode_plan>& plan, std::shared_ptr<spiht_encode_action>& action, pQuery& qry)
 {
-	pQuery spihtQuery_ = std::make_shared<query>();
-	auto spihtPlan_ = std::make_shared<spiht_encode_plan>();
-	auto spihtAction_ = std::make_shared<spiht_encode_action>();
-	parameters params = {
-		std::make_shared<opParamArray>(sourceArrDesc)
-	};
-	auto pSet = std::make_shared<spiht_encode_pset>(params);
-
-	spihtPlan_->setParamSet(pSet);
-	spihtAction_->setArrayDesc(spihtPlan_->inferSchema());
-	spihtAction_->setParams(params);
-
-	plan = spihtPlan_;
-	action = spihtAction_;
-	qry = spihtQuery_;
+	auto planAction = getSingleArrayParamOperator<spiht_encode_plan, spiht_encode_action, spiht_encode_pset>(sourceArrDesc);
+	plan = std::get<0>(planAction);
+	action = std::get<1>(planAction);
+	qry = std::get<2>(planAction);
 }
 }	// caDummy
 }	// msdb

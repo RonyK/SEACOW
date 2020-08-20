@@ -34,6 +34,7 @@ namespace data2D_star1024x1024
 {
 pArray mmt_build(std::vector<pArray> sourceArr);
 pArray mmt_delta_encode(std::vector<pArray> sourceArr);
+pArray mmt_delta_decode(std::vector<pArray> sourceArr);
 }
 }	// caDummy
 }	// msdb

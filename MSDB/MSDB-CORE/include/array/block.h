@@ -60,6 +60,36 @@ protected:
 public:
 	virtual pBlockItemIterator getItemIterator() = 0;
 	virtual pBlockItemRangeIterator getItemRangeIterator(const coorRange& range) = 0;
+
+//////////////////////////////
+// Print
+//////////////////////////////
+public:
+	void print();
+
+protected:
+	template <class Ty_>
+	void printImp()
+	{
+		auto it = this->getItemIterator();
+		std::cout << "==============================" << std::endl;
+		for (size_t i = 0; i < it->getCapacity() && !it->isEnd(); ++i, ++(*it))
+		{
+			std::cout << (**it).get<Ty_>() << ", ";
+		}
+		std::cout << std::endl << "==============================" << std::endl;
+	}
+	template<>
+	void printImp<char>()
+	{
+		auto it = this->getItemIterator();
+		std::cout << "==============================" << std::endl;
+		for (size_t i = 0; i < it->getCapacity() && !it->isEnd(); ++i, ++(*it))
+		{
+			std::cout << static_cast<int>((**it).get<char>()) << ", ";
+		}
+		std::cout << std::endl << "==============================" << std::endl;
+	}
 };
 };
 

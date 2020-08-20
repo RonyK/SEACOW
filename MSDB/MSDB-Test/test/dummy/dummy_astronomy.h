@@ -13,14 +13,17 @@ using dim_type = position_t;
 namespace data2D_star1024x1024
 {
 using value_type = char;
+static const eleType ele_type = eleType::CHAR;
 
-static const size_t dataLength = 1024 * 1024;
+//static const size_t dataLength = 1024 * 1024;
+//static const dim_type dimX = 1024;
+//static const dim_type dimY = 1024;
+
 static const dim_type dimX = 1024;
 static const dim_type dimY = 1024;
-//static const size_t dataLength = 256 * 256;
-//static const dim_type dimX = 256;
-//static const dim_type dimY = 256;
-static const size_t maxLevel = 5;
+static const size_t dataLength = dimX * dimY;
+static const size_t maxLevel = 3;
+static const size_t mmtLevel = 0;
 static const arrayId aid = 24241;
 
 extern std::vector<dim_type> dims;
@@ -39,7 +42,7 @@ std::vector<std::shared_ptr<Aty_>> getSourceArray()
 	getDummy(data, dataLength);
 
 	std::vector<std::shared_ptr<Aty_>> arrs(
-		{ get2DCharArray<Aty_>(data, aid, "data2D_star1024x1024", dims, chunkDims, blockDims, eleType::CHAR) });
+		{ get2DCharArray<Aty_>(data, aid, "data2D_star1024x1024", dims, chunkDims, blockDims, ele_type) });
 	return arrs;
 }
 

@@ -120,6 +120,8 @@ public:
 	class mmtNode : public attributeIndex
 	{
 	public:
+		using TyType = Ty_;
+
 		sig_bit_type bMax_;			// significant nit of max value
 		sig_bit_type bMin_;			// significant nit of min value
 		bit_cnt_type bMaxDelta_;	// bMax_ delta from a parent node
@@ -742,6 +744,11 @@ public:
 		return this->nodes_;
 	}
 
+	pNode getNode(blockId nodeId, size_type level = 0)
+	{
+		return this->nodes_[level][nodeId];
+	}
+
 	pNode getNode(coor& nodeCoor, size_type level = 0)
 	{
 		auto nit = this->getNodeIterator(level);
@@ -782,6 +789,11 @@ public:
 
 		return nullptr;
 	};
+
+	void setNode(blockId nodeId, size_type level = 0)
+	{
+		this->nodes_[level][nodeId];
+	}
 
 	void setNode(pNode node, coor& nodeCoor, size_type level = 0)
 	{

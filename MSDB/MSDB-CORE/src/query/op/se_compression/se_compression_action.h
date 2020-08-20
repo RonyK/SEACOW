@@ -34,6 +34,7 @@ private:
 	{
 		auto arrId = inArr->getId();
 		auto cit = inArr->getChunkIterator(iterateMode::EXIST);
+		bool hasNegative = false;
 
 		auto arrIndex = arrayMgr::instance()->getAttributeIndex(inArr->getId(), attrDesc->id_);
 		if (arrIndex->getType() != attrIndexType::MMT)
@@ -43,10 +44,15 @@ private:
 		auto mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
 		dimension chunkDim(inArr->getDesc()->getDimDescs().getChunkDims());
 
+		if((Ty_)-1 < 0)
+		{
+			hasNegative = true;
+		}
+
 		while (!cit->isEnd())
 		{
 			pChunk outChunk = this->compressChunk<Ty_>(
-				std::static_pointer_cast<wtChunk>(**cit), mmtIndex, chunkDim);
+				std::static_pointer_cast<wtChunk>(**cit), mmtIndex, chunkDim, hasNegative);
 
 			auto attr = outChunk->getDesc()->attrDesc_;
 			storageMgr::instance()->saveChunk(arrId, attr->id_, (outChunk)->getId(),
@@ -58,33 +64,36 @@ private:
 	template<typename Ty_>
 	pSeChunk compressChunk(pWtChunk inChunk,
 						   std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex,
-						   dimension& sourceChunkDim)
+						   dimension& sourceChunkDim, bool hasNegative)
 	{
 		size_t dSize = inChunk->getDSize();
 		pSeChunk outChunk = this->makeOutChunk(inChunk);
 
 		coor chunkCoor = inChunk->getChunkCoor();
+		//auto mNode = mmtIndex->getNode(inChunk->getId(), 0);
 		auto mNode = mmtIndex->getNode(chunkCoor, 0);
-		outChunk->rBitFromMMT = mNode->bits_;
+		outChunk->rBitFromMMT = getRBitFromMMT(mNode) + static_cast<char>(hasNegative);
+		assert(outChunk->rBitFromMMT <= sizeof(Ty_) * CHAR_BIT);
 
 		pBlock outBlock = outChunk->getBlock(0);
-
 		size_t numBandsInLevel = std::pow(2, dSize) - 1;
 		dimension inBlockDims = inChunk->getDesc()->getBlockDims();
 		dimension bandDims = inBlockDims / std::pow(2, inChunk->getLevel() + 1);
 
 		// Do band 0 in max level
 		{
-			bit_cnt_type requiredBits = this->compressBand<Ty_>(outBlock, getBandRange(0, bandDims));
+			bit_cnt_type requiredBits = this->compressBand<Ty_>(outBlock, getBandRange(0, bandDims)) + static_cast<char>(hasNegative);
 			outChunk->rBitFromDelta.push_back(requiredBits);
+			assert(requiredBits <= outChunk->rBitFromMMT);
 		}
 		
 		for(size_t level = 0; level <= inChunk->getLevel(); ++level)
 		{
 			for(size_t band = 1; band <= numBandsInLevel; ++band)
 			{
-				bit_cnt_type requiredBits = this->compressBand<Ty_>(outBlock, getBandRange(band, bandDims));
+				bit_cnt_type requiredBits = this->compressBand<Ty_>(outBlock, getBandRange(band, bandDims)) + static_cast<char>(hasNegative);
 				outChunk->rBitFromDelta.push_back(requiredBits);
+				assert(requiredBits <= outChunk->rBitFromMMT);
 			}
 			
 			bandDims *= 2;
@@ -101,7 +110,8 @@ private:
 
 		while(!bItemItr->isEnd())
 		{
-			bit_cnt_type valueBits = msb<bit_cnt_type>(abs_((**bItemItr).get<Ty_>()));
+			Ty_ value = (**bItemItr).get<Ty_>();
+			bit_cnt_type valueBits = static_cast<bit_cnt_type>(msb<Ty_>(abs_(value)));
 			if (maxValueBits < valueBits)
 			{
 				maxValueBits = valueBits;

@@ -59,6 +59,54 @@ public:
 	virtual void bufferRef(pChunk source);
 	bool isMaterialized() const;
 
+public:
+	bool operator == (const chunk& mit)
+	{
+		if(this->getId() != mit.getId())
+		{
+			return false;
+		}
+
+		// TODO::Compare desc
+		if(this->desc_->mSize_ != mit.getDesc()->mSize_)
+		{
+			return false;
+		}
+		
+		if(memcmp(this->cached_->getReadData(), mit.cached_->getReadData(), this->desc_->mSize_))
+		{
+			//auto lbItr = (*lcItr)->getBlockIterator();
+			//auto rbItr = (*rcItr)->getBlockIterator();
+
+			//while (!lbItr->isEnd() && !rbItr->isEnd())
+			//{
+			//	auto liItr = (*lbItr)->getItemIterator();
+			//	auto riItr = (*rbItr)->getItemIterator();
+
+			//	while (!liItr->isEnd() && !riItr->isEnd())
+			//	{
+			//		Ty_ li = (**liItr).get<Ty_>();
+			//		Ty_ ri = (**riItr).get<Ty_>();
+
+			//		EXPECT_EQ(li, ri);
+
+			//		++(*liItr);
+			//		++(*riItr);
+			//	}
+
+			//	EXPECT_EQ(liItr->isEnd(), riItr->isEnd());
+
+			//	++(*lbItr);
+			//	++(*rbItr);
+			//}
+
+			//EXPECT_EQ(lbItr->isEnd(), rbItr->isEnd());
+			return false;
+		}
+
+		return true;
+	}
+
 protected:
 	pChunkBuffer getBuffer();
 
@@ -131,20 +179,20 @@ protected:
 	public:
 		virtual void serialize(std::ostream& os) override
 		{
-			std::cout << "Chunk Header serialize" << std::endl;
-			std::cout << this->version_ << ", " << this->bodySize_ << std::endl;
+			//std::cout << "Chunk Header serialize" << std::endl;
+			//std::cout << this->version_ << ", " << this->bodySize_ << std::endl;
 
 			os.write((char*)(&this->version_), sizeof(this->version_));
 			os.write((char*)(&this->bodySize_), sizeof(this->bodySize_));
 		}
 		virtual void deserialize(std::istream& is) override
 		{
-			std::cout << "Chunk Header deserialize" << std::endl;
+			//std::cout << "Chunk Header deserialize" << std::endl;
 
 			is.read((char*)(&this->version_), sizeof(this->version_));
 			is.read((char*)(&this->bodySize_), sizeof(this->bodySize_));
 
-			std::cout << this->version_ << ", " << this->bodySize_ << std::endl;
+			//std::cout << this->version_ << ", " << this->bodySize_ << std::endl;
 		}
 	};
 
