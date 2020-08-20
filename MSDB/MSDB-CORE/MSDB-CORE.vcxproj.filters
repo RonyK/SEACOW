@@ -86,6 +86,10 @@
     <ClCompile Include="src\query\op\se_decompression\se_decompression_plan.cpp" />
     <ClCompile Include="src\compression\spihtBlock.cpp" />
     <ClCompile Include="src\compression\spihtChunk.cpp" />
+    <ClCompile Include="src\query\op\naive_filter\naive_filter_plan.cpp" />
+    <ClCompile Include="src\query\op\naive_filter\naive_filter_action.cpp" />
+    <ClCompile Include="src\query\op\between\between_plan.cpp" />
+    <ClCompile Include="src\query\op\between\between_action.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.h" />
@@ -188,6 +192,8 @@
     <ClInclude Include="src\query\op\se_decompression\se_decompression_action.h" />
     <ClInclude Include="src\query\op\se_decompression\se_decompression_plan.h" />
     <ClInclude Include="include\compression\spihtBlock.h" />
+    <ClInclude Include="src\query\op\between\between_plan.h" />
+    <ClInclude Include="src\query\op\between\between_action.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">
@@ -365,6 +371,8 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClInclude Include="src\query\op\spiht_encode\timer.h" />
+    <ClInclude Include="src\query\op\naive_filter\naive_filter_plan.h" />
+    <ClInclude Include="src\query\op\naive_filter\naive_filter_action.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\system\errorCategories.inc" />

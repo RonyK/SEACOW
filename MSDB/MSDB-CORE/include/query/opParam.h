@@ -24,7 +24,8 @@ enum class opParamType
 	ATTRIBUTE,
 	DIMENSION,
 	CONST,
-	INTLIST
+	INTLIST,
+	COOR,
 };
 
 class opParam : public std::enable_shared_from_this<opParam>
@@ -120,6 +121,22 @@ private:
 	std::shared_ptr<std::vector<int64_t>> eleList_;
 };
 
+class opParamCoor : public opParam
+{
+public:
+	using paramType = coor;
+
+public:
+	opParamCoor(std::shared_ptr<coor> coordinate);
+
+public:
+	virtual opParam::void_pointer getParam();
+	virtual opParamType type();
+
+private:
+	std::shared_ptr<coor> coor_;
+};
+
 //////////////////////////////
 // Placeholder classes
 class opParamPlaceholder
@@ -171,6 +188,15 @@ class opParamIntListPlaceholder : public opParamPlaceholder, public opParamIntLi
 {
 public:
 	opParamIntListPlaceholder();
+
+public:
+	virtual opParamType type();
+};
+
+class opParamCoorPlaceholder : public opParamPlaceholder, public opParamCoor
+{
+public:
+	opParamCoorPlaceholder();
 
 public:
 	virtual opParamType type();
