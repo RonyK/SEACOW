@@ -4,7 +4,6 @@
 
 #include <query/opAction.h>
 #include <util/math.h>
-#include <vector>
 #include <list>
 
 namespace msdb
