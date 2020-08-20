@@ -25,8 +25,12 @@ pArray se_decompression_action::execute(std::vector<pArray>& inputArrays, pQuery
 		arrDesc->getDimDescs()[d]->chunkSize_ = arrDesc->getDimDescs()[d]->blockSize_;
 	}
 
+	pStableElement ele = std::static_pointer_cast<stableElement>(this->params_[1]->getParam());
+	eleDefault maxLevel;
+	ele->getData(&maxLevel);
+
 	auto outArr = std::make_shared<wavelet_encode_array>(arrDesc);
-	outArr->setMaxLevel(0);
+	outArr->setMaxLevel(maxLevel);
 	outArr->setOrigianlChunkDims(origianlChunkDims);
 	auto arrId = outArr->getId();
 

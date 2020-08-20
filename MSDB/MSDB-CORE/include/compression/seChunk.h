@@ -69,6 +69,8 @@ public:
 		bit_cnt_type requiredBits = this->rBitFromDelta[bandSeqId];
 		//std::cout << "rBit: " << static_cast<int>(requiredBits) << " / gap : " << static_cast<int>(this->rBitFromMMT - requiredBits) << std::endl;;
 		//bs.print();
+		assert(this->rBitFromMMT >= requiredBits);
+		//std::cout << static_cast<int>(this->rBitFromMMT - requiredBits) << " / " << static_cast<int>(this->rBitFromMMT) << std::endl;
 		this->serializeGap(bs, this->rBitFromMMT - requiredBits);
 		//bs.print();
 
@@ -90,13 +92,23 @@ public:
 	{
 		size_t gap = this->deserializeGap(bs);
 		size_t requiredBit = this->rBitFromMMT - gap;
+		//std::cout << static_cast<int>(gap) << " / " << static_cast<int>(this->rBitFromMMT) << std::endl;
+		assert(gap <= this->rBitFromMMT);
 
 		bs >> setw(requiredBit);
+		Ty_ signMask = 0x1 << requiredBit - 1;
+		Ty_ negativeMask = (Ty_)-1 - (signMask - 1);
+		
 		auto bItemItr = myBlock->getItemRangeIterator(getBandRange(bandId, bandDims));
 		while (!bItemItr->isEnd())
 		{
-			Ty_ value;
+			Ty_ value = 0;
 			bs >> value;
+			if(value & signMask)
+			{
+				value |= negativeMask;
+			}
+
 			(**bItemItr).set<Ty_>(value);
 			++(*bItemItr);
 		}
@@ -189,5 +201,28 @@ public:
 	bit_cnt_type rBitFromMMT;	// required bits from MMT node
 	std::vector<bit_cnt_type> rBitFromDelta;	// required bits from delta array
 };
+
+template <typename mmtNode>
+bit_cnt_type getRBitFromMMT(mmtNode node)
+{
+	if (node->order_ > 1)
+	{
+		if (SIGN(node->bMax_) > 0)
+		{
+			return node->bMax_;
+		}
+
+		return abs_(node->bMin_);
+	}
+
+	if (SIGN(node->bMax_) != SIGN(node->bMin_))
+	{
+		// bMax > 0
+		//return std::max((bit_cnt_type)node->bMax_, (bit_cnt_type)abs_(node->bMin_)) + 1;	// 여기 왜 1을 추가한거지?
+		return std::max((bit_cnt_type)node->bMax_, (bit_cnt_type)abs_(node->bMin_));
+	}
+
+	return std::max((bit_cnt_type)abs_(node->bMax_), (bit_cnt_type)abs_(node->bMin_));
+}
 }	// msdb
 #endif		// _MSDB_SE_CHUNK_H_

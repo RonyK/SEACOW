@@ -38,19 +38,30 @@ unsigned long long calcMinLimit(bit_cnt_type bits);
 
 template<typename Ty_, typename size_type = std::conditional_t<sizeof(Ty_) < 32, unsigned char, unsigned int > ,
 	size_t Bits_ = sizeof(Ty_)* CHAR_BIT>
-	size_type msb(Ty_ value, size_type order = 1)
+	size_type msb(const Ty_ inValue, const size_type inOrder = 1)
 {
-	assert(order > 0);
+	assert(inOrder > 0);
+	if (inValue == 0)	return 0;
 
-	if (value == 0)
-		return 0;
-
+	Ty_ value = inValue;
+	size_type order = inOrder;
 	Ty_ mask = 1 << (Bits_ - 1);
 	size_type i = Bits_ + 1;
 	while (order != 0 && i-- != 0)
 	{
 		(mask & value) && --order;
 		value <<= 1;
+	}
+
+	if(inValue < 0 && i == Bits_)
+	{
+		// For sign values:
+		// Char type(8 bits)
+		// -128 = 1000 0000
+		//        N|------|
+		// msb should be 7 not 8.
+		// 8th bit is a sign bit, not significant bit.
+		return Bits_ - 1;
 	}
 
 	return i;
@@ -104,7 +115,13 @@ Ty_ getMinBoundary(Ty_ prevLimit, sig_bit_type sigBitPos)
 		return std::max({ static_cast<Ty_>(calcMinLimit(sigBitPos)), prevLimit });
 	} else
 	{
-		return std::max({ static_cast<Ty_>(calcMaxLimit(-sigBitPos) * -1), prevLimit });
+		// For sign value:
+		// -127 = 1000 0001
+		//      =>0111 1111 (127)
+		// -128 = 1000 0000
+		// but, sigBitPos = 7
+		// To cover this, 
+		return std::max({ static_cast<Ty_>(calcMaxLimit(-sigBitPos) * -1 - 1), prevLimit });
 	}
 }
 

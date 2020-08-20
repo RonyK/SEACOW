@@ -29,10 +29,14 @@ se_decompression_pset::se_decompression_pset(parameters& pSet)
 
 pArrayDesc se_decompression_pset::inferSchema()
 {
-	assert(this->params_.size() == 1);
+	assert(this->params_.size() == 2);
 	assert(this->params_[0]->type() == opParamType::ARRAY);		// source array
+	assert(this->params_[1]->type() == opParamType::CONST);		// Target level
 
 	pArrayDesc aSourceDesc = std::static_pointer_cast<opParamArray::paramType>(this->params_[0]->getParam());
+	eleDefault level;
+	std::static_pointer_cast<opParamConst::paramType>(this->params_[1]->getParam())->getData(&level);
+
 	return std::make_shared<opParamArray::paramType>(*aSourceDesc);
 }
 }	// msdb

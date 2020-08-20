@@ -35,6 +35,12 @@ private:
 			// TODO::PARALLEL
 			auto convertedChunkList = this->chunkEncode<Ty_>((**cItr), w, maxLevel, q);
 			// --------------------
+			for(auto chk : convertedChunkList)
+			{
+				auto cid = outArr->getChunkIdFromChunkCoor(chk->getDesc()->chunkCoor_);
+				chk->setId(cid);
+			}
+
 			outArr->insertChunk(convertedChunkList.begin(), convertedChunkList.end());
 			++(*cItr);
 		}
@@ -66,6 +72,7 @@ private:
 		auto blockSpace = inChunkDesc->getBlockSpace();
 
 		auto outChunkDesc = std::make_shared<chunkDesc>(*inChunkDesc);
+		//outChunkDesc->id_ = outChunk->getId() * blockSpace.area() + bid;
 		outChunkDesc->dims_ = outChunkDesc->blockDims_;
 		outChunkDesc->chunkCoor_ = inChunkDesc->chunkCoor_ * blockSpace + blockCoor;
 		outChunkDesc->sp_ = inChunkDesc->sp_ + inBlockDesc->sp_;		// csp + bsp
@@ -80,23 +87,25 @@ private:
 		{
 			coorRange arrRange = outChunkDesc->blockDims_ / pow(2, level);
 			this->levelEncode<Ty_>(outChunk, arrRange, w, level, q);
+			//std::cout << "Level Encode" << std::endl;
+			//outChunk->print();
 		}
 		return outChunk;
 	}
 
 	template <class Ty_>
-	void levelEncode(pChunk inChunk, coorRange arrRange, 
+	void levelEncode(pChunk outChunk, coorRange arrRange, 
 					 pWavelet w, size_t level, pQuery q)
 	{
-		dimensionId dSize = inChunk->getDSize();
+		dimensionId dSize = outChunk->getDSize();
 		for(dimensionId d = 0; d < dSize; ++d)
 		{
-			this->dimensionEncode<Ty_>(inChunk, arrRange, d, w, q);
+			this->dimensionEncode<Ty_>(outChunk, arrRange, d, w, q);
 		}
 	}
 
 	template <class Ty_>
-	void dimensionEncode(pChunk inChunk, 
+	void dimensionEncode(pChunk outChunk, 
 						 coorRange arrRange, dimensionId basisDim,
 						 pWavelet w, pQuery q)
 	{
@@ -114,9 +123,9 @@ private:
 		assert(approximateRange.getEp()[basisDim] == length / 2);
 		assert(detailRange.getSp()[basisDim] == approximateRange.getEp()[basisDim]);
 
-		auto iit = inChunk->getBlock(0)->getItemIterator();
-		auto ait = inChunk->getBlock(0)->getItemRangeIterator(approximateRange);
-		auto dit = inChunk->getBlock(0)->getItemRangeIterator(detailRange);
+		auto iit = outChunk->getBlock(0)->getItemRangeIterator(arrRange);
+		auto ait = outChunk->getBlock(0)->getItemRangeIterator(approximateRange);
+		auto dit = outChunk->getBlock(0)->getItemRangeIterator(detailRange);
 
 		iit->setBasisDim(basisDim);
 		ait->setBasisDim(basisDim);
@@ -127,17 +136,33 @@ private:
 		dit->moveToStart();
 
 		// convert to ty
-		double* row = new double[length];
+		Ty_* row = new Ty_[length];
 
 		for(size_t r = 0; r < rows; ++r)
 		{
 			for(size_t ai = 0, di = halfLength; ai < halfLength; ++ai, ++di)
 			{
-				row[ai] = (**iit).get<Ty_>();
+				//row[ai] = (**iit).get<Ty_>();
+				//++(*iit);
+				//row[di] = std::ceil((row[ai] - (**iit).get<Ty_>()) / 2.0);
+				//row[ai] -= row[di];
+				
+				Ty_ x0 = (**iit).get<Ty_>();
 				++(*iit);
-				row[di] = (row[ai] - (**iit).get<Ty_>()) / 2;
-				row[ai] -= row[di];
+				Ty_ x1 = (**iit).get<Ty_>();
 				++(*iit);
+
+				//uint64_t x0 = (**iit).get<Ty_>();
+				//++(*iit);
+				//uint64_t x1 = (**iit).get<Ty_>();
+				//++(*iit);
+
+				//uint64_t y0 = x1 - x0;
+				//uint64_t y1 = x0 + std::floor(y0 / 2.0);
+
+				row[di] = x1 - x0;
+				row[ai] = x0 + std::floor(row[di] / 2.0);
+				
 			}
 
 			for(size_t ai = 0, di = halfLength; ai < halfLength; ++ai, ++di)

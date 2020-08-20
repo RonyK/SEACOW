@@ -298,7 +298,13 @@ namespace msdb
 			while (remain > 0)
 			{
 				unsigned char temp = 0x00;
-				remain -= this->get(temp, remain);
+				size_type move = this->get(temp, remain);
+				if(!move)
+				{
+					// EOF, return output
+					return out;
+				}
+				remain -= move;
 				out |= (temp << remain);
 			}
 
@@ -400,7 +406,7 @@ namespace msdb
 		{
 			pos_type possible = std::min(static_cast<pos_type>(_BlockBits - this->bitPos), static_cast<pos_type>(length));
 
-			out |= (((*this->frontBlock << this->bitPos).to_ulong() & this->rmask[possible]) >> (_BlockBits - possible)) << (length - possible);
+			out |= (((*this->frontBlock << this->bitPos).to_ulong() & this->rmask[possible]) >> (_BlockBits - possible));
 			auto blockBits = (*this->frontBlock << this->bitPos).to_ulong();
 
 			this->bitPos = (this->bitPos + possible) % _BlockBits;
