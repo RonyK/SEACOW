@@ -41,6 +41,12 @@ private:
 		auto mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
 		auto cit = outArr->getChunkIterator(iterateMode::ALL);
 
+		bool hasNegative = false;
+		if ((Ty_)-1 < 0)
+		{
+			hasNegative = true;
+		}
+
 		while (!cit->isEnd())
 		{
 			// make chunk
@@ -50,16 +56,16 @@ private:
 			inChunk->bufferAlloc();
 			inChunk->makeAllBlocks();
 
-			auto curMMTNode = mmtIndex->getNode(chunkCoor, 0);
-			inChunk->rBitFromMMT = curMMTNode->bits_;
+			auto mNode = mmtIndex->getNode(chunkCoor, 0);
+			inChunk->rBitFromMMT = getRBitFromMMT(mNode) + static_cast<char>(hasNegative);
 
 			pSerializable serialChunk
 				= std::static_pointer_cast<serializable>(inChunk);
 			storageMgr::instance()->loadChunk(outArr->getId(), attrDesc->id_, inChunk->getId(),
 											  serialChunk);
 
-			std::cout << "inChunk:: " << std::endl;
-			inChunk->print();
+			//std::cout << "inChunk:: " << std::endl;
+			//inChunk->print();
 
 			auto outChunk = std::make_shared<wtChunk>(inChunk->getDesc());
 			outChunk->setLevel(inChunk->getLevel());

@@ -2,23 +2,29 @@
 #ifndef _MSDB_SPIHTCHUNK_H_
 #define _MSDB_SPIHTCHUNK_H_
 
-#include <array/chunk.h>
+#include <array/memChunk.h>
+#include <compression/spihtBlock.h>
 #include <io/bitstream.h>
+#include <list>
 
 namespace msdb
 {
-class spihtChunk : public chunk
+class spihtChunk;
+using pSpihtChunk = std::shared_ptr<spihtChunk>;
+
+class spihtChunk : public memChunk
 {
 public:
 	spihtChunk(pChunkDesc desc);
 	virtual ~spihtChunk();
 
 protected:
+	virtual void makeBlocks(std::vector<bool> bitmap);
 	virtual void makeBuffer();
 
 public:
-	virtual pChunkItemIterator getItemIterator();
-	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range);
+	//virtual pChunkItemIterator getItemIterator();
+	//virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range);
 
 public:
 	virtual void serialize(std::ostream& os) override;
@@ -27,55 +33,44 @@ public:
 	template<typename Ty_>
 	void serialize(bstream& bs)
 	{
-		// TODO::serialize
-		//bs << setw(sizeof(Ty_) * CHAR_BIT);
-		//auto it = this->getItemIterator();
+		auto blockItr = this->getBlockIterator();
+		while (!blockItr->isEnd())
+		{
+			this->blockSerialize<Ty_>(bs, (**blockItr));
+			++(*blockItr);
+		}
+	}
 
-		//while (!it->isEnd())
-		//{
-		//	bs << (**it).get<Ty_>();
-		//	++(*it);
-		//}
+	template <typename Ty_>
+	void blockSerialize(bstream& bs, pBlock curBlock)
+	{
+		pSpihtBlock spBlock = std::static_pointer_cast<spihtBlock>(curBlock);
+		spBlock->serializeTy<Ty_>(bs);
 	}
 
 	template<class Ty_>
 	void deserialize(bstream& bs)
 	{
-		// TODO::deserialize
-		//bs >> setw(sizeof(Ty_) * CHAR_BIT);
-		//auto it = this->getItemIterator();
-
-		//while (!it->isEnd())
-		//{
-		//	Ty_ value;
-		//	bs >> value;
-		//	(**it).set<Ty_>(value);
-		//	++(*it);
-		//}
+		auto blockItr = this->getBlockIterator();
+		while (!blockItr->isEnd())
+		{
+			this->blockDeserialize<Ty_>(bs, (**blockItr));
+			++(*blockItr);
+		}
 	}
-};
 
-//class spihtChunkBuffer : public chunkBuffer
-//{
-//public:
-//	spihtChunkBuffer();
-//	virtual ~spihtChunkBuffer();
-//
-//public:
-//	virtual void* getData();
-//	virtual void const* getReadData() const;
-//
-//	virtual bufferSize size() const;
-//
-//	virtual void bufferAlloc(bufferSize size);
-//	virtual void realloc(bufferSize size);
-//	virtual void copy(void* data, bufferSize size);
-//	virtual void copy(void* data, bufferSize offset, bufferSize size);
-//	virtual void linkToChunkBuffer(void* data, bufferSize size);
-//	virtual void free();
-//
-//protected:
-//	bstream* data_;
-//};
+	template <typename Ty_>
+	void blockDeserialize(bstream& bs, pBlock curBlock)
+	{
+		pSpihtBlock spBlock = std::static_pointer_cast<spihtBlock>(curBlock);
+		spBlock->deserializeTy<Ty_>(bs);
+	}
+
+public:
+	void setMaxLevel(size_t maxLevel);
+
+protected:
+	size_t maxLevel_;
+};
 }
 #endif	// _MSDB_SPIHTCHUNK_H_

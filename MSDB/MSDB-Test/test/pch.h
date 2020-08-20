@@ -11,6 +11,7 @@
 #include <list>
 #include <bitset>
 #include <memory>
+#include <tuple>
 #include "gtest/gtest.h"
 #include "dummy/dummy.h"
 #include "dummy/opDummy.h"

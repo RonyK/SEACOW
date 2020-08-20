@@ -1,0 +1,1 @@
+<Playlist Version="1.0"><Add Test="query_op_wavelet_encode.wavelet_encode_star1024x1024" /><Add Test="query_op_se_compression.se_compression_star1024x1024" /></Playlist>

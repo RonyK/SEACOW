@@ -15,6 +15,26 @@ namespace msdb
 {
 namespace caDummy
 {
+pArray wavelet_encode_execute(std::vector<pArray> sourceArr, eleDefault level)
+{
+	std::shared_ptr<wavelet_encode_plan> wePlan;
+	std::shared_ptr<wavelet_encode_action> weAction;
+	pQuery weQuery;
+	getWaveletEncode(sourceArr[0]->getDesc(), level, wePlan, weAction, weQuery);
+
+	return weAction->execute(sourceArr, weQuery);
+}
+
+pArray wavelet_decode_execute(std::vector<pArray> sourceArr, eleDefault level)
+{
+	std::shared_ptr<wavelet_decode_plan> wdPlan;
+	std::shared_ptr<wavelet_decode_action> wdAction;
+	pQuery wdQuery;
+	getWaveletDecode(sourceArr[0]->getDesc(), level, wdPlan, wdAction, wdQuery);
+
+	return wdAction->execute(sourceArr, wdQuery);
+}
+
 namespace data2D_sc4x4
 {
 pArray wavelet_encode(std::vector<pArray> sourceArr)
@@ -122,10 +142,11 @@ pArray se_decompression(std::vector<pArray> sourceArr)
 {
 	getSourceArrayIfEmpty(sourceArr);
 
+	eleDefault level = maxLevel;
 	std::shared_ptr<se_decompression_plan> sePlan;
 	std::shared_ptr<se_decompression_action> seAction;
 	pQuery seQuery;
-	getSeDecompression(sourceArr[0]->getDesc(), sePlan, seAction, seQuery);
+	getSeDecompression(sourceArr[0]->getDesc(), level, sePlan, seAction, seQuery);
 
 	auto afterArray = seAction->execute(sourceArr, seQuery);
 
@@ -135,6 +156,21 @@ void se_decompression_check(pArray arr)
 {
 
 }
+
+pArray spiht_encode(std::vector<pArray> sourceArr)
+{
+	// Should build mmt before
+	getSourceArrayIfEmpty(sourceArr);
+
+	std::shared_ptr<spiht_encode_plan> spihtPlan;
+	std::shared_ptr<spiht_encode_action> spihtAction;
+	pQuery spihtQuery;
+	getSPIHTEncode(sourceArr[0]->getDesc(), spihtPlan, spihtAction, spihtQuery);
+
+	auto afterArray = spihtAction->execute(sourceArr, spihtQuery);
+
+	return afterArray;
+}
 }	// data2D_sc4x4
 
 namespace data2D_star1024x1024
@@ -143,7 +179,7 @@ pArray wavelet_encode(std::vector<pArray> sourceArr)
 {
 	getSourceArrayIfEmpty(sourceArr);
 
-	eleDefault level = 0;
+	eleDefault level = maxLevel;
 	std::shared_ptr<wavelet_encode_plan> wePlan;
 	std::shared_ptr<wavelet_encode_action> weAction;
 	pQuery weQuery;
@@ -156,7 +192,7 @@ pArray wavelet_decode(std::vector<pArray> sourceArr)
 {
 	getSourceArrayIfEmpty(sourceArr);
 
-	eleDefault level = 0;
+	eleDefault level = maxLevel;
 	std::shared_ptr<wavelet_decode_plan> wdPlan;
 	std::shared_ptr<wavelet_decode_action> wdAction;
 	pQuery wdQuery;
@@ -179,6 +215,37 @@ pArray se_compression(std::vector<pArray> sourceArr)
 	return afterArray;
 }
 
+pArray se_decompression(std::vector<pArray> sourceArr)
+{
+	getSourceArrayIfEmpty(sourceArr);
+
+	eleDefault level = maxLevel;
+	std::shared_ptr<se_decompression_plan> sePlan;
+	std::shared_ptr<se_decompression_action> seAction;
+	pQuery seQuery;
+	getSeDecompression(sourceArr[0]->getDesc(), level, sePlan, seAction, seQuery);
+
+	auto afterArray = seAction->execute(sourceArr, seQuery);
+
+	return afterArray;
+}
 }	// data2D_star1024x1024
+
+namespace data2D_tempTest
+{
+	pArray wavelet_encode(std::vector<pArray> sourceArr)
+	{
+		getSourceArrayIfEmpty(sourceArr);
+		eleDefault level = maxLevel;
+		return wavelet_encode_execute(sourceArr, level);
+	}
+
+	pArray wavelet_decode(std::vector<pArray> sourceArr)
+	{
+		getSourceArrayIfEmpty(sourceArr);
+		eleDefault level = maxLevel;
+		return wavelet_decode_execute(sourceArr, level);
+	}
+}
 }	// caDummy
 }	// msdbk

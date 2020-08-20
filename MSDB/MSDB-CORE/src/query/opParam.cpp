@@ -120,4 +120,24 @@ opParamType opParamIntList::type()
 {
 	return opParamType::INTLIST;
 }
+opParamCoor::opParamCoor(std::shared_ptr<coor> coordinate)
+	: opParam(), coor_(coordinate)
+{
+}
+opParam::void_pointer opParamCoor::getParam()
+{
+	return this->coor_;
+}
+opParamType opParamCoor::type()
+{
+	return opParamType::COOR;
+}
+opParamCoorPlaceholder::opParamCoorPlaceholder()
+	: opParamPlaceholder(), opParamCoor(nullptr)
+{
+}
+opParamType opParamCoorPlaceholder::type()
+{
+	return opParamType::COOR;
+}
 }

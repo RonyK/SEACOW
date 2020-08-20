@@ -11,7 +11,7 @@ spiht_encode_plan::spiht_encode_plan()
 
 const char* spiht_encode_plan::name()
 {
-	return "spiht_encode";
+	return "spiht_encode_plan";
 }
 
 pAction spiht_encode_plan::getAction()

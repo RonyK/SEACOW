@@ -1,14 +1,32 @@
 #include <pch.h>
 #include <op/spiht_encode/spiht_encode_plan.h>
 #include <op/spiht_encode/spiht_encode_action.h>
-#include <compression/testSPIHT.h>
 #include <dummy/spihtDummy.h>
+#include <compression/testCompression.h>
 #include <op/wavelet_encode/wavelet_encode_array.h>
 
 namespace msdb
 {
 namespace caDummy
 {
+namespace data2D_sc4x4
+{
+TEST(query_op_spiht_encode, spiht_encode_sc4x4)
+{
+	// Assing new array id for se compressed array
+	std::vector<pArray> sourceArr;
+	getSourceArrayIfEmpty(sourceArr);
+	sourceArr[0]->setId(sourceArr[0]->getId() + 3);     // 444
+	std::cout << "##############################" << std::endl;
+	std::cout << "Source Arr" << std::endl;
+	sourceArr[0]->print();
+
+	auto arr_spiht_encode = spiht_encode(sourceArr);
+	std::cout << "##############################" << std::endl;
+	std::cout << "Spiht Encoded Arr" << std::endl;
+}
+}	// data2D_sc4x4
+
 namespace data2D_spiht_sc4x4
 {
 TEST(query_op_spiht_encode, spiht_2D_4x4)
@@ -30,13 +48,13 @@ TEST(query_op_spiht_encode, spiht_2D_4x4)
 
 	//////////////////////////////
 	// Set up array
-	arrayId aid = 99441;
+	arrayId aid = 99445;
 	dimensionDescs dimDescs;
 	dimDescs.push_back(std::make_shared<dimensionDesc>(0, "X", 0, 4, 4, 4));
 	dimDescs.push_back(std::make_shared<dimensionDesc>(0, "Y", 0, 4, 4, 4));
 	attributeDescs attrDescs;
 	attrDescs.push_back(std::make_shared<attributeDesc>(0, "A1", eleType::CHAR));
-
+		
 	pArrayDesc arrDesc = std::make_shared<arrayDesc>(aid, "spiht_test_array", dimDescs, attrDescs);
 	auto sourceArr = std::make_shared<wavelet_encode_array>(arrDesc);
 	sourceArr->setMaxLevel(0);
@@ -45,6 +63,7 @@ TEST(query_op_spiht_encode, spiht_2D_4x4)
 
 	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, dim, sP, eP);
 	pChunk sourceChunk = std::make_shared<memChunk>(cDesc);
+	sourceChunk->makeAllBlocks();
 	sourceChunk->bufferCopy(data, sizeof(data));
 	sourceArr->insertChunk(sourceChunk);
 
@@ -81,7 +100,7 @@ TEST(query_op_spiht_encode, spiht_2D_8x8)
 
 	//////////////////////////////
 	// Set up array
-	arrayId aid = 99881;
+	arrayId aid = 99885;
 	dimensionDescs dimDescs;
 	dimDescs.push_back(std::make_shared<dimensionDesc>(1, "X", 0, 8, 8, 8));
 	dimDescs.push_back(std::make_shared<dimensionDesc>(1, "Y", 0, 8, 8, 8));
@@ -97,6 +116,7 @@ TEST(query_op_spiht_encode, spiht_2D_8x8)
 	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, dim, sP, eP);
 	pChunk sourceChunk = std::make_shared<memChunk>(cDesc);
 	sourceChunk->bufferCopy(data, sizeof(data));
+	sourceChunk->makeAllBlocks();
 	sourceArr->insertChunk(sourceChunk);
 
 	//////////////////////////////

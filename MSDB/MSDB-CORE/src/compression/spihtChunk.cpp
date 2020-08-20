@@ -1,10 +1,12 @@
-#pragma once
 #include <compression/spihtChunk.h>
+#include <compression/spihtBlock.h>
+#include <array/memChunkBuffer.h>
+#include <array/memChunk.h>
 
 namespace msdb
 {
 spihtChunk::spihtChunk(pChunkDesc desc)
-	: chunk(desc)
+	: memChunk(desc)
 {
 }
 
@@ -12,22 +14,40 @@ spihtChunk::~spihtChunk()
 {
 }
 
+void spihtChunk::makeBlocks(std::vector<bool> bitmap)
+{
+	if (bitmap[0])
+	{
+		this->block_ = std::make_shared<spihtBlock>(
+			std::make_shared<blockDesc>(
+			0,						// id
+			this->desc_->attrDesc_->type_,	// eType
+			this->desc_->getDims(),	// dims
+			this->desc_->sp_,		// sp
+			this->desc_->ep_,		// ep
+			this->desc_->mSize_		// mSize
+			));
+		pSpihtBlock spBlock = std::static_pointer_cast<spihtBlock>(this->block_);
+		spBlock->setMaxLevel(this->maxLevel_);
+	}
+}
+
 void spihtChunk::makeBuffer()
 {
-	//this->cached_ = std::make_shared<spihtChunkBuffer>();
+	this->cached_ = std::make_shared<memChunkBuffer>();
 }
 
-pChunkItemIterator spihtChunk::getItemIterator()
-{
-	_MSDB_EXCEPTIONS_MSG(MSDB_EC_LOGIC_ERROR, MSDB_ER_NOT_IMPLEMENTED, "spihtChunk has no itemiterator");
-	return nullptr;
-}
-
-pChunkItemRangeIterator spihtChunk::getItemRangeIterator(const coorRange& range)
-{
-	_MSDB_EXCEPTIONS_MSG(MSDB_EC_LOGIC_ERROR, MSDB_ER_NOT_IMPLEMENTED, "spihtChunk has no itemiterator");
-	return nullptr;
-}
+//pChunkItemIterator spihtChunk::getItemIterator()
+//{
+//	_MSDB_EXCEPTIONS_MSG(MSDB_EC_LOGIC_ERROR, MSDB_ER_NOT_IMPLEMENTED, "spihtChunk has no itemiterator");
+//	return nullptr;
+//}
+//
+//pChunkItemRangeIterator spihtChunk::getItemRangeIterator(const coorRange& range)
+//{
+//	_MSDB_EXCEPTIONS_MSG(MSDB_EC_LOGIC_ERROR, MSDB_ER_NOT_IMPLEMENTED, "spihtChunk has no itemiterator");
+//	return nullptr;
+//}
 
 void spihtChunk::serialize(std::ostream& os)
 {
@@ -110,5 +130,9 @@ void spihtChunk::deserialize(std::istream& is)
 	default:
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 	}
+}
+void spihtChunk::setMaxLevel(size_t maxLevel)
+{
+	this->maxLevel_ = maxLevel;
 }
 }	// msdb

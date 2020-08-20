@@ -635,6 +635,24 @@ public:
 	_NODISCARD inline coordinate_type dims() const { return coordinate_type(dSize, this->dims_); }
 	_NODISCARD inline bool isEnd() const { return this->end_; }
 	_NODISCARD inline bool isFront() const { return this->front_; }
+	coordinate<Dty_> getSp() const
+	{
+		return this->sP_;
+	}
+	coordinate<Dty_> getEp() const
+	{
+		return this->eP_;
+	}
+
+	coordinate<Dty_>& getSp()
+	{
+		return this->sP_;
+	}
+	coordinate<Dty_>& getEp()
+	{
+		return this->eP_;
+	}
+
 	size_type getCapacity()
 	{
 		return this->seqCapacity_;

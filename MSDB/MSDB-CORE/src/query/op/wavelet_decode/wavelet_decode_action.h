@@ -26,24 +26,36 @@ private:
 	void attributeDecode(pArray outArr, pArray inArr, pAttributeDesc attrDesc,
 						 pWavelet w, size_t maxLevel, pQuery q)
 	{
-		auto cItr = inArr->getChunkIterator();
+		auto icItr = inArr->getChunkIterator();
 		auto chunkDims = outArr->getDesc()->getDimDescs().getChunkDims();
 		auto blockSpace = outArr->getDesc()->getDimDescs().getBlockSpace();
 		size_t numBlocks = blockSpace.area();
 
-		while (!cItr->isEnd())
+		auto ocItr = outArr->getChunkIterator(iterateMode::ALL);
+		while(!ocItr->isEnd())
 		{
 			std::vector<pChunk> chunks;
-			for (size_t i = 0; i < numBlocks; ++i)
+			auto chunkCoor = ocItr->coor();
+			auto bSpaceItr = coorItr(blockSpace);
+			while (!bSpaceItr.isEnd())
 			{
-				chunks.push_back((**cItr));
-				++(*cItr);
+				auto blockCoor = bSpaceItr.coor();
+				auto inChunkCoor = chunkCoor * blockSpace + blockCoor;
+
+				icItr->moveTo(inChunkCoor);
+				assert((*icItr)->getDesc()->chunkCoor_ == inChunkCoor);
+				chunks.push_back(**icItr);
+
+				++bSpaceItr;
 			}
 			// --------------------
 			// TODO::PARALLEL
 			auto outChunk = this->chunkDecode<Ty_>(chunks, chunkDims, w, maxLevel, q);
 			// --------------------
+			auto cid = outArr->getChunkIdFromChunkCoor(chunkCoor);
+			outChunk->setId(cid);
 			outArr->insertChunk(outChunk);
+			++(*ocItr);
 		}
 	}
 
@@ -86,9 +98,11 @@ private:
 	{
 		// Copy data from inBlock
 		outBlock->copy(inBlock);
-		for (size_t level = 0; level <= maxLevel; ++level)
+		for (size_t level = maxLevel; level != (size_t)-1; --level)
 		{
 			this->levelDecode<Ty_>(outBlock, w, level, q);
+			//std::cout << "Level Decode" << std::endl;
+			//outBlock->print();
 		}
 	}
 
@@ -96,7 +110,7 @@ private:
 	void levelDecode(pBlock outBlock, pWavelet w, size_t level, pQuery q)
 	{
 		dimensionId dSize = outBlock->getDSize();
-		for (dimensionId d = 0; d < dSize; ++d)
+		for (dimensionId d = dSize - 1; d != (dimensionId)-1; --d)
 		{
 			coorRange arrRange = outBlock->getDesc()->dims_ / pow(2, level);
 			this->dimensionDecode<Ty_>(outBlock, arrRange, d, w, q);
@@ -122,7 +136,7 @@ private:
 		assert(approximateRange.getEp()[basisDim] == length / 2);
 		assert(detailRange.getSp()[basisDim] == approximateRange.getEp()[basisDim]);
 
-		auto iit = outBlock->getItemIterator();
+		auto iit = outBlock->getItemRangeIterator(encodeRange);
 		auto ait = outBlock->getItemRangeIterator(approximateRange);
 		auto dit = outBlock->getItemRangeIterator(detailRange);
 
@@ -135,14 +149,23 @@ private:
 		dit->moveToStart();
 
 		// convert to ty
-		double* row = new double[length];
+		Ty_* row = new Ty_[length];
 
 		for (size_t r = 0; r < rows; ++r)
 		{
 			for (size_t i = 0; i < halfLength * 2; i += 2)
 			{
-				row[i] = (**ait).get<Ty_>() + (**dit).get<Ty_>();
-				row[i + 1] = (**ait).get<Ty_>() - (**dit).get<Ty_>();
+				//row[i] = (**ait).get<Ty_>() + (**dit).get<Ty_>();
+				//row[i + 1] = (**ait).get<Ty_>() - (**dit).get<Ty_>();
+
+				Ty_ y0 = (**ait).get<Ty_>();
+				Ty_ y1 = (**dit).get<Ty_>();
+
+				//uint64_t y0 = (**ait).get<Ty_>();
+				//uint64_t y1 = (**dit).get<Ty_>();
+				row[i] = y0 - std::floor(y1 / 2.0);
+				row[i + 1] = y1 + row[i];
+				
 				++(*ait);
 				++(*dit);
 			}
