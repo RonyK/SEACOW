@@ -28,7 +28,7 @@ public:
 	{
 		bs << setw(1);
 		dimension bandDims(this->desc_->dims_);
-		bandDims /= pow(2, this->maxLevel_ + 1);
+		bandDims /= pow(2, this->maxLevel_);
 
 		this->init(bandDims);
 		this->encode_progress<Ty_>(bs, bandDims);
@@ -340,10 +340,11 @@ public:
 	{
 		auto itemItr = this->getItemIterator();
 
+		std::list<coor> TMP_ = this->LSP_;
 		for (size_t i = 0; i < LSP_size; i++)
 		{
-			coor LSP_coor = this->LSP_.front();
-			this->LSP_.pop_front();
+			coor LSP_coor = TMP_.front();
+			TMP_.pop_front();
 			itemItr->moveTo(LSP_coor);
 			auto LSP_data = (**itemItr).get<Ty_>();
 
@@ -362,7 +363,7 @@ public:
 	{
 		bs >> setw(1);
 		dimension bandDims(this->desc_->dims_);
-		bandDims /= pow(2, this->maxLevel_ + 1);
+		bandDims /= pow(2, this->maxLevel_);
 
 		this->init(bandDims);
 		this->decode_progress<Ty_>(bs, bandDims);
@@ -374,6 +375,35 @@ public:
 		auto itemItr = this->getItemIterator();
 		size_t dSize = this->getDSize();
 		dimension blockDims = this->desc_->dims_;
+
+		// set zero
+		coor zero_coor(dSize);	// {0, 0, ...}
+		size_t zero_num = 1;
+		for (int d = (int)dSize - 1; d >= 0; d--)
+		{
+			zero_coor[d] = 0;
+			zero_num *= blockDims[d];
+		}
+
+		for (size_t i = 0; i < zero_num; i++)
+		{
+			itemItr->moveTo(zero_coor);
+			(**itemItr).set<Ty_>(0);
+			
+
+			for (int d = (int)dSize - 1; d >= 0; d--)	// iteration(?)
+			{
+				zero_coor[d] = zero_coor[d] + 1;
+				if (zero_coor[d] == blockDims[d])
+				{
+					zero_coor[d] = 0;
+				}
+				else
+				{
+					break;
+				}
+			}
+		}
 		
 		size_t maxStep = sizeof(Ty_) * 8;
 		Ty_ signBit = (Ty_)0x1 << (maxStep - 1);
@@ -387,7 +417,8 @@ public:
 			stepBit = stepBit >> 1;
 		}
 
-		// abs
+		// abs 
+		// TODO:: unsigned error
 		coor abs_coor(dSize);	// {0, 0, ...}
 		size_t abs_num = 1;
 		for (int d = (int)dSize - 1; d >= 0; d--)
@@ -606,10 +637,11 @@ public:
 		auto itemItr = this->getItemIterator();
 		char codeBit;
 
+		std::list<coor> TMP_ = this->LSP_;
 		for (size_t i = 0; i < LSP_size; i++)
 		{
-			coor LSP_coor = this->LSP_.front();
-			this->LSP_.pop_front();
+			coor LSP_coor = TMP_.front();
+			TMP_.pop_front();
 			itemItr->moveTo(LSP_coor);
 			auto LSP_data = (**itemItr).get<Ty_>();
 

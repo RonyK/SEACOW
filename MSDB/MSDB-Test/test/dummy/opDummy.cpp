@@ -27,6 +27,22 @@ void getWaveletDecode(pArrayDesc sourceArrDesc, eleDefault level,
 	qry = std::get<2>(planAction);
 }
 
+void getSPIHTEncode(pArrayDesc sourceArrDesc, std::shared_ptr<spiht_encode_plan>& plan, std::shared_ptr<spiht_encode_action>& action, pQuery& qry)
+{
+	auto planAction = getSingleArrayParamOperator<spiht_encode_plan, spiht_encode_action, spiht_encode_pset>(sourceArrDesc);
+	plan = std::get<0>(planAction);
+	action = std::get<1>(planAction);
+	qry = std::get<2>(planAction);
+}
+
+void getSPIHTDecode(pArrayDesc sourceArrDesc, std::shared_ptr<spiht_decode_plan>& plan, std::shared_ptr<spiht_decode_action>& action, pQuery& qry)
+{
+	auto planAction = getSingleArrayParamOperator<spiht_decode_plan, spiht_decode_action, spiht_decode_pset>(sourceArrDesc);
+	plan = std::get<0>(planAction);
+	action = std::get<1>(planAction);
+	qry = std::get<2>(planAction);
+}
+
 void getMmtBuild(pArrayDesc sourceArrDesc,
 				 eleDefault& level,
 				 std::shared_ptr<mmt_build_plan>& plan,
@@ -98,14 +114,6 @@ void getSeDecompression(pArrayDesc sourceArrDesc, eleDefault level,
 						pQuery& qry)
 {
 	auto planAction = getLevelArrayParamOperator<se_decompression_plan, se_decompression_action, se_decompression_pset>(sourceArrDesc, level);
-	plan = std::get<0>(planAction);
-	action = std::get<1>(planAction);
-	qry = std::get<2>(planAction);
-}
-
-void getSPIHTEncode(pArrayDesc sourceArrDesc, std::shared_ptr<spiht_encode_plan>& plan, std::shared_ptr<spiht_encode_action>& action, pQuery& qry)
-{
-	auto planAction = getSingleArrayParamOperator<spiht_encode_plan, spiht_encode_action, spiht_encode_pset>(sourceArrDesc);
 	plan = std::get<0>(planAction);
 	action = std::get<1>(planAction);
 	qry = std::get<2>(planAction);

@@ -41,7 +41,6 @@
     <ClInclude Include="test\dummy\dummy.h" />
     <ClInclude Include="test\dummy\dummy_astronomy.h" />
     <ClInclude Include="test\dummy\opDummy.h" />
-    <ClInclude Include="test\dummy\spihtDummy.h" />
     <ClInclude Include="test\index\testMMT.h" />
     <ClInclude Include="test\io\testIO.h" />
     <ClInclude Include="test\pch.h" />
@@ -54,7 +53,6 @@
     <ClCompile Include="test\dummy\dummy.cpp" />
     <ClCompile Include="test\dummy\dummy_astronomy.cpp" />
     <ClCompile Include="test\dummy\opDummy.cpp" />
-    <ClCompile Include="test\dummy\spihtDummy.cpp" />
     <ClCompile Include="test\index\testMMT.cpp" />
     <ClCompile Include="test\io\testIO.cpp" />
     <ClCompile Include="test\pch.cpp">
@@ -74,7 +72,7 @@
     <ClCompile Include="test\query\op\mmt_build\test_mmt_build.cpp" />
     <ClCompile Include="test\query\op\mmt_load\test_mmt_load.cpp" />
     <ClCompile Include="test\query\op\mmt_save\test_mmt_save.cpp" />
-    <ClCompile Include="test\query\op\spiht_encode\test_spiht_encode.cpp" />
+    <ClCompile Include="test\query\op\spiht_encode_decode\test_spiht_encode_decode.cpp" />
     <ClCompile Include="test\query\op\se_compression\test_se_compression.cpp" />
     <ClCompile Include="test\query\op\wavelet_encode\test_wavelet_encode_action.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
