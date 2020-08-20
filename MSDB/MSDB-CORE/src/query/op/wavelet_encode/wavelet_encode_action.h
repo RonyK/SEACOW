@@ -94,7 +94,7 @@ private:
 	}
 
 	template <class Ty_>
-	void levelEncode(pChunk outChunk, coorRange arrRange, 
+	void levelEncode(pChunk outChunk, coorRange& arrRange, 
 					 pWavelet w, size_t level, pQuery q)
 	{
 		dimensionId dSize = outChunk->getDSize();
@@ -106,7 +106,7 @@ private:
 
 	template <class Ty_>
 	void dimensionEncode(pChunk outChunk, 
-						 coorRange arrRange, dimensionId basisDim,
+						 coorRange& arrRange, dimensionId basisDim,
 						 pWavelet w, pQuery q)
 	{
 		size_t length = arrRange.getEp()[basisDim];

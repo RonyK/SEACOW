@@ -19,9 +19,9 @@ using pDimensionDescs = std::shared_ptr<dimensionDescs>;
 class dimensionDescs : public std::vector<pDimensionDesc>, public std::enable_shared_from_this<dimensionDescs>
 {
 public:
-	std::vector<position_t> getDims();
-	std::vector<position_t> getChunkDims();
-	std::vector<position_t> getChunkContainerDims();
+	dimension getDims();
+	dimension getChunkDims();
+	dimension getChunkSpace();
 	dimension getBlockDims();
 	dimension getBlockSpace();
 };

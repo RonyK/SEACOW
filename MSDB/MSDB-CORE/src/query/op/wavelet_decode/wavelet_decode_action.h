@@ -119,7 +119,7 @@ private:
 
 	template <class Ty_>
 	void dimensionDecode(pBlock outBlock,
-						 coorRange encodeRange, dimensionId basisDim,
+						 coorRange& encodeRange, dimensionId& basisDim,
 						 pWavelet w, pQuery q)
 	{
 		size_t length = encodeRange.getEp()[basisDim];

@@ -29,35 +29,28 @@ size_t dimensionDesc::getChunkNum()
 	}
 	return this->getLength() / this->chunkSize_;
 }
-std::vector<position_t> dimensionDescs::getDims()
+dimension dimensionDescs::getDims()
 {
-	std::vector<position_t> dims;
-	for(auto it = this->begin(); it != this->end(); it++)
+	dimension dims(this->size());
+	for (dimensionId d = 0; d < this->size(); ++d)
 	{
-		dims.push_back((*it)->getLength());
-	}
-
-	return dims;
-}
-std::vector<position_t> dimensionDescs::getChunkDims()
-{
-	std::vector<position_t> dims;
-	for (auto it = this->begin(); it != this->end(); it++)
-	{
-		dims.push_back((*it)->chunkSize_);
+		dims[d] = this->at(d)->getLength();
 	}
 	return dims;
 }
-
-std::vector<position_t> dimensionDescs::getChunkContainerDims()
+dimension dimensionDescs::getChunkDims()
 {
-	std::vector<position_t> dims;
-	for (auto it = this->begin(); it != this->end(); it++)
+	dimension dims(this->size());
+	for (dimensionId d = 0; d < this->size(); ++d)
 	{
-		dims.push_back(intDivCeil((*it)->getLength(), (*it)->chunkSize_));
+		dims[d] = this->at(d)->chunkSize_;
 	}
-
 	return dims;
+}
+
+dimension dimensionDescs::getChunkSpace()
+{
+	return this->getDims() / this->getChunkDims();
 }
 
 dimension dimensionDescs::getBlockDims()
@@ -74,9 +67,4 @@ dimension dimensionDescs::getBlockSpace()
 {
 	return dimension(this->getChunkDims()) / this->getBlockDims();
 }
-
-//dimension dimensionDescs::getBlockContainerDims()
-//{
-//	return std::vector<position_t>();
-//}
 }	// msdb

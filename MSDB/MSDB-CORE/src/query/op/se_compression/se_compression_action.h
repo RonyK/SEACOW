@@ -103,7 +103,7 @@ private:
 	}
 
 	template <class Ty_>
-	bit_cnt_type compressBand(pBlock curBlock, const coorRange bandRange)
+	bit_cnt_type compressBand(pBlock curBlock, const coorRange& bandRange)
 	{
 		auto bItemItr = curBlock->getItemRangeIterator(bandRange);
 		bit_cnt_type maxValueBits = 0;
