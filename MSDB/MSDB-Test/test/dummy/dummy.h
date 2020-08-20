@@ -14,8 +14,8 @@ namespace caDummy
 {
 template <class Aty_>
 std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string arrayName,
-											  dimension dims, dimension chunkDims, dimension blockDims,
-											  eleType eType)
+									 dimension dims, dimension chunkDims, dimension blockDims,
+									 eleType eType)
 {
 	dimension chunkNums = dims / chunkDims;
 	dimension blockNums = chunkDims / blockDims;
@@ -45,21 +45,21 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 
 			pChunkDesc cDesc = std::make_shared<chunkDesc>(
 				sourceArr->getChunkIdFromItemCoor(sP),
-				attrDescs[0], 
-				chunkDims, blockDims, 
+				attrDescs[0],
+				chunkDims, blockDims,
 				sP, eP);
 			pChunk sourceChunk = std::make_shared<memBlockChunk>(cDesc);
 			sourceChunk->bufferAlloc();
-			
+
 			// Insert data into chunk
 			auto bItr = sourceChunk->getBlockIterator();
-			while(!bItr->isEnd())
+			while (!bItr->isEnd())
 			{
 				auto blockCoor = bItr->coor();
 				auto it = (**bItr)->getItemIterator();
-				for(int iy = 0; iy < blockDims[0]; ++iy)
+				for (int iy = 0; iy < blockDims[0]; ++iy)
 				{
-					for(int ix = 0; ix < blockDims[1]; ++ix)
+					for (int ix = 0; ix < blockDims[1]; ++ix)
 					{
 						(**it).setChar(static_cast<char>(
 							data[(y * chunkDims[0] + blockCoor[0] * blockDims[0] + iy) * dims[1] + (x * chunkDims[1] + blockCoor[1] * blockDims[1] + ix)]));
@@ -69,23 +69,108 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 				++(*bItr);
 				sourceArr->insertChunk(sourceChunk);
 			}
-
-			//auto it = sourceChunk->getItemIterator();
-			//for (int iy = 0; iy < chunkDims[0]; iy++)
-			//{
-			//	for (int ix = 0; ix < chunkDims[1]; ix++)
-			//	{
-			//		(**it).setChar(static_cast<char>(data[(y * chunkDims[0] + iy) * dims[1] + (x * chunkDims[1] + ix)]));
-			//		++(*it);
-			//	}
-			//}
-			//sourceArr->insertChunk(sourceChunk);
 		}
 	}
 
 	// Build source array
 	return sourceArr;
 }
+
+template <typename Ty_>
+void compArrary(pArray lArr, pArray rArr)
+{
+	auto lAttrDesc = lArr->getDesc()->attrDescs_;
+	auto rAttrDesc = rArr->getDesc()->attrDescs_;
+
+	EXPECT_EQ(lAttrDesc.size(), rAttrDesc.size());
+
+	for (int attrId = 0; attrId < lAttrDesc.size(); ++attrId)
+	{
+		auto lcItr = lArr->getChunkIterator();
+		auto rcItr = rArr->getChunkIterator();
+
+		EXPECT_EQ(lcItr->getCapacity(), rcItr->getCapacity());
+
+		while (!lcItr->isEnd() && !rcItr->isEnd())
+		{
+			EXPECT_TRUE(lcItr->coor() == rcItr->coor());
+			EXPECT_TRUE(*(**lcItr) == *(**rcItr));
+			//if(!(*(**lcItr) == *(**rcItr)))
+			//{
+			//	compChunkItems<Ty_>((**lcItr), (**rcItr));
+			//}
+			//auto lbItr = (*lcItr)->getBlockIterator();
+			//auto rbItr = (*rcItr)->getBlockIterator();
+
+			//while (!lbItr->isEnd() && !rbItr->isEnd())
+			//{
+			//	auto liItr = (*lbItr)->getItemIterator();
+			//	auto riItr = (*rbItr)->getItemIterator();
+
+			//	while (!liItr->isEnd() && !riItr->isEnd())
+			//	{
+			//		Ty_ li = (**liItr).get<Ty_>();
+			//		Ty_ ri = (**riItr).get<Ty_>();
+
+			//		EXPECT_EQ(li, ri);
+
+			//		++(*liItr);
+			//		++(*riItr);
+			//	}
+
+			//	EXPECT_EQ(liItr->isEnd(), riItr->isEnd());
+
+			//	++(*lbItr);
+			//	++(*rbItr);
+			//}
+
+			//EXPECT_EQ(lbItr->isEnd(), rbItr->isEnd());
+
+			++(*lcItr);
+			++(*rcItr);
+		}
+
+		EXPECT_EQ(lcItr->isEnd(), rcItr->isEnd());
+	}
+}
+
+template <typename Ty_>
+void compChunkItems(pChunk lChunk, pChunk rChunk)
+{
+	std::cout << "==============================" << std::endl;
+	lChunk->print();
+	std::cout << "==============================" << std::endl;
+	rChunk->print();
+	std::cout << "==============================" << std::endl;
+	EXPECT_TRUE(false);
+	//auto lbItr = lChunk->getBlockIterator();
+	//auto rbItr = rChunk->getBlockIterator();
+
+	//while (!lbItr->isEnd() && !rbItr->isEnd())
+	//{
+	//	auto liItr = (*lbItr)->getItemIterator();
+	//	auto riItr = (*rbItr)->getItemIterator();
+
+	//	while (!liItr->isEnd() && !riItr->isEnd())
+	//	{
+	//		Ty_ li = (**liItr).get<Ty_>();
+	//		Ty_ ri = (**riItr).get<Ty_>();
+
+	//		EXPECT_EQ(li, ri);
+
+	//		++(*liItr);
+	//		++(*riItr);
+	//	}
+
+	//	EXPECT_EQ(liItr->isEnd(), riItr->isEnd());
+
+	//	++(*lbItr);
+	//	++(*rbItr);
+	//}
+
+	//EXPECT_EQ(lbItr->isEnd(), rbItr->isEnd());
+}
+
 
 using dim_type = position_t;
 // signed char
@@ -122,6 +207,39 @@ std::vector<std::shared_ptr<Aty_>> getSourceArray()
 
 	std::vector<std::shared_ptr<Aty_>> arrs(
 		{ get2DCharArray<Aty_>(data, aid, "data2D_sc4x4", dims, chunkDims, blockDims, eleType::CHAR) });
+	return arrs;
+}
+
+void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
+}
+
+namespace data2D_tempTest
+{
+using value_type = char;
+
+static const size_t dataLength = 16;
+static const size_t dimX = 4;
+static const size_t dimY = 4;
+static const size_t maxLevel = 0;
+static const arrayId aid = 441;
+
+extern std::vector<dim_type> dims;
+extern std::vector<dim_type> chunkNums;
+extern std::vector<dim_type> chunkDims;
+extern std::vector<dim_type> blockNums;
+extern std::vector<dim_type> blockDims;
+
+void getDummy(value_type* output, size_t length);
+
+template<class Aty_ = arrayBase>
+std::vector<std::shared_ptr<Aty_>> getSourceArray()
+{
+	// Get Dummy data
+	value_type data[dataLength];
+	getDummy(data, dataLength);
+
+	std::vector<std::shared_ptr<Aty_>> arrs(
+		{ get2DCharArray<Aty_>(data, aid, "data2D_tempTest", dims, chunkDims, blockDims, eleType::CHAR) });
 	return arrs;
 }
 
@@ -184,7 +302,7 @@ void getDummy(char* output, size_t length);
 void getWTDummy(char* output, size_t length);
 void getExDummy(char* output, size_t length);
 void getExMMTBuilded(char* output, size_t length);
-}
+}	// data2D_si8x8
 }
 }
 

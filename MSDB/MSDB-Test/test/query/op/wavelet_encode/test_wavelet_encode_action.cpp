@@ -173,5 +173,56 @@ TEST(query_op_wavelet_encode, waveletHaarSimple_sc4x4)
 	//wavelet_decode_check(wdArr);
 }
 }	// data2D_sc4x4
+
+namespace data2D_star1024x1024
+{
+TEST(query_op_wavelet_encode, wavelet_encode_star1024x1024)
+{
+	bool printFlag = false;
+
+	std::vector<pArray> sourceArr;
+	getSourceArrayIfEmpty(sourceArr);
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "Source Arr" << std::endl;
+		sourceArr[0]->print();
+	}
+
+	auto weArr = wavelet_encode(sourceArr);
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "WE Arr" << std::endl;
+		weArr->print();
+	}
+
+	auto wdArr = wavelet_decode(std::vector<pArray>({ weArr }));
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "WD Arr" << std::endl;
+		wdArr->print();
+	}
+
+	compArrary<value_type>(sourceArr[0], wdArr);
+	//EXPECT_TRUE(false);
+}
+}	// data2D_star1024x1024
+
+namespace data2D_tempTest
+{
+TEST(query_op_wavelet_encode, wavelet_encode_testTemp)
+{
+	std::vector<pArray> sourceArr;
+	getSourceArrayIfEmpty(sourceArr);
+	auto weArr = wavelet_encode(sourceArr);
+	weArr->print();
+	auto wdArr = wavelet_decode(std::vector<pArray>({ weArr }));
+	wdArr->print();
+
+	compArrary<value_type>(sourceArr[0], wdArr);
+}
+}	// data2D_tempTest
 }	// caDummy
 }	// msdb

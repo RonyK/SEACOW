@@ -180,6 +180,7 @@ pArray mmt_delta_decode(std::vector<pArray> sourceArr)
 
 	return afterArray;
 }
+
 std::shared_ptr<mmt_delta_encode_array> get_mmt_delta_encode_array()
 {
 	auto arr_1 = mmt_build();
@@ -259,7 +260,7 @@ pArray mmt_build(std::vector<pArray> sourceArr)
 {
 	getSourceArrayIfEmpty(sourceArr);
 
-	eleDefault level = 5;
+	eleDefault level = mmtLevel;
 	std::shared_ptr<mmt_build_plan> mmtPlan;
 	std::shared_ptr<mmt_build_action> mmtAction;
 	pQuery mmtQuery;
@@ -283,6 +284,22 @@ pArray mmt_delta_encode(std::vector<pArray> sourceArr)
 
 	auto afterArray = mmtAction->execute(sourceArr, mmtQuery);
 	std::cout << "mmt delta encode" << std::endl;
+
+	return afterArray;
+}
+
+pArray mmt_delta_decode(std::vector<pArray> sourceArr)
+{
+	// Should build mmt before
+	getSourceArrayIfEmpty(sourceArr);
+
+	std::shared_ptr<mmt_delta_decode_plan> mmtPlan;
+	std::shared_ptr<mmt_delta_decode_action> mmtAction;
+	pQuery mmtQuery;
+	getMmtDeltaDecode(sourceArr[0]->getDesc(), mmtPlan, mmtAction, mmtQuery);
+
+	auto afterArray = mmtAction->execute(sourceArr, mmtQuery);
+	std::cout << "mmt delta decode" << std::endl;
 
 	return afterArray;
 }

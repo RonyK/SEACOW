@@ -70,7 +70,7 @@ void getSeCompression(pArrayDesc sourceArrDesc,
 					  std::shared_ptr<se_compression_action>& action,
 					  pQuery& qry);
 
-void getSeDecompression(pArrayDesc sourceArrDesc,
+void getSeDecompression(pArrayDesc sourceArrDesc, eleDefault level,
 						std::shared_ptr<se_decompression_plan>& plan,
 						std::shared_ptr<se_decompression_action>& action,
 						pQuery& qry);

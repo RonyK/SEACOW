@@ -92,12 +92,12 @@ void getSeCompression(pArrayDesc sourceArrDesc,
 	qry = std::get<2>(planAction);
 }
 
-void getSeDecompression(pArrayDesc sourceArrDesc,
+void getSeDecompression(pArrayDesc sourceArrDesc, eleDefault level,
 						std::shared_ptr<se_decompression_plan>& plan,
 						std::shared_ptr<se_decompression_action>& action,
 						pQuery& qry)
 {
-	auto planAction = getSingleArrayParamOperator<se_decompression_plan, se_decompression_action, se_decompression_pset>(sourceArrDesc);
+	auto planAction = getLevelArrayParamOperator<se_decompression_plan, se_decompression_action, se_decompression_pset>(sourceArrDesc, level);
 	plan = std::get<0>(planAction);
 	action = std::get<1>(planAction);
 	qry = std::get<2>(planAction);

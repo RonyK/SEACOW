@@ -211,6 +211,42 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
 }
 }
 
+namespace data2D_tempTest
+{
+std::vector<dim_type> dims = { dimY, dimX };
+std::vector<dim_type> chunkNums = { 2, 2 };
+std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
+
+std::vector<dim_type> blockNums = { 1, 1 };
+std::vector<dim_type> blockDims = { chunkDims[0] / blockNums[0], chunkDims[1] / blockNums[1] };
+
+void getDummy(value_type* output, size_t length)
+{
+	const static value_type arr[][4] = {
+		{-122,	-120,	-118,	-118},
+		{-120,	-124,	-123,	-123},
+		{-84,	127,	-123,	-123},
+		{-92,	-19,	-111,	-123}
+	};
+
+	for (int y = 0; y < 4; y++)
+	{
+		for (int x = 0; x < 4; x++)
+		{
+			output[y * 4 + x] = arr[y][x];
+		}
+	}
+}
+
+void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
+{
+	if (sourceArr.empty())
+	{
+		sourceArr = getSourceArray();
+	}
+}
+}
+
 namespace data2D_sc8x8
 {
 std::vector<dim_type> dims = { 8, 8 };
