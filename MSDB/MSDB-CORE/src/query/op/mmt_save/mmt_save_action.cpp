@@ -26,7 +26,7 @@ pArray mmt_save_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 	pArray arr = inputArrays[0];
 	arrayId arrId = arr->getId();
 
-	for (auto attr : arr->getDesc()->attrDescs_)
+	for (auto attr : *arr->getDesc()->attrDescs_)
 	{
 		auto arrIndex = arrayMgr::instance()->getAttributeIndex(arrId, attr->id_);
 		if(arrIndex->getType() != attrIndexType::MMT)

@@ -1,4 +1,5 @@
 #include <pch.h>
+#include <array/memBlockArray.h>
 #include <array/memChunk.h>
 #include <array/memChunkBuffer.h>
 #include <array/dimensionDesc.h>
@@ -25,19 +26,19 @@ TEST(query_op_wavelet_encode, waveletHaar_1D)
 
 	//////////////////////////////
 	// Set up array
-	dimensionDescs dimDescs;
-	dimDescs.push_back(std::make_shared<dimensionDesc>(0, "X", 0, 8, 8, 8));
-	attributeDescs attrDescs;
-	attrDescs.push_back(std::make_shared<attributeDesc>(0, "A1", eleType::DOUBLE));
+	pDimensionDescs dimDescs = std::make_shared<dimensionDescs>();
+	dimDescs->push_back(std::make_shared<dimensionDesc>(0, "X", 0, 8, 8, 8));
+	pAttributeDescs attrDescs = std::make_shared<attributeDescs>();
+	attrDescs->push_back(std::make_shared<attributeDesc>(0, "A1", eleType::DOUBLE));
 
 	pArrayDesc arrDesc = std::make_shared<arrayDesc>(0, "wavelet_test_array", dimDescs, attrDescs);
-	pArray sourceArr = std::make_shared<arrayBase>(arrDesc);
+	pArray sourceArr = std::make_shared<memBlockArray>(arrDesc);
 	std::vector<pArray> arrs = { sourceArr };
 
-	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, dim, sP, eP);
+	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs->at(0), dim, dim, sP, eP);
 	pChunk sourceChunk = std::make_shared<memChunk>(cDesc);
 	sourceChunk->bufferCopy(data, sizeof(data));
-	sourceArr->insertChunk(sourceChunk);
+	sourceArr->insertChunk(0, sourceChunk);
 
 	//////////////////////////////
 	// Encoding
@@ -106,20 +107,20 @@ TEST(query_op_wavelet_encode, waveletHaarSimple_2D)
 
 	//////////////////////////////
 	// Set up array
-	dimensionDescs dimDescs;
-	dimDescs.push_back(std::make_shared<dimensionDesc>(0, "X", 0, 4, 4, 4));
-	dimDescs.push_back(std::make_shared<dimensionDesc>(0, "Y", 0, 4, 4, 4));
-	attributeDescs attrDescs;
-	attrDescs.push_back(std::make_shared<attributeDesc>(0, "A1", eleType::DOUBLE));
+	pDimensionDescs dimDescs;
+	dimDescs->push_back(std::make_shared<dimensionDesc>(0, "X", 0, 4, 4, 4));
+	dimDescs->push_back(std::make_shared<dimensionDesc>(0, "Y", 0, 4, 4, 4));
+	pAttributeDescs attrDescs;
+	attrDescs->push_back(std::make_shared<attributeDesc>(0, "A1", eleType::DOUBLE));
 
 	pArrayDesc arrDesc = std::make_shared<arrayDesc>(0, "wavelet_test_array", dimDescs, attrDescs);
-	pArray sourceArr = std::make_shared<arrayBase>(arrDesc);
+	pArray sourceArr = std::make_shared<memBlockArray>(arrDesc);
 	std::vector<pArray> arrs = { sourceArr };
 
-	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs[0], dim, dim, sP, eP);
+	pChunkDesc cDesc = std::make_shared<chunkDesc>(0, attrDescs->at(0), dim, dim, sP, eP);
 	pChunk sourceChunk = std::make_shared<memChunk>(cDesc);
 	sourceChunk->bufferCopy(data, sizeof(data));
-	sourceArr->insertChunk(sourceChunk);
+	sourceArr->insertChunk(0, sourceChunk);
 
 	//////////////////////////////
 	// Encoding

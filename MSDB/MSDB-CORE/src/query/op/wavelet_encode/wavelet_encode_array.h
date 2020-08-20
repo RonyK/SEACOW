@@ -2,14 +2,14 @@
 #ifndef _MSDB_OP_WAVELET_ENCODE_ARRAY_H_
 #define _MSDB_OP_WAVELET_ENCODE_ARRAY_H_
 
-#include <array/array.h>
+#include <array/memArray.h>
 
 namespace msdb
 {
-class wavelet_encode_array : public arrayBase
+class wavelet_encode_array : public memArray
 {
 public:
-	using base_type = arrayBase;
+	using base_type = memArray;
 
 public:
 	wavelet_encode_array(pArrayDesc desc);
@@ -50,6 +50,10 @@ public:
 	 * ┃   ┃   ┃	  └─┚ └─┚
 	 * ┗━━━┻━━━┛
 	 */
+
+public:
+	virtual pChunk makeChunk(const attributeId attrId, const chunkId cId) override;
+	virtual pChunk makeChunk(const chunkDesc& desc) override;
 
 public:
 	size_t getMaxLevel();

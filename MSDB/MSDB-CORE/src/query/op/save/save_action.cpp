@@ -21,7 +21,7 @@ pArray save_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 	pArray sourceArr = inputArrays[0];
 	arrayId arrId = sourceArr->getId();
 
-	for (auto attr : sourceArr->getDesc()->attrDescs_)
+	for (auto attr : *sourceArr->getDesc()->attrDescs_)
 	{
 		auto cit = sourceArr->getChunkIterator(iterateMode::EXIST);
 

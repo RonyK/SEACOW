@@ -46,7 +46,7 @@ pArrayDesc wavelet_decode_pset::inferSchema()
 	//// Reset chunkSize
 	//auto chunkSizes = std::static_pointer_cast<opParamIntList::paramType>(
 	//	this->params_[2]->getParam());
-	//for (dimensionId d = 0; d < aInferDesc->dimDescs_.size(); ++d)
+	//for (dimensionId d = 0; d < aInferDesc->dimDescs_->size(); ++d)
 	//{
 	//	auto dDesc = aInferDesc->dimDescs_[d];
 	//	dDesc->chunkSize_ = chunkSizes->at(d);

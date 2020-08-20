@@ -13,9 +13,14 @@ namespace msdb
 class attributeDesc;
 using pAttributeDesc = std::shared_ptr<attributeDesc>;
 
+class attributeDescs;
+using pAttributeDescs = std::shared_ptr<attributeDescs>;
+
 class attributeDescs : public std::vector<pAttributeDesc>, public std::enable_shared_from_this<attributeDescs>
 {
-
+public:
+	attributeDescs();
+	attributeDescs(const attributeDescs& mit);
 };
 
 class attributeDesc

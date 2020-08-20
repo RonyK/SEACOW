@@ -56,9 +56,9 @@ pArrayDesc wavelet_encode_pset::inferSchema()
 	
 	size_t ratio = std::pow(2, level);
 	
-	for(dimensionId d = 0; d < aInferDesc->dimDescs_.size(); d++)
+	for(dimensionId d = 0; d < aInferDesc->dimDescs_->size(); d++)
 	{
-		auto dDesc = aInferDesc->dimDescs_[d];
+		auto dDesc = aInferDesc->dimDescs_->at(d);
 		dDesc->chunkSize_ = intDivCeil(dDesc->chunkSize_, ratio);
 	}
 

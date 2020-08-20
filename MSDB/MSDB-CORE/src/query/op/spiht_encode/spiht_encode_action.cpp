@@ -27,7 +27,7 @@ pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 	auto wArray = std::static_pointer_cast<wavelet_encode_array>(sourceArr);
 	arrayId arrId = sourceArr->getId();
 
-	for (auto attr : sourceArr->getDesc()->attrDescs_)
+	for (auto attr : *sourceArr->getDesc()->attrDescs_)
 	{
 		auto cit = sourceArr->getChunkIterator(iterateMode::EXIST);
 		while (!cit->isEnd())

@@ -47,7 +47,7 @@ TEST_F(query_op_mmt_save, mmt_serialize_sc4x4)
     pArray arr = sourceArr[0];
     arrayId arrId = arr->getId();
 
-    for (auto attr : arr->getDesc()->attrDescs_)
+    for (auto attr : *arr->getDesc()->attrDescs_)
     {
         auto arrIndex = arrayMgr::instance()->getAttributeIndex(arrId, attr->id_);
         if (arrIndex->getType() != attrIndexType::MMT)

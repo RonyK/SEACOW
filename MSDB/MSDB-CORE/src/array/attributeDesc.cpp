@@ -9,4 +9,15 @@ attributeDesc::attributeDesc(attributeId id, std::string name, eleType type)
 	this->typeSize_ = getEleSize(type);
 }
 
+attributeDescs::attributeDescs()
+{
+}
+
+attributeDescs::attributeDescs(const attributeDescs& mit)
+{
+	for (auto desc : mit)
+	{
+		this->push_back(std::make_shared<attributeDesc>(*desc));
+	}
+}
 }

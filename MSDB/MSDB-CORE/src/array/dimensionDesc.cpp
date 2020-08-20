@@ -29,6 +29,16 @@ size_t dimensionDesc::getChunkNum()
 	}
 	return this->getLength() / this->chunkSize_;
 }
+dimensionDescs::dimensionDescs()
+{
+}
+dimensionDescs::dimensionDescs(const dimensionDescs& mit)
+{
+	for(auto desc : mit)
+	{
+		this->push_back(std::make_shared<dimensionDesc>(*desc));
+	}
+}
 dimension dimensionDescs::getDims()
 {
 	dimension dims(this->size());

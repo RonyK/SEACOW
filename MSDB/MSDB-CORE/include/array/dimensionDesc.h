@@ -19,6 +19,10 @@ using pDimensionDescs = std::shared_ptr<dimensionDescs>;
 class dimensionDescs : public std::vector<pDimensionDesc>, public std::enable_shared_from_this<dimensionDescs>
 {
 public:
+	dimensionDescs();
+	dimensionDescs(const dimensionDescs& mit);
+
+public:
 	dimension getDims();
 	dimension getChunkDims();
 	dimension getChunkSpace();
@@ -50,6 +54,5 @@ public:
 	position_t chunkSize_;
 	position_t blockSize_;
 };
-}
-
-#endif
+}		// msdb
+#endif	// _MSDB_DIMENSIONDESC_H_

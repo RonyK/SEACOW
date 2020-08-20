@@ -1,4 +1,5 @@
 #include <op/between/between_action.h>
+#include <array/memBlockArray.h>
 
 namespace msdb
 {
@@ -18,11 +19,11 @@ const char* between_action::name()
 pArray between_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 {
 	pArray inputArray = inputArrays[0];
-	pArray outputArray = std::make_shared<arrayBase>(inputArray->getDesc());
+	pArray outputArray = std::make_shared<memBlockArray>(this->getArrayDesc());
 	std::shared_ptr<coor> sp = std::static_pointer_cast<coor>(this->params_[1]->getParam());
 	std::shared_ptr<coor> ep = std::static_pointer_cast<coor>(this->params_[2]->getParam());
 
-	auto chunkItr = inputArray->getChunkIterator();
+	auto chunkItr = outputArray->getChunkIterator();
 	while (!chunkItr->isEnd())
 	{
 		auto blockItr = (**chunkItr)->getBlockIterator();
@@ -42,6 +43,6 @@ pArray between_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 		}
 		++(*chunkItr);
 	}
-	return inputArray;
+	return outputArray;
 }
 }

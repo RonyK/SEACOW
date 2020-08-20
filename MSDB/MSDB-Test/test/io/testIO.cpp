@@ -84,7 +84,7 @@ void load_test(pArray arr)
 	auto arrId = arr->getId();
 
 	size_t items = 0;
-	for (auto attr : arr->getDesc()->attrDescs_)
+	for (auto attr : *arr->getDesc()->attrDescs_)
 	{
 		value_type expected[dataLength];
 		getChunkDummy(expected, dataLength);

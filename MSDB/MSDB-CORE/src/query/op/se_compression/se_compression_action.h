@@ -42,7 +42,7 @@ private:
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_USER_QUERY_ERROR, MSDB_ER_ATTR_INDEX_TYPE_DIFF));
 		}
 		auto mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
-		dimension chunkDim(inArr->getDesc()->getDimDescs().getChunkDims());
+		dimension chunkDim(inArr->getDesc()->getDimDescs()->getChunkDims());
 
 		if((Ty_)-1 < 0)
 		{

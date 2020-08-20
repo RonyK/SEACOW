@@ -19,10 +19,10 @@ pArray se_decompression_action::execute(std::vector<pArray>& inputArrays, pQuery
 	assert(inputArrays.size() == 1);
 
 	auto arrDesc = this->getArrayDesc();
-	dimension origianlChunkDims = arrDesc->getDimDescs().getChunkDims();
-	for(dimensionId d = 0; d < arrDesc->getDSize(); ++d)
+	dimension origianlChunkDims = arrDesc->getDimDescs()->getChunkDims();
+	for (dimensionId d = 0; d < arrDesc->getDSize(); ++d)
 	{
-		arrDesc->getDimDescs()[d]->chunkSize_ = arrDesc->getDimDescs()[d]->blockSize_;
+		arrDesc->getDimDescs()->at(d)->chunkSize_ = arrDesc->getDimDescs()->at(d)->blockSize_;
 	}
 
 	pStableElement ele = std::static_pointer_cast<stableElement>(this->params_[1]->getParam());
@@ -34,7 +34,7 @@ pArray se_decompression_action::execute(std::vector<pArray>& inputArrays, pQuery
 	outArr->setOrigianlChunkDims(origianlChunkDims);
 	auto arrId = outArr->getId();
 
-	for (auto attrDesc : outArr->getDesc()->attrDescs_)
+	for (auto attrDesc : *outArr->getDesc()->attrDescs_)
 	{
 		switch (attrDesc->type_)
 		{
@@ -73,11 +73,12 @@ pArray se_decompression_action::execute(std::vector<pArray>& inputArrays, pQuery
 	return std::static_pointer_cast<arrayBase>(outArr);;
 }
 
-pSeChunk se_decompression_action::makeInChunk(std::shared_ptr<wavelet_encode_array> arr, pAttributeDesc attrDesc,
-											   chunkId cid, coor chunkCoor)
+pSeChunk se_decompression_action::makeInChunk(std::shared_ptr<wavelet_encode_array> arr,
+											  pAttributeDesc attrDesc,
+											  chunkId cid, coor chunkCoor)
 {
-	dimension chunkDims = arr->getDesc()->getDimDescs().getChunkDims();
-	dimension blockDims = arr->getDesc()->getDimDescs().getBlockDims();
+	dimension chunkDims = arr->getDesc()->getDimDescs()->getChunkDims();
+	dimension blockDims = arr->getDesc()->getDimDescs()->getBlockDims();
 
 	coor sp = chunkDims * chunkCoor;
 	coor ep = sp + chunkDims;
@@ -86,8 +87,8 @@ pSeChunk se_decompression_action::makeInChunk(std::shared_ptr<wavelet_encode_arr
 
 	dimension originalSourceDims = arr->getOrigianlChunkDims();
 
-	auto outDesc = std::make_shared<chunkDesc>(cid, attrDesc, 
-											   chunkDims, blockDims, 
+	auto outDesc = std::make_shared<chunkDesc>(cid, std::make_shared<attributeDesc>(*attrDesc),
+											   chunkDims, blockDims,
 											   sp, ep, mSize);
 	pSeChunk outChunk = std::make_shared<seChunk>(outDesc);
 	outChunk->setLevel(arr->getMaxLevel());

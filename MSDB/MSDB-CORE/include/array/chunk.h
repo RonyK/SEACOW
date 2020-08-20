@@ -10,6 +10,7 @@
 #include <array/blockContainer.h>
 #include <io/serializable.h>
 #include <io/bitstream.h>
+#include <index/bitmap.h>
 #include <memory>
 
 namespace msdb
@@ -129,6 +130,7 @@ public:
 
 protected:
 	size_type blockCapacity_;
+	bitmap blockBitmap_;
 
 //////////////////////////////
 // Item Iterators

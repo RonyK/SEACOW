@@ -24,7 +24,7 @@ pArray mmt_delta_decode_action::execute(std::vector<pArray>& inputArrays, pQuery
 
 	auto deltaArr = std::make_shared<mmt_delta_decode_array>(this->getArrayDesc());
 
-	for (auto attr : sourceArr->getDesc()->attrDescs_)
+	for (auto attr : *sourceArr->getDesc()->attrDescs_)
 	{
 		switch (attr->type_)
 		{

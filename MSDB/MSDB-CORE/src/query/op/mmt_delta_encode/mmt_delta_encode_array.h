@@ -2,16 +2,16 @@
 #ifndef _MSDB_OPMMT_DELTA_ENCODE_ARRAY_H_
 #define _MSDB_OPMMT_DELTA_ENCODE_ARRAY_H_
 
-#include <array/array.h>
+#include <array/memBlockArray.h>
 #include <index/mmt.h>
 #include <map>
 
 namespace msdb
 {
-class mmt_delta_encode_array : public arrayBase
+class mmt_delta_encode_array : public memBlockArray
 {
 public:
-	using base_type = arrayBase;
+	using base_type = memBlockArray;
 
 public:
 	mmt_delta_encode_array(pArrayDesc desc);

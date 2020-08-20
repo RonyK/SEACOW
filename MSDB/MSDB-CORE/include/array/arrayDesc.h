@@ -20,13 +20,13 @@ class arrayDesc : public std::enable_shared_from_this<arrayDesc>
 public:
 	arrayDesc();
 	arrayDesc(const arrayId aid, const std::string arrayName, 
-			  const dimensionDescs& dimDescs, const attributeDescs& attrDescs);
+			  pDimensionDescs dimDescs, pAttributeDescs attrDescs);
 	arrayDesc(const arrayDesc& mit);
 	~arrayDesc();
 
 public:
-	dimensionDescs& getDimDescs();
-	attributeDescs& getAttrDescs();
+	pDimensionDescs getDimDescs();
+	pAttributeDescs getAttrDescs();
 
 	size_t getDSize();
 
@@ -34,8 +34,8 @@ public:
 	arrayId id_;
 	std::string name_;
 
-	dimensionDescs dimDescs_;
-	attributeDescs attrDescs_;
+	pDimensionDescs dimDescs_;
+	pAttributeDescs attrDescs_;
 };
 }
 
