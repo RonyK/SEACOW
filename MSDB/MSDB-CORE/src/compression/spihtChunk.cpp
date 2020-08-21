@@ -14,6 +14,11 @@ spihtChunk::~spihtChunk()
 {
 }
 
+void spihtChunk::initBufferZero()
+{
+	memset(this->cached_->getData(), 0, this->desc_->mSize_);
+}
+
 void spihtChunk::makeBlocks(std::vector<bool> bitmap)
 {
 	if (bitmap[0])

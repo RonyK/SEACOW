@@ -18,6 +18,8 @@ public:
 	spihtChunk(pChunkDesc desc);
 	virtual ~spihtChunk();
 
+	void initBufferZero();
+
 protected:
 	virtual void makeBlocks(std::vector<bool> bitmap);
 	virtual void makeBuffer();

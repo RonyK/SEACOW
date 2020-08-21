@@ -26,15 +26,15 @@ TEST(query_op_spiht_encode_decode, spiht_encode_decode_star1024x1024)
 	//arr_wavelet_decode2->print();
 	//EXPECT_TRUE(false);
 
-	sourceArr[0]->print();
+	// sourceArr[0]->print();
 	auto arr_wavelet_encode = wavelet_encode(sourceArr);
-	arr_wavelet_encode->print();
+	// arr_wavelet_encode->print();
 	auto arr_spiht_encode = spiht_encode(std::vector<pArray>({ arr_wavelet_encode }));
-	//arr_spiht_encode->print();
+	
 	auto arr_spiht_decode = spiht_decode(std::vector<pArray>({ arr_spiht_encode }));
-	arr_spiht_decode->print();
+	// arr_spiht_decode->print();
 	auto arr_wavelet_decode = wavelet_decode(std::vector<pArray>({ arr_spiht_decode }));
-	arr_wavelet_decode->print();
+	// arr_wavelet_decode->print();
 	compArrary<value_type>(sourceArr[0], arr_wavelet_decode);
 	//EXPECT_TRUE(false);
 }
