@@ -18,7 +18,7 @@ public:
 	virtual pAction getAction() override;
 };
 
-class se_decompression_pset : public opParamSet
+class se_decompression_pset : public opArrayParamSet
 {
 public:
 	se_decompression_pset(parameters& pSet);

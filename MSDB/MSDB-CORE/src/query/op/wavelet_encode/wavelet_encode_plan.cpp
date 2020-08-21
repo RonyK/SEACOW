@@ -26,22 +26,10 @@ pAction wavelet_encode_plan::getAction()
 
 //////////////////////////////
 // pset
-wavelet_encode_pset::wavelet_encode_pset()
-	: opParamSet()
-{
-}
-
 wavelet_encode_pset::wavelet_encode_pset(parameters& pSet)
-	: opParamSet(pSet)
+	: opArrayParamSet(pSet)
 {
 }
-
-//void wavelet_encode_pset::initParams()
-//{
-//	auto a = new opParamArrayPlaceholder();
-//	this->params_.push_back(_MSDB_MAKE_PARAM(opParamArrayPlaceholder));		// Source array
-//	this->params_.push_back(_MSDB_MAKE_PARAM(opParamConstPlaceholder));		// Target level
-//}
 
 pArrayDesc wavelet_encode_pset::inferSchema()
 {
@@ -64,5 +52,4 @@ pArrayDesc wavelet_encode_pset::inferSchema()
 
 	return aInferDesc;
 }
-
 }

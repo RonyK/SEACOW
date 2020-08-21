@@ -23,6 +23,7 @@ public:
 	void setParamSet(pParamSet paramSet);
 	//virtual void initParamSets() = 0;
 	virtual pArrayDesc inferSchema();
+	virtual pBitmap inferBitmap();
 	//void addParamSet(pParamSet pSet);
 	virtual pAction getAction() = 0;
 	parameters getParam();
@@ -30,6 +31,31 @@ public:
 private:
 	pParamSet myParamSet_;
 	//std::vector<pParamSet> paramSets_;
+};
+
+class opParamPlan : public opParam
+{
+public:
+	using paramType = opPlan;
+
+public:
+	opParamPlan(pPlan plan);
+
+public:
+	virtual opParam::void_pointer getParam();
+	virtual opParamType type();
+
+private:
+	pPlan plan_;
+};
+
+class opParamPlanPlaceholder : public opParamPlaceholder, public opParamPlan
+{
+public:
+	opParamPlanPlaceholder();
+
+public:
+	virtual opParamType type();
 };
 }
 

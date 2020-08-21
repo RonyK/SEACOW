@@ -22,16 +22,7 @@ pAction se_compression_plan::getAction()
 }
 
 se_compression_pset::se_compression_pset(parameters& pSet)
-	: opParamSet(pSet)
+	: opArrayParamSet(pSet)
 {
-}
-
-pArrayDesc se_compression_pset::inferSchema()
-{
-	assert(this->params_.size() == 1);
-	assert(this->params_[0]->type() == opParamType::ARRAY);		// source array
-
-	pArrayDesc aSourceDesc = std::static_pointer_cast<opParamArray::paramType>(this->params_[0]->getParam());
-	return std::make_shared<opParamArray::paramType>(*aSourceDesc);
 }
 }	// msdb

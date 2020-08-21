@@ -20,13 +20,8 @@ namespace msdb
 	}
 
 	// pset
-	between_pset::between_pset()
-		: opParamSet()
-	{
-	}
-
 	between_pset::between_pset(parameters& pSet)
-		: opParamSet(pSet)
+		: opArrayParamSet(pSet)
 	{
 	}
 

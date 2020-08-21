@@ -20,24 +20,8 @@ pAction spiht_decode_plan::getAction()
 }
 
 // pset
-spiht_decode_pset::spiht_decode_pset()
-	: opParamSet()
-{
-}
-
 spiht_decode_pset::spiht_decode_pset(parameters& pSet)
-	: opParamSet(pSet)
+	: opArrayParamSet(pSet)
 {
-}
-
-pArrayDesc spiht_decode_pset::inferSchema()
-{
-	assert(this->params_.size() == 1);
-	assert(this->params_[0]->type() == opParamType::ARRAY);
-
-	auto aSourceDesc = std::static_pointer_cast<opParamArray::paramType>(this->params_[0]->getParam());
-	auto aInferDesc = std::make_shared<opParamArray::paramType>(*aSourceDesc);
-
-	return aInferDesc;
 }
 }

@@ -17,7 +17,7 @@ namespace msdb
 		virtual pAction getAction() override;
 	};
 
-	class between_pset : public opParamSet
+	class between_pset : public opArrayParamSet
 	{
 	public:
 		between_pset();

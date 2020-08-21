@@ -18,13 +18,24 @@ public:
 	virtual pAction getAction() override;
 };
 
-class save_pset : public opParamSet
+class save_array_pset : public opParamSet
 {
 public:
-	save_pset(parameters& pSet);
+	save_array_pset(parameters& pSet);
 
 public:
 	virtual pArrayDesc inferSchema() override;
+	virtual pBitmap inferBitmap() override;
+};
+
+class save_plan_pset : public opParamSet
+{
+public:
+	save_plan_pset(parameters& pSet);
+
+public:
+	virtual pArrayDesc inferSchema() override;
+	virtual pBitmap inferBitmap() override;
 };
 }	// msdb
 #endif	// _MSDB_OP_SAVE_PLAN_H_

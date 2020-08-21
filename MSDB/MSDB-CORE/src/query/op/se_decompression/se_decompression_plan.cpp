@@ -22,7 +22,7 @@ pAction se_decompression_plan::getAction()
 }
 
 se_decompression_pset::se_decompression_pset(parameters& pSet)
-	: opParamSet(pSet)
+	: opArrayParamSet(pSet)
 {
 
 }

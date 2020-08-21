@@ -17,14 +17,8 @@ pAction wavelet_decode_plan::getAction()
 	return wdAction;
 }
 
-
-wavelet_decode_pset::wavelet_decode_pset()
-	: opParamSet()
-{
-}
-
 wavelet_decode_pset::wavelet_decode_pset(parameters& pSet)
-	: opParamSet(pSet)
+	: opArrayParamSet(pSet)
 {
 	assert(this->params_.size() == 2);
 }
@@ -54,5 +48,4 @@ pArrayDesc wavelet_decode_pset::inferSchema()
 
 	return aInferDesc;
 }
-
 }	// msdb

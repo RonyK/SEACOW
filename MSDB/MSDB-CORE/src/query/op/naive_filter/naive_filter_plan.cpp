@@ -20,13 +20,8 @@ pAction naive_filter_plan::getAction()
 }
 
 // pset
-naive_filter_pset::naive_filter_pset()
-	: opParamSet()
-{
-}
-
 naive_filter_pset::naive_filter_pset(parameters& pSet)
-	: opParamSet(pSet)
+	: opArrayParamSet(pSet)
 {
 }
 

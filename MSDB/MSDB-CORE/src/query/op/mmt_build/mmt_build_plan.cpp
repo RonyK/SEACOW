@@ -18,13 +18,8 @@ pAction mmt_build_plan::getAction()
 	return std::make_shared<mmt_build_action>();
 }
 
-mmt_build_pset::mmt_build_pset()
-	: opParamSet()
-{
-}
-
 mmt_build_pset::mmt_build_pset(parameters& pSet)
-	: opParamSet(pSet)
+	: opArrayParamSet(pSet)
 {
 }
 

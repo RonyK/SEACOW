@@ -17,10 +17,9 @@ public:
 	virtual pAction getAction() override;
 };
 
-class wavelet_decode_pset : public opParamSet
+class wavelet_decode_pset : public opArrayParamSet
 {
 public:
-	wavelet_decode_pset();
 	wavelet_decode_pset(parameters& pSet);
 
 public:

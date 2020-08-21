@@ -17,10 +17,9 @@ public:
 	virtual pAction getAction() override;
 };
 
-class mmt_build_pset : public opParamSet
+class mmt_build_pset : public opArrayParamSet
 {
 public:
-	mmt_build_pset();
 	mmt_build_pset(parameters& pSet);
 
 public:
