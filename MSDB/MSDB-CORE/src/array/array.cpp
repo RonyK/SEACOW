@@ -8,7 +8,7 @@ arrayBase::arrayBase(pArrayDesc desc)
 	: chunkBitmap_()
 {
 	this->desc_ = desc;
-	this->chunkBitmap_.resize(desc->attrDescs_->size(), bitmap(desc_->dimDescs_->getChunkSpace()));
+	this->chunkBitmap_.resize(desc->attrDescs_->size(), bitmap(desc_->dimDescs_->getChunkSpace().area()));
 }
 arrayBase::~arrayBase()
 {

@@ -4,7 +4,7 @@
 namespace msdb
 {
 chunk::chunk(pChunkDesc desc) : cached_(nullptr), desc_(desc), 
-blockBitmap_(desc->getBlockSpace()), blockCapacity_(desc->getBlockSpace().area()),
+blockCapacity_(desc->getBlockSpace().area()), blockBitmap_(this->blockCapacity_),
 serializable(std::make_shared<chunkHeader>())
 {
 }
