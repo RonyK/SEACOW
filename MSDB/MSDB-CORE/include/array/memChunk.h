@@ -13,23 +13,30 @@ public:
 	memChunk(pChunkDesc desc);
 	virtual ~memChunk();
 
+//////////////////////////////
+// Buffer
+//////////////////////////////
 protected:
 	virtual void makeBuffer();
-	virtual void makeBlocks(std::vector<bool> bitmap);
-	virtual void referenceBufferToBlock();
+	virtual void referenceBufferToBlock(const blockId bId);
 
 //////////////////////////////
 // Blocks
 //////////////////////////////
 public:
-	virtual pBlock getBlock(blockId bId) override;
-	virtual blockId getBlockId(pBlockDesc cDesc) override;
-	virtual blockId getBlockIdFromItemCoor(coor& itemCoor) override;
-	virtual blockId getBlockIdFromBlockCoor(coor& blockCoor) override;
-	virtual coor itemCoorToBlockCoor(coor& itemCoor) override;
-	virtual pBlockIterator getBlockIterator(iterateMode itMode = iterateMode::ALL) override;
+	virtual pBlock makeBlock(const blockId bId) override;
+	virtual void insertBlock(pBlock inBlock);
+	virtual pBlock getBlock(const blockId bId) override;
+	//virtual blockId getBlockId(pBlockDesc cDesc) override;
+	//virtual blockId getBlockIdFromItemCoor(coor& itemCoor) override;
+	//virtual blockId getBlockIdFromBlockCoor(coor& blockCoor) override;
+	//virtual coor itemCoorToBlockCoor(coor& itemCoor) override;
+	virtual coor getBlockCoor(const blockId bId);
+	virtual pBlockIterator getBlockIterator(
+		const iterateMode itMode = iterateMode::ALL) override;
 
 protected:
+	//blockContainer blocks_;
 	pBlock block_;	// memChunk has single block.
 
 //////////////////////////////

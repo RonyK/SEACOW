@@ -85,12 +85,6 @@ public:
 	size_type getNumChunks();
 
 	// Chunk
-	virtual pChunk makeChunk(const attributeId attrId, const chunkId cId) = 0;
-	// For better performance, implement the function in an inherit class.
-	// The function provided by default extracts ID from ChunkDesc 
-	// and re-generate chunkDesc for it.
-	virtual pChunk makeChunk(const chunkDesc& desc);
-	void setChunkBitmap(const attributeId attrId, const bitmap& input);
 	pChunkDesc getChunkDesc(const attributeId attrId, const chunkId cId);
 	pChunk getChunk(const chunkId cId);
 	chunkId getChunkId(pChunkDesc cDesc);
@@ -98,15 +92,23 @@ public:
 	chunkId getChunkIdFromChunkCoor(const coor& chunkCoor);
 	virtual coor itemCoorToChunkCoor(const coor& itemCoor);
 	virtual pChunkIterator getChunkIterator(
-		iterateMode itMode = iterateMode::ALL);
+		const iterateMode itMode = iterateMode::ALL);
 
 	//////////////////////////////
 	// Setter
 	//////////////////////////////
 	void setId(const arrayId id);	// only used for test
-	void insertChunk(const attributeId attrId, pChunk inputChunk);
 	void flush();
 
+	virtual pChunk makeChunk(const attributeId attrId, const chunkId cId) = 0;
+	// For better performance, implement the function in an inherit class.
+	// The function provided by default extracts ID from ChunkDesc 
+	// and re-generate chunkDesc for it.
+	virtual pChunk makeChunk(const chunkDesc& desc);
+	// If a chunkBit is setted, arrayBase makes a chunk accordingly.
+	void makeChunks(const attributeId attrId, const bitmap& input);
+
+	void insertChunk(const attributeId attrId, pChunk inputChunk);
 	template <class _Iter>
 	void insertChunk(const attributeId attrId, _Iter begin, _Iter end)
 	{

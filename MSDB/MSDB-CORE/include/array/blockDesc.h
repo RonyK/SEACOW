@@ -21,8 +21,11 @@ class blockDesc : std::enable_shared_from_this<blockDesc>
 public:
 	blockDesc();
 
-	blockDesc(const blockId id, const eleType eType, const dimension& dims,
-			  const coor sp, const coor ep, const blockSize mSize = INVALID_BLOCK_SIZE);
+	blockDesc(const blockId id, const eleType eType,
+			  const dimension& dims,
+			  const coor& sp, const coor& ep, 
+			  const blockSize mSize = INVALID_BLOCK_SIZE,
+			  const blockSize mOffset = INVALID_BLOCK_SIZE);
 
 protected:
 	void initBlockCoor();
@@ -30,6 +33,7 @@ protected:
 public:
 	blockId id_;				// in chunk
 	blockSize mSize_;			// materialized size
+	blockSize mOffset_;			// memory offset in chunkBuffer
 	eleType eType_;
 
 	dimension dims_;			// dimensions

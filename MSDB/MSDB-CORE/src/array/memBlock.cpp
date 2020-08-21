@@ -6,6 +6,13 @@ namespace msdb
 memBlock::memBlock(pBlockDesc desc)
 	: block(desc)
 {
+	if(this->desc_->mSize_ == INVALID_BLOCK_SIZE || 
+	   this->desc_->mOffset_ == INVALID_BLOCK_SIZE)
+	{
+		this->desc_->mSize_
+			= this->desc_->dims_.area() * getEleSize(this->desc_->eType_);
+		this->desc_->mOffset_ = this->desc_->mSize_ * this->desc_->id_;
+	}
 }
 
 memBlock::~memBlock()

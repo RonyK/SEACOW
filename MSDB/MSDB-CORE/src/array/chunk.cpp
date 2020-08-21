@@ -14,12 +14,21 @@ chunk::~chunk()
 	this->free();
 }
 
+void chunk::referenceAllBufferToBlock()
+{
+	blockId capacity = this->getBlockCapacity();
+	for(blockId bid = 0; bid < capacity; ++bid)
+	{
+		this->referenceBufferToBlock(bid);
+	}
+}
+
 void chunk::bufferAlloc()
 {
 	this->free();
 	this->makeBuffer();
 	this->cached_->bufferAlloc(this->desc_->mSize_);
-	this->referenceBufferToBlock();
+	this->referenceAllBufferToBlock();
 }
 
 void chunk::bufferAlloc(bufferSize size)
@@ -27,8 +36,8 @@ void chunk::bufferAlloc(bufferSize size)
 	this->free();
 	this->makeBuffer();
 	this->cached_->bufferAlloc(size);
-	this->referenceBufferToBlock();
 	this->desc_->mSize_ = size;
+	this->referenceAllBufferToBlock();
 }
 
 // Deep copy
@@ -36,7 +45,6 @@ void chunk::bufferCopy(void* data, bufferSize size)
 {
 	this->bufferAlloc(size);
 	this->cached_->copy(data, size);
-	this->desc_->mSize_ = size;
 }
 
 void chunk::bufferCopy(pChunk source)
@@ -57,7 +65,7 @@ void chunk::bufferRef(void* data, bufferSize size)
 	this->free();
 	this->makeBuffer();
 	this->cached_->linkToChunkBuffer(data, size);
-	this->referenceBufferToBlock();
+	this->referenceAllBufferToBlock();
 	this->desc_->mSize_ = size;
 }
 
@@ -155,13 +163,42 @@ void chunk::free()
 	}
 }
 
+void chunk::makeBlocks(const bitmap blockBitmap)
+{
+	assert(blockBitmap.getCapacity() == this->getBlockCapacity());
+	blockId capacity = this->getBlockCapacity();
+	for(blockId bid = 0; bid < capacity; ++bid)
+	{
+		if(blockBitmap[bid])
+		{
+			this->makeBlock(bid);
+		}
+	}
+}
+
 void chunk::makeAllBlocks()
 {
-	this->makeBlocks(std::vector<bool>(this->getBlockCapacity(), true));
+	for(blockId bid = 0; bid < this->blockCapacity_; ++bid)
+	{
+		this->makeBlock(bid);
+	}
 	if(this->cached_)
 	{
-		this->referenceBufferToBlock();
+		this->referenceAllBufferToBlock();
 	}
+}
+
+pBlockDesc chunk::getBlockDesc(const blockId bId)
+{
+	pAttributeDesc attrDesc = this->desc_->attrDesc_;
+	dimension blockDims = this->desc_->getBlockDims();
+	coor blockCoor = this->getBlockCoor(bId);
+	coor sp = blockCoor * blockDims;
+	coor ep = sp + blockDims;
+
+	return std::make_shared<blockDesc>(bId, attrDesc->type_,
+									   blockDims,
+									   sp, ep);
 }
 
 size_t chunk::getBlockCapacity()
@@ -181,5 +218,9 @@ void chunk::updateFromHeader()
 	auto curHeader = std::static_pointer_cast<chunkHeader>(this->getHeader());
 	this->setSerializedSize(curHeader->bodySize_);
 	this->bufferAlloc();
+}
+coor chunk::getBlockCoor(const blockId bId)
+{
+	return this->getBlockIterator()->seqToCoor(bId);
 }
 }

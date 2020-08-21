@@ -18,11 +18,11 @@ pArrayDesc arrayBase::getDesc()
 {
 	return this->desc_;
 }
-pChunkIterator arrayBase::getChunkIterator(iterateMode itMode)
+// TODO::required an attirubteId as an input parameter
+pChunkIterator arrayBase::getChunkIterator(const iterateMode itMode)
 {
-	return std::make_shared<chunkIterator>(this->desc_->dimDescs_->size(),
-										   this->desc_->dimDescs_->getChunkSpace().data(),
-										   &this->chunks_,
+	return std::make_shared<chunkIterator>(this->desc_->dimDescs_->getChunkSpace(),
+										   &this->chunks_, &(this->chunkBitmap_[0]),
 										   itMode);
 }
 arrayBase::size_type arrayBase::getNumChunks()
@@ -55,14 +55,14 @@ pChunk arrayBase::makeChunk(const chunkDesc& desc)
 	return this->makeChunk(desc.attrDesc_->id_, desc.id_);
 }
 
-void arrayBase::setChunkBitmap(const attributeId attrId, const bitmap& input)
+void arrayBase::makeChunks(const attributeId attrId, const bitmap& input)
 {
-	auto cit = this->getChunkIterator();
-	while(!cit->isEnd())
+	chunkId capacity = this->getChunkIterator()->getCapacity();
+	for(chunkId cid = 0; cid < capacity; ++cid)
 	{
-		if(input.isExist(cit->seqPos()) && (**cit) == nullptr)
+		if(input.isExist(cid) && !this->chunkBitmap_[attrId].isExist(cid))
 		{
-			this->makeChunk(attrId, cit->seqPos());
+			this->makeChunk(attrId, cid);
 		}
 	}
 }

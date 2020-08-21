@@ -44,7 +44,7 @@ void bitmap::setNull(const coor& pos)
 	this->setNull(this->getSeqPos(pos));
 }
 
-size_t bitmap::getCapacity()
+size_t bitmap::getCapacity() const
 {
 	return this->data_.size();
 }

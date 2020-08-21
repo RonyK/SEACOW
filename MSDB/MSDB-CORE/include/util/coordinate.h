@@ -728,7 +728,7 @@ public:
 	}
 	coordinate<Dty_> seqToCoor(const size_type seq)
 	{
-		assert(seq <= this->getCapacity());
+		//assert(seq <= this->getCapacity());
 
 		size_type remain = seq;
 		coordinate<Dty_> outCoor(this->dSize_);

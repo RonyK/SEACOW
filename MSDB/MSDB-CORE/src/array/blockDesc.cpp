@@ -11,8 +11,14 @@ blockDesc::blockDesc()
 	// TODO::initialization
 }
 
-blockDesc::blockDesc(const blockId id, const eleType eType, const dimension& dims, const coor sp, const coor ep, const blockSize mSize)
-	: id_(id), eType_(eType), dims_(dims), sp_(sp), ep_(ep), mSize_(mSize), blockCoor_(dims.size())
+blockDesc::blockDesc(const blockId id, const eleType eType,
+					 const dimension& dims, 
+					 const coor& sp, const coor& ep, 
+					 const blockSize mSize, const blockSize mOffset)
+	: id_(id), eType_(eType), 
+	dims_(dims), sp_(sp), ep_(ep),
+	mSize_(mSize), mOffset_(mOffset),
+	blockCoor_(dims.size())
 {
 	initBlockCoor();
 }

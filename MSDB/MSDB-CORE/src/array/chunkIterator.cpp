@@ -2,14 +2,28 @@
 
 namespace msdb
 {
-chunkIterator::chunkIterator(const size_type dSize, dim_const_pointer dims,
-							 chunkContainer* chunks, iterateMode itMode)
-	: coorItr(dSize, dims), chunks_(chunks), itMode_(itMode)
+chunkIterator::chunkIterator(const dimension dims,
+							 chunkContainer* chunks, bitmap* chunkBitmap, 
+							 iterateMode itMode)
+	: coorItr(dims), 
+	chunks_(chunks), chunkBitmap_(chunkBitmap),
+	itMode_(itMode)
 {
 }
 
+//chunkIterator::chunkIterator(const dimension dims,
+//							 chunkContainer* chunks,
+//							 iterateMode itMode)
+//	: coorItr(dims),
+//	chunks_(chunks),
+//	itMode_(itMode)
+//{
+//}
+
 chunkIterator::chunkIterator(const self_type& mit)
-	: coorItr(mit), chunks_(mit.chunks_), itMode_(mit.itMode_)
+	: coorItr(mit), 
+	chunks_(mit.chunks_), chunkBitmap_(mit.chunkBitmap_), 
+	itMode_(mit.itMode_)
 {
 }
 
@@ -20,12 +34,12 @@ chunkIterator::size_type chunkIterator::getSeqEnd()
 
 bool chunkIterator::isExist()
 {
-	return this->chunks_->find(this->seqPos_) != this->chunks_->end();
+	return this->isExist(this->seqPos_);
 }
 
 bool chunkIterator::isExist(chunkId cid)
 {
-	return this->chunks_->find(cid) != this->chunks_->end();
+	return (*this->chunkBitmap_)[cid] && this->chunks_->find(cid) != this->chunks_->end();
 }
 
 iterateMode chunkIterator::getIterateMode()

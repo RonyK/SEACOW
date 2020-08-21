@@ -24,7 +24,7 @@ public:
 	void setNull(const size_t seqPos);
 	void setNull(const coor& pos);
 
-	size_t getCapacity();
+	size_t getCapacity() const;
 
 	//void setSpace(const coor& space);
 

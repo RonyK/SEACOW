@@ -53,6 +53,8 @@ private:
 			chunkId cid = cit->seqPos();
 			coor chunkCoor = cit->coor();
 			auto inChunk = this->makeInChunk(outArr, attrDesc, cid, chunkCoor);
+			// TODO::Create se_compression_array, seChunk
+			// Make seChunk in se_compression_array
 
 			auto mNode = mmtIndex->getNode(chunkCoor, 0);
 			inChunk->rBitFromMMT = getRBitFromMMT(mNode) + static_cast<char>(hasNegative);

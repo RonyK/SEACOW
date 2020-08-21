@@ -3,8 +3,8 @@
 #define _MSDB_CHUNKITERATOR_H_
 
 #include <array/chunkContainer.h>
+#include <index/bitmap.h>
 #include <util/coordinate.h>
-#include <map>
 
 namespace msdb
 {
@@ -20,8 +20,13 @@ public:
 	using size_type = coorItr::size_type;
 
 public:
-	chunkIterator(const size_type dSize, dim_const_pointer dims,
-				  chunkContainer* chunks, iterateMode itMode);
+	chunkIterator(const dimension dims,
+				  chunkContainer* chunks, bitmap* chunkBitmap, 
+				  iterateMode itMode);
+
+	//chunkIterator(const dimension dims,
+	//			  chunkContainer* chunks,
+	//			  iterateMode itMode);
 
 	chunkIterator(const self_type& mit);
 
@@ -67,6 +72,7 @@ public:
 
 protected:
 	chunkContainer* chunks_;
+	bitmap* chunkBitmap_;
 	iterateMode itMode_;
 };
 }	// msdb

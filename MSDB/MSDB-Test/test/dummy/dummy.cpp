@@ -82,8 +82,11 @@ void getWTChunkDummy(value_type* output, size_t length)
 	assert(length >= 4 * 4);
 	// Wavelet represent array as a band-wise fashion
 	const static value_type arr[dataLength] = {
-		6, 1, 2, 0, 4, 1, 0, 1, 4, 3, 1, 0, 2, 1, 0, 1
+		6, -2, -4, 0, 4, -2, 0, 4, 4, -6, -2, 0, 2, -2, 0, 4
 	};
+	//const static value_type arr[dataLength] = {
+	//	6, 1, 2, 0, 4, 1, 0, 1, 4, 3, 1, 0, 2, 1, 0, 1
+	//};
 
 	// In multi-dimensional fashion
 	//{
