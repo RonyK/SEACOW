@@ -66,7 +66,7 @@ public:
 			auto value = (**itemItr).get<Ty_>();
 
 			// absolute 
-			if (value & signBit)
+			if ((value & signBit) && (value != signBit))
 			{
 				value = ~value;
 				value += 1;
@@ -82,6 +82,7 @@ public:
 				multiply *= blockDims[d];
 			}
 			arr[index].value_ = value;
+			(**itemItr).set<Ty_>(value);
 
 			if (curLevel == this->maxLevel_)
 			{
@@ -153,7 +154,7 @@ public:
 			auto value = (**itemItr).get<Ty_>();
 
 			// absolute 
-			if (value & signBit)
+			if ((value & signBit) && (value != signBit))
 			{
 				value = ~value;
 				value += 1;
@@ -173,6 +174,7 @@ public:
 					haveChild = true;
 				}
 			}
+			(**itemItr).set<Ty_>(value);
 			arr[index].value_ = value;
 			arr[index].firstBand_ = true;
 
@@ -204,6 +206,43 @@ public:
 			this->encode_sigpass<Ty_>(bs, arr, bandDims, signBit, stepBit);
 			this->encode_refinepass<Ty_>(bs, arr, stepBit, LSP_size);
 			stepBit = stepBit >> 1;
+		}
+
+		// for -128 and 0
+		size_t LIP_size = this->ENLIP_.size();
+		for (size_t i = 0; i < LIP_size; i++)
+		{
+			size_t LIP_index = this->ENLIP_.front();
+			this->ENLIP_.pop_front();
+			Ty_ LIP_value = arr[LIP_index].value_;
+
+			if (LIP_value == 0)
+			{
+				bs << 0;
+			} else if(LIP_value == signBit)
+			{
+				bs << 1;
+			}
+
+		}
+
+		size_t LIS_size = this->ENLIS_.size();
+		for (size_t i = 0; i < LIS_size; i++)
+		{
+			coor LIS_coor = this->ENLIS_.front();
+			this->ENLIS_.pop_front();
+			itemItr->moveTo(LIS_coor);
+			Ty_ LIS_value = (**itemItr).get<Ty_>();
+
+			if (LIS_value == 0)
+			{
+				bs << 0;
+			}
+			else if (LIS_value == signBit)
+			{
+				bs << 1;
+			}
+
 		}
 	}
 
@@ -485,7 +524,7 @@ public:
 		{
 			itemItr->moveTo(abs_coor);
 			auto data = (**itemItr).get<Ty_>();
-			if (data & signBit)
+			if ((data & signBit) && (data != signBit))
 			{
 				data = ~data;
 				data += 1;
@@ -502,6 +541,46 @@ public:
 				} else
 				{
 					break;
+				}
+			}
+		}
+
+		// for -128 and 0
+		char codeBit;
+		size_t LIP_size = this->DELIP_.size();
+		for (size_t i = 0; i < LIP_size; i++)
+		{
+			coor LIP_coor = this->DELIP_.front();
+			this->DELIP_.pop_front();
+			itemItr->moveTo(LIP_coor);
+			Ty_ LIP_value = (**itemItr).get<Ty_>();
+
+			if (LIP_value == 0)
+			{
+				bs >> codeBit;
+				if (codeBit)
+				{
+					LIP_value = LIP_value ^ signBit;
+					(**itemItr).set<Ty_>(LIP_value);
+				}
+			}
+		}
+
+		size_t LIS_size = this->DELIS_.size();
+		for (size_t i = 0; i < LIS_size; i++)
+		{
+			coor LIS_coor = this->DELIS_.front();
+			this->DELIS_.pop_front();
+			itemItr->moveTo(LIS_coor);
+			Ty_ LIS_value = (**itemItr).get<Ty_>();
+
+			if (LIS_value == 0)
+			{
+				bs >> codeBit;
+				if (codeBit)
+				{
+					LIS_value = LIS_value ^ signBit;
+					(**itemItr).set<Ty_>(LIS_value);
 				}
 			}
 		}
