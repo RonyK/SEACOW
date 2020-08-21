@@ -33,7 +33,6 @@ parameters opParamSet::getParam()
 opArrayParamSet::opArrayParamSet(parameters& pSet)
 	: opParamSet(pSet)
 {
-	assert(this->params_.size() == 1);
 	assert(this->params_[0]->type() == opParamType::ARRAY);		// source array
 }
 pArrayDesc opArrayParamSet::inferSchema()

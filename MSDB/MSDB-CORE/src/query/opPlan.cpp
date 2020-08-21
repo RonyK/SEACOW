@@ -42,8 +42,20 @@ opParamType opParamPlanPlaceholder::type()
 {
 	return opParamType::PLAN;
 }
-//void opPlan::addParamSet(pParamSet pSet)
-//{
-//	this->paramSets_.push_back(pSet);
-//}
+opPlanParamSet::opPlanParamSet(parameters& pSet)
+{
+	assert(this->params_[0]->type() == opParamType::PLAN);		// source plan
+}
+pArrayDesc opPlanParamSet::inferSchema()
+{
+	auto sourcePlan = std::static_pointer_cast<opParamPlan::paramType>(
+		this->params_[0]->getParam());
+	return std::make_shared<arrayDesc>(*sourcePlan->inferSchema());
+}
+pBitmap opPlanParamSet::inferBitmap()
+{
+	auto sourcePlan = std::static_pointer_cast<opParamPlan::paramType>(
+		this->params_[0]->getParam());
+	return std::make_shared<bitmap>(*sourcePlan->inferBitmap());
+}
 }

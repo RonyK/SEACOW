@@ -16,8 +16,9 @@ pAction mmt_save_plan::getAction()
 {
 	return std::make_shared<mmt_save_action>();
 }
-mmt_save_pset::mmt_save_pset(parameters& pSet)
+mmt_save_array_pset::mmt_save_array_pset(parameters& pSet)
 	: opArrayParamSet(pSet)
 {
+	assert(this->params_.size() == 1);
 }
 }	// msdb

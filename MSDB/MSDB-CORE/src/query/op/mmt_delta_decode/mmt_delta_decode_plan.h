@@ -18,10 +18,10 @@ public:
 	virtual pAction getAction() override;
 };
 
-class mmt_delta_decode_pset : public opArrayParamSet
+class mmt_delta_decode_array_pset : public opArrayParamSet
 {
 public:
-	mmt_delta_decode_pset(parameters& pSet);
+	mmt_delta_decode_array_pset(parameters& pSet);
 };
 }
 

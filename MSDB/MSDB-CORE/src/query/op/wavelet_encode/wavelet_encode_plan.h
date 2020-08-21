@@ -19,10 +19,10 @@ public:
 
 };
 
-class wavelet_encode_pset : public opArrayParamSet
+class wavelet_encode_array_pset : public opArrayParamSet
 {
 public:
-	wavelet_encode_pset(parameters& pSet);
+	wavelet_encode_array_pset(parameters& pSet);
 
 public:
 	virtual pArrayDesc inferSchema() override;

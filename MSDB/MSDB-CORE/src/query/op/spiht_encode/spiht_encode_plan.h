@@ -17,10 +17,10 @@ public:
 	virtual pAction getAction() override;
 };
 
-class spiht_encode_pset : public opArrayParamSet
+class spiht_encode_array_pset : public opArrayParamSet
 {
 public:
-	spiht_encode_pset(parameters& pSet);
+	spiht_encode_array_pset(parameters& pSet);
 };
 }
 

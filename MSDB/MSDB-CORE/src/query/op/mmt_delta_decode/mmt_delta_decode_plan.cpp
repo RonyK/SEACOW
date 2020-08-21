@@ -21,9 +21,9 @@ pAction mmt_delta_decode_plan::getAction()
 	return pAction();
 }
 
-mmt_delta_decode_pset::mmt_delta_decode_pset(parameters& pSet)
+mmt_delta_decode_array_pset::mmt_delta_decode_array_pset(parameters& pSet)
 	: opArrayParamSet(pSet)
 {
-
+	assert(this->params_.size() == 1);
 }
 }

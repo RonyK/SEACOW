@@ -76,7 +76,7 @@ TEST(query_op_spiht_encode, spiht_2D_4x4)
 		std::make_shared<opParamArray>(arrDesc)
 	};
 
-	auto pSet = std::make_shared<spiht_encode_pset>(params);
+	auto pSet = std::make_shared<spiht_encode_array_pset>(params);
 	spihtPlan->setParamSet(pSet);
 
 	spihtAction->setArrayDesc(spihtPlan->inferSchema());
@@ -128,7 +128,7 @@ TEST(query_op_spiht_encode, spiht_2D_8x8)
 		std::make_shared<opParamArray>(arrDesc)
 	};
 
-	auto pSet = std::make_shared<spiht_encode_pset>(params);
+	auto pSet = std::make_shared<spiht_encode_array_pset>(params);
 	spihtPlan->setParamSet(pSet);
 
 	spihtAction->setArrayDesc(spihtPlan->inferSchema());

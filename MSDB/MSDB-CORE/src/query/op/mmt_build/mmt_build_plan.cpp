@@ -18,17 +18,15 @@ pAction mmt_build_plan::getAction()
 	return std::make_shared<mmt_build_action>();
 }
 
-mmt_build_pset::mmt_build_pset(parameters& pSet)
+mmt_build_array_pset::mmt_build_array_pset(parameters& pSet)
 	: opArrayParamSet(pSet)
 {
+	assert(this->params_.size() == 2);
+	assert(this->params_[1]->type() == opParamType::CONST);		// Target level
 }
 
-pArrayDesc mmt_build_pset::inferSchema()
+pArrayDesc mmt_build_array_pset::inferSchema()
 {
-	assert(this->params_.size() == 2);
-	assert(this->params_[0]->type() == opParamType::ARRAY);		// Source array
-	assert(this->params_[1]->type() == opParamType::CONST);		// Target level
-
 	pArrayDesc aSourceDesc = std::static_pointer_cast<opParamArray::paramType>(this->params_[0]->getParam());
 	pArrayDesc aInferDesc = std::make_shared<opParamArray::paramType>(*aSourceDesc);
 	

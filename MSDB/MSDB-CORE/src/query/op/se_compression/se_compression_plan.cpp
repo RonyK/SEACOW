@@ -21,8 +21,9 @@ pAction se_compression_plan::getAction()
 	return std::make_shared<se_compression_action>();
 }
 
-se_compression_pset::se_compression_pset(parameters& pSet)
+se_compression_array_pset::se_compression_array_pset(parameters& pSet)
 	: opArrayParamSet(pSet)
 {
+	assert(this->params_.size() == 1);
 }
 }	// msdb

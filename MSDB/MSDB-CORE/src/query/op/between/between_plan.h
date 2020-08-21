@@ -17,11 +17,10 @@ namespace msdb
 		virtual pAction getAction() override;
 	};
 
-	class between_pset : public opArrayParamSet
+	class between_array_pset : public opArrayParamSet
 	{
 	public:
-		between_pset();
-		between_pset(parameters& pSet);
+		between_array_pset(parameters& pSet);
 
 	public:
 		virtual pArrayDesc inferSchema() override;

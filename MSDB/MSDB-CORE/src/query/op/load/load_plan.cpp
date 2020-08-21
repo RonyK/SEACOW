@@ -21,8 +21,9 @@ pAction load_plan::getAction()
 	return std::make_shared<load_action>();
 }
 
-load_pset::load_pset(parameters& pSet)
+load_array_pset::load_array_pset(parameters& pSet)
 	: opArrayParamSet(pSet)
 {
+	assert(this->params_.size() == 1);
 }
 }	// msdb

@@ -16,8 +16,9 @@ pAction mmt_load_plan::getAction()
 {
 	return std::make_shared<mmt_load_action>();
 }
-mmt_load_pset::mmt_load_pset(parameters& pSet)
+mmt_load_array_pset::mmt_load_array_pset(parameters& pSet)
 	: opArrayParamSet(pSet)
 {
+	assert(this->params_.size() == 1);
 }
 }

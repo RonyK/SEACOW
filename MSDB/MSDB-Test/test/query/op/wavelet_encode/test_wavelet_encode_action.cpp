@@ -53,7 +53,7 @@ TEST(query_op_wavelet_encode, waveletHaar_1D)
 		std::make_shared<opParamConst>(sEle)
 	};
 
-	auto pSet = std::make_shared<wavelet_encode_pset>(params);
+	auto pSet = std::make_shared<wavelet_encode_array_pset>(params);
 	wePlan->setParamSet(pSet);
 
 	weAction->setArrayDesc(wePlan->inferSchema());
@@ -134,7 +134,7 @@ TEST(query_op_wavelet_encode, waveletHaarSimple_2D)
 		std::make_shared<opParamConst>(sEle)
 	};
 
-	auto pSet = std::make_shared<wavelet_encode_pset>(params);
+	auto pSet = std::make_shared<wavelet_encode_array_pset>(params);
 	wePlan->setParamSet(pSet);
 
 	weAction->setArrayDesc(wePlan->inferSchema());

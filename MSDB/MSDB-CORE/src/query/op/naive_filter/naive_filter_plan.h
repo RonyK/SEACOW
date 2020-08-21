@@ -17,10 +17,10 @@ public:
 	virtual pAction getAction() override;
 };
 
-class naive_filter_pset : public opArrayParamSet
+class naive_filter_array_pset : public opArrayParamSet
 {
 public: 
-	naive_filter_pset(parameters& pSet);
+	naive_filter_array_pset(parameters& pSet);
 
 public:
 	virtual pArrayDesc inferSchema() override;

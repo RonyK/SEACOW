@@ -39,7 +39,7 @@ void getLoad(pArrayDesc sourceArrDesc,
 	parameters params = {
 		std::make_shared<opParamArray>(sourceArrDesc)
 	};
-	auto pSet = std::make_shared<load_pset>(params);
+	auto pSet = std::make_shared<load_array_pset>(params);
 
 	loadPlan->setParamSet(pSet);
 	loadAction->setArrayDesc(loadPlan->inferSchema());

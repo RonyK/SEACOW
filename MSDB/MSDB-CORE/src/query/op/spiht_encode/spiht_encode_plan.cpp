@@ -20,8 +20,9 @@ pAction spiht_encode_plan::getAction()
 }
 
 // pset
-spiht_encode_pset::spiht_encode_pset(parameters& pSet)
+spiht_encode_array_pset::spiht_encode_array_pset(parameters& pSet)
 	: opArrayParamSet(pSet)
 {
+	assert(this->params_.size() == 1);
 }
 }

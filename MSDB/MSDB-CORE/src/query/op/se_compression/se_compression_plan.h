@@ -18,10 +18,10 @@ public:
 	virtual pAction getAction() override;
 };
 
-class se_compression_pset : public opArrayParamSet
+class se_compression_array_pset : public opArrayParamSet
 {
 public:
-	se_compression_pset(parameters& pSet);
+	se_compression_array_pset(parameters& pSet);
 };
 }	// msdb
 #endif	// _MSDB_OP_SE_COMPRESSION_PLAN_H_

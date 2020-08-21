@@ -17,10 +17,10 @@ public:
 	virtual pAction getAction() override;
 };
 
-class mmt_build_pset : public opArrayParamSet
+class mmt_build_array_pset : public opArrayParamSet
 {
 public:
-	mmt_build_pset(parameters& pSet);
+	mmt_build_array_pset(parameters& pSet);
 
 public:
 	virtual pArrayDesc inferSchema() override;

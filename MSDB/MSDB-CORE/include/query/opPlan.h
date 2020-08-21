@@ -57,6 +57,15 @@ public:
 public:
 	virtual opParamType type();
 };
+class opPlanParamSet : public opParamSet
+{
+public:
+	opPlanParamSet(parameters& pSet);
+
+public:
+	virtual pArrayDesc inferSchema() override;
+	virtual pBitmap inferBitmap() override;
+};
 }
 
 #endif		// _MSDB_OPPLAN_H_
