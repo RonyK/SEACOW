@@ -4,11 +4,20 @@ namespace msdb
 {
 opPlan::opPlan()
 {
-	//this->initParamSets();
 }
 void opPlan::setParamSet(pParamSet paramSet)
 {
 	this->inParamSet_ = paramSet;
+
+	auto params = this->getParam();
+	for(auto param : params)
+	{
+		if(param->type() == opParamType::PLAN)
+		{
+			auto childPlan = std::static_pointer_cast<opParamPlan::paramType>(param->getParam());
+			childPlan->setParentPlan(shared_from_this());
+		}
+	}
 }
 pArrayDesc opPlan::inferSchema()
 {
@@ -29,7 +38,8 @@ pBitmap opPlan::inferBottomUpBitmap()
 }
 pBitmap opPlan::inferTopDownBitmap()
 {
-	return pBitmap();
+	//return pBitmap();
+	return nullptr;
 }
 parameters opPlan::getParam()
 {
@@ -38,16 +48,6 @@ parameters opPlan::getParam()
 void opPlan::setParentPlan(pPlan parentPlan)
 {
 	this->parentPlan_ = parentPlan;
-
-	auto params = this->getParam();
-	for(auto param : params)
-	{
-		if(param->type() == opParamType::PLAN)
-		{
-			auto childPlan = std::static_pointer_cast<opParamPlan::paramType>(param->getParam());
-			childPlan->setParentPlan(std::make_shared<opPlan>(this));
-		}
-	}
 }
 opParamPlan::opParamPlan(pPlan plan)
 	: plan_(plan)
@@ -83,7 +83,8 @@ pBitmap opPlanParamSet::inferBottomUpBitmap()
 {
 	auto sourcePlan = std::static_pointer_cast<opParamPlan::paramType>(
 		this->params_[0]->getParam());
-	return std::make_shared<bitmap>(*sourcePlan->inferBottomUpBitmap());
+	//return std::make_shared<bitmap>(*sourcePlan->inferBottomUpBitmap());
+	return nullptr;
 }
 pBitmap opPlanParamSet::inferTopDownBitmap(pBitmap fromParent)
 {

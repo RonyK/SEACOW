@@ -29,7 +29,7 @@ public:
 	parameters getParam();
 
 protected:
-	void setParentPlan(pPlan parentPlan);
+	virtual void setParentPlan(pPlan parentPlan);
 
 private:
 	pParamSet inParamSet_;
