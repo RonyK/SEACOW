@@ -32,7 +32,6 @@ wavelet_encode_array_pset::wavelet_encode_array_pset(parameters& pSet)
 	assert(this->params_.size() == 2);
 	assert(this->params_[0]->type() == opParamType::ARRAY);		// Source array
 	assert(this->params_[1]->type() == opParamType::CONST);		// Target level
-
 }
 
 pArrayDesc wavelet_encode_array_pset::inferSchema()

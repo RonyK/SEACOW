@@ -24,6 +24,7 @@ public:
 
 public:
 	virtual pArrayDesc inferSchema() override;
+	// TODO::infer bitmap
 };
 }
 

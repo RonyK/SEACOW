@@ -20,9 +20,9 @@ public:
 
 public:
 	bool isMatch(parameters pSet);
-	//virtual void initParams() = 0;
 	virtual pArrayDesc inferSchema() = 0;
-	virtual pBitmap inferBitmap() = 0;
+	virtual pBitmap inferBottomUpBitmap() = 0;
+	virtual pBitmap inferTopDownBitmap(pBitmap fromParent) = 0;
 	parameters getParam();
 
 protected:
@@ -36,7 +36,8 @@ public:
 
 public:
 	virtual pArrayDesc inferSchema() override;
-	virtual pBitmap inferBitmap() override;
+	virtual pBitmap inferBottomUpBitmap() override;
+	virtual pBitmap inferTopDownBitmap(pBitmap fromParent) override;
 };
 }
 
