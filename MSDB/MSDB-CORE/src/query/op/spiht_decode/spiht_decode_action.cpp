@@ -40,7 +40,8 @@ pArray spiht_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 		while (!cit->isEnd())
 		{
 			chunkId cId = cit->seqPos();
-			outArr->insertChunk(attr->id_, std::make_shared<spihtChunk>(outArr->getChunkDesc(cId, attr->id_)));
+			// TODO:: Use to makeChunk function
+			outArr->insertChunk(attr->id_, std::make_shared<spihtChunk>(outArr->getChunkDesc(attr->id_, cId)));
 
 			auto spChunk = std::static_pointer_cast<spihtChunk>(**cit);
 			spChunk->setMaxLevel(maxLevel);

@@ -44,8 +44,8 @@ void spihtChunk::makeBuffer()
 
 pBlock spihtChunk::makeBlock(const blockId bId)
 {
-	if(bId == 0 && this->block_ == nullptr)
-	{
+	//if(bId == 0 && this->block_ == nullptr)
+	//{
 		auto desc = this->getBlockDesc(bId);
 		desc->mSize_ = desc->mSize_;
 		desc->mOffset_ = 0;
@@ -53,9 +53,9 @@ pBlock spihtChunk::makeBlock(const blockId bId)
 		blockObj->setMaxLevel(this->maxLevel_);
 		this->insertBlock(blockObj);
 		return blockObj;
-	}
+	//}
 
-	return nullptr;
+	//return nullptr;
 }
 
 //pChunkItemIterator spihtChunk::getItemIterator()
