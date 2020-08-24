@@ -470,33 +470,39 @@ public:
 		dimension blockDims = this->desc_->dims_;
 
 		// set zero
-		coor zero_coor(dSize);	// {0, 0, ...}
-		size_t zero_num = 1;
-		for (int d = (int)dSize - 1; d >= 0; d--)
-		{
-			zero_coor[d] = 0;
-			zero_num *= blockDims[d];
-		}
+		//coor zero_coor(dSize);	// {0, 0, ...}
+		//size_t zero_num = 1;
+		//for (int d = (int)dSize - 1; d >= 0; d--)
+		//{
+		//	zero_coor[d] = 0;
+		//	zero_num *= blockDims[d];
+		//}
 
-		for (size_t i = 0; i < zero_num; i++)
-		{
-			itemItr->moveTo(zero_coor);
-			(**itemItr).set<Ty_>(0);
-			
+		//for (size_t i = 0; i < zero_num; i++)
+		//{
+		//	itemItr->moveTo(zero_coor);
+		//	Ty_ v = 0;
+		//	v = (**itemItr).get<Ty_>();
+		//	if(v != 0)
+		//	{
+		//		v = 0;
+		//	}
+		//	//(**itemItr).set<Ty_>(0);
+		//	
 
-			for (int d = (int)dSize - 1; d >= 0; d--)	// iteration(?)
-			{
-				zero_coor[d] = zero_coor[d] + 1;
-				if (zero_coor[d] == blockDims[d])
-				{
-					zero_coor[d] = 0;
-				}
-				else
-				{
-					break;
-				}
-			}
-		}
+		//	for (int d = (int)dSize - 1; d >= 0; d--)	// iteration(?)
+		//	{
+		//		zero_coor[d] = zero_coor[d] + 1;
+		//		if (zero_coor[d] == blockDims[d])
+		//		{
+		//			zero_coor[d] = 0;
+		//		}
+		//		else
+		//		{
+		//			break;
+		//		}
+		//	}
+		//}
 		
 		size_t maxStep = sizeof(Ty_) * 8;
 		Ty_ signBit = (Ty_)0x1 << (maxStep - 1);

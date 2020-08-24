@@ -50,6 +50,7 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 				sP, eP);
 			pChunk sourceChunk = std::make_shared<memBlockChunk>(cDesc);
 			sourceChunk->bufferAlloc();
+			sourceChunk->makeAllBlocks();
 
 			// Insert data into chunk
 			auto bItr = sourceChunk->getBlockIterator();

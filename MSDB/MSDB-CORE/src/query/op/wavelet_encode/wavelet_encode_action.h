@@ -80,6 +80,7 @@ private:
 		outChunkDesc->mSize_ = inBlockDesc->mSize_;
 
 		pWtChunk outChunk = std::make_shared<wtChunk>(outChunkDesc);
+		outChunk->makeAllBlocks();
 		outChunk->setLevel(maxLevel);
 		outChunk->bufferCopy(inBlock);
 

@@ -124,8 +124,6 @@ TEST(query_op_se_compression, se_compression_star1024x1024)
         arr_delta_decode->print();
     }
 
-    //EXPECT_TRUE(false);
-
     //compArrary<value_type>(arr_wavelet_encode, arr_se_decompression);
     //compArrary<value_type>(arr_delta_encode, arr_wavelet_decode);
     compArrary<value_type>(arr_mmt_build, arr_delta_decode);

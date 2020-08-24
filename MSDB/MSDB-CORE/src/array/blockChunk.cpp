@@ -9,7 +9,6 @@ memBlockChunk::memBlockChunk(pChunkDesc desc)
 {
 	this->blockCapacity_ = this->desc_->getBlockSpace().area();
 	this->blocks_.resize(this->getBlockCapacity(), nullptr);
-	this->makeAllBlocks();
 }
 
 memBlockChunk::~memBlockChunk()
@@ -41,45 +40,6 @@ void memBlockChunk::insertBlock(pBlock inBlock)
 	this->blockBitmap_.setExist(inBlock->getId());
 }
 
-//void memBlockChunk::makeBlocks(std::vector<bool> bitmap)
-//{
-//	pChunkDesc bcDesc = std::static_pointer_cast<chunkDesc>(this->desc_);
-//
-//	blockId capacity = this->getBlockCapacity();
-//	bufferSize mSizeBlock = bcDesc->blockDims_.area();
-//	coorItr bCoorItr(bcDesc->getBlockSpace());
-//
-//	for(blockId bid = 0; bid < capacity; ++bid, ++bCoorItr)
-//	{
-//		if(bitmap.size() > bid && bitmap[bid])
-//		{
-//			coor blockCoor = bCoorItr.coor();
-//			coor blockSp = blockCoor * bcDesc->blockDims_;
-//			coor blockEp = blockSp + bcDesc->blockDims_;
-//			coorRange bRange = coorRange(blockSp, blockEp);
-//
-//			// TODO::block bitmap
-//			pBlockDesc bDesc = std::make_shared<blockDesc>(
-//				bid,				// blockId
-//				this->desc_->attrDesc_->type_,	// eType
-//				bcDesc->blockDims_,	// dims
-//				blockSp, blockEp,	// sp, ep
-//				mSizeBlock);		// mSize
-//			this->blocks_[bid] = std::make_shared<memBlock>(bDesc);
-//			
-//			if(this->isMaterialized())
-//			{
-//				this->blocks_[bid]->linkToChunkBuffer(
-//					(char*)this->cached_->getData() + mSizeBlock * bid,
-//					mSizeBlock);
-//			}
-//		}else
-//		{
-//			this->blocks_[bid] = nullptr;
-//		}
-//	}
-//}
-
 void memBlockChunk::referenceBufferToBlock(blockId bId)
 {
 	// Reference block buffers to the chunk buffer
@@ -97,30 +57,6 @@ pBlock memBlockChunk::getBlock(const blockId bId)
 	assert(this->blockCapacity_ > bId);
 	return this->blocks_[bId];
 }
-
-//blockId memBlockChunk::getBlockId(pBlockDesc bDesc)
-//{
-//	return this->getBlockIdFromBlockCoor(bDesc->sp_);
-//}
-//
-//blockId memBlockChunk::getBlockIdFromItemCoor(coor& itemCoor)
-//{
-//	auto blockCoor = this->itemCoorToBlockCoor(itemCoor);
-//	return this->getBlockIdFromBlockCoor(blockCoor);
-//}
-//
-//blockId memBlockChunk::getBlockIdFromBlockCoor(coor& blockCoor)
-//{
-//	auto bItr = this->getBlockIterator();
-//	return bItr->coorToSeq(blockCoor);
-//}
-//
-//coor memBlockChunk::itemCoorToBlockCoor(coor& itemCoor)
-//{
-//	coor blockCoor = itemCoor;
-//	blockCoor /= this->desc_->getBlockDims();
-//	return blockCoor;
-//}
 
 pBlockIterator memBlockChunk::getBlockIterator(const iterateMode itMode)
 {
@@ -147,12 +83,6 @@ pChunkItemRangeIterator memBlockChunk::getItemRangeIterator(const coorRange& ran
 														 this->desc_->sp_,
 														 this->getBlockIterator());
 }
-
-//void memBlockChunk::flush()
-//{
-//	this->blocks_.clear();
-//	// TODO:: Flush cached
-//}
 
 void memBlockChunk::serialize(std::ostream& os)
 {
