@@ -19,14 +19,10 @@ public:
 	virtual pAction getAction() override;
 };
 
-class mmt_delta_encode_pset : public opParamSet
+class mmt_delta_encode_array_pset : public opArrayParamSet
 {
 public:
-	mmt_delta_encode_pset(parameters& pSet);
-
-public:
-	virtual pArrayDesc inferSchema() override;
-
+	mmt_delta_encode_array_pset(parameters& pSet);
 };
 }	// msdb
 #endif	// _MSDB_OP_MMT_DELTA_ENCODE_PLAN_H_

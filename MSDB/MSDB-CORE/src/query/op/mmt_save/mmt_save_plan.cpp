@@ -16,22 +16,9 @@ pAction mmt_save_plan::getAction()
 {
 	return std::make_shared<mmt_save_action>();
 }
-mmt_save_pset::mmt_save_pset()
-	: opParamSet()
-{
-}
-mmt_save_pset::mmt_save_pset(parameters& pSet)
-	: opParamSet(pSet)
-{
-}
-pArrayDesc mmt_save_pset::inferSchema()
+mmt_save_array_pset::mmt_save_array_pset(parameters& pSet)
+	: opArrayParamSet(pSet)
 {
 	assert(this->params_.size() == 1);
-	assert(this->params_[0]->type() == opParamType::ARRAY);		// source array
-
-	pArrayDesc aSourceDesc = std::static_pointer_cast<opParamArray::paramType>(this->params_[0]->getParam());
-	pArrayDesc aInferDesc = std::make_shared<opParamArray::paramType>(*aSourceDesc);
-
-	return aInferDesc;
 }
 }	// msdb

@@ -90,6 +90,8 @@
     <ClCompile Include="src\query\op\naive_filter\naive_filter_action.cpp" />
     <ClCompile Include="src\query\op\between\between_plan.cpp" />
     <ClCompile Include="src\query\op\between\between_action.cpp" />
+    <ClCompile Include="src\index\bitmap.cpp" />
+    <ClCompile Include="src\array\memBlockArray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.h" />
@@ -194,6 +196,8 @@
     <ClInclude Include="include\compression\spihtBlock.h" />
     <ClInclude Include="src\query\op\between\between_plan.h" />
     <ClInclude Include="src\query\op\between\between_action.h" />
+    <ClInclude Include="include\index\bitmap.h" />
+    <ClInclude Include="include\array\memBlockArray.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">

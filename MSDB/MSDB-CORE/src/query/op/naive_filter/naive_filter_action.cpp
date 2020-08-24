@@ -1,4 +1,5 @@
 #include <op/naive_filter/naive_filter_action.h>
+#include <array/memBlockArray.h>
 
 namespace msdb
 {
@@ -19,7 +20,7 @@ pArray naive_filter_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 {
 	pArray inputArray = inputArrays[0];
 	
-	for (auto attrDesc : inputArray->getDesc()->getAttrDescs())
+	for (auto attrDesc : *inputArray->getDesc()->getAttrDescs())
 	{
 		switch (attrDesc->type_)
 		{
@@ -56,7 +57,7 @@ pArray naive_filter_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 	}
 
 	pArrayDesc arrDesc = inputArray->getDesc();
-	pArray outputArray = std::make_shared<arrayBase>(arrDesc);
+	pArray outputArray = std::make_shared<memBlockArray>(arrDesc);
 
 	return outputArray;
 }

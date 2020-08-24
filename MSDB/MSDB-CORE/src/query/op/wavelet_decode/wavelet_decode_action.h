@@ -27,8 +27,8 @@ private:
 						 pWavelet w, size_t maxLevel, pQuery q)
 	{
 		auto icItr = inArr->getChunkIterator();
-		auto chunkDims = outArr->getDesc()->getDimDescs().getChunkDims();
-		auto blockSpace = outArr->getDesc()->getDimDescs().getBlockSpace();
+		auto chunkDims = outArr->getDesc()->getDimDescs()->getChunkDims();
+		auto blockSpace = outArr->getDesc()->getDimDescs()->getBlockSpace();
 		size_t numBlocks = blockSpace.area();
 
 		auto ocItr = outArr->getChunkIterator(iterateMode::ALL);
@@ -54,7 +54,7 @@ private:
 			// --------------------
 			auto cid = outArr->getChunkIdFromChunkCoor(chunkCoor);
 			outChunk->setId(cid);
-			outArr->insertChunk(outChunk);
+			outArr->insertChunk(attrDesc->id_, outChunk);
 			++(*ocItr);
 		}
 	}
@@ -119,7 +119,7 @@ private:
 
 	template <class Ty_>
 	void dimensionDecode(pBlock outBlock,
-						 coorRange encodeRange, dimensionId basisDim,
+						 coorRange& encodeRange, dimensionId& basisDim,
 						 pWavelet w, pQuery q)
 	{
 		size_t length = encodeRange.getEp()[basisDim];
@@ -155,14 +155,9 @@ private:
 		{
 			for (size_t i = 0; i < halfLength * 2; i += 2)
 			{
-				//row[i] = (**ait).get<Ty_>() + (**dit).get<Ty_>();
-				//row[i + 1] = (**ait).get<Ty_>() - (**dit).get<Ty_>();
-
 				Ty_ y0 = (**ait).get<Ty_>();
 				Ty_ y1 = (**dit).get<Ty_>();
 
-				//uint64_t y0 = (**ait).get<Ty_>();
-				//uint64_t y1 = (**dit).get<Ty_>();
 				row[i] = y0 - std::floor(y1 / 2.0);
 				row[i + 1] = y1 + row[i];
 				

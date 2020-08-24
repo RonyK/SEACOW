@@ -3,7 +3,7 @@
 namespace msdb
 {
 wtChunk::wtChunk(pChunkDesc desc)
-	: memChunk(desc)
+	: memChunk(desc), level_(0)
 {
 }
 

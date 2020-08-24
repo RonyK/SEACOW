@@ -62,6 +62,14 @@ public:
 		memcpy(this->coor_, mit.coor_, mit.dSize_ * sizeof(dim_type));
 	}
 
+	self_type& operator=(self_type& rhs)
+	{
+		this->dSize_ = rhs.dSize_;
+		this->coor_ = new dim_type[this->dSize_];
+		memcpy(this->coor_, rhs.coor_, rhs.dSize_ * sizeof(dim_type));
+		return *this;
+	}
+
 	coordinate(std::initializer_list<dim_type> lst)
 	{
 		this->dSize_ = lst.size();
@@ -599,6 +607,22 @@ public:
 		dims_(mit.dims_), sP_(mit.sP_), eP_(mit.eP_)
 	{
 	}
+	self_type& operator=(const self_type& rhs)
+	{
+		this->coor_ = rhs.coor_;
+		this->basisDim_ = rhs.basisDim_;
+		this->dSize_ = rhs.dSize_;
+		this->front_ = rhs.front_;
+		this->end_ = rhs.end_;
+		this->basisDimOffset_ = rhs.basisDimOffset_;
+		this->seqPos_ = rhs.seqPos_;
+		this->seqCapacity_ = rhs.seqCapacity_;
+		this->dims_ = rhs.dims_;
+		this->sP_ = rhs.sP_;
+		this->eP_ = rhs.eP_;
+
+		return *this;
+	}
 
 	~coordinateIterator()
 	{
@@ -704,7 +728,7 @@ public:
 	}
 	coordinate<Dty_> seqToCoor(const size_type seq)
 	{
-		assert(seq <= this->getCapacity());
+		//assert(seq <= this->getCapacity());
 
 		size_type remain = seq;
 		coordinate<Dty_> outCoor(this->dSize_);

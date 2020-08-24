@@ -3,7 +3,7 @@
 #define _MSDB_DUMMY_H_
 
 #include <pch.h>
-#include <array/array.h>
+#include <array/memBlockArray.h>
 #include <array/memChunk.h>
 #include <array/blockChunk.h>
 #include <vector>
@@ -21,16 +21,16 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 	dimension blockNums = chunkDims / blockDims;
 
 	// Build Array
-	dimensionDescs arrDimDescs;
+	pDimensionDescs dimDescs = std::make_shared<dimensionDescs>();
 	dimensionId dimId = 0;
-	arrDimDescs.push_back(std::make_shared<dimensionDesc>(dimId++, "X", 0, dims[1], chunkDims[1], blockDims[1]));
-	arrDimDescs.push_back(std::make_shared<dimensionDesc>(dimId++, "Y", 0, dims[0], chunkDims[0], blockDims[0]));
+	dimDescs->push_back(std::make_shared<dimensionDesc>(dimId++, "X", 0, dims[1], chunkDims[1], blockDims[1]));
+	dimDescs->push_back(std::make_shared<dimensionDesc>(dimId++, "Y", 0, dims[0], chunkDims[0], blockDims[0]));
 
-	attributeDescs attrDescs;
+	pAttributeDescs attrDescs = std::make_shared<attributeDescs>();
 	attributeId attrId = 0;
-	attrDescs.push_back(std::make_shared<attributeDesc>(attrId++, "ATTR_1", eleType::CHAR));		// SIGNED CHAR
+	attrDescs->push_back(std::make_shared<attributeDesc>(attrId++, "ATTR_1", eleType::CHAR));		// SIGNED CHAR
 
-	pArrayDesc arrDesc = std::make_shared<arrayDesc>(aid, arrayName.c_str(), arrDimDescs, attrDescs);
+	pArrayDesc arrDesc = std::make_shared<arrayDesc>(aid, arrayName.c_str(), dimDescs, attrDescs);
 	std::shared_ptr<Aty_> sourceArr = std::make_shared<Aty_>(arrDesc);
 
 	// Build Chunk
@@ -45,7 +45,7 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 
 			pChunkDesc cDesc = std::make_shared<chunkDesc>(
 				sourceArr->getChunkIdFromItemCoor(sP),
-				attrDescs[0],
+				attrDescs->at(0),
 				chunkDims, blockDims,
 				sP, eP);
 			pChunk sourceChunk = std::make_shared<memBlockChunk>(cDesc);
@@ -67,7 +67,7 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 					}
 				}
 				++(*bItr);
-				sourceArr->insertChunk(sourceChunk);
+				sourceArr->insertChunk(0, sourceChunk);
 			}
 		}
 	}
@@ -82,9 +82,9 @@ void compArrary(pArray lArr, pArray rArr)
 	auto lAttrDesc = lArr->getDesc()->attrDescs_;
 	auto rAttrDesc = rArr->getDesc()->attrDescs_;
 
-	EXPECT_EQ(lAttrDesc.size(), rAttrDesc.size());
+	EXPECT_EQ(lAttrDesc->size(), rAttrDesc->size());
 
-	for (int attrId = 0; attrId < lAttrDesc.size(); ++attrId)
+	for (int attrId = 0; attrId < lAttrDesc->size(); ++attrId)
 	{
 		auto lcItr = lArr->getChunkIterator();
 		auto rcItr = rArr->getChunkIterator();
@@ -198,15 +198,15 @@ void getExDummy(value_type* output, size_t length);
 void getExMMTBuilded(value_type(*minOutput)[2][2], value_type(*maxOutput)[2][2], size_t length);
 void getExDelta(value_type* output, size_t length);
 
-template<class Aty_ = arrayBase>
-std::vector<std::shared_ptr<Aty_>> getSourceArray()
+template<class Aty_ = memBlockArray>
+std::vector<pArray> getSourceArray()
 {
 	// Get Dummy data
 	value_type data[dataLength];
 	getDummy(data, dataLength);
 
-	std::vector<std::shared_ptr<Aty_>> arrs(
-		{ get2DCharArray<Aty_>(data, aid, "data2D_sc4x4", dims, chunkDims, blockDims, eleType::CHAR) });
+	std::vector<pArray> arrs(
+		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_>(data, aid, "data2D_sc4x4", dims, chunkDims, blockDims, eleType::CHAR)) });
 	return arrs;
 }
 
@@ -231,15 +231,15 @@ extern std::vector<dim_type> blockDims;
 
 void getDummy(value_type* output, size_t length);
 
-template<class Aty_ = arrayBase>
-std::vector<std::shared_ptr<Aty_>> getSourceArray()
+template<class Aty_ = memBlockArray>
+std::vector<pArray> getSourceArray()
 {
 	// Get Dummy data
 	value_type data[dataLength];
 	getDummy(data, dataLength);
 
-	std::vector<std::shared_ptr<Aty_>> arrs(
-		{ get2DCharArray<Aty_>(data, aid, "data2D_tempTest", dims, chunkDims, blockDims, eleType::CHAR) });
+	std::vector<pArray> arrs(
+		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_>(data, aid, "data2D_tempTest", dims, chunkDims, blockDims, eleType::CHAR)) });
 	return arrs;
 }
 
@@ -268,15 +268,15 @@ void getExDummy(value_type* output, size_t length);
 void getExMMTBuilded(value_type(*minOutput)[4][4], value_type(*maxOutput)[4][4], size_t length);
 void getExSerialMMT(value_type* output, size_t length);
 
-template<class Aty_ = arrayBase>
-std::vector<std::shared_ptr<Aty_>> getSourceArray()
+template<class Aty_ = memBlockArray>
+std::vector<pArray> getSourceArray()
 {
 	// Get Dummy data
 	value_type data[dataLength];
 	getDummy(data, dataLength);
 
-	std::vector<std::shared_ptr<Aty_>> arrs(
-		{ get2DCharArray<Aty_>(data, aid, "data2D_sc8x8", dims, chunkDims, blockDims, eleType::CHAR) });
+	std::vector<pArray> arrs(
+		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_>(data, aid, "data2D_sc8x8", dims, chunkDims, blockDims, eleType::CHAR)) });
 	return arrs;
 }
 

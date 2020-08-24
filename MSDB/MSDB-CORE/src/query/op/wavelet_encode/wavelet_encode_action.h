@@ -41,7 +41,7 @@ private:
 				chk->setId(cid);
 			}
 
-			outArr->insertChunk(convertedChunkList.begin(), convertedChunkList.end());
+			outArr->insertChunk(attrDesc->id_, convertedChunkList.begin(), convertedChunkList.end());
 			++(*cItr);
 		}
 	}
@@ -94,7 +94,7 @@ private:
 	}
 
 	template <class Ty_>
-	void levelEncode(pChunk outChunk, coorRange arrRange, 
+	void levelEncode(pChunk outChunk, coorRange& arrRange, 
 					 pWavelet w, size_t level, pQuery q)
 	{
 		dimensionId dSize = outChunk->getDSize();
@@ -106,7 +106,7 @@ private:
 
 	template <class Ty_>
 	void dimensionEncode(pChunk outChunk, 
-						 coorRange arrRange, dimensionId basisDim,
+						 coorRange& arrRange, dimensionId basisDim,
 						 pWavelet w, pQuery q)
 	{
 		size_t length = arrRange.getEp()[basisDim];
@@ -142,27 +142,13 @@ private:
 		{
 			for(size_t ai = 0, di = halfLength; ai < halfLength; ++ai, ++di)
 			{
-				//row[ai] = (**iit).get<Ty_>();
-				//++(*iit);
-				//row[di] = std::ceil((row[ai] - (**iit).get<Ty_>()) / 2.0);
-				//row[ai] -= row[di];
-				
 				Ty_ x0 = (**iit).get<Ty_>();
 				++(*iit);
 				Ty_ x1 = (**iit).get<Ty_>();
 				++(*iit);
 
-				//uint64_t x0 = (**iit).get<Ty_>();
-				//++(*iit);
-				//uint64_t x1 = (**iit).get<Ty_>();
-				//++(*iit);
-
-				//uint64_t y0 = x1 - x0;
-				//uint64_t y1 = x0 + std::floor(y0 / 2.0);
-
 				row[di] = x1 - x0;
 				row[ai] = x0 + std::floor(row[di] / 2.0);
-				
 			}
 
 			for(size_t ai = 0, di = halfLength; ai < halfLength; ++ai, ++di)

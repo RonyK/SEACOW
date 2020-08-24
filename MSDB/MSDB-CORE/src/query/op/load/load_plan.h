@@ -18,13 +18,10 @@ public:
 	virtual pAction getAction() override;
 };
 
-class load_pset : public opParamSet
+class load_array_pset : public opArrayParamSet
 {
 public:
-	load_pset(parameters& pSet);
-
-public:
-	virtual pArrayDesc inferSchema() override;
+	load_array_pset(parameters& pSet);
 };
 }	// msdb
 #endif		// _MSDB_OP_LOAD_PLAN_H_

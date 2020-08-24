@@ -2,9 +2,9 @@
 #ifndef _MSDB_BLOCKITERATOR_H_
 #define _MSDB_BLOCKITERATOR_H_
 
-#include <util/coordinate.h>
-#include <array/blockId.h>
 #include <array/blockContainer.h>
+#include <index/bitmap.h>
+#include <util/coordinate.h>
 
 namespace msdb
 {
@@ -21,10 +21,9 @@ public:
 
 
 public:
-	blockIterator(const size_type dSize, dim_const_pointer dims,
-				  blockContainer* blocks, iterateMode itMode);
-
-	blockIterator(const dimension dims, blockContainer* blocks, iterateMode itMode);
+	blockIterator(const dimension dims, 
+				  blockContainer* blocks, bitmap* blockBitmap,
+				  const iterateMode itMode);
 
 	blockIterator(const self_type& mit);
 
@@ -74,13 +73,14 @@ public:
 
 protected:
 	blockContainer* blocks_;
+	bitmap* blockBitmap_;
 	iterateMode itMode_;
 };
 
 class singleBlockIterator : public blockIterator
 {
 public:
-	singleBlockIterator(pBlock blk, iterateMode itMode);
+	singleBlockIterator(const dimension dims, pBlock blk, const iterateMode itMode);
 	singleBlockIterator(const singleBlockIterator& mit);
 
 public:

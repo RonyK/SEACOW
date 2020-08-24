@@ -6,6 +6,7 @@
 #include <array/chunk.h>
 #include <array/chunkIterator.h>
 #include <util/coordinate.h>
+#include <index/bitmap.h>
 #include <memory>
 #include <map>
 
@@ -84,28 +85,37 @@ public:
 	size_type getNumChunks();
 
 	// Chunk
-	pChunkDesc getChunkDesc(chunkId cId, attributeId attrId);
-	pChunk getChunk(chunkId cId);
+	pChunkDesc getChunkDesc(const attributeId attrId, const chunkId cId);
+	pChunk getChunk(const chunkId cId);
 	chunkId getChunkId(pChunkDesc cDesc);
-	chunkId getChunkIdFromItemCoor(coor& itemCoor);
-	chunkId getChunkIdFromChunkCoor(coor& chunkCoor);
-	virtual coor itemCoorToChunkCoor(coor& itemCoor);
+	chunkId getChunkIdFromItemCoor(const coor& itemCoor);
+	chunkId getChunkIdFromChunkCoor(const coor& chunkCoor);
+	virtual coor itemCoorToChunkCoor(const coor& itemCoor);
 	virtual pChunkIterator getChunkIterator(
-		iterateMode itMode = iterateMode::ALL);
+		const iterateMode itMode = iterateMode::ALL);
 
 	//////////////////////////////
 	// Setter
 	//////////////////////////////
-	void setId(arrayId id);	// only used for test
-	void insertChunk(pChunk inputChunk);
+	void setId(const arrayId id);	// only used for test
 	void flush();
 
+	virtual pChunk makeChunk(const attributeId attrId, const chunkId cId) = 0;
+	// For better performance, implement the function in an inherit class.
+	// The function provided by default extracts ID from ChunkDesc 
+	// and re-generate chunkDesc for it.
+	virtual pChunk makeChunk(const chunkDesc& desc);
+	// If a chunkBit is setted, arrayBase makes a chunk accordingly.
+	void makeChunks(const attributeId attrId, const bitmap& input);
+
+	void insertChunk(const attributeId attrId, pChunk inputChunk);
 	template <class _Iter>
-	void insertChunk(_Iter begin, _Iter end)
+	void insertChunk(const attributeId attrId, _Iter begin, _Iter end)
 	{
 		for (; begin != end; ++begin)
 		{
 			this->chunks_.insert(chunkPair((*begin)->getId(), *begin));
+			this->chunkBitmap_[attrId].setExist((*begin)->getId());
 		}
 	}
 
@@ -114,6 +124,7 @@ public:
 protected:
 	pArrayDesc desc_;
 	chunkContainer chunks_;		// TODO::Seperate chunk container by attributeId
+	std::vector<bitmap> chunkBitmap_;
 };
 }	// msdb
 #endif		// _MSDB_ARRAY_H_

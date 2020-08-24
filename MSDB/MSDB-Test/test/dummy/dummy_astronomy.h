@@ -34,15 +34,15 @@ extern std::vector<dim_type> blockNums;
 
 void getDummy(value_type* output, size_t length);
 
-template<class Aty_ = arrayBase>
-std::vector<std::shared_ptr<Aty_>> getSourceArray()
+template<class Aty_ = memBlockArray>
+std::vector<pArray> getSourceArray()
 {
 	// Get Dummy data
 	value_type* data = new value_type[dataLength];
 	getDummy(data, dataLength);
 
-	std::vector<std::shared_ptr<Aty_>> arrs(
-		{ get2DCharArray<Aty_>(data, aid, "data2D_star1024x1024", dims, chunkDims, blockDims, ele_type) });
+	std::vector<pArray> arrs(
+		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_>(data, aid, "data2D_star1024x1024", dims, chunkDims, blockDims, ele_type)) });
 	return arrs;
 }
 

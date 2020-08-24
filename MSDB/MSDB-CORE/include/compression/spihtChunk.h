@@ -21,8 +21,10 @@ public:
 	void initBufferZero();
 
 protected:
-	virtual void makeBlocks(std::vector<bool> bitmap);
 	virtual void makeBuffer();
+
+public:
+	virtual pBlock makeBlock(const blockId bId) override;
 
 public:
 	//virtual pChunkItemIterator getItemIterator();

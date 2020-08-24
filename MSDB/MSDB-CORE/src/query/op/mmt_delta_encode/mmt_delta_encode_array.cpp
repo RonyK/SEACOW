@@ -3,7 +3,7 @@
 namespace msdb
 {
 mmt_delta_encode_array::mmt_delta_encode_array(pArrayDesc desc)
-	: arrayBase(desc), attrMMT()
+	: base_type(desc), attrMMT()
 {
 }
 pMMT mmt_delta_encode_array::getMMT(attributeId attrId)

@@ -21,17 +21,9 @@ pAction mmt_delta_encode_plan::getAction()
 	return std::make_shared<mmt_delta_encode_action>();
 }
 
-mmt_delta_encode_pset::mmt_delta_encode_pset(parameters& pSet)
-	: opParamSet(pSet)
-{
-}
-
-pArrayDesc mmt_delta_encode_pset::inferSchema()
+mmt_delta_encode_array_pset::mmt_delta_encode_array_pset(parameters& pSet)
+	: opArrayParamSet(pSet)
 {
 	assert(this->params_.size() == 1);
-	assert(this->params_[0]->type() == opParamType::ARRAY);		// source array
-
-	pArrayDesc aSourceDesc = std::static_pointer_cast<opParamArray::paramType>(this->params_[0]->getParam());
-	return std::make_shared<opParamArray::paramType>(*aSourceDesc);
 }
 }	// msdb

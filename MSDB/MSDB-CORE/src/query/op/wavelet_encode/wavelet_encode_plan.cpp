@@ -16,7 +16,7 @@ const char* msdb::wavelet_encode_plan::name()
 
 //void wavelet_encode_plan::initParamSets()
 //{
-//	this->addParamSet(std::make_shared<wavelet_encode_pset>());
+//	this->addParamSet(std::make_shared<wavelet_encode_array_pset>());
 //}
 
 pAction wavelet_encode_plan::getAction()
@@ -26,29 +26,16 @@ pAction wavelet_encode_plan::getAction()
 
 //////////////////////////////
 // pset
-wavelet_encode_pset::wavelet_encode_pset()
-	: opParamSet()
-{
-}
-
-wavelet_encode_pset::wavelet_encode_pset(parameters& pSet)
-	: opParamSet(pSet)
-{
-}
-
-//void wavelet_encode_pset::initParams()
-//{
-//	auto a = new opParamArrayPlaceholder();
-//	this->params_.push_back(_MSDB_MAKE_PARAM(opParamArrayPlaceholder));		// Source array
-//	this->params_.push_back(_MSDB_MAKE_PARAM(opParamConstPlaceholder));		// Target level
-//}
-
-pArrayDesc wavelet_encode_pset::inferSchema()
+wavelet_encode_array_pset::wavelet_encode_array_pset(parameters& pSet)
+	: opArrayParamSet(pSet)
 {
 	assert(this->params_.size() == 2);
 	assert(this->params_[0]->type() == opParamType::ARRAY);		// Source array
 	assert(this->params_[1]->type() == opParamType::CONST);		// Target level
+}
 
+pArrayDesc wavelet_encode_array_pset::inferSchema()
+{
 	pArrayDesc aSourceDesc = std::static_pointer_cast<opParamArray::paramType>(this->params_[0]->getParam());
 	pArrayDesc aInferDesc = std::make_shared<opParamArray::paramType>(*aSourceDesc);
 	eleDefault level;
@@ -56,13 +43,12 @@ pArrayDesc wavelet_encode_pset::inferSchema()
 	
 	size_t ratio = std::pow(2, level);
 	
-	for(dimensionId d = 0; d < aInferDesc->dimDescs_.size(); d++)
+	for(dimensionId d = 0; d < aInferDesc->dimDescs_->size(); d++)
 	{
-		auto dDesc = aInferDesc->dimDescs_[d];
+		auto dDesc = aInferDesc->dimDescs_->at(d);
 		dDesc->chunkSize_ = intDivCeil(dDesc->chunkSize_, ratio);
 	}
 
 	return aInferDesc;
 }
-
 }

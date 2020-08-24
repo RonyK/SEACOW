@@ -20,6 +20,7 @@ using paramSetId = size_t;
 
 enum class opParamType
 {
+	PLAN,
 	ARRAY,
 	ATTRIBUTE,
 	DIMENSION,

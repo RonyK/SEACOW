@@ -17,22 +17,17 @@ pAction wavelet_decode_plan::getAction()
 	return wdAction;
 }
 
-
-wavelet_decode_pset::wavelet_decode_pset()
-	: opParamSet()
-{
-}
-
-wavelet_decode_pset::wavelet_decode_pset(parameters& pSet)
-	: opParamSet(pSet)
+wavelet_decode_array_pset::wavelet_decode_array_pset(parameters& pSet)
+	: opArrayParamSet(pSet)
 {
 	assert(this->params_.size() == 2);
-}
-
-pArrayDesc wavelet_decode_pset::inferSchema()
-{
 	assert(this->params_[0]->type() == opParamType::ARRAY);
 	assert(this->params_[1]->type() == opParamType::CONST);		// Target level
+}
+
+pArrayDesc wavelet_decode_array_pset::inferSchema()
+{
+
 	//assert(this->params_[2]->type() == opParamType::INTLIST);	// Target dimSchema
 
 	pArrayDesc aSourceDesc = std::static_pointer_cast<opParamArray::paramType>(
@@ -46,7 +41,7 @@ pArrayDesc wavelet_decode_pset::inferSchema()
 	//// Reset chunkSize
 	//auto chunkSizes = std::static_pointer_cast<opParamIntList::paramType>(
 	//	this->params_[2]->getParam());
-	//for (dimensionId d = 0; d < aInferDesc->dimDescs_.size(); ++d)
+	//for (dimensionId d = 0; d < aInferDesc->dimDescs_->size(); ++d)
 	//{
 	//	auto dDesc = aInferDesc->dimDescs_[d];
 	//	dDesc->chunkSize_ = chunkSizes->at(d);
@@ -54,5 +49,4 @@ pArrayDesc wavelet_decode_pset::inferSchema()
 
 	return aInferDesc;
 }
-
 }	// msdb

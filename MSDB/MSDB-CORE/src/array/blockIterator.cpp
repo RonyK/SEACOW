@@ -3,22 +3,19 @@
 
 namespace msdb
 {
-// BLOCK ITERATOR
-blockIterator::blockIterator(const size_type dSize, dim_const_pointer dims,
-							 blockContainer* blocks, iterateMode itMode)
-	: coorItr(dSize, dims), blocks_(blocks), itMode_(itMode)
-{
-	// TODO::blocks_(blocks)
-}
-
 blockIterator::blockIterator(const dimension dims,
-							 blockContainer* blocks, iterateMode itMode)
-	: coorItr(dims), blocks_(blocks), itMode_(itMode)
+							 blockContainer* blocks, bitmap* blockBitmap, 
+							 const iterateMode itMode)
+	: coorItr(dims), 
+	blocks_(blocks), blockBitmap_(blockBitmap),
+	itMode_(itMode)
 {
 }
 
 blockIterator::blockIterator(const self_type& mit)
-	: coorItr(mit), blocks_(mit.blocks_), itMode_(mit.itMode_)
+	: coorItr(mit), 
+	blocks_(mit.blocks_), blockBitmap_(mit.blockBitmap_),
+	itMode_(mit.itMode_)
 {
 }
 
@@ -45,8 +42,8 @@ iterateMode blockIterator::getIterateMode()
 	return this->itMode_;
 }
 
-singleBlockIterator::singleBlockIterator(pBlock blk, iterateMode itMode)
-	: blockIterator(dimension(1), nullptr, itMode), block_(blk)
+singleBlockIterator::singleBlockIterator(const dimension dims, pBlock blk, const iterateMode itMode)
+	: blockIterator(dims, nullptr, nullptr, itMode), block_(blk)
 {
 }
 
@@ -62,14 +59,14 @@ blockIterator::size_type singleBlockIterator::getSeqEnd()
 
 bool singleBlockIterator::isExist()
 {
-	if (this->seqPos_ == 0)
+	if (this->seqPos_ == 0 && this->block_ != nullptr)
 		return true;
 	return false;
 }
 
 bool singleBlockIterator::isExist(blockId bid)
 {
-	if (bid == 0)
+	if (bid == 0 && this->block_ != nullptr)
 		return true;
 	return false;
 }

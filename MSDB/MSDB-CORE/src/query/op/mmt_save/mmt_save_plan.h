@@ -17,14 +17,10 @@ public:
 	virtual pAction getAction() override;
 };
 
-class mmt_save_pset : public opParamSet
+class mmt_save_array_pset : public opArrayParamSet
 {
 public:
-	mmt_save_pset();
-	mmt_save_pset(parameters& pSet);
-
-public:
-	virtual pArrayDesc inferSchema() override;
+	mmt_save_array_pset(parameters& pSet);
 };
 }	// msdb
 

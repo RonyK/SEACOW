@@ -29,35 +29,38 @@ size_t dimensionDesc::getChunkNum()
 	}
 	return this->getLength() / this->chunkSize_;
 }
-std::vector<position_t> dimensionDescs::getDims()
+dimensionDescs::dimensionDescs()
 {
-	std::vector<position_t> dims;
-	for(auto it = this->begin(); it != this->end(); it++)
+}
+dimensionDescs::dimensionDescs(const dimensionDescs& mit)
+{
+	for(auto desc : mit)
 	{
-		dims.push_back((*it)->getLength());
+		this->push_back(std::make_shared<dimensionDesc>(*desc));
 	}
-
+}
+dimension dimensionDescs::getDims()
+{
+	dimension dims(this->size());
+	for (dimensionId d = 0; d < this->size(); ++d)
+	{
+		dims[d] = this->at(d)->getLength();
+	}
 	return dims;
 }
-std::vector<position_t> dimensionDescs::getChunkDims()
+dimension dimensionDescs::getChunkDims()
 {
-	std::vector<position_t> dims;
-	for (auto it = this->begin(); it != this->end(); it++)
+	dimension dims(this->size());
+	for (dimensionId d = 0; d < this->size(); ++d)
 	{
-		dims.push_back((*it)->chunkSize_);
+		dims[d] = this->at(d)->chunkSize_;
 	}
 	return dims;
 }
 
-std::vector<position_t> dimensionDescs::getChunkContainerDims()
+dimension dimensionDescs::getChunkSpace()
 {
-	std::vector<position_t> dims;
-	for (auto it = this->begin(); it != this->end(); it++)
-	{
-		dims.push_back(intDivCeil((*it)->getLength(), (*it)->chunkSize_));
-	}
-
-	return dims;
+	return this->getDims() / this->getChunkDims();
 }
 
 dimension dimensionDescs::getBlockDims()
@@ -74,9 +77,4 @@ dimension dimensionDescs::getBlockSpace()
 {
 	return dimension(this->getChunkDims()) / this->getBlockDims();
 }
-
-//dimension dimensionDescs::getBlockContainerDims()
-//{
-//	return std::vector<position_t>();
-//}
 }	// msdb

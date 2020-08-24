@@ -37,12 +37,12 @@ pArray wavelet_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 	// Build wavelet_decode_array
 	auto outArr = std::make_shared<wavelet_decode_array>(this->getArrayDesc(), maxLevel);
 	auto outDimDesc = outArr->getDesc()->getDimDescs();
-	for(dimensionId d = 0; d < outDimDesc.size(); ++d)
+	for(dimensionId d = 0; d < outDimDesc->size(); ++d)
 	{
-		outArr->getDesc()->getDimDescs()[d]->chunkSize_ = originalChunkDims[d];
+		(*outArr->getDesc()->getDimDescs())[d]->chunkSize_ = originalChunkDims[d];
 	}
 
-	for (auto attrDesc : inArr->getDesc()->getAttrDescs())
+	for (auto attrDesc : *inArr->getDesc()->getAttrDescs())
 	{
 		switch (attrDesc->type_)
 		{

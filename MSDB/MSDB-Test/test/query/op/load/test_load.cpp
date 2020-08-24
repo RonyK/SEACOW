@@ -1,4 +1,5 @@
 #include <pch.h>
+#include <array/memBlockArray.h>
 #include <index/testMMT.h>
 #include <system/storageMgr.h>
 #include <io/testIO.h>
@@ -16,7 +17,7 @@ TEST(query_op_load, load_sc4x4)
     auto loadArrDesc = std::make_shared<arrayDesc>(*saveArr->getDesc());
     saveArr = nullptr;
 
-    auto loadArrSchema = std::make_shared<arrayBase>(loadArrDesc);
+    auto loadArrSchema = std::make_shared<memBlockArray>(loadArrDesc);
     auto loadArr = load(std::vector<pArray>({ loadArrSchema }), &getSourceArrayIfEmpty);
     load_test(loadArr);
 }	// TEST()

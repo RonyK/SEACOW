@@ -43,7 +43,7 @@ pArray mmt_build(std::vector<pArray> sourceArr)
 void mmt_build_test(pArray afterArray)
 {
 	// Result check
-	for (auto attrDesc : afterArray->getDesc()->attrDescs_)
+	for (auto attrDesc : *afterArray->getDesc()->attrDescs_)
 	{
 		auto attrIndex = arrayMgr::instance()->getAttributeIndex(afterArray->getId(), attrDesc->id_);
 		EXPECT_TRUE(attrIndex != nullptr);
@@ -140,7 +140,7 @@ void mmt_delta_encode_test(std::shared_ptr<mmt_delta_encode_array> arr)
 {
 	auto arrId = arr->getId();
 
-	for (auto attr : arr->getDesc()->attrDescs_)
+	for (auto attr : *arr->getDesc()->attrDescs_)
 	{
 		value_type expected[dataLength];
 		getExDelta(expected, dataLength);
@@ -175,7 +175,7 @@ pArray mmt_delta_decode(std::vector<pArray> sourceArr)
 	pQuery mmtQuery;
 	getMmtDeltaDecode(sourceArr[0]->getDesc(), mmtPlan, mmtAction, mmtQuery);
 
-	auto afterArray = mmtAction->execute(std::vector<pArray>({ std::static_pointer_cast<arrayBase>(sourceArr[0]) }), mmtQuery);
+	auto afterArray = mmtAction->execute(std::vector<pArray>({ sourceArr[0] }), mmtQuery);
 	std::cout << "mmt delta decode" << std::endl;
 
 	return afterArray;
@@ -193,7 +193,7 @@ void mmt_delta_decode_test(std::shared_ptr<mmt_delta_decode_array> arr)
 {
 	auto arrId = arr->getId();
 
-	for (auto attr : arr->getDesc()->attrDescs_)
+	for (auto attr : *arr->getDesc()->attrDescs_)
 	{
 		value_type expected[dataLength];
 		getChunkDummy(expected, dataLength);

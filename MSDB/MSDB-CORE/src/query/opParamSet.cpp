@@ -30,4 +30,25 @@ parameters opParamSet::getParam()
 {
 	return this->params_;
 }
+opArrayParamSet::opArrayParamSet(parameters& pSet)
+	: opParamSet(pSet)
+{
+	assert(this->params_[0]->type() == opParamType::ARRAY);		// source array
+}
+pArrayDesc opArrayParamSet::inferSchema()
+{
+	pArrayDesc aSourceDesc = std::static_pointer_cast<opParamArray::paramType>(this->params_[0]->getParam());
+	return std::make_shared<opParamArray::paramType>(*aSourceDesc);
+}
+pBitmap opArrayParamSet::inferBottomUpBitmap()
+{
+	pArrayDesc desc = this->inferSchema();
+	dimension chunkSpace = desc->getDimDescs()->getChunkSpace();
+
+	return std::make_shared<bitmap>(chunkSpace.area(), true);
+}
+pBitmap opArrayParamSet::inferTopDownBitmap(pBitmap fromParent)
+{
+	return std::make_shared<bitmap>(*fromParent);
+}
 }

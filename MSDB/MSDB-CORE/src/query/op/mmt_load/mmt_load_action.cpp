@@ -23,13 +23,13 @@ pArray mmt_load_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 	assert(inputArrays.size() == 1);
 
 	pArray arr = inputArrays[0];
-	auto dims = arr->getDesc()->getDimDescs().getDims();
-	auto chunkDims = arr->getDesc()->getDimDescs().getChunkDims();
-	auto blockDims = arr->getDesc()->getDimDescs().getBlockDims();
+	auto dims = arr->getDesc()->getDimDescs()->getDims();
+	auto chunkDims = arr->getDesc()->getDimDescs()->getChunkDims();
+	auto blockDims = arr->getDesc()->getDimDescs()->getBlockDims();
 
 	arrayId arrId = arr->getId();
 
-	for(auto attr : arr->getDesc()->getAttrDescs())
+	for(auto attr : *arr->getDesc()->getAttrDescs())
 	{
 		pMMT mmtIndex = MinMaxTree::createMMT(attr->type_, dims, chunkDims, blockDims);		// maxLevel is not setted
 		storageMgr::instance()->loadAttrIndex(arrId, attr->id_, mmtIndex);

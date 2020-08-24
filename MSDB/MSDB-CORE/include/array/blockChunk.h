@@ -20,32 +20,39 @@ public:
 	memBlockChunk(pChunkDesc desc);
 	virtual ~memBlockChunk();
 
+//////////////////////////////
+// Buffer
+//////////////////////////////
 protected:
-	virtual void makeBuffer();
-	virtual void makeBlocks(std::vector<bool> bitmap);
-	virtual void referenceBufferToBlock();
-
+	virtual void makeBuffer() override;
+	virtual void referenceBufferToBlock(const blockId bId) override;
+	
 public:
-	//////////////////////////////
-	// Getter
-	//////////////////////////////
-	// Block
-	virtual pBlock getBlock(blockId bId);
-	virtual blockId getBlockId(pBlockDesc cDesc);
-	virtual blockId getBlockIdFromItemCoor(coor& itemCoor);
-	virtual blockId getBlockIdFromBlockCoor(coor& chunkCoor);
-	virtual virtual coor itemCoorToBlockCoor(coor& itemCoor);
-	virtual pBlockIterator getBlockIterator(iterateMode itMode = iterateMode::ALL);
+	//void flush();
+
+//////////////////////////////
+// Blocks
+//////////////////////////////
+public:
+	virtual pBlock makeBlock(const blockId bId) override;
+	virtual void insertBlock(pBlock inBlock) override;
+	virtual pBlock getBlock(const blockId bId) override;
+	//virtual blockId getBlockId(pBlockDesc cDesc) override;
+	//virtual blockId getBlockIdFromItemCoor(coor& itemCoor);
+	//virtual blockId getBlockIdFromBlockCoor(coor& blockCoor);
+	//virtual coor itemCoorToBlockCoor(coor& itemCoor);
+	virtual pBlockIterator getBlockIterator(
+		const iterateMode itMode = iterateMode::ALL) override;
 
 	//////////////////////////////
 	// Setter
 	//////////////////////////////
-	void setBlock(pBlock b);
-	void flush();
+	
 
-	//////////////////////////////
-	// Item Iterators
-	//////////////////////////////
+//////////////////////////////
+// Item Iterators
+//////////////////////////////
+public:
 	virtual pChunkItemIterator getItemIterator();
 	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range);
 

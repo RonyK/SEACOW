@@ -29,17 +29,18 @@ pArray spiht_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 	pArray outArr = arrayMgr::instance()->makeArray<wavelet_encode_array>(this->getArrayDesc());
 	arrayId arrId = outArr->getId();
 
+
 	std::static_pointer_cast<wavelet_encode_array>(outArr)->setMaxLevel(maxLevel);
 	std::static_pointer_cast<wavelet_encode_array>(outArr)->setOrigianlChunkDims(originalChunkDims);
 
-	for (auto attr : outArr->getDesc()->attrDescs_)
+	for (auto attr : *outArr->getDesc()->attrDescs_)
 	{
 		auto cit = outArr->getChunkIterator(iterateMode::ALL);
 
 		while (!cit->isEnd())
 		{
 			chunkId cId = cit->seqPos();
-			outArr->insertChunk(std::make_shared<spihtChunk>(outArr->getChunkDesc(cId, attr->id_)));
+			outArr->insertChunk(attr->id_, std::make_shared<spihtChunk>(outArr->getChunkDesc(cId, attr->id_)));
 
 			auto spChunk = std::static_pointer_cast<spihtChunk>(**cit);
 			spChunk->setMaxLevel(maxLevel);

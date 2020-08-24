@@ -19,15 +19,14 @@ public:
 
 };
 
-class wavelet_encode_pset : public opParamSet
+class wavelet_encode_array_pset : public opArrayParamSet
 {
 public:
-	wavelet_encode_pset();
-	wavelet_encode_pset(parameters& pSet);
+	wavelet_encode_array_pset(parameters& pSet);
 
 public:
-	//virtual void initParams() override;
 	virtual pArrayDesc inferSchema() override;
+	// TODO::infer bitmap
 };
 }
 

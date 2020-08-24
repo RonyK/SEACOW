@@ -10,6 +10,7 @@
 #include <array/blockContainer.h>
 #include <io/serializable.h>
 #include <io/bitstream.h>
+#include <index/bitmap.h>
 #include <memory>
 
 namespace msdb
@@ -47,7 +48,8 @@ protected:
 	void free();
 	// NOTE::Call a referenceBufferToBlock() in a makeBuffer()
 	virtual void makeBuffer() = 0;
-	virtual void referenceBufferToBlock() = 0;
+	virtual void referenceBufferToBlock(const blockId bId) = 0;
+	virtual void referenceAllBufferToBlock();
 
 public:
 	virtual void bufferAlloc();
@@ -117,18 +119,26 @@ protected:
 // Blocks
 //////////////////////////////
 public:
-	virtual void makeBlocks(std::vector<bool> bitmap) = 0;
+	virtual pBlock makeBlock(const blockId bId) = 0;
+	virtual void makeBlocks(const bitmap blockBitmap);
 	virtual void makeAllBlocks();
+	virtual void insertBlock(pBlock inBlock) = 0;
+
+	// mSize and mOffset size are not setted in the output of getBlockDesc function
+	virtual pBlockDesc getBlockDesc(const blockId bId);
 	size_t getBlockCapacity();
-	virtual pBlock getBlock(blockId bId) = 0;
-	virtual blockId getBlockId(pBlockDesc cDesc) = 0;
-	virtual blockId getBlockIdFromItemCoor(coor& itemCoor) = 0;
-	virtual blockId getBlockIdFromBlockCoor(coor& blockCoor) = 0;
-	virtual virtual coor itemCoorToBlockCoor(coor& itemCoor) = 0;
-	virtual pBlockIterator getBlockIterator(iterateMode itMode = iterateMode::ALL) = 0;
+	virtual pBlock getBlock(const blockId bId) = 0;
+	//virtual blockId getBlockId(pBlockDesc cDesc) = 0;
+	//virtual blockId getBlockIdFromItemCoor(coor& itemCoor) = 0;
+	//virtual blockId getBlockIdFromBlockCoor(coor& blockCoor) = 0;
+	//virtual coor itemCoorToBlockCoor(coor& itemCoor) = 0;
+	virtual coor getBlockCoor(const blockId bId);
+	virtual pBlockIterator getBlockIterator(
+		const iterateMode itMode = iterateMode::ALL) = 0;
 
 protected:
 	size_type blockCapacity_;
+	bitmap blockBitmap_;
 
 //////////////////////////////
 // Item Iterators

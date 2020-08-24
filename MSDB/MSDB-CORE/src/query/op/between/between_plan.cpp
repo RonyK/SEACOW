@@ -20,23 +20,16 @@ namespace msdb
 	}
 
 	// pset
-	between_pset::between_pset()
-		: opParamSet()
-	{
-	}
-
-	between_pset::between_pset(parameters& pSet)
-		: opParamSet(pSet)
-	{
-	}
-
-	pArrayDesc between_pset::inferSchema()
+	between_array_pset::between_array_pset(parameters& pSet)
+		: opArrayParamSet(pSet)
 	{
 		assert(this->params_.size() == 3);
-		assert(this->params_[0]->type() == opParamType::ARRAY);
 		assert(this->params_[1]->type() == opParamType::COOR);
 		assert(this->params_[2]->type() == opParamType::COOR);
+	}
 
+	pArrayDesc between_array_pset::inferSchema()
+	{
 		auto aSourceDesc = std::static_pointer_cast<opParamArray::paramType>(this->params_[0]->getParam());
 		auto aInferDesc = std::make_shared<opParamArray::paramType>(*aSourceDesc);
 

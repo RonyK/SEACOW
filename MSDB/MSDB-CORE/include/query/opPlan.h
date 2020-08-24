@@ -21,15 +21,55 @@ public:
 public:
 	virtual const char* name() = 0;
 	void setParamSet(pParamSet paramSet);
-	//virtual void initParamSets() = 0;
 	virtual pArrayDesc inferSchema();
-	//void addParamSet(pParamSet pSet);
+	virtual pBitmap inferBitmap();
+	virtual pBitmap inferBottomUpBitmap();
+	virtual pBitmap inferTopDownBitmap();
 	virtual pAction getAction() = 0;
 	parameters getParam();
 
+protected:
+	virtual void setParentPlan(pPlan parentPlan);
+
 private:
-	pParamSet myParamSet_;
-	//std::vector<pParamSet> paramSets_;
+	pParamSet inParamSet_;
+	pBitmap outArrBitmap_;
+	pPlan parentPlan_;
+};
+
+class opParamPlan : public opParam
+{
+public:
+	using paramType = opPlan;
+
+public:
+	opParamPlan(pPlan plan);
+
+public:
+	virtual opParam::void_pointer getParam();
+	virtual opParamType type();
+
+private:
+	pPlan plan_;
+};
+
+class opParamPlanPlaceholder : public opParamPlaceholder, public opParamPlan
+{
+public:
+	opParamPlanPlaceholder();
+
+public:
+	virtual opParamType type();
+};
+class opPlanParamSet : public opParamSet
+{
+public:
+	opPlanParamSet(parameters& pSet);
+
+public:
+	virtual pArrayDesc inferSchema() override;
+	virtual pBitmap inferBottomUpBitmap() override;
+	virtual pBitmap inferTopDownBitmap(pBitmap fromParent) override;
 };
 }
 

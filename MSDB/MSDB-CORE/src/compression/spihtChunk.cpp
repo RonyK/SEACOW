@@ -19,27 +19,43 @@ void spihtChunk::initBufferZero()
 	memset(this->cached_->getData(), 0, this->desc_->mSize_);
 }
 
-void spihtChunk::makeBlocks(std::vector<bool> bitmap)
-{
-	if (bitmap[0])
-	{
-		this->block_ = std::make_shared<spihtBlock>(
-			std::make_shared<blockDesc>(
-			0,						// id
-			this->desc_->attrDesc_->type_,	// eType
-			this->desc_->getDims(),	// dims
-			this->desc_->sp_,		// sp
-			this->desc_->ep_,		// ep
-			this->desc_->mSize_		// mSize
-			));
-		pSpihtBlock spBlock = std::static_pointer_cast<spihtBlock>(this->block_);
-		spBlock->setMaxLevel(this->maxLevel_);
-	}
-}
+//void spihtChunk::makeBlocks(std::vector<bool> bitmap)
+//{
+//	if (bitmap[0])
+//	{
+//		this->block_ = std::make_shared<spihtBlock>(
+//			std::make_shared<blockDesc>(
+//			0,						// id
+//			this->desc_->attrDesc_->type_,	// eType
+//			this->desc_->getDims(),	// dims
+//			this->desc_->sp_,		// sp
+//			this->desc_->ep_,		// ep
+//			this->desc_->mSize_		// mSize
+//			));
+//		pSpihtBlock spBlock = std::static_pointer_cast<spihtBlock>(this->block_);
+//		spBlock->setMaxLevel(this->maxLevel_);
+//	}
+//}
 
 void spihtChunk::makeBuffer()
 {
 	this->cached_ = std::make_shared<memChunkBuffer>();
+}
+
+pBlock spihtChunk::makeBlock(const blockId bId)
+{
+	if(bId == 0 && this->block_ == nullptr)
+	{
+		auto desc = this->getBlockDesc(bId);
+		desc->mSize_ = desc->mSize_;
+		desc->mOffset_ = 0;
+		auto blockObj = std::make_shared<spihtBlock>(desc);
+		blockObj->setMaxLevel(this->maxLevel_);
+		this->insertBlock(blockObj);
+		return blockObj;
+	}
+
+	return nullptr;
 }
 
 //pChunkItemIterator spihtChunk::getItemIterator()

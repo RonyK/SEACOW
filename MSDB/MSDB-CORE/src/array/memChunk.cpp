@@ -6,7 +6,7 @@
 namespace msdb
 {
 memChunk::memChunk(pChunkDesc desc)
-	: chunk(desc)
+	: chunk(desc), block_(nullptr)
 {
 	this->blockCapacity_ = 1;
 	this->makeAllBlocks();
@@ -21,28 +21,47 @@ void memChunk::makeBuffer()
 	this->cached_ = std::make_shared<memChunkBuffer>();
 }
 
-void memChunk::makeBlocks(std::vector<bool> bitmap)
+pBlock memChunk::makeBlock(const blockId bId)
 {
-	if(bitmap[0])
+	if(bId == 0 && this->block_ == nullptr)
 	{
-		this->block_ = std::make_shared<memBlock>(
-			std::make_shared<blockDesc>(
-			0,						// id
-			this->desc_->attrDesc_->type_,	// eType
-			this->desc_->getDims(),	// dims
-			this->desc_->sp_,		// sp
-			this->desc_->ep_,		// ep
-			this->desc_->mSize_		// mSize
-			));
+		auto desc = this->getBlockDesc(bId);
+		desc->mSize_ = desc->dims_.area() * this->desc_->attrDesc_->typeSize_;
+		desc->mOffset_ = 0;
+		auto blockObj = std::make_shared<memBlock>(desc);
+		this->insertBlock(blockObj);
+		return blockObj;
 	}
+	return nullptr;
 }
 
-void memChunk::referenceBufferToBlock()
+void memChunk::insertBlock(pBlock inBlock)
 {
-	if (this->block_)
+	this->block_ = inBlock;
+}
+
+//void memChunk::makeBlocks(const bitmap blockBitmap)
+//{
+//	if(bitmap[0])
+//	{
+//		this->block_ = std::make_shared<memBlock>(
+//			std::make_shared<blockDesc>(
+//			0,						// id
+//			this->desc_->attrDesc_->type_,	// eType
+//			this->desc_->getDims(),	// dims
+//			this->desc_->sp_,		// sp
+//			this->desc_->ep_,		// ep
+//			this->desc_->mSize_,	// mSize
+//			0						// mOffset
+//			));
+//	}
+//}
+
+void memChunk::referenceBufferToBlock(const blockId bId)
+{
+	if (bId == 0 && this->block_)
 	{
-		bufferSize mSizeBlock = this->desc_->dims_.area();
-		this->block_->linkToChunkBuffer(this->cached_->getData(), mSizeBlock);
+		this->block_->linkToChunkBuffer(this->cached_->getData(), this->block_->getDesc()->mSize_);
 	}
 }
 
@@ -144,33 +163,42 @@ void memChunk::deserialize(std::istream& is)
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 	}
 }
-pBlock memChunk::getBlock(blockId bId)
+pBlock memChunk::getBlock(const blockId bId)
 {
 	assert(bId == 0);
 	return this->block_;
 }
-blockId memChunk::getBlockId(pBlockDesc cDesc)
+coor memChunk::getBlockCoor(const blockId bId)
 {
-	// TODO::getBlockId
-	return 0;
+	assert(bId == 0);
+	return coor(this->getDSize());
 }
-blockId memChunk::getBlockIdFromItemCoor(coor& itemCoor)
+//blockId memChunk::getBlockId(pBlockDesc cDesc)
+//{
+//	// TODO::getBlockId
+//	return 0;
+//}
+//blockId memChunk::getBlockIdFromItemCoor(coor& itemCoor)
+//{
+//	return 0;
+//}
+//blockId memChunk::getBlockIdFromBlockCoor(coor& blockCoor)
+//{
+//	assert(blockCoor == coor(this->desc_->getDimSize()));
+//	return 0;
+//}
+//coor memChunk::itemCoorToBlockCoor(coor& itemCoor)
+//{
+//	return itemCoor;
+//}
+pBlockIterator memChunk::getBlockIterator(const iterateMode itMode)
 {
-	return 0;
-}
-blockId memChunk::getBlockIdFromBlockCoor(coor& blockCoor)
-{
-	assert(blockCoor == coor(this->desc_->getDimSize()));
-	return 0;
-}
-coor memChunk::itemCoorToBlockCoor(coor& itemCoor)
-{
-	return itemCoor;
-}
-pBlockIterator memChunk::getBlockIterator(iterateMode itMode)
-{
-	pBlockIterator bItr = std::make_shared<singleBlockIterator>(
+	//return std::make_shared<blockIterator>(this->desc_->getBlockSpace(),
+	//									   &this->blocks_, &this->blockBitmap_,
+	//									   itMode);
+	return std::make_shared<singleBlockIterator>(
+		this->desc_->getBlockSpace(),
 		this->block_, itMode);
-	return bItr;
+	//return nullptr;
 }
 }	// msdb

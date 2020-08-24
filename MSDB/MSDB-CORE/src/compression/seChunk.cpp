@@ -5,7 +5,7 @@
 namespace msdb
 {
 seChunk::seChunk(pChunkDesc desc)
-	: memBlockChunk(desc), level_(0)
+	: memBlockChunk(desc), level_(0), rBitFromMMT(0)
 {
 }
 

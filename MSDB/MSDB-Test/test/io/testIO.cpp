@@ -17,7 +17,7 @@ void getSave(pArrayDesc sourceArrDesc,
 	parameters params = {
 		std::make_shared<opParamArray>(sourceArrDesc)
 	};
-	auto pSet = std::make_shared<save_pset>(params);
+	auto pSet = std::make_shared<save_array_pset>(params);
 
 	savePlan->setParamSet(pSet);
 	saveAction->setArrayDesc(savePlan->inferSchema());
@@ -39,7 +39,7 @@ void getLoad(pArrayDesc sourceArrDesc,
 	parameters params = {
 		std::make_shared<opParamArray>(sourceArrDesc)
 	};
-	auto pSet = std::make_shared<load_pset>(params);
+	auto pSet = std::make_shared<load_array_pset>(params);
 
 	loadPlan->setParamSet(pSet);
 	loadAction->setArrayDesc(loadPlan->inferSchema());
@@ -84,7 +84,7 @@ void load_test(pArray arr)
 	auto arrId = arr->getId();
 
 	size_t items = 0;
-	for (auto attr : arr->getDesc()->attrDescs_)
+	for (auto attr : *arr->getDesc()->attrDescs_)
 	{
 		value_type expected[dataLength];
 		getChunkDummy(expected, dataLength);

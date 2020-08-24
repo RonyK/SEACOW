@@ -33,7 +33,7 @@ TEST(query_op_mmt_build, mmt_build_sc8x8)
 	auto afterArray = mmtAction->execute(sourceArr, mmtQuery);
 
 	// Result check
-	for(auto attrDesc : afterArray->getDesc()->attrDescs_)
+	for(auto attrDesc : *afterArray->getDesc()->attrDescs_)
 	{
 		auto attrIndex = arrayMgr::instance()->getAttributeIndex(afterArray->getId(), attrDesc->id_);
 		EXPECT_TRUE(attrIndex != nullptr);
