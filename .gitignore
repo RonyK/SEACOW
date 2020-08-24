@@ -3,6 +3,10 @@
 # Edit at https://www.gitignore.io/?templates=c,c++,clion,visualstudio,visualstudiocode
 
 #########################
+########   MSDB  ########
+*.chunk
+
+#########################
 ##########  C  ##########
 # Prerequisites
 *.d
