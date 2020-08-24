@@ -43,6 +43,7 @@ pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 				= std::static_pointer_cast<serializable>(outChunk);
 			storageMgr::instance()->saveChunk(arrId, attr->id_, (outChunk)->getId(),
 											  serialChunk);
+
 			++(*cit);
 		}
 	}

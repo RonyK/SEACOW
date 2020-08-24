@@ -102,10 +102,17 @@ void getSeDecompression(pArrayDesc sourceArrDesc, eleDefault level,
 	action = std::get<1>(planAction);
 	qry = std::get<2>(planAction);
 }
-
 void getSPIHTEncode(pArrayDesc sourceArrDesc, std::shared_ptr<spiht_encode_plan>& plan, std::shared_ptr<spiht_encode_action>& action, pQuery& qry)
 {
 	auto planAction = getSingleArrayParamOperator<spiht_encode_plan, spiht_encode_action, spiht_encode_array_pset>(sourceArrDesc);
+	plan = std::get<0>(planAction);
+	action = std::get<1>(planAction);
+	qry = std::get<2>(planAction);
+}
+
+void getSPIHTDecode(pArrayDesc sourceArrDesc, std::shared_ptr<spiht_decode_plan>& plan, std::shared_ptr<spiht_decode_action>& action, pQuery& qry)
+{
+	auto planAction = getSingleArrayParamOperator<spiht_decode_plan, spiht_decode_action, spiht_decode_array_pset>(sourceArrDesc);
 	plan = std::get<0>(planAction);
 	action = std::get<1>(planAction);
 	qry = std::get<2>(planAction);

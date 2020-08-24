@@ -6,6 +6,11 @@
 #include <op/wavelet_decode/wavelet_decode_plan.h>
 #include <op/wavelet_decode/wavelet_decode_action.h>
 
+#include <op/spiht_encode/spiht_encode_plan.h>
+#include <op/spiht_encode/spiht_encode_action.h>
+#include <op/spiht_decode/spiht_decode_plan.h>
+#include <op/spiht_decode/spiht_decode_action.h>
+
 #include <op/se_compression/se_compression_plan.h>
 #include <op/se_compression/se_compression_action.h>
 #include <op/se_decompression/se_decompression_plan.h>
@@ -157,20 +162,20 @@ void se_decompression_check(pArray arr)
 
 }
 
-pArray spiht_encode(std::vector<pArray> sourceArr)
-{
-	// Should build mmt before
-	getSourceArrayIfEmpty(sourceArr);
-
-	std::shared_ptr<spiht_encode_plan> spihtPlan;
-	std::shared_ptr<spiht_encode_action> spihtAction;
-	pQuery spihtQuery;
-	getSPIHTEncode(sourceArr[0]->getDesc(), spihtPlan, spihtAction, spihtQuery);
-
-	auto afterArray = spihtAction->execute(sourceArr, spihtQuery);
-
-	return afterArray;
-}
+//pArray spiht_encode(std::vector<pArray> sourceArr)
+//{
+//	// Should build mmt before
+//	getSourceArrayIfEmpty(sourceArr);
+//
+//	std::shared_ptr<spiht_encode_plan> spihtPlan;
+//	std::shared_ptr<spiht_encode_action> spihtAction;
+//	pQuery spihtQuery;
+//	getSPIHTEncode(sourceArr[0]->getDesc(), spihtPlan, spihtAction, spihtQuery);
+//
+//	auto afterArray = spihtAction->execute(sourceArr, spihtQuery);
+//
+//	return afterArray;
+//}
 }	// data2D_sc4x4
 
 namespace data2D_star1024x1024
@@ -199,6 +204,28 @@ pArray wavelet_decode(std::vector<pArray> sourceArr)
 	getWaveletDecode(sourceArr[0]->getDesc(), level, wdPlan, wdAction, wdQuery);
 
 	return wdAction->execute(sourceArr, wdQuery);
+}
+
+pArray spiht_encode(std::vector<pArray> sourceArr)
+{
+	getSourceArrayIfEmpty(sourceArr);
+	std::shared_ptr<spiht_encode_plan> spihtPlan;
+	std::shared_ptr<spiht_encode_action> spihtAction;
+	pQuery spihtQuery;
+	getSPIHTEncode(sourceArr[0]->getDesc(), spihtPlan, spihtAction, spihtQuery);
+
+	return spihtAction->execute(sourceArr, spihtQuery);
+}
+
+pArray spiht_decode(std::vector<pArray> sourceArr)
+{
+	getSourceArrayIfEmpty(sourceArr);
+	std::shared_ptr<spiht_decode_plan> spihtPlan;
+	std::shared_ptr<spiht_decode_action> spihtAction;
+	pQuery spihtQuery;
+	getSPIHTDecode(sourceArr[0]->getDesc(), spihtPlan, spihtAction, spihtQuery);
+
+	return spihtAction->execute(sourceArr, spihtQuery);
 }
 
 pArray se_compression(std::vector<pArray> sourceArr)
@@ -245,6 +272,29 @@ namespace data2D_tempTest
 		getSourceArrayIfEmpty(sourceArr);
 		eleDefault level = maxLevel;
 		return wavelet_decode_execute(sourceArr, level);
+	}
+
+
+	pArray spiht_encode(std::vector<pArray> sourceArr)
+	{
+		getSourceArrayIfEmpty(sourceArr);
+		std::shared_ptr<spiht_encode_plan> spihtPlan;
+		std::shared_ptr<spiht_encode_action> spihtAction;
+		pQuery spihtQuery;
+		getSPIHTEncode(sourceArr[0]->getDesc(), spihtPlan, spihtAction, spihtQuery);
+
+		return spihtAction->execute(sourceArr, spihtQuery);
+	}
+
+	pArray spiht_decode(std::vector<pArray> sourceArr)
+	{
+		getSourceArrayIfEmpty(sourceArr);
+		std::shared_ptr<spiht_decode_plan> spihtPlan;
+		std::shared_ptr<spiht_decode_action> spihtAction;
+		pQuery spihtQuery;
+		getSPIHTDecode(sourceArr[0]->getDesc(), spihtPlan, spihtAction, spihtQuery);
+
+		return spihtAction->execute(sourceArr, spihtQuery);
 	}
 }
 }	// caDummy

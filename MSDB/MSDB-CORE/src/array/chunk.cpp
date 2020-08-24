@@ -7,6 +7,7 @@ chunk::chunk(pChunkDesc desc) : cached_(nullptr), desc_(desc),
 blockCapacity_(desc->getBlockSpace().area()), blockBitmap_(this->blockCapacity_),
 serializable(std::make_shared<chunkHeader>())
 {
+
 }
 
 chunk::~chunk()

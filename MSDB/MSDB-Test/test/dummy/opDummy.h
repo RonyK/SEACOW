@@ -5,6 +5,11 @@
 #include <op/wavelet_decode/wavelet_decode_plan.h>
 #include <op/wavelet_decode/wavelet_decode_action.h>
 
+#include <op/spiht_encode/spiht_encode_plan.h>
+#include <op/spiht_encode/spiht_encode_action.h>
+#include <op/spiht_decode/spiht_decode_plan.h>
+#include <op/spiht_decode/spiht_decode_action.h>
+
 #include <op/mmt_build/mmt_build_plan.h>
 #include <op/mmt_build/mmt_build_action.h>
 
@@ -23,9 +28,6 @@
 #include <op/se_decompression/se_decompression_plan.h>
 #include <op/se_decompression/se_decompression_action.h>
 
-#include <op/spiht_encode/spiht_encode_plan.h>
-#include <op/spiht_encode/spiht_encode_action.h>
-
 namespace msdb
 {
 namespace caDummy
@@ -39,6 +41,16 @@ void getWaveletDecode(pArrayDesc sourceArrDesc, eleDefault level,
 					  std::shared_ptr<wavelet_decode_plan>& plan,
 					  std::shared_ptr<wavelet_decode_action>& action,
 					  pQuery& qry);
+
+void getSPIHTEncode(pArrayDesc sourceArrDesc,
+	std::shared_ptr<spiht_encode_plan>& plan,
+	std::shared_ptr<spiht_encode_action>& action,
+	pQuery& qry);
+
+void getSPIHTDecode(pArrayDesc sourceArrDesc,
+	std::shared_ptr<spiht_decode_plan>& plan,
+	std::shared_ptr<spiht_decode_action>& action,
+	pQuery& qry);
 
 void getMmtBuild(pArrayDesc sourceArrDesc, eleDefault& level,
 				 std::shared_ptr<mmt_build_plan>& plan,
@@ -74,11 +86,6 @@ void getSeDecompression(pArrayDesc sourceArrDesc, eleDefault level,
 						std::shared_ptr<se_decompression_plan>& plan,
 						std::shared_ptr<se_decompression_action>& action,
 						pQuery& qry);
-
-void getSPIHTEncode(pArrayDesc sourceArrDesc,
-					std::shared_ptr<spiht_encode_plan>& plan,
-					std::shared_ptr<spiht_encode_action>& action,
-					pQuery& qry);
 
 template <typename plan_, typename action_, typename pset_>
 std::tuple<std::shared_ptr<plan_>, std::shared_ptr<action_>, pQuery>

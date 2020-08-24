@@ -41,7 +41,7 @@ void chunkBuffer::bufferAlloc(bufferSize size)
 	}
 	
 	this->isAllocated_ = true;
-	this->data_ = new char[size];
+	this->data_ = new char[size]();
 	this->bodySize_ = size;
 	this->isAllocated_ = true;
 }
@@ -50,7 +50,7 @@ void chunkBuffer::realloc(bufferSize size)
 {
 	assert(size > 0);
 
-	void* re = new char[size];
+	void* re = new char[size]();
 	memcpy(re, this->data_, std::min(size, this->bodySize_));
 	this->free();
 

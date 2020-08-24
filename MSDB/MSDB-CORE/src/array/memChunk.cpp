@@ -9,7 +9,6 @@ memChunk::memChunk(pChunkDesc desc)
 	: chunk(desc), block_(nullptr)
 {
 	this->blockCapacity_ = 1;
-	this->makeAllBlocks();
 }
 
 memChunk::~memChunk()
@@ -39,23 +38,6 @@ void memChunk::insertBlock(pBlock inBlock)
 {
 	this->block_ = inBlock;
 }
-
-//void memChunk::makeBlocks(const bitmap blockBitmap)
-//{
-//	if(bitmap[0])
-//	{
-//		this->block_ = std::make_shared<memBlock>(
-//			std::make_shared<blockDesc>(
-//			0,						// id
-//			this->desc_->attrDesc_->type_,	// eType
-//			this->desc_->getDims(),	// dims
-//			this->desc_->sp_,		// sp
-//			this->desc_->ep_,		// ep
-//			this->desc_->mSize_,	// mSize
-//			0						// mOffset
-//			));
-//	}
-//}
 
 void memChunk::referenceBufferToBlock(const blockId bId)
 {

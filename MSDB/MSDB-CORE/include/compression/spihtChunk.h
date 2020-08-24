@@ -18,6 +18,8 @@ public:
 	spihtChunk(pChunkDesc desc);
 	virtual ~spihtChunk();
 
+	void initBufferZero();
+
 protected:
 	virtual void makeBuffer();
 
@@ -38,6 +40,7 @@ public:
 		auto blockItr = this->getBlockIterator();
 		while (!blockItr->isEnd())
 		{
+			std::static_pointer_cast<spihtBlock>(**blockItr)->setMaxLevel(this->maxLevel_);
 			this->blockSerialize<Ty_>(bs, (**blockItr));
 			++(*blockItr);
 		}
@@ -56,6 +59,7 @@ public:
 		auto blockItr = this->getBlockIterator();
 		while (!blockItr->isEnd())
 		{
+			std::static_pointer_cast<spihtBlock>(**blockItr)->setMaxLevel(this->maxLevel_);
 			this->blockDeserialize<Ty_>(bs, (**blockItr));
 			++(*blockItr);
 		}
