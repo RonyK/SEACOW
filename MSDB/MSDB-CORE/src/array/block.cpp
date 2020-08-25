@@ -23,6 +23,14 @@ dimensionId block::getDSize()
 {
 	return this->desc_->dims_.size();
 }
+void block::setIsp(coor isp)
+{
+	this->desc_->isp_ = isp;
+}
+void block::setIep(coor iep)
+{
+	this->desc_->iep_ = iep;
+}
 void block::unlinkFromChunkBuffer()
 {
 	this->cached_ = nullptr;

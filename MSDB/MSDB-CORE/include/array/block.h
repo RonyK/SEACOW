@@ -28,6 +28,8 @@ public:
 	blockId getId();
 	pBlockDesc getDesc();
 	dimensionId getDSize();
+	void setIsp(coor isp);
+	void setIep(coor iep);
 
 	virtual void serialize(bstream& os) = 0;
 	virtual void deserialize(bstream& is) = 0;

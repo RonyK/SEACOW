@@ -16,7 +16,7 @@ blockDesc::blockDesc(const blockId id, const eleType eType,
 					 const coor& sp, const coor& ep, 
 					 const blockSize mSize, const blockSize mOffset)
 	: id_(id), eType_(eType), 
-	dims_(dims), sp_(sp), ep_(ep),
+	dims_(dims), sp_(sp), ep_(ep), isp_(sp), iep_(ep),
 	mSize_(mSize), mOffset_(mOffset),
 	blockCoor_(dims.size())
 {

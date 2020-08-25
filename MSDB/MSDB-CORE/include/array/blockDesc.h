@@ -39,6 +39,8 @@ public:
 	dimension dims_;			// dimensions
 	coor sp_;					// in chunk
 	coor ep_;					// in chunk
+	coor isp_;					// item start point
+	coor iep_;					// item end point
 	coor blockCoor_;			// in chunk
 };
 }

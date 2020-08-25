@@ -518,37 +518,51 @@ public:
 
 		// abs 
 		// TODO:: unsigned error
-		coor abs_coor(dSize);	// {0, 0, ...}
-		size_t abs_num = 1;
-		for (int d = (int)dSize - 1; d >= 0; d--)
-		{
-			abs_coor[d] = 0;
-			abs_num *= blockDims[d];
-		}
+		//coor abs_coor(dSize);	// {0, 0, ...}
+		//size_t abs_num = 1;
+		//for (int d = (int)dSize - 1; d >= 0; d--)
+		//{
+		//	abs_coor[d] = 0;
+		//	abs_num *= blockDims[d];
+		//}
 
-		for (size_t i = 0; i < abs_num; i++)
+		//for (size_t i = 0; i < abs_num; i++)
+		//{
+		//	itemItr->moveTo(abs_coor);
+		//	auto data = (**itemItr).get<Ty_>();
+		//	if ((data & signBit) && (data != signBit))
+		//	{
+		//		data = ~data;
+		//		data += 1;
+		//		data = data ^ signBit;
+		//		(**itemItr).set<Ty_>(data);
+		//	}
+
+		//	for (int d = (int)dSize - 1; d >= 0; d--)	// iteration(?)
+		//	{
+		//		abs_coor[d] = abs_coor[d] + 1;
+		//		if (abs_coor[d] == blockDims[d])
+		//		{
+		//			abs_coor[d] = 0;
+		//		} else
+		//		{
+		//			break;
+		//		}
+		//	}
+		//}
+		
+		itemItr->moveToStart();
+		while (!itemItr->isEnd())
 		{
-			itemItr->moveTo(abs_coor);
 			auto data = (**itemItr).get<Ty_>();
-			if ((data & signBit) && (data != signBit))
+			if (data & signBit)
 			{
 				data = ~data;
 				data += 1;
 				data = data ^ signBit;
 				(**itemItr).set<Ty_>(data);
 			}
-
-			for (int d = (int)dSize - 1; d >= 0; d--)	// iteration(?)
-			{
-				abs_coor[d] = abs_coor[d] + 1;
-				if (abs_coor[d] == blockDims[d])
-				{
-					abs_coor[d] = 0;
-				} else
-				{
-					break;
-				}
-			}
+			++(*itemItr);
 		}
 
 		// for -128 and 0
