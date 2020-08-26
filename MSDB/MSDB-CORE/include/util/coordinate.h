@@ -1041,6 +1041,11 @@ public:
 	{
 		return element((void*)(ptr_ + (this->seqPos_ + this->posToSeq(pos)) * this->eSize_), this->eType_);
 	}
+
+	eleType getEtype()
+	{
+		return this->eType_;
+	}
 	//////////////////////////////
 
 	//////////////////////////////
@@ -1225,9 +1230,16 @@ coordinate<Dty_> getOutsideCoor(coordinate<Dty_>& c1, coordinate<Dty_>& c2)
 
 using coor = coordinate<position_t>;
 using coorItr = coordinateIterator<position_t>;
+using pCoorItr = std::shared_ptr<coorItr>;
+
 using coorRange = coordinateRange<position_t>;
+using pCoorRangeItr = std::shared_ptr<coorRange>;
+
 using itemItr = itemIterator<position_t>;
+using pItemItr = std::shared_ptr<itemItr>;
+
 using itemRangeItr = itemRangeIterator<position_t>;
+using pItemRangeItr = std::shared_ptr<itemRangeItr>;
 }
 
 #endif

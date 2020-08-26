@@ -18,47 +18,50 @@ const char* naive_filter_action::name()
 
 pArray naive_filter_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 {
-	pArray inputArray = inputArrays[0];
+	pArray inArr = inputArrays[0];
+	auto inArrDesc = inArr->getDesc();
+	auto outArrDesc = std::make_shared<arrayDesc>(*inArrDesc);
+	auto outArr = std::make_shared<memBlockArray>(outArrDesc);
+
+	auto inPredicate = std::static_pointer_cast<predicate>(this->params_[1]->getParam());
 	
-	for (auto attrDesc : *inputArray->getDesc()->getAttrDescs())
+	auto attrDesc = inArr->getDesc()->getAttrDescs();
+	for (auto attrDesc : *attrDesc)
 	{
 		switch (attrDesc->type_)
 		{
 		case eleType::CHAR:
-			this->filter<char>(inputArray);
+			this->attributeFilter<char>(outArr, inArr, attrDesc, inPredicate);
 			break;
 		case eleType::INT8:
-			this->filter<int8_t>(inputArray);
+			this->attributeFilter<int8_t>(outArr, inArr, attrDesc, inPredicate);
 			break;
 		case eleType::INT16:
-			this->filter<int16_t>(inputArray);
+			this->attributeFilter<int16_t>(outArr, inArr, attrDesc, inPredicate);
 			break;
 		case eleType::INT32:
-			this->filter<int32_t>(inputArray);
+			this->attributeFilter<int32_t>(outArr, inArr, attrDesc, inPredicate);
 			break;
 		case eleType::INT64:
-			this->filter<int64_t>(inputArray);
+			this->attributeFilter<int64_t>(outArr, inArr, attrDesc, inPredicate);
 			break;
 		case eleType::UINT8:
-			this->filter<uint8_t>(inputArray);
+			this->attributeFilter<uint8_t>(outArr, inArr, attrDesc, inPredicate);
 			break;
 		case eleType::UINT16:
-			this->filter<uint16_t>(inputArray);
+			this->attributeFilter<uint16_t>(outArr, inArr, attrDesc, inPredicate);
 			break;
 		case eleType::UINT32:
-			this->filter<uint32_t>(inputArray);
+			this->attributeFilter<uint32_t>(outArr, inArr, attrDesc, inPredicate);
 			break;
 		case eleType::UINT64:
-			this->filter<uint64_t>(inputArray);
+			this->attributeFilter<uint64_t>(outArr, inArr, attrDesc, inPredicate);
 			break;
 		default:
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 		}
 	}
 
-	pArrayDesc arrDesc = inputArray->getDesc();
-	pArray outputArray = std::make_shared<memBlockArray>(arrDesc);
-
-	return outputArray;
+	return outArr;
 }
 }

@@ -106,6 +106,7 @@
       <ShowIncludes>true</ShowIncludes>
       <CompileAs>CompileAsCpp</CompileAs>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>%BOOST_ROOT%</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -197,6 +198,9 @@
     </ClInclude>
     <ClInclude Include="include\io\io.h" />
     <ClInclude Include="include\io\serializable.h" />
+    <ClInclude Include="include\parse\expression.h" />
+    <ClInclude Include="include\parse\predicate.h" />
+    <ClInclude Include="include\parse\term.h" />
     <ClInclude Include="include\query\operator.h" />
     <ClInclude Include="include\query\opParam.h" />
     <ClInclude Include="include\query\opParamSet.h" />
@@ -289,6 +293,9 @@
     <ClCompile Include="src\index\bitmap.cpp" />
     <ClCompile Include="src\index\mmt.cpp" />
     <ClCompile Include="src\io\serializable.cpp" />
+    <ClCompile Include="src\parse\expression.cpp" />
+    <ClCompile Include="src\parse\predicate.cpp" />
+    <ClCompile Include="src\parse\term.cpp" />
     <ClCompile Include="src\query\op\between\between_action.cpp" />
     <ClCompile Include="src\query\op\between\between_plan.cpp" />
     <ClCompile Include="src\query\op\load\load_action.cpp" />

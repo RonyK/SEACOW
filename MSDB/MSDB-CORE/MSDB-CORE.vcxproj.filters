@@ -92,6 +92,9 @@
     <ClCompile Include="src\query\op\between\between_action.cpp" />
     <ClCompile Include="src\index\bitmap.cpp" />
     <ClCompile Include="src\array\memBlockArray.cpp" />
+    <ClCompile Include="src\parse\predicate.cpp" />
+    <ClCompile Include="src\parse\term.cpp" />
+    <ClCompile Include="src\parse\expression.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.h" />
@@ -198,6 +201,9 @@
     <ClInclude Include="src\query\op\between\between_action.h" />
     <ClInclude Include="include\index\bitmap.h" />
     <ClInclude Include="include\array\memBlockArray.h" />
+    <ClInclude Include="include\parse\predicate.h" />
+    <ClInclude Include="include\parse\term.h" />
+    <ClInclude Include="include\parse\expression.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">
