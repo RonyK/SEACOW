@@ -1,5 +1,10 @@
 #pragma once
 #include <pch.h>
+#include <op/save/save_action.h>
+#include <op/save/save_plan.h>
+#include <op/load/load_action.h>
+#include <op/load/load_plan.h>
+
 #include <op/wavelet_encode/wavelet_encode_plan.h>
 #include <op/wavelet_encode/wavelet_encode_action.h>
 #include <op/wavelet_decode/wavelet_decode_plan.h>
@@ -87,17 +92,59 @@ void getSeDecompression(pArrayDesc sourceArrDesc, eleDefault level,
 						std::shared_ptr<se_decompression_action>& action,
 						pQuery& qry);
 
+void getSave(pArrayDesc sourceArrDesc,
+			 std::shared_ptr<save_plan>& plan,
+			 std::shared_ptr<save_action>& action,
+			 pQuery& qry);
+//{
+//	pQuery saveQuery = std::make_shared<query>();
+//	auto savePlan = std::make_shared<save_plan>();
+//	auto saveAction = std::make_shared<save_action>();
+//	parameters params = {
+//		std::make_shared<opParamArray>(sourceArrDesc)
+//	};
+//	auto pSet = std::make_shared<save_array_pset>(params);
+//
+//	savePlan->setParamSet(pSet);
+//	saveAction->setArrayDesc(savePlan->inferSchema());
+//	saveAction->setParams(params);
+//
+//	plan = savePlan;
+//	action = saveAction;
+//	qry = saveQuery;
+//}
+
+void getLoad(pArrayDesc sourceArrDesc,
+			 std::shared_ptr<load_plan>& plan,
+			 std::shared_ptr<load_action>& action,
+			 pQuery& qry);
+//{
+//	pQuery loadQuery = std::make_shared<query>();
+//	auto loadPlan = std::make_shared<load_plan>();
+//	auto loadAction = std::make_shared<load_action>();
+//	parameters params = {
+//		std::make_shared<opParamArray>(sourceArrDesc)
+//	};
+//	auto pSet = std::make_shared<load_array_pset>(params);
+//
+//	loadPlan->setParamSet(pSet);
+//	loadAction->setArrayDesc(loadPlan->inferSchema());
+//	loadAction->setParams(params);
+//
+//	plan = loadPlan;
+//	action = loadAction;
+//	qry = loadQuery;
+//}
+
 template <typename plan_, typename action_, typename pset_>
 std::tuple<std::shared_ptr<plan_>, std::shared_ptr<action_>, pQuery>
 getOperator(pArrayDesc sourceArrDesc, parameters& params)
 {
 	pQuery myQuery = std::make_shared<query>();
 	auto myPlan = std::make_shared<plan_>();
-	auto myAction = std::make_shared<action_>();
-
 	myPlan->setParamSet(std::make_shared<pset_>(params));
-	myAction->setArrayDesc(myPlan->inferSchema());
-	myAction->setParams(params);
+
+	auto myAction = std::static_pointer_cast<action_>(myPlan->getAction());
 
 	return std::make_tuple(myPlan, myAction, myQuery);
 }
