@@ -65,9 +65,27 @@ size_t bitmap::getCapacity() const
 {
 	return this->data_.size();
 }
-bool bitmap::isTree()
+bool bitmap::isTree() const
 {
 	return false;
+}
+void bitmap::andMerge(bitmap& mit)
+{
+	assert(mit.getCapacity() >= this->getCapacity());
+	size_t capacity = this->getCapacity();
+	for(size_t i = 0; i < capacity; ++i)
+	{
+		this->data_[i] = (bool)this->data_[i] & (bool)mit[i];
+	}
+}
+void bitmap::orMerge(bitmap& mit)
+{
+	assert(mit.getCapacity() >= this->getCapacity());
+	size_t capacity = this->getCapacity();
+	for (size_t i = 0; i < capacity; ++i)
+	{
+		this->data_[i] = (bool)this->data_[i] | (bool)mit[i];
+	}
 }
 std::vector<bool>::reference bitmap::operator[](size_t seqPos)
 {
@@ -115,6 +133,11 @@ pBitmap bitmapTree::makeChild(const size_t seqPos, const size_t capacity, const 
 	return child;
 }
 pBitmap bitmapTree::getChild(const size_t seqPos)
+{
+	assert(seqPos < this->childs_.size());
+	return this->childs_[seqPos];
+}
+cpBitmap bitmapTree::getChild(const size_t seqPos) const
 {
 	assert(seqPos < this->childs_.size());
 	return this->childs_[seqPos];
