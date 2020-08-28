@@ -14,7 +14,7 @@ const char* naive_filter_plan::name()
 	return "naive_filter";
 }
 
-pAction naive_filter_plan::getAction()
+pAction naive_filter_plan::makeAction()
 {
 	return std::make_shared<naive_filter_action>();
 }

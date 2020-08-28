@@ -14,7 +14,7 @@ const char* spiht_decode_plan::name()
 	return "spiht_decode_plan";
 }
 
-pAction spiht_decode_plan::getAction()
+pAction spiht_decode_plan::makeAction()
 {
 	return std::make_shared<spiht_decode_action>();
 }

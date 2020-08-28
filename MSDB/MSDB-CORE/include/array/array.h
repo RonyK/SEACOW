@@ -115,16 +115,20 @@ public:
 		for (; begin != end; ++begin)
 		{
 			this->chunks_.insert(chunkPair((*begin)->getId(), *begin));
-			this->chunkBitmap_[attrId].setExist((*begin)->getId());
+			this->chunkBitmap_->setExist((*begin)->getId());
 		}
 	}
+
+	void copyChunkBitmap(cpBitmap chunkBitmap);
+	void replaceChunkBitmap(pBitmap chunkBitmap);
+	void mergeChunkBitmap(pBitmap chunkBitmap);
 
 	void print();
 
 protected:
 	pArrayDesc desc_;
 	chunkContainer chunks_;		// TODO::Seperate chunk container by attributeId
-	std::vector<bitmap> chunkBitmap_;
+	pBitmap chunkBitmap_;		// Be initialized to false by default
 };
 }	// msdb
 #endif		// _MSDB_ARRAY_H_

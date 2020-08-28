@@ -38,19 +38,23 @@ pArray spiht_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 
 		while (!cit->isEnd())
 		{
-			chunkId cId = cit->seqPos();
-			// TODO:: Use to makeChunk function
-			//outArr->makeChunk(attr->id_, cId);
-			outArr->insertChunk(attr->id_, std::make_shared<spihtChunk>(outArr->getChunkDesc(attr->id_, cId)));
+			if(cit->isExist())
+			{
+				chunkId cId = cit->seqPos();
+							// TODO:: Use to makeChunk function
+							//outArr->makeChunk(attr->id_, cId);
+				outArr->insertChunk(attr->id_, std::make_shared<spihtChunk>(outArr->getChunkDesc(attr->id_, cId)));
 
-			auto spChunk = std::static_pointer_cast<spihtChunk>(**cit);
-			spChunk->setMaxLevel(maxLevel);
-			spChunk->makeAllBlocks();
+				auto spChunk = std::static_pointer_cast<spihtChunk>(**cit);
+				spChunk->setMaxLevel(maxLevel);
+				spChunk->makeAllBlocks();
+
+				pSerializable serialChunk
+					= std::static_pointer_cast<serializable>(**cit);
+				storageMgr::instance()->loadChunk(arrId, attr->id_, (**cit)->getId(),
+												  serialChunk);
+			}
 			
-			pSerializable serialChunk
-				= std::static_pointer_cast<serializable>(**cit);
-			storageMgr::instance()->loadChunk(arrId, attr->id_, (**cit)->getId(),
-				serialChunk);
 			++(*cit);
 		}
 	}

@@ -16,7 +16,7 @@ const char* se_decompression_plan::name()
 	return "se_decompression_plan";
 }
 
-pAction se_decompression_plan::getAction()
+pAction se_decompression_plan::makeAction()
 {
 	return std::make_shared<se_decompression_action>();
 }

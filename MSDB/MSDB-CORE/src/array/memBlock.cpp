@@ -96,7 +96,8 @@ pBlockItemIterator memBlock::getItemIterator()
 	return std::make_shared<memBlockItemIterator>(this->cached_->getData(),
 												  this->desc_->eType_,
 												  this->desc_->dims_,
-												  this->desc_->sp_);
+												  this->desc_->sp_,
+												  this->itemBitmap_);
 }
 
 pBlockItemRangeIterator memBlock::getItemRangeIterator(const coorRange& range)
@@ -105,7 +106,8 @@ pBlockItemRangeIterator memBlock::getItemRangeIterator(const coorRange& range)
 													   this->desc_->eType_,
 													   this->desc_->dims_,
 													   range,
-													   this->desc_->sp_);
+													   this->desc_->sp_,
+													   this->itemBitmap_);
 }
 void memBlock::linkToChunkBuffer(void* data, bufferSize size)
 {

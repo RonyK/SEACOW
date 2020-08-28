@@ -26,21 +26,29 @@ pArray between_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 	auto chunkItr = outputArray->getChunkIterator();
 	while (!chunkItr->isEnd())
 	{
-		auto blockItr = (**chunkItr)->getBlockIterator();
-		while (!blockItr->isEnd())
+		if(chunkItr->isExist())
 		{
-			coor globalSp = chunkItr->getEp() + blockItr->getSp();
-			coor globalEp = chunkItr->getEp() + blockItr->getEp();
-			if ((*sp) < globalSp && globalEp < (*ep))
+			auto blockItr = (**chunkItr)->getBlockIterator();
+			while (!blockItr->isEnd())
 			{
-				blockItr;
-			} else
-			{
-				coorRange tmp(*sp, *ep);
-				(**blockItr)->getItemRangeIterator(tmp);
+				if(blockItr->isExist())
+				{
+					coor globalSp = chunkItr->getEp() + blockItr->getSp();
+					coor globalEp = chunkItr->getEp() + blockItr->getEp();
+					if ((*sp) < globalSp && globalEp < (*ep))
+					{
+						blockItr;
+					} else
+					{
+						coorRange tmp(*sp, *ep);
+						(**blockItr)->getItemRangeIterator(tmp);
+					}
+				}
+				
+				++(*blockItr);
 			}
-			++(*blockItr);
 		}
+		
 		++(*chunkItr);
 	}
 	return outputArray;

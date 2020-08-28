@@ -3,7 +3,7 @@
 namespace msdb
 {
 chunkIterator::chunkIterator(const dimension dims,
-							 chunkContainer* chunks, bitmap* chunkBitmap, 
+							 chunkContainer* chunks, pBitmap chunkBitmap, 
 							 iterateMode itMode)
 	: coorItr(dims), 
 	chunks_(chunks), chunkBitmap_(chunkBitmap),
@@ -39,7 +39,8 @@ bool chunkIterator::isExist()
 
 bool chunkIterator::isExist(chunkId cid)
 {
-	return (*this->chunkBitmap_)[cid] && this->chunks_->find(cid) != this->chunks_->end();
+	return (*this->chunkBitmap_)[cid];
+	//&& this->chunks_->find(cid) != this->chunks_->end();
 }
 
 iterateMode chunkIterator::getIterateMode()

@@ -5,6 +5,7 @@
 #include <array/blockItemIterator.h>
 #include <array/blockBuffer.h>
 #include <array/blockDesc.h>
+#include <index/bitmap.h>
 #include <io/bitstream.h>
 #include <memory>
 
@@ -60,6 +61,13 @@ protected:
 public:
 	virtual pBlockItemIterator getItemIterator() = 0;
 	virtual pBlockItemRangeIterator getItemRangeIterator(const coorRange& range) = 0;
+
+	void copyBitmap(cpBitmap itemBitmap);
+	void replaceBitmap(pBitmap itemBitmap);
+	void mergeBitmap(pBitmap itemBitmap);
+
+protected:
+	pBitmap itemBitmap_;
 
 //////////////////////////////
 // Print

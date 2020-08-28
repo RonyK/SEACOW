@@ -16,7 +16,7 @@ const char* save_plan::name()
 	return "save_plan";
 }
 
-pAction save_plan::getAction()
+pAction save_plan::makeAction()
 {
 	return std::make_shared<save_action>();
 }

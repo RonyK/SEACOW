@@ -15,7 +15,7 @@ public:
 
 public:
 	virtual const char* name() override;
-	virtual pAction getAction() override;
+	virtual pAction makeAction() override;
 };
 
 class mmt_delta_decode_array_pset : public opArrayParamSet

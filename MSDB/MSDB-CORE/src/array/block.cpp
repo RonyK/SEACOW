@@ -3,7 +3,7 @@
 namespace msdb
 {
 block::block(pBlockDesc desc)
-	: desc_(desc)
+	: desc_(desc), itemBitmap_(std::make_shared<bitmap>(desc->dims_.area(), true))
 {
 
 }
@@ -46,6 +46,18 @@ bool block::isMaterialized() const
 pBlockBuffer block::getBuffer()
 {
 	return this->cached_;
+}
+void block::copyBitmap(cpBitmap itemBitmap)
+{
+	this->itemBitmap_ = std::make_shared<bitmap>(*itemBitmap);
+}
+void block::replaceBitmap(pBitmap itemBitmap)
+{
+	this->itemBitmap_ = itemBitmap;
+}
+void block::mergeBitmap(pBitmap itemBitmap)
+{
+	this->itemBitmap_->andMerge(*itemBitmap);
 }
 void block::print()
 {

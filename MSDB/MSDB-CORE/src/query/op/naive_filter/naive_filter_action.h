@@ -22,15 +22,21 @@ private:
 	void attributeFilter(pArray outArr, pArray inArr, pAttributeDesc attrDesc, pPredicate inPredicate)
 	{
 		auto inChunkItr = inArr->getChunkIterator();
-		auto outChunkItr = outArr->getChunkIterator();
+		//auto outChunkItr = outArr->getChunkIterator();
 
 		inPredicate->setEvaluateFunc(attrDesc->type_);
 
 		while (!inChunkItr->isEnd()) 
 		{
-			this->chunkFilter<Ty_>((**outChunkItr), (**inChunkItr), inPredicate);
+			if(inChunkItr->isExist())
+			{
+				auto inChunk = (**inChunkItr);
+				auto outChunk = outArr->makeChunk(attrDesc->id_, inChunk->getId());
+				outChunk->bufferRef(inChunk);
+				this->chunkFilter<Ty_>(outChunk, inChunk, inPredicate);
+			}
 			++(*inChunkItr);
-			++(*outChunkItr);
+			//++(*outChunkItr);
 		}
 	}
 
@@ -41,9 +47,12 @@ private:
 		auto outBlockItr = outChunk->getBlockIterator();
 		while (!inBlockItr->isEnd())
 		{
-			this->blockFilter<Ty_>((**outBlockItr), (**inBlockItr), inPredicate);
-			++(*inBlockItr);
-			++(*outBlockItr);
+			if(inBlockItr->isExist())
+			{
+				this->blockFilter<Ty_>((**outBlockItr), (**inBlockItr), inPredicate);
+				++(*inBlockItr);
+				++(*outBlockItr);
+			}
 		}
 	}
 
@@ -55,9 +64,9 @@ private:
 
 		while (!inBlockItemItr->isEnd())
 		{
-			if (inPredicate->evaluate(inBlockItemItr))
+			if (inBlockItemItr->isExist() && inPredicate->evaluate(inBlockItemItr))
 			{
-				// TODO :: SET BITMAP;
+				outBlockItemItr->isExist();
 			}
 			++(*inBlockItemItr);
 			++(*outBlockItemItr);

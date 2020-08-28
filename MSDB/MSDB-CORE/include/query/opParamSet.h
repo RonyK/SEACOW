@@ -19,7 +19,7 @@ public:
 	opParamSet(parameters& pSet);
 
 public:
-	bool isMatch(parameters pSet);
+	//bool isMatch(parameters pSet);
 	virtual pArrayDesc inferSchema() = 0;
 	virtual pBitmap inferBottomUpBitmap() = 0;
 	virtual pBitmap inferTopDownBitmap(pBitmap fromParent) = 0;

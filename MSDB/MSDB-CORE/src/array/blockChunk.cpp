@@ -37,7 +37,7 @@ void memBlockChunk::insertBlock(pBlock inBlock)
 {
 	assert(this->blockCapacity_ > inBlock->getId());
 	this->blocks_[inBlock->getId()] = inBlock;
-	this->blockBitmap_.setExist(inBlock->getId());
+	this->blockBitmap_->setExist(inBlock->getId());
 }
 
 void memBlockChunk::referenceBufferToBlock(blockId bId)
@@ -61,7 +61,7 @@ pBlock memBlockChunk::getBlock(const blockId bId)
 pBlockIterator memBlockChunk::getBlockIterator(const iterateMode itMode)
 {
 	return std::make_shared<blockIterator>(this->desc_->getBlockSpace(),
-										   &this->blocks_, &this->blockBitmap_,
+										   &this->blocks_, this->blockBitmap_,
 										   itMode);
 }
 

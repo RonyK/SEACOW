@@ -16,7 +16,7 @@ const char* load_plan::name()
 	return "load_plan";
 }
 
-pAction load_plan::getAction()
+pAction load_plan::makeAction()
 {
 	return std::make_shared<load_action>();
 }

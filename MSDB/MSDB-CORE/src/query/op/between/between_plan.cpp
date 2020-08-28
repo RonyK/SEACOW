@@ -14,7 +14,7 @@ namespace msdb
 		return "between_plan";
 	}
 
-	pAction between_plan::getAction()
+	pAction between_plan::makeAction()
 	{
 		return std::make_shared<between_action>();
 	}

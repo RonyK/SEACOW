@@ -3,6 +3,7 @@
 namespace msdb
 {
 opPlan::opPlan()
+	: parentPlan_(nullptr), outArrBitmap_(nullptr), inParamSet_(nullptr)
 {
 }
 void opPlan::setParamSet(pParamSet paramSet)
@@ -38,8 +39,23 @@ pBitmap opPlan::inferBottomUpBitmap()
 }
 pBitmap opPlan::inferTopDownBitmap()
 {
-	//return pBitmap();
-	return nullptr;
+	if(this->parentPlan_)
+	{
+		return this->inParamSet_->inferTopDownBitmap(
+			this->parentPlan_->inferTopDownBitmap());
+	}else
+	{
+		assert(this->outArrBitmap_ != nullptr);
+		return this->outArrBitmap_;
+	}
+}
+pAction opPlan::getAction()
+{
+	auto myAction = this->makeAction();
+	myAction->setParams(this->getParam());
+	myAction->setArrayDesc(this->inferSchema());
+	myAction->setPlanBitmap(this->inferBitmap());
+	return myAction;
 }
 parameters opPlan::getParam()
 {
@@ -83,8 +99,8 @@ pBitmap opPlanParamSet::inferBottomUpBitmap()
 {
 	auto sourcePlan = std::static_pointer_cast<opParamPlan::paramType>(
 		this->params_[0]->getParam());
-	//return std::make_shared<bitmap>(*sourcePlan->inferBottomUpBitmap());
-	return nullptr;
+	return std::make_shared<bitmap>(*(sourcePlan->inferBottomUpBitmap()));
+	//return nullptr;
 }
 pBitmap opPlanParamSet::inferTopDownBitmap(pBitmap fromParent)
 {

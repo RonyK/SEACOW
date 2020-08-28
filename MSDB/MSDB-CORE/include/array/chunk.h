@@ -135,10 +135,15 @@ public:
 	virtual coor getBlockCoor(const blockId bId);
 	virtual pBlockIterator getBlockIterator(
 		const iterateMode itMode = iterateMode::ALL) = 0;
+	void copyBlockBitmap(cpBitmap blockBitmap);
+	void replaceBlockBitmap(pBitmap blockBitmap);
+	void mergeBlockBitmap(pBitmap blockBitmap);
+	pBitmap getBlockBitmap();
+	//cpBitmap getBlockBitmap() const;
 
 protected:
 	size_type blockCapacity_;
-	bitmap blockBitmap_;
+	pBitmap blockBitmap_;		// Be initialized to false by default
 
 //////////////////////////////
 // Item Iterators

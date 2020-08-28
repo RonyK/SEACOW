@@ -3,6 +3,7 @@
 #define _MSDB_MEMBLOCKITEMITERATOR_H_
 
 #include <array/blockItemIterator.h>
+#include <index/bitmap.h>
 
 namespace msdb
 {
@@ -24,7 +25,8 @@ public:
 	memBlockItemIterator(void* data, 
 						 const eleType eType, 
 						 const dimension& dims,
-						 const dimension& bSp);
+						 const dimension& bSp,
+						 pBitmap itemBitmap);
 };
 
 class memBlockItemRangeIterator : public blockItemRangeIterator
@@ -34,7 +36,8 @@ public:
 							  const eleType eType,
 							  const dimension& dims,
 							  const coorRange& range,
-							  const dimension& bSp);
+							  const dimension& bSp,
+							  pBitmap itemBitmap);
 };
 }
 #endif	// _MSDB_MEMBLOCKITEMITERATOR_H_

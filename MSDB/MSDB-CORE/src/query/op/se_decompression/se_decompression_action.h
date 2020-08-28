@@ -49,29 +49,44 @@ private:
 
 		while (!cit->isEnd())
 		{
-			// make chunk
-			chunkId cid = cit->seqPos();
-			coor chunkCoor = cit->coor();
-			auto inChunk = this->makeInChunk(outArr, attrDesc, cid, chunkCoor);
-			// TODO::Create se_compression_array, seChunk
-			// Make seChunk in se_compression_array
+			if(cit->isExist())
+			{
+				// make chunk
+				chunkId cid = cit->seqPos();
+				coor chunkCoor = cit->coor();
+				auto inChunk = this->makeInChunk(outArr, attrDesc, cid, chunkCoor);
+				// TODO::Create se_compression_array, seChunk
+				// Make seChunk in se_compression_array
 
-			auto mNode = mmtIndex->getNode(chunkCoor, 0);
-			inChunk->rBitFromMMT = getRBitFromMMT(mNode) + static_cast<char>(hasNegative);
+				auto blockBitmap = this->getPlanBlockBitmap(cid);
+				if(blockBitmap)
+				{
+					inChunk->copyBlockBitmap(blockBitmap);
+				}else
+				{
+					// If there were no bitmap, set all blocks as true.
+					inChunk->replaceBlockBitmap(std::make_shared<bitmap>(inChunk->getBlockCapacity(), true));
+				}
+				inChunk->makeAllBlocks();
 
-			pSerializable serialChunk
-				= std::static_pointer_cast<serializable>(inChunk);
-			storageMgr::instance()->loadChunk(outArr->getId(), attrDesc->id_, inChunk->getId(),
-											  serialChunk);
+				auto mNode = mmtIndex->getNode(chunkCoor, 0);
+				inChunk->rBitFromMMT = getRBitFromMMT(mNode) + static_cast<char>(hasNegative);
 
-			//std::cout << "inChunk:: " << std::endl;
-			//inChunk->print();
+				pSerializable serialChunk
+					= std::static_pointer_cast<serializable>(inChunk);
+				storageMgr::instance()->loadChunk(outArr->getId(), attrDesc->id_, inChunk->getId(),
+												  serialChunk);
 
-			auto outChunk = outArr->makeChunk(*inChunk->getDesc());
-			auto wtOutChunk = std::static_pointer_cast<wtChunk>(outChunk);
-			wtOutChunk->setLevel(inChunk->getLevel());
-			wtOutChunk->makeAllBlocks();
-			outChunk->bufferCopy(inChunk);
+				//std::cout << "inChunk:: " << std::endl;
+				//inChunk->print();
+
+				auto outChunk = outArr->makeChunk(*inChunk->getDesc());
+				auto wtOutChunk = std::static_pointer_cast<wtChunk>(outChunk);
+				wtOutChunk->setLevel(inChunk->getLevel());
+				wtOutChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
+				wtOutChunk->makeAllBlocks();
+				outChunk->bufferCopy(inChunk);
+			}
 
 			++(*cit);
 		}

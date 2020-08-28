@@ -4,7 +4,7 @@
 namespace msdb
 {
 chunk::chunk(pChunkDesc desc) : cached_(nullptr), desc_(desc), 
-blockCapacity_(desc->getBlockSpace().area()), blockBitmap_(this->blockCapacity_),
+blockCapacity_(desc->getBlockSpace().area()), blockBitmap_(std::make_shared<bitmap>(this->blockCapacity_, false)),
 serializable(std::make_shared<chunkHeader>())
 {
 
@@ -224,4 +224,24 @@ coor chunk::getBlockCoor(const blockId bId)
 {
 	return this->getBlockIterator()->seqToCoor(bId);
 }
+void chunk::copyBlockBitmap(cpBitmap blockBitmap)
+{
+	this->blockBitmap_ = std::make_shared<bitmap>(*blockBitmap);
+}
+void chunk::replaceBlockBitmap(pBitmap blockBitmap)
+{
+	this->blockBitmap_ = blockBitmap;
+}
+void chunk::mergeBlockBitmap(pBitmap blockBitmap)
+{
+	this->blockBitmap_->andMerge(*blockBitmap);
+}
+pBitmap chunk::getBlockBitmap()
+{
+	return this->blockBitmap_;
+}
+//cpBitmap chunk::getBlockBitmap() const
+//{
+//	return this->blockBitmap_;
+//}
 }

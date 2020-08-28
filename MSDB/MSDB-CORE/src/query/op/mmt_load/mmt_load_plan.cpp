@@ -12,7 +12,7 @@ const char* mmt_load_plan::name()
 	return "mmt_load_plan";
 }
 
-pAction mmt_load_plan::getAction()
+pAction mmt_load_plan::makeAction()
 {
 	return std::make_shared<mmt_load_action>();
 }

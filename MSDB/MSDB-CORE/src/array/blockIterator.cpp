@@ -4,7 +4,7 @@
 namespace msdb
 {
 blockIterator::blockIterator(const dimension dims,
-							 blockContainer* blocks, bitmap* blockBitmap, 
+							 blockContainer* blocks, pBitmap blockBitmap, 
 							 const iterateMode itMode)
 	: coorItr(dims), 
 	blocks_(blocks), blockBitmap_(blockBitmap),

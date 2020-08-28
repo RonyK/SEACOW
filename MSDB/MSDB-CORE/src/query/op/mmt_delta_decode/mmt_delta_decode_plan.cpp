@@ -16,9 +16,9 @@ const char* mmt_delta_decode_plan::name()
 	return "mmt_delta_decode";
 }
 
-pAction mmt_delta_decode_plan::getAction()
+pAction mmt_delta_decode_plan::makeAction()
 {
-	return pAction();
+	return std::make_shared<mmt_delta_decode_action>();
 }
 
 mmt_delta_decode_array_pset::mmt_delta_decode_array_pset(parameters& pSet)

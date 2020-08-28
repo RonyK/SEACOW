@@ -14,18 +14,18 @@ opParamSet::opParamSet(parameters& pSet)
 	}
 }
 
-bool opParamSet::isMatch(parameters pSet)
-{
-	if (this->params_.size() != pSet.size())
-		return false;
-
-	auto it = this->params_.begin();
-	auto iit = pSet.begin();
-	for(; it != this->params_.end(); it++, iit++)
-	{
-		
-	}
-}
+//bool opParamSet::isMatch(parameters pSet)
+//{
+//	if (this->params_.size() != pSet.size())
+//		return false;
+//
+//	auto it = this->params_.begin();
+//	auto iit = pSet.begin();
+//	for(; it != this->params_.end(); ++it, ++iit)
+//	{
+//		
+//	}
+//}
 parameters opParamSet::getParam()
 {
 	return this->params_;

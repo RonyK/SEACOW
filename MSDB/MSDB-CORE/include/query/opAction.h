@@ -23,12 +23,16 @@ public:
 	const pArrayDesc getArrayDesc();
 	void setParams(const parameters& params);
 	void setArrayDesc(pArrayDesc aDesc);
+	void setPlanBitmap(pBitmap planBitmap);
+	cpBitmap getPlanChunkBitmap() const;
+	virtual cpBitmap getPlanBlockBitmap(chunkId cid) const;
 	virtual const char* name() = 0;
 
 	virtual pArray execute(std::vector<pArray>&inputArrays, pQuery q) = 0;
 
 protected:
 	pArrayDesc aDesc_;
+	pBitmap planBitmap_;	// chunk bitmap or chunk-block bitmap tree
 	//std::vector<action> sources_;
 	parameters params_;
 };
