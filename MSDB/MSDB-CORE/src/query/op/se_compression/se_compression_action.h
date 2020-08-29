@@ -32,6 +32,7 @@ private:
 	template<typename Ty_>
 	void compressAttribute(std::shared_ptr<wavelet_encode_array>inArr, pAttributeDesc attrDesc)
 	{
+		size_t mSizeTotal = 0;
 		auto arrId = inArr->getId();
 		auto cit = inArr->getChunkIterator(iterateMode::EXIST);
 		bool hasNegative = false;
@@ -57,8 +58,12 @@ private:
 			auto attr = outChunk->getDesc()->attrDesc_;
 			storageMgr::instance()->saveChunk(arrId, attr->id_, (outChunk)->getId(),
 											  std::static_pointer_cast<serializable>(outChunk));
+			mSizeTotal += outChunk->getSerializedSize();
+			std::cout << outChunk->getSerializedSize() << std::endl;
 			++(*cit);
 		}
+
+		std::cout << "mSizeTotal: " << mSizeTotal << std::endl;
 	}
 
 	template<typename Ty_>

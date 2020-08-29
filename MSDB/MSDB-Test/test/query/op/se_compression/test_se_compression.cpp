@@ -127,6 +127,8 @@ TEST(query_op_se_compression, se_compression_star1024x1024)
 	//compArrary<value_type>(arr_wavelet_encode, arr_se_decompression);
 	//compArrary<value_type>(arr_delta_encode, arr_wavelet_decode);
 	compArrary<value_type>(arr_mmt_build, arr_delta_decode);
+
+	EXPECT_TRUE(false);
 }
 
 TEST(query_op_se_compression, without_secompression_star1024x1024)
@@ -162,7 +164,23 @@ TEST(query_op_se_compression, without_secompression_star1024x1024)
 		arr_wavelet_encode->print();
 	}
 
-	auto arr_wavelet_decode = wavelet_decode(std::vector<pArray>({ arr_wavelet_encode }));
+	auto arr_spiht_encode = spiht_encode(std::vector<pArray>({ arr_wavelet_encode }));
+	std::cout << "##############################" << std::endl;
+	std::cout << "SPIHT Encode Arr" << std::endl;
+	if (printFlag)
+	{
+		arr_spiht_encode->print();
+	}
+
+	auto arr_spiht_decode = spiht_decode(std::vector<pArray>({ arr_spiht_encode }));
+	std::cout << "##############################" << std::endl;
+	std::cout << "SPIHT Decode Arr" << std::endl;
+	if (printFlag)
+	{
+		arr_spiht_decode->print();
+	}
+
+	auto arr_wavelet_decode = wavelet_decode(std::vector<pArray>({ arr_spiht_decode }));
 	std::cout << "##############################" << std::endl;
 	std::cout << "Wavelet Decode Arr" << std::endl;
 	if (printFlag)
@@ -181,6 +199,8 @@ TEST(query_op_se_compression, without_secompression_star1024x1024)
 	//compArrary<value_type>(arr_wavelet_encode, arr_se_decompression);
 	//compArrary<value_type>(arr_delta_encode, arr_wavelet_decode);
 	compArrary<value_type>(arr_mmt_build, arr_delta_decode);
+
+	EXPECT_TRUE(false);
 }
 }   // data2D_star1024x1024
 }	// caDummy

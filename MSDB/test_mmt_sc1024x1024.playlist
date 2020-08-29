@@ -8,12 +8,7 @@
     <Rule Match="All">
       <Property Name="Solution" />
       <Rule Match="Any">
-        <Rule Match="All">
-          <Property Name="Project" Value="MSDB-Test" />
-          <Rule Match="Any">
-            <Property Name="Namespace" Value="" />
-          </Rule>
-        </Rule>
+        <Property Name="Project" Value="MSDB-Test" />
       </Rule>
     </Rule>
   </Rule>

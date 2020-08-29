@@ -87,5 +87,22 @@ TEST_F(query_op_mmt_save, mmt_save_sc8x8)
     //    filePath("../storage/array/881/indies/0.msdbindex")));
 }	// TEST()
 }	// data2D_sc8x8
+
+namespace data2D_star1024x1024
+{
+TEST_F(query_op_mmt_save, mmt_save_star1024x1024)
+{
+    bool printFlag = false;
+
+// Assing new array id for se compressed array
+    std::vector<pArray> sourceArr;
+    getSourceArrayIfEmpty(sourceArr);
+    sourceArr[0]->setId(sourceArr[0]->getId() + 2);     // 24243
+
+    auto arr_mmt_build = mmt_build(sourceArr);
+    auto arr_mmt_save = mmt_save(std::vector<pArray>({ arr_mmt_build }));
+    EXPECT_TRUE(false);
+}   // TEST
+}   // data2D_star1024x1024
 }	// caDummy
 }	// msdb

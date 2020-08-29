@@ -272,6 +272,21 @@ pArray mmt_build(std::vector<pArray> sourceArr)
 	return afterArray;
 }
 
+pArray mmt_save(std::vector<pArray> sourceArr)
+{
+	// Should build mmt before
+	getSourceArrayIfEmpty(sourceArr);
+
+	std::shared_ptr<mmt_save_plan> mmtPlan;
+	std::shared_ptr<mmt_save_action> mmtAction;
+	pQuery mmtQuery;
+	getMmtSave(sourceArr[0]->getDesc(), mmtPlan, mmtAction, mmtQuery);
+
+	auto afterArray = mmtAction->execute(sourceArr, mmtQuery);
+
+	return afterArray;
+}
+
 pArray mmt_delta_encode(std::vector<pArray> sourceArr)
 {
 	// Should build mmt before

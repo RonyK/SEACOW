@@ -47,7 +47,7 @@ TEST(query_op_spiht_encode_decode, spiht_encode_decode_star1024x1024)
 	// arr_wavelet_decode->print();
 
 	compArrary<value_type>(sourceArr[0], arr_wavelet_decode);
-	//EXPECT_TRUE(false);
+	EXPECT_TRUE(false);
 }
 }
 }

@@ -23,6 +23,7 @@ pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 {
 	assert(inputArrays.size() == 1);
 
+	size_t mSizeTotal = 0;
 	pArray sourceArr = inputArrays[0];
 	auto wArray = std::static_pointer_cast<wavelet_encode_array>(sourceArr);
 	arrayId arrId = sourceArr->getId();
@@ -43,10 +44,13 @@ pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 				= std::static_pointer_cast<serializable>(outChunk);
 			storageMgr::instance()->saveChunk(arrId, attr->id_, (outChunk)->getId(),
 											  serialChunk);
-
+			mSizeTotal += serialChunk->getSerializedSize();
+			std::cout << serialChunk->getSerializedSize() << std::endl;
 			++(*cit);
 		}
 	}
+
+	std::cout << "mSizeTotal: " << mSizeTotal << std::endl;
 
 	return sourceArr;
 }
