@@ -27,11 +27,15 @@ public:
 	virtual void realloc(bufferSize size);
 	virtual void copy(void* data, bufferSize size);
 	virtual void copy(void* data, bufferSize offset, bufferSize size);
-	virtual void linkToChunkBuffer(void* data, bufferSize size);
+	virtual void ref(pBuffer refBuffer, bufferSize size);
 	virtual void free();
+
+protected:
+	pChunkBuffer getRefBuffer();
 	
 protected:
 	void* data_;
+	pChunkBuffer refBuffer_;		// Hold a refBuffer to protect it from a garbage collecting.
 };
 }
 

@@ -21,6 +21,9 @@ class spiht_decode_array_pset : public opArrayParamSet
 {
 public:
 	spiht_decode_array_pset(parameters& pSet);
+
+public:
+	virtual pBitmap inferBottomUpBitmap() override;
 };
 }
 

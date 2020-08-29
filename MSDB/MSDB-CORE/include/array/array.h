@@ -108,7 +108,7 @@ public:
 	// If a chunkBit is setted, arrayBase makes a chunk accordingly.
 	void makeChunks(const attributeId attrId, const bitmap& input);
 
-	void insertChunk(const attributeId attrId, pChunk inputChunk);
+	pChunk insertChunk(const attributeId attrId, pChunk inputChunk);
 	template <class _Iter>
 	void insertChunk(const attributeId attrId, _Iter begin, _Iter end)
 	{

@@ -43,7 +43,7 @@ void memChunk::referenceBufferToBlock(const blockId bId)
 {
 	if (bId == 0 && this->block_)
 	{
-		this->block_->linkToChunkBuffer(this->cached_->getData(), this->block_->getDesc()->mSize_);
+		this->block_->refChunkBufferWithoutOwnership(this->cached_->getData(), this->block_->getDesc()->mSize_);
 	}
 }
 

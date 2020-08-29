@@ -85,7 +85,7 @@ private:
 				wtOutChunk->setLevel(inChunk->getLevel());
 				wtOutChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
 				wtOutChunk->makeAllBlocks();
-				outChunk->bufferCopy(inChunk);
+				outChunk->bufferRef(inChunk);	// 여기 왜 copy지? 왜ref 하면 애러나지?
 			}
 
 			++(*cit);

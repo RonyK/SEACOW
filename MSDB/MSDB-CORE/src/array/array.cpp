@@ -38,11 +38,12 @@ coor arrayBase::itemCoorToChunkCoor(const coor& itemCoor)
 	}
 	return chunkCoor;
 }
-void arrayBase::insertChunk(const attributeId attrId, pChunk inputChunk)
+pChunk arrayBase::insertChunk(const attributeId attrId, pChunk inputChunk)
 {
 	assert(attrId < this->desc_->attrDescs_->size());
 	this->chunks_.insert(chunkPair(inputChunk->getId(), inputChunk));
 	this->chunkBitmap_->setExist(inputChunk->getId());
+	return inputChunk;
 }
 
 void arrayBase::flush()

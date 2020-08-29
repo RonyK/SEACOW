@@ -46,7 +46,7 @@ void memBlockChunk::referenceBufferToBlock(blockId bId)
 	if (this->blocks_[bId])
 	{
 		bufferSize mSizeBlock = this->blocks_[bId]->getDesc()->mSize_;
-		this->blocks_[bId]->linkToChunkBuffer(
+		this->blocks_[bId]->refChunkBufferWithoutOwnership(
 			(char*)this->cached_->getData() + (bId * mSizeBlock),
 			mSizeBlock);
 	}

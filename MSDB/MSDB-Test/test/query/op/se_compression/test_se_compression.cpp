@@ -128,6 +128,60 @@ TEST(query_op_se_compression, se_compression_star1024x1024)
 	//compArrary<value_type>(arr_delta_encode, arr_wavelet_decode);
 	compArrary<value_type>(arr_mmt_build, arr_delta_decode);
 }
+
+TEST(query_op_se_compression, without_secompression_star1024x1024)
+{
+	bool printFlag = false;
+
+	// Assing new array id for se compressed array
+	std::vector<pArray> sourceArr;
+	getSourceArrayIfEmpty(sourceArr);
+	sourceArr[0]->setId(sourceArr[0]->getId() + 2);     // 24243
+
+	auto arr_mmt_build = mmt_build(sourceArr);
+	std::cout << "##############################" << std::endl;
+	std::cout << "Source Arr" << std::endl;
+	if (printFlag)
+	{
+		arr_mmt_build->print();
+	}
+
+	auto arr_delta_encode = mmt_delta_encode(std::vector<pArray>({ arr_mmt_build }));
+	std::cout << "##############################" << std::endl;
+	std::cout << "Delta Arr" << std::endl;
+	if (printFlag)
+	{
+		arr_delta_encode->print();
+	}
+
+	auto arr_wavelet_encode = wavelet_encode(std::vector<pArray>({ arr_delta_encode }));
+	std::cout << "##############################" << std::endl;
+	std::cout << "Wavelet Encode Arr" << std::endl;
+	if (printFlag)
+	{
+		arr_wavelet_encode->print();
+	}
+
+	auto arr_wavelet_decode = wavelet_decode(std::vector<pArray>({ arr_wavelet_encode }));
+	std::cout << "##############################" << std::endl;
+	std::cout << "Wavelet Decode Arr" << std::endl;
+	if (printFlag)
+	{
+		arr_wavelet_decode->print();
+	}
+
+	auto arr_delta_decode = mmt_delta_decode(std::vector<pArray>({ arr_wavelet_decode }));
+	std::cout << "##############################" << std::endl;
+	std::cout << "Delta Decode Arr" << std::endl;
+	if (printFlag)
+	{
+		arr_delta_decode->print();
+	}
+
+	//compArrary<value_type>(arr_wavelet_encode, arr_se_decompression);
+	//compArrary<value_type>(arr_delta_encode, arr_wavelet_decode);
+	compArrary<value_type>(arr_mmt_build, arr_delta_decode);
+}
 }   // data2D_star1024x1024
 }	// caDummy
 }	// msdb

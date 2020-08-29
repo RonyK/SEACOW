@@ -28,13 +28,24 @@ TEST(query_op_spiht_encode_decode, spiht_encode_decode_star1024x1024)
 
 	// sourceArr[0]->print();
 	auto arr_wavelet_encode = wavelet_encode(sourceArr);
+	std::cout << "##############################" << std::endl;
+	std::cout << "Wavelet Encode Arr" << std::endl;
 	// arr_wavelet_encode->print();
-	auto arr_spiht_encode = spiht_encode(std::vector<pArray>({ arr_wavelet_encode }));
 	
+	auto arr_spiht_encode = spiht_encode(std::vector<pArray>({ arr_wavelet_encode }));
+	std::cout << "##############################" << std::endl;
+	std::cout << "SPIHT Encode Arr" << std::endl;
+
 	auto arr_spiht_decode = spiht_decode(std::vector<pArray>({ arr_spiht_encode }));
+	std::cout << "##############################" << std::endl;
+	std::cout << "SPIHT Decode Arr" << std::endl;
 	// arr_spiht_decode->print();
+
 	auto arr_wavelet_decode = wavelet_decode(std::vector<pArray>({ arr_spiht_decode }));
+	std::cout << "##############################" << std::endl;
+	std::cout << "Wavelet Decode Arr" << std::endl;
 	// arr_wavelet_decode->print();
+
 	compArrary<value_type>(sourceArr[0], arr_wavelet_decode);
 	//EXPECT_TRUE(false);
 }

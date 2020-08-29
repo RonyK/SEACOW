@@ -27,7 +27,7 @@ public:
 	virtual void bufferAlloc(bufferSize size) override;
 	virtual void realloc(bufferSize size) override;
 	virtual void copy(void* data, bufferSize size) override;
-	virtual void linkToChunkBuffer(void* data, bufferSize size);
+	virtual void refChunkBufferWithoutOwnership(void* data, bufferSize size);
 	virtual void free() override;
 
 protected:

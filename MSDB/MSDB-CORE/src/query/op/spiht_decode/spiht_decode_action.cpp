@@ -4,6 +4,7 @@
 #include <array/arrayMgr.h>
 #include <array/memChunk.h>
 #include <compression/spihtChunk.h>
+#include <compression/wtChunk.h>
 
 namespace msdb
 {
@@ -23,42 +24,69 @@ const char* spiht_decode_action::name()
 pArray spiht_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 {
 	assert(inputArrays.size() == 1);
+	auto planBitmap = this->getPlanChunkBitmap();
 
 	auto maxLevel = std::static_pointer_cast<wavelet_encode_array>(inputArrays[0])->getMaxLevel();
 	auto originalChunkDims = std::static_pointer_cast<wavelet_encode_array>(inputArrays[0])->getOrigianlChunkDims();
-	pArray outArr = arrayMgr::instance()->makeArray<wavelet_encode_array>(this->getArrayDesc());
-	arrayId arrId = outArr->getId();
 
-	std::static_pointer_cast<wavelet_encode_array>(outArr)->setMaxLevel(maxLevel);
-	std::static_pointer_cast<wavelet_encode_array>(outArr)->setOrigianlChunkDims(originalChunkDims);
+	//pArray outArr = arrayMgr::instance()->makeArray<wavelet_encode_array>(this->getArrayDesc());
+	//arrayId arrId = outArr->getId();
+	//std::static_pointer_cast<wavelet_encode_array>(outArr)->setMaxLevel(maxLevel);
+	//std::static_pointer_cast<wavelet_encode_array>(outArr)->setOrigianlChunkDims(originalChunkDims);
+	auto outArr = std::make_shared<wavelet_encode_array>(this->getArrayDesc());
+	outArr->setMaxLevel(maxLevel);
+	outArr->setOrigianlChunkDims(originalChunkDims);
+	outArr->copyChunkBitmap(planBitmap);
 
 	for (auto attr : *outArr->getDesc()->attrDescs_)
 	{
-		auto cit = outArr->getChunkIterator(iterateMode::ALL);
-
-		while (!cit->isEnd())
-		{
-			if(cit->isExist())
-			{
-				chunkId cId = cit->seqPos();
-							// TODO:: Use to makeChunk function
-							//outArr->makeChunk(attr->id_, cId);
-				outArr->insertChunk(attr->id_, std::make_shared<spihtChunk>(outArr->getChunkDesc(attr->id_, cId)));
-
-				auto spChunk = std::static_pointer_cast<spihtChunk>(**cit);
-				spChunk->setMaxLevel(maxLevel);
-				spChunk->makeAllBlocks();
-
-				pSerializable serialChunk
-					= std::static_pointer_cast<serializable>(**cit);
-				storageMgr::instance()->loadChunk(arrId, attr->id_, (**cit)->getId(),
-												  serialChunk);
-			}
-			
-			++(*cit);
-		}
+		this->decodeAttribute(std::static_pointer_cast<wavelet_encode_array>(outArr), attr);
 	}
 
 	return outArr;
+}
+
+void spiht_decode_action::decodeAttribute(std::shared_ptr<wavelet_encode_array> outArr, 
+										  pAttributeDesc attrDesc)
+{
+	auto cit = outArr->getChunkIterator(iterateMode::ALL);
+
+	while (!cit->isEnd())
+	{
+		if (cit->isExist())
+		{
+			chunkId cid = cit->seqPos();
+						// TODO:: Use to makeChunk function
+						//outArr->makeChunk(attr->id_, cId);
+			auto inChunk = this->makeInChunk(outArr, attrDesc, cid);
+			auto blockBitmap = this->getPlanBlockBitmap(cid);
+			if (blockBitmap)
+			{
+				inChunk->copyBlockBitmap(blockBitmap);
+			} else
+			{
+				// If there were no bitmap, set all blocks as true.
+				inChunk->replaceBlockBitmap(std::make_shared<bitmap>(inChunk->getBlockCapacity(), true));
+			}
+			inChunk->makeAllBlocks();
+			inChunk->setMaxLevel(outArr->getMaxLevel());
+
+			pSerializable serialChunk
+				= std::static_pointer_cast<serializable>(inChunk);
+			storageMgr::instance()->loadChunk(outArr->getId(), attrDesc->id_, cid, serialChunk);
+
+			auto outChunk = outArr->makeChunk(*inChunk->getDesc());
+			auto wtOutChunk = std::static_pointer_cast<wtChunk>(outChunk);
+			wtOutChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
+			wtOutChunk->makeAllBlocks();
+			outChunk->bufferCopy(inChunk);	// 여기 왜 copy지? 왜ref 하면 애러나지?
+		}
+
+		++(*cit);
+	}
+}
+pSpihtChunk spiht_decode_action::makeInChunk(std::shared_ptr<wavelet_encode_array> arr, pAttributeDesc attrDesc, chunkId cid)
+{
+	return std::make_shared<spihtChunk>(arr->getChunkDesc(attrDesc->id_, cid));
 }
 }
