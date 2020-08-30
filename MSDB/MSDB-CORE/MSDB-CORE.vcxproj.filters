@@ -80,7 +80,6 @@
     <ClCompile Include="src\query\op\se_compression\se_compression_plan.cpp" />
     <ClCompile Include="src\array\blockItemIterator.cpp" />
     <ClCompile Include="src\array\memBlockItemIterator.cpp" />
-    <ClCompile Include="src\query\op\spiht_encode\timer.cpp" />
     <ClCompile Include="src\compression\waveletUtil.cpp" />
     <ClCompile Include="src\query\op\se_decompression\se_decompression_action.cpp" />
     <ClCompile Include="src\query\op\se_decompression\se_decompression_plan.cpp" />
@@ -95,6 +94,7 @@
     <ClCompile Include="src\parse\predicate.cpp" />
     <ClCompile Include="src\parse\term.cpp" />
     <ClCompile Include="src\parse\expression.cpp" />
+    <ClCompile Include="src\util\timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.h" />
@@ -204,6 +204,7 @@
     <ClInclude Include="include\parse\predicate.h" />
     <ClInclude Include="include\parse\term.h" />
     <ClInclude Include="include\parse\expression.h" />
+    <ClInclude Include="include\util\timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">
@@ -380,7 +381,6 @@
     <ClCompile Include="src\query\op\load\load_plan.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClInclude Include="src\query\op\spiht_encode\timer.h" />
     <ClInclude Include="src\query\op\naive_filter\naive_filter_plan.h" />
     <ClInclude Include="src\query\op\naive_filter\naive_filter_action.h" />
   </ItemGroup>
