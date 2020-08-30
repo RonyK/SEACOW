@@ -19,11 +19,11 @@ static const eleType ele_type = eleType::CHAR;
 //static const dim_type dimX = 1024;
 //static const dim_type dimY = 1024;
 
-static const dim_type dimX = 1024;
-static const dim_type dimY = 1024;
+static const dim_type dimX = 4096;
+static const dim_type dimY = 2048;
 static const size_t dataLength = dimX * dimY;
 static const size_t maxLevel = 3;
-static const size_t mmtLevel = 0;
+static const size_t mmtLevel = 2;
 static const arrayId aid = 24241;
 
 extern std::vector<dim_type> dims;
