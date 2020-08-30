@@ -1,4 +1,6 @@
 #include <op/between/between_action.h>
+#include <array/arrayMgr.h>
+#include <array/blockChunk.h>
 #include <array/memBlockArray.h>
 
 namespace msdb
@@ -18,39 +20,81 @@ const char* between_action::name()
 
 pArray between_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 {
-	pArray inputArray = inputArrays[0];
-	pArray outputArray = std::make_shared<memBlockArray>(this->getArrayDesc());
+	pArray inArr = inputArrays[0];
+	pArray outArr = arrayMgr::instance()->makeArray<memBlockArray>(this->getArrayDesc());
 	std::shared_ptr<coor> sp = std::static_pointer_cast<coor>(this->params_[1]->getParam());
 	std::shared_ptr<coor> ep = std::static_pointer_cast<coor>(this->params_[2]->getParam());
 
-	auto chunkItr = outputArray->getChunkIterator();
-	while (!chunkItr->isEnd())
+	for (auto attr : *inArr->getDesc()->attrDescs_)
 	{
-		if(chunkItr->isExist())
+		auto chunkItr = inArr->getChunkIterator();
+		while (!chunkItr->isEnd())
 		{
-			auto blockItr = (**chunkItr)->getBlockIterator();
-			while (!blockItr->isEnd())
+			chunkId cId = chunkItr->seqPos();
+			coor chunkSp = chunkItr->getSp();
+			coor chunkEp = chunkItr->getEp();
+
+			if ((*sp) < chunkEp && chunkSp < (*ep))
 			{
-				if(blockItr->isExist())
+				auto outChunk = outArr->makeChunk(attr->id_, cId);
+				outChunk->makeAllBlocks();
+				outChunk->bufferRef((**chunkItr));
+				
+				if (!((*sp) <= chunkSp && chunkEp <= (*ep)))
 				{
-					coor globalSp = chunkItr->getEp() + blockItr->getSp();
-					coor globalEp = chunkItr->getEp() + blockItr->getEp();
-					if ((*sp) < globalSp && globalEp < (*ep))
+					auto blockItr = outChunk->getBlockIterator();
+					while (!blockItr->isEnd())
 					{
-						blockItr;
-					} else
-					{
-						coorRange tmp(*sp, *ep);
-						(**blockItr)->getItemRangeIterator(tmp);
+						auto dSize = (**blockItr)->getDSize();
+						coor blockSp = chunkSp + blockItr->getSp();
+						coor blockEp = chunkSp + blockItr->getEp();
+						coor newSp(dSize);
+						coor newEp(dSize);
+
+						bool outRange = false;
+						for (int d = 0; d< dSize; d++)
+						{				
+							if(blockEp[d] <= (*sp)[d] || (*ep)[d] <= blockSp[d])
+							{
+								outRange = true;
+								break;
+							}
+
+							if (blockSp[d] < (*sp)[d])
+							{
+								newSp[d] = (*sp)[d] - chunkSp[d];
+							} else
+							{
+								newSp[d] = blockSp[d] - chunkSp[d];
+							}
+
+							if ((*ep)[d] < blockEp[d])
+							{
+								newEp[d] = (*ep)[d] - chunkEp[d];
+							}
+							else
+							{
+								newEp[d] = blockEp[d] - chunkEp[d];
+							}
+						}
+
+						if (outRange)
+						{
+							(**blockItr)->setIep(blockItr->getSp()); // TODO:: no item block
+						} else
+						{
+							(**blockItr)->setIsp(newSp);
+							(**blockItr)->setIep(newEp);
+						}
+
+						++(*blockItr);
 					}
 				}
-				
-				++(*blockItr);
 			}
+			++(*chunkItr);
 		}
-		
-		++(*chunkItr);
 	}
-	return outputArray;
+	
+	return outArr;
 }
 }

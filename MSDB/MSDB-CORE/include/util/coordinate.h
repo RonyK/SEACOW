@@ -175,6 +175,28 @@ public:
 		}
 		return true;
 	}
+	bool operator<=(const self_type& rhs) const
+	{
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			if (this->coor_[d] > rhs[d])
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	bool operator>=(const self_type& rhs) const
+	{
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			if (this->coor_[d] < rhs[d])
+			{
+				return false;
+			}
+		}
+		return true;
+	}
 
 	// Assign
 	self_type& operator=(const self_type& mit)
