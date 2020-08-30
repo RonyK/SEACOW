@@ -23,8 +23,8 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 	// Build Array
 	pDimensionDescs dimDescs = std::make_shared<dimensionDescs>();
 	dimensionId dimId = 0;
-	dimDescs->push_back(std::make_shared<dimensionDesc>(dimId++, "X", 0, dims[1], chunkDims[1], blockDims[1]));
 	dimDescs->push_back(std::make_shared<dimensionDesc>(dimId++, "Y", 0, dims[0], chunkDims[0], blockDims[0]));
+	dimDescs->push_back(std::make_shared<dimensionDesc>(dimId++, "X", 0, dims[1], chunkDims[1], blockDims[1]));
 
 	pAttributeDescs attrDescs = std::make_shared<attributeDescs>();
 	attributeId attrId = 0;
@@ -69,8 +69,8 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 					}
 				}
 				++(*bItr);
-				sourceArr->insertChunk(0, sourceChunk);
 			}
+			sourceArr->insertChunk(0, sourceChunk);
 		}
 	}
 

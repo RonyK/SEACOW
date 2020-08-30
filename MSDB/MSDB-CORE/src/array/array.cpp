@@ -108,7 +108,7 @@ chunkId arrayBase::getChunkId(pChunkDesc cDesc)
 chunkId arrayBase::getChunkIdFromItemCoor(const coor& itemCoor)
 {
 	coor chunkCoor = itemCoor;
-	for (dimensionId d = this->desc_->dimDescs_->size() - 1; d != -1; d--)
+	for (dimensionId d = this->desc_->dimDescs_->size() - 1; d != -1; --d)
 	{
 		chunkCoor[d] /= this->desc_->dimDescs_->at(d)->chunkSize_;
 	}

@@ -3,6 +3,7 @@
 #include <compression/testCompression.h>
 #include <system/storageMgr.h>
 #include <io/testIO.h>
+#include <util/timer.h>
 
 namespace msdb
 {
@@ -63,10 +64,13 @@ TEST(query_op_se_compression, se_compression_star1024x1024)
 {
 	bool printFlag = false;
 
+	timer myTimer;
+	myTimer.start(0);
 	// Assing new array id for se compressed array
 	std::vector<pArray> sourceArr;
 	getSourceArrayIfEmpty(sourceArr);
 	sourceArr[0]->setId(sourceArr[0]->getId() + 2);     // 24243
+	myTimer.check(0, timer::workType::ARRAY_CONSTRUCTING, true);
 
 	auto arr_mmt_build = mmt_build(sourceArr);
 	std::cout << "##############################" << std::endl;
@@ -75,6 +79,7 @@ TEST(query_op_se_compression, se_compression_star1024x1024)
 	{
 		arr_mmt_build->print();
 	}
+	myTimer.check(0, timer::workType::COMPUTING, true);
 
 	auto arr_delta_encode = mmt_delta_encode(std::vector<pArray>({ arr_mmt_build }));
 	std::cout << "##############################" << std::endl;
@@ -83,6 +88,7 @@ TEST(query_op_se_compression, se_compression_star1024x1024)
 	{
 		arr_delta_encode->print();
 	}
+	myTimer.check(0, timer::workType::COMPUTING, true);
 
 	auto arr_wavelet_encode = wavelet_encode(std::vector<pArray>({ arr_delta_encode }));
 	std::cout << "##############################" << std::endl;
@@ -91,6 +97,7 @@ TEST(query_op_se_compression, se_compression_star1024x1024)
 	{
 		arr_wavelet_encode->print();
 	}
+	myTimer.check(0, timer::workType::COMPUTING, true);
 
 	auto arr_se_compression = se_compression(std::vector<pArray>({ arr_wavelet_encode }));
 	std::cout << "##############################" << std::endl;
@@ -99,6 +106,7 @@ TEST(query_op_se_compression, se_compression_star1024x1024)
 	{
 		arr_se_compression->print();
 	}
+	myTimer.check(0, timer::workType::COMPUTING, true);
 
 	auto arr_se_decompression = se_decompression(std::vector<pArray>({ arr_delta_encode }));
 	std::cout << "##############################" << std::endl;
@@ -107,6 +115,7 @@ TEST(query_op_se_compression, se_compression_star1024x1024)
 	{
 		arr_se_decompression->print();
 	}
+	myTimer.check(0, timer::workType::COMPUTING, true);
 
 	auto arr_wavelet_decode = wavelet_decode(std::vector<pArray>({ arr_se_decompression }));
 	std::cout << "##############################" << std::endl;
@@ -115,6 +124,7 @@ TEST(query_op_se_compression, se_compression_star1024x1024)
 	{
 		arr_wavelet_decode->print();
 	}
+	myTimer.check(0, timer::workType::COMPUTING, true);
 
 	auto arr_delta_decode = mmt_delta_decode(std::vector<pArray>({ arr_wavelet_decode }));
 	std::cout << "##############################" << std::endl;
@@ -123,10 +133,13 @@ TEST(query_op_se_compression, se_compression_star1024x1024)
 	{
 		arr_delta_decode->print();
 	}
+	myTimer.check(0, timer::workType::COMPUTING, true);
 
 	//compArrary<value_type>(arr_wavelet_encode, arr_se_decompression);
 	//compArrary<value_type>(arr_delta_encode, arr_wavelet_decode);
 	compArrary<value_type>(arr_mmt_build, arr_delta_decode);
+
+	myTimer.printTime();
 
 	EXPECT_TRUE(false);
 }
