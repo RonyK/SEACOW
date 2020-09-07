@@ -183,7 +183,8 @@ using value_type = char;
 static const size_t dataLength = 16;
 static const size_t dimX = 4;
 static const size_t dimY = 4;
-static const size_t maxLevel = 0;
+static const size_t wtLevel = 0;
+static const size_t mmtLevel = 0;
 static const arrayId aid = 441;
 
 extern std::vector<dim_type> dims;
@@ -222,7 +223,7 @@ using value_type = char;
 static const size_t dataLength = 16;
 static const size_t dimX = 4;
 static const size_t dimY = 4;
-static const size_t maxLevel = 0;
+static const size_t wtLevel = 0;
 static const arrayId aid = 441;
 
 extern std::vector<dim_type> dims;
@@ -256,7 +257,8 @@ using value_type = char;
 static const size_t dataLength = 64;
 static const size_t dimX = 8;
 static const size_t dimY = 8;
-static const size_t maxLevel = 2;
+static const size_t wtLevel = 2;
+static const size_t mmtLevel = 2;
 static const arrayId aid = 881;
 
 extern std::vector<dim_type> dims;
@@ -293,7 +295,7 @@ using value_type = int;
 static const size_t dataLength = 64;
 static const size_t dimX = 8;
 static const size_t dimY = 8;
-static const size_t maxLevel = 2;
+static const size_t wtLevel = 2;
 static const arrayId aid = 882;
 
 extern std::vector<dim_type> dims;

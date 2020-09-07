@@ -6,6 +6,23 @@ namespace msdb
 {
 namespace caDummy
 {
+template <typename value_type>
+void test_body_mmt_save(_pFuncGetSourceArray_, eleDefault mmtLevel)
+{
+    bool printFlag = false;
+
+    std::vector<pArray> sourceArr;
+    getSourceArrayIfEmpty(sourceArr);
+    sourceArr[0]->setId(sourceArr[0]->getId() + 2);
+
+    auto arr_mmt_build = mmt_build(sourceArr, mmtLevel);
+    std::cout << "##############################" << std::endl;
+    auto arr_mmt_save = mmt_save(std::vector<pArray>({ arr_mmt_build }));
+    std::cout << "##############################" << std::endl;
+
+    //EXPECT_TRUE(false);
+}
+
 class query_op_mmt_save : public ::testing::Test
 {
 protected:
@@ -62,8 +79,7 @@ TEST_F(query_op_mmt_save, mmt_serialize_sc4x4)
 
 TEST_F(query_op_mmt_save, mmt_save_sc4x4)
 {
-    auto arr = mmt_build();
-    arr = mmt_save(std::vector<pArray>({ arr }));
+    test_body_mmt_save<value_type>(&getSourceArrayIfEmpty, mmtLevel);
 }	// TEST()
 }	// data2D_sc4x4
 
@@ -71,20 +87,7 @@ namespace data2D_sc8x8
 {
 TEST_F(query_op_mmt_save, mmt_save_sc8x8)
 {
-    auto arr = mmt_build();
-    arr = mmt_save(std::vector<pArray>({ arr }));
-
-    //// Should build mmt before
-    //std::vector<pArray> sourceArr = getSourceArray();
-    //std::shared_ptr<mmt_save_plan> mmtPlan;
-    //std::shared_ptr<mmt_save_action> mmtAction;
-    //pQuery mmtQuery;
-    //getMmtSave(sourceArr[0]->getDesc(), mmtPlan, mmtAction, mmtQuery);
-
-    //auto afterArray = mmtAction->execute(sourceArr, mmtQuery);
-
-    //EXPECT_TRUE(std::filesystem::is_regular_file(
-    //    filePath("../storage/array/881/indies/0.msdbindex")));
+    test_body_mmt_save<value_type>(&getSourceArrayIfEmpty, mmtLevel);
 }	// TEST()
 }	// data2D_sc8x8
 
@@ -92,16 +95,7 @@ namespace data2D_star1024x1024
 {
 TEST_F(query_op_mmt_save, mmt_save_star1024x1024)
 {
-    bool printFlag = false;
-
-// Assing new array id for se compressed array
-    std::vector<pArray> sourceArr;
-    getSourceArrayIfEmpty(sourceArr);
-    sourceArr[0]->setId(sourceArr[0]->getId() + 2);     // 24243
-
-    auto arr_mmt_build = mmt_build(sourceArr);
-    auto arr_mmt_save = mmt_save(std::vector<pArray>({ arr_mmt_build }));
-    EXPECT_TRUE(false);
+    test_body_mmt_save<value_type>(&getSourceArrayIfEmpty, mmtLevel);        // 24243
 }   // TEST
 }   // data2D_star1024x1024
 }	// caDummy

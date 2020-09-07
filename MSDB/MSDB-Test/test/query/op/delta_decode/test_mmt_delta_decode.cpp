@@ -16,7 +16,7 @@ TEST(query_op_mmt_delta_decode, mmt_delta_decode_sc4x4)
     getSourceArrayIfEmpty(sourceArr);
     sourceArr[0]->setId(sourceArr[0]->getId());     // 441
 
-    auto arr_mmt_build = mmt_build(sourceArr);
+    auto arr_mmt_build = mmt_build(sourceArr, mmtLevel);
     std::cout << "##############################" << std::endl;
     std::cout << "Source Arr" << std::endl;
     arr_mmt_build->print();

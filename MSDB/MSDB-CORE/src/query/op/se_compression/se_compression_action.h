@@ -59,7 +59,7 @@ private:
 			storageMgr::instance()->saveChunk(arrId, attr->id_, (outChunk)->getId(),
 											  std::static_pointer_cast<serializable>(outChunk));
 			mSizeTotal += outChunk->getSerializedSize();
-			std::cout << outChunk->getSerializedSize() << std::endl;
+			//std::cout << outChunk->getSerializedSize() << std::endl;
 			++(*cit);
 		}
 

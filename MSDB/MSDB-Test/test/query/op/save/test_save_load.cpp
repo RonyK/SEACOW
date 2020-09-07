@@ -7,18 +7,8 @@ namespace msdb
 {
 namespace caDummy
 {
-namespace data2D_sc4x4
-{
-TEST(query_op_save, save_sc4x4)
-{
-    auto arr = save(std::vector<pArray>(), &getSourceArrayIfEmpty);
-}	// TEST()
-}	// data2D_sc4x4
-
-namespace data2D_star1024x1024
-{
-
-TEST(query_op_save, save_star1024x1024)
+template <typename value_type>
+void test_body_save(_pFuncGetSourceArray_)
 {
 	bool printFlag = false;
 
@@ -43,12 +33,27 @@ TEST(query_op_save, save_star1024x1024)
 	if (printFlag)
 	{
 		std::cout << "##############################" << std::endl;
-		std::cout << "WD Arr" << std::endl;
+		std::cout << "Load Arr" << std::endl;
 		loadArr->print();
 	}
 
 	compArrary<value_type>(sourceArr[0], loadArr);
-	EXPECT_TRUE(false);
+	//EXPECT_TRUE(false);
+}
+
+namespace data2D_sc4x4
+{
+TEST(query_op_save_load, save_load_sc4x4)
+{
+	test_body_save<value_type>(&getSourceArrayIfEmpty);
+}	// TEST()
+}	// data2D_sc4x4
+
+namespace data2D_star1024x1024
+{
+TEST(query_op_save_load, save_load_star1024x1024)
+{
+	test_body_save<value_type>(&getSourceArrayIfEmpty);
 }
 }   // data2D_star1024x1024
 }	// caDummy

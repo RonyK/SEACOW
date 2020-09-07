@@ -194,6 +194,8 @@ protected:
 		this->eType_ = curHeader->eType_;
 
 		this->initNodeSpace(this->dims_, this->chunkDims_, this->blockDims_, this->maxLevel_);
+		// Limits maxLevel according the size of nodeSpace vector initialized above.
+		this->maxLevel_ = this->nodeSpace_.size() - 1;
 	}
 
 	//////////////////////////////
@@ -208,6 +210,8 @@ public:
 		TyBits_(getEleSize(eType)* CHAR_BIT)
 	{
 		this->initNodeSpace(dim, chunkDim, blockDim, maxLevel);
+		// Limits maxLevel according the size of nodeSpace vector initialized above.
+		this->maxLevel_ = this->nodeSpace_.size() - 1;
 	}
 
 	~MinMaxTreeImpl() {}
@@ -228,6 +232,16 @@ public:
 		for (size_type level = 1; level <= this->maxLevel_; level++)
 		{
 			this->forwardBuildNonLeaf(level);
+			if(this->nodes_[level].size() == 1)
+			{
+				this->maxLevel_ = level;
+			}
+		}
+
+		if(this->nodes_[this->maxLevel_].size() != 1)
+		{
+			++this->maxLevel_;
+			this->forwardBuildRoot();
 		}
 		//////////////////////////////
 
@@ -235,9 +249,15 @@ public:
 		// Backward Build
 		// Set bits [maxLevel -> 0 level]
 		this->backwardBuildRoot();
-		for (size_type level = this->maxLevel_ - 1; level != (size_type)-1; level--)
+
+		if(this->maxLevel_ >= 1)
 		{
-			this->backwardBuildNonRoot(level);
+			this->backwardBuildFromRoot();
+
+			for (size_type level = this->maxLevel_ - 2; level != (size_type)-1; --level)
+			{
+				this->backwardBuildNonRoot(level);
+			}
 		}
 		//////////////////////////////
 	}
@@ -462,22 +482,96 @@ protected:
 		}
 	}
 
+	void forwardBuildRoot()
+	{
+		assert(this->maxLevel_ > 0);
+
+		////////////////////////////////////////
+		// Create new mmtNodes
+		this->nodeSpace_.push_back(dimension(this->dSize_, 1));
+
+		dimension prevNodeSpace = this->nodeSpace_[this->maxLevel_ - 1];
+		dimension nodeSpace(this->dSize_, 1);
+		size_type blockCnt = nodeSpace.area();
+
+		if(this->nodeSpace_.size() <= this->maxLevel_)
+		{
+			this->nodeSpace_.push_back(nodeSpace);
+		}else
+		{
+			this->nodeSpace_[this->maxLevel_] = nodeSpace;
+		}
+		this->nodes_.push_back(std::vector<pNode>(nodeSpace.area()));
+		this->nodes_[this->maxLevel_][0] = std::make_shared<mmtNode>();	// Root has a single mmtNode
+
+		////////////////////////////////////////
+		// Update min/max values
+		itemIterator<Dty_, pNode> pcit(this->nodes_[this->maxLevel_ - 1].data(), this->dSize_,
+									   prevNodeSpace.data());
+
+		auto node = this->nodes_[this->maxLevel_][0];
+		for (size_type i = 0; i < this->nodes_[this->maxLevel_ - 1].size(); ++i)
+		{
+			// init min, max value
+			if (node->bits_ == 0x80)
+			{
+				node->max_ = (*pcit)->max_;
+				node->min_ = (*pcit)->min_;
+				node->bits_ = (bit_cnt_type)TyBits_;
+			} else
+			{
+				// compare min max value
+				if (node->max_ < (*pcit)->max_)
+				{
+					node->max_ = (*pcit)->max_;
+				}
+				if (node->min_ > (*pcit)->min_)
+				{
+					node->min_ = (*pcit)->min_;
+				}
+			}
+			++pcit;
+		}
+
+		this->nodes_[this->maxLevel_][0] = node;
+	}
+
 	// For max level nodes
 	void backwardBuildRoot()
 	{
-		pNode* curLevel = this->nodes_.back().data();
+		assert(this->nodes_.back().size() == 1);
 
+		this->nodes_.back()[0]->initBits();
+		/*curLevel[i]->initBits();
+		pNode* curLevel = this->nodes_.back().data();
 		for (size_type i = 0; i < this->nodes_.back().size(); i++)
 		{
-			curLevel[i]->initBits();
+			
+		}*/
+	}
+
+	// For max level nodes
+	void backwardBuildFromRoot()
+	{
+		pNode rootNode = this->nodes_[this->maxLevel_][0];
+		pNode* curLevel = this->nodes_[this->maxLevel_ - 1].data();
+		for (size_type i = 0; i < this->nodes_[this->maxLevel_ - 1].size(); ++i)
+		{
+			bool isLastBit = (bit_cnt_type)rootNode->order_ + 1 >= TyBits_;
+			bool orderChanged = (rootNode->bMax_ == rootNode->bMin_);	// if bMax_ == bMin_, move on to the next most significant nit
+			bit_cnt_type bits = orderChanged ?
+				msb<sig_bit_type>(abs_(rootNode->bMax_) - 1) :			// decreases a required bits
+				msb<sig_bit_type>(rootNode->bMax_ - rootNode->bMin_);	// calculate a required bits from prev node
+
+			backwardUpdateNode(rootNode, curLevel[i], isLastBit, orderChanged, bits);
 		}
 	}
 
 	// Except max level nodes ((maxLevel - 1) -> level 0 )
 	void backwardBuildNonRoot(const size_type level)
 	{
-		assert(level < this->nodes_.size() - 1);		// Not for max level nodes
-		assert(level != -1);
+		assert(level < this->nodes_.size() - 2);		// Not for max level nodes
+		assert(level != (size_type)-1);
 
 		size_type pLevel = level + 1;
 		size_type childs = (size_type)pow(2, this->dims_.size());
@@ -508,11 +602,12 @@ protected:
 			}
 
 			pNode prevNode = (*pcit);
+
+			bool isLastBit = (bit_cnt_type)prevNode->order_ + 1 >= TyBits_;
 			bool orderChanged = (prevNode->bMax_ == prevNode->bMin_);	// if bMax_ == bMin_, move on to the next most significant nit
 			bit_cnt_type bits = orderChanged ?
 				msb<sig_bit_type>(abs_(prevNode->bMax_) - 1) :			// decreases a required bits
 				msb<sig_bit_type>(prevNode->bMax_ - prevNode->bMin_);	// calculate a required bits from prev node
-			bool isLastBit = (bit_cnt_type)prevNode->order_ + 1 >= TyBits_;
 
 			// Iterate childs
 			for (size_type cID = 0; cID < childs; cID++)
@@ -530,43 +625,48 @@ protected:
 
 				// Update
 				pNode cNode = (*cit);
-				if (orderChanged)
-				{
-					// Order changed
-					if (isLastBit)
-					{
-						// The last bit. Has no more next significant bit
-						cNode->bits_ = 0;
-						cNode->order_ = prevNode->order_;
-						cNode->bMax_ = 0;
-						cNode->bMin_ = 0;
-						cNode->bMaxDelta_ = 0;
-						cNode->bMinDelta_ = 0;
-					} else
-					{
-						// Move to next significant bit
-						cNode->bits_ = bits;
-						cNode->order_ = prevNode->order_ + 1;
-						cNode->setMinMaxBits();
-						cNode->bMaxDelta_ = std::max({ abs_(prevNode->bMax_ - cNode->bMax_) - 1, 0 });
-						cNode->bMinDelta_ = std::max({ abs_(cNode->bMin_ - prevNode->bMin_) - 1, 0 });
-						// TODO::Change min, max according order and deltaBits
-					}
-				} else
-				{
-					// Order not changed
-					cNode->bits_ = bits;
-					cNode->order_ = prevNode->order_;
-					cNode->setMinMaxBits();
-					cNode->bMaxDelta_ = static_cast<bit_cnt_type>(prevNode->bMax_ - cNode->bMax_);	// max: prev >= cur
-					cNode->bMinDelta_ = static_cast<bit_cnt_type>(cNode->bMin_ - prevNode->bMin_);	// min: prev <= cur
-					// TODO::Change min, max according order and deltaBits
-				}
-
-				cNode->max_ = getMaxBoundary<Ty_>(prevNode->max_, cNode->order_, cNode->bMax_);;
-				cNode->min_ = getMinBoundary<Ty_>(prevNode->min_, cNode->order_, cNode->bMin_);
+				backwardUpdateNode(prevNode, cNode, isLastBit, orderChanged, bits);
 			}
 		}
+	}
+
+	void backwardUpdateNode(pNode prevNode, pNode curNode, bool isLastBit, bool orderChanged, bit_cnt_type bits)
+	{
+		if (orderChanged)
+		{
+			// Order changed
+			if (isLastBit)
+			{
+				// The last bit. Has no more next significant bit
+				curNode->bits_ = 0;
+				curNode->order_ = prevNode->order_;
+				curNode->bMax_ = 0;
+				curNode->bMin_ = 0;
+				curNode->bMaxDelta_ = 0;
+				curNode->bMinDelta_ = 0;
+			} else
+			{
+				// Move to next significant bit
+				curNode->bits_ = bits;
+				curNode->order_ = prevNode->order_ + 1;
+				curNode->setMinMaxBits();
+				curNode->bMaxDelta_ = std::max({ abs_(prevNode->bMax_ - curNode->bMax_) - 1, 0 });
+				curNode->bMinDelta_ = std::max({ abs_(curNode->bMin_ - prevNode->bMin_) - 1, 0 });
+				// TODO::Change min, max according order and deltaBits
+			}
+		} else
+		{
+			// Order not changed
+			curNode->bits_ = bits;
+			curNode->order_ = prevNode->order_;
+			curNode->setMinMaxBits();
+			curNode->bMaxDelta_ = static_cast<bit_cnt_type>(prevNode->bMax_ - curNode->bMax_);	// max: prev >= cur
+			curNode->bMinDelta_ = static_cast<bit_cnt_type>(curNode->bMin_ - prevNode->bMin_);	// min: prev <= cur
+			// TODO::Change min, max according order and deltaBits
+		}
+
+		curNode->max_ = getMaxBoundary<Ty_>(prevNode->max_, curNode->order_, curNode->bMax_);
+		curNode->min_ = getMinBoundary<Ty_>(prevNode->min_, curNode->order_, curNode->bMin_);
 	}
 
 	////////////////////////////////////////
@@ -679,29 +779,40 @@ protected:
 	// UTILS					//
 	//////////////////////////////
 	// Calculate number of chunk on each dimension using the dimension sizes and chunk sizes
+	// If any dimension cannot be merged, stops calculating node spaces.
 	void initNodeSpace(const dimension& dims,
 					   const dimension& chunkDims,
 					   const dimension& blockDims,
 					   const size_type maxLevel)
 	{
 		this->nodeSpace_.clear();
-		for (size_type level = 0; level <= maxLevel; level++)
+		for (size_type level = 0; level <= maxLevel; ++level)
 		{
 			dimension chunkSpace = dims / chunkDims;
 			dimension blockSpace = chunkDims / blockDims;
-			this->nodeSpace_.push_back(chunkSpace * blockSpace / pow(2, level));
+			dimension nodeSpace = chunkSpace * blockSpace / pow(2, level);
+			this->nodeSpace_.push_back(nodeSpace);
+
+			for(dimensionId d = 0; d < this->dSize_; ++d)
+			{
+				if(nodeSpace[d] == 1)
+				{
+					// nodes canno be merged.
+					break;
+				}
+			}
 		}
 	}
 
-	_NODISCARD coordinate<Dty_> getChildBaseCoor(coordinate<Dty_>& parentCoor)
-	{
-		coordinate<Dty_> childBase = parentCoor;
-		for (dimensionId d = 0; d < this->dSize_; d++)
-		{
-			childBase[d] *= 2;
-		}
-		return childBase;
-	}
+	//_NODISCARD coordinate<Dty_> getChildBaseCoor(coordinate<Dty_>& parentCoor)
+	//{
+	//	coordinate<Dty_> childBase = parentCoor;
+	//	for (dimensionId d = 0; d < this->dSize_; d++)
+	//	{
+	//		childBase[d] *= 2;
+	//	}
+	//	return childBase;
+	//}
 
 	_NODISCARD coordinate<Dty_> getParentCoor(coordinate<Dty_>& childCoor)
 	{

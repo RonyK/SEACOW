@@ -13,7 +13,7 @@ namespace data2D_sc4x4
 {
 TEST(query_op_mmt_build, mmt_build_sc4x4)
 {
-	auto arr = mmt_build();
+	auto arr = mmt_build(std::vector<pArray>(), mmtLevel);
 	mmt_build_test(arr);
 }	// TEST()
 }	// data2D_sc4x4

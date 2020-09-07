@@ -33,7 +33,7 @@ pArray save_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 			storageMgr::instance()->saveChunk(arrId, attr->id_, (**cit)->getId(),
 											  serialChunk);
 			mSizeTotal += serialChunk->getSerializedSize();
-			std::cout << serialChunk->getSerializedSize() << std::endl;
+			//std::cout << serialChunk->getSerializedSize() << std::endl;
 			++(*cit);
 		}
 	}

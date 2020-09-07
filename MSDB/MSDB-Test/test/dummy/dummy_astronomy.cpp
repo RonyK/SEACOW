@@ -10,7 +10,8 @@ namespace caDummy
 namespace data2D_star1024x1024
 {
 std::vector<dim_type> dims = { dimY, dimX };
-std::vector<dim_type> chunkNums = { 8, 16 };
+//std::vector<dim_type> chunkNums = { 8, 16 };
+std::vector<dim_type> chunkNums = { 8, 8 };
 std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
 std::vector<dim_type> blockNums = { 4, 4 };
 std::vector<dim_type> blockDims = { chunkDims[0] / blockNums[0], chunkDims[1] / blockNums[1] };
@@ -18,8 +19,8 @@ std::vector<dim_type> blockDims = { chunkDims[0] / blockNums[0], chunkDims[1] / 
 void getDummy(value_type* output, size_t length)
 {
 	assert(length >= dims[0] * dims[1]);
+	std::ifstream in("STSCI-H-p1942a-f-1024x1024_Gray.txt");
 	//std::ifstream in("Mars_Viking_MDIM21_ClrMosaic_1km_4096x2048_gray.txt");
-	std::ifstream in("Mars_Viking_MDIM21_ClrMosaic_1km_4096x2048_gray.txt");
 	assert(in.is_open() == true);
 
 	int c;

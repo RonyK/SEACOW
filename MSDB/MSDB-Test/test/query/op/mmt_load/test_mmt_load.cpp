@@ -29,7 +29,7 @@ protected:
 
 TEST_F(query_op_mmt_load, mmt_load_sc4x4)
 {
-    auto arr = mmt_build();
+    auto arr = mmt_build(std::vector<pArray>(), mmtLevel);
     arr = mmt_save(std::vector<pArray>({ arr }));
 
     std::cout << "====================" << std::endl;

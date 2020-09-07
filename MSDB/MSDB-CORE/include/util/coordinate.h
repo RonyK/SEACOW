@@ -48,6 +48,16 @@ public:
 		memcpy(this->coor_, coor, this->dSize_ * sizeof(dim_type));
 	}
 
+	coordinate(const size_type dSize, const dim_type coor)
+		: dSize_(dSize)
+	{
+		this->coor_ = new dim_type[this->dSize_];
+		for(size_type d = 0; d < this->dSize_; ++d)
+		{
+			this->coor_[d] = coor;
+		}
+	}
+
 	coordinate(const std::vector<dim_type>& coorVec)
 		: dSize_(coorVec.size())
 	{

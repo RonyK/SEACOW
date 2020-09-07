@@ -29,14 +29,13 @@
     <ClCompile Include="test\query\op\delta_encode\test_delta_encode.cpp" />
     <ClCompile Include="test\index\testMMT.cpp" />
     <ClCompile Include="test\query\op\delta_decode\test_mmt_delta_decode.cpp" />
-    <ClCompile Include="test\query\op\save\test_save.cpp" />
-    <ClCompile Include="test\query\op\load\test_load.cpp" />
     <ClCompile Include="test\io\testIO.cpp" />
     <ClCompile Include="test\array\testBlock.cpp" />
     <ClCompile Include="test\query\op\se_compression\test_se_compression.cpp" />
     <ClCompile Include="test\compression\testCompression.cpp" />
     <ClCompile Include="test\dummy\dummy_astronomy.cpp" />
     <ClCompile Include="test\query\op\spiht_encode_decode\test_spiht_encode_decode.cpp" />
+    <ClCompile Include="test\query\op\save\test_save_load.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">

@@ -6,10 +6,8 @@ namespace msdb
 {
 namespace caDummy
 {
-pArray save(std::vector<pArray> sourceArr,
-			void (*getArray)(std::vector<pArray>& sourceArr))
+pArray save(std::vector<pArray> sourceArr)
 {
-	getArray(sourceArr);
 	std::shared_ptr<save_plan> savePlan;
 	std::shared_ptr<save_action> saveAction;
 	pQuery saveQuery;
@@ -19,10 +17,8 @@ pArray save(std::vector<pArray> sourceArr,
 
 	return afterArray;
 }
-pArray load(std::vector<pArray> sourceArr,
-			void (*getArray)(std::vector<pArray>& sourceArr))
+pArray load(std::vector<pArray> sourceArr)
 {
-	getArray(sourceArr);
 	std::shared_ptr<load_plan> loadPlan;
 	std::shared_ptr<load_action> loadAction;
 	pQuery loadQuery;
@@ -66,38 +62,5 @@ void load_test(pArray arr)
 	EXPECT_EQ(items, dataLength);
 }
 }	// data2D_sc4x4
-
-namespace data2D_star1024x1024
-{
-pArray save(std::vector<pArray> sourceArr)
-{
-	// Should build mmt before
-	getSourceArrayIfEmpty(sourceArr);
-
-	std::shared_ptr<save_plan> savePlan;
-	std::shared_ptr<save_action> saveAction;
-	pQuery saveQuery;
-	getSave(sourceArr[0]->getDesc(), savePlan, saveAction, saveQuery);
-
-	auto afterArray = saveAction->execute(sourceArr, saveQuery);
-
-	return afterArray;
-}
-
-pArray load(std::vector<pArray> sourceArr)
-{
-	// Should build mmt before
-	getSourceArrayIfEmpty(sourceArr);
-
-	std::shared_ptr<load_plan> loadPlan;
-	std::shared_ptr<load_action> loadAction;
-	pQuery loadQuery;
-	getLoad(sourceArr[0]->getDesc(), loadPlan, loadAction, loadQuery);
-
-	auto afterArray = loadAction->execute(sourceArr, loadQuery);
-
-	return afterArray;
-}
-}	// data2D_star1024x1024
 }	// caDummy
 }	// msdb
