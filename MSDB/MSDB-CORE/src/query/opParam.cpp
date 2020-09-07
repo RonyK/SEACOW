@@ -60,6 +60,20 @@ opParamType opParamConst::type()
 {
 	return opParamType::CONST;
 }
+
+opParamPredicate::opParamPredicate(std::shared_ptr<predicate> predicate)
+	: opParam(), predicates_(predicate)
+{
+}
+opParam::void_pointer opParamPredicate::getParam()
+{
+	return this->predicates_;
+}
+opParamType opParamPredicate::type()
+{
+	return opParamType::PREDICATE;
+}
+
 opParam::opParam()
 {
 }
@@ -140,4 +154,5 @@ opParamType opParamCoorPlaceholder::type()
 {
 	return opParamType::COOR;
 }
+
 }
