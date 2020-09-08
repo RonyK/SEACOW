@@ -144,7 +144,16 @@ void arrayBase::print()
 
 	while (!cit->isEnd())
 	{
-		(**cit)->print();
+		std::cout << "==============================" << std::endl;
+		if(cit->isExist())
+		{
+			(**cit)->print();
+			
+		}else
+		{
+			std::cout << "Chunk (" << cit->seqPos() << ") is not exist" << std::endl;
+		}
+		std::cout << "==============================" << std::endl;
 		++(*cit);
 	}
 }

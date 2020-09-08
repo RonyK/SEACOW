@@ -83,24 +83,36 @@ protected:
 	template <class Ty_>
 	void printImp()
 	{
-		auto it = this->getItemIterator();
-		std::cout << "==============================" << std::endl;
-		for (size_t i = 0; i < it->getCapacity() && !it->isEnd(); ++i, ++(*it))
+		auto iit = this->getItemIterator();
+		while(!iit->isEnd())
 		{
-			std::cout << (**it).get<Ty_>() << ", ";
+			if(iit->isExist())
+			{
+				std::cout << (**iit).get<Ty_>() << ", ";
+			}else
+			{
+				std::cout << "*, ";
+			}
+			++(*iit);
 		}
-		std::cout << std::endl << "==============================" << std::endl;
+		std::cout << std::endl;
 	}
 	template<>
 	void printImp<char>()
 	{
-		auto it = this->getItemIterator();
-		std::cout << "==============================" << std::endl;
-		for (size_t i = 0; i < it->getCapacity() && !it->isEnd(); ++i, ++(*it))
+		auto iit = this->getItemIterator();
+		while (!iit->isEnd())
 		{
-			std::cout << static_cast<int>((**it).get<char>()) << ", ";
+			if (iit->isExist())
+			{
+				std::cout << static_cast<int>((**iit).get<char>()) << ", ";
+			} else
+			{
+				std::cout << "*, ";
+			}
+			++(*iit);
 		}
-		std::cout << std::endl << "==============================" << std::endl;
+		std::cout << std::endl;
 	}
 };
 };
