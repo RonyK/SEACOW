@@ -31,6 +31,14 @@ void block::setIep(coor iep)
 {
 	this->desc_->iep_ = iep;
 }
+coorRange block::getBlockRange()
+{
+	return coorRange(this->desc_->sp_, this->desc_->ep_);
+}
+coorRange block::getBlockItemRange()
+{
+	return coorRange(this->desc_->isp_, this->desc_->iep_);
+}
 void block::unlinkFromChunkBuffer()
 {
 	this->cached_ = nullptr;

@@ -535,6 +535,22 @@ public:
 		this->move(offset);
 	}
 
+	bool isIntersect(const self_type& rhs) const
+	{
+		if (this->sP_ < rhs.eP_ && rhs.sP_ < this->eP_)
+			return true;
+
+		return false;
+	}
+
+	bool isFullyInside(const self_type& rhs) const
+	{
+		if (rhs.sP_ <= this->sP_ && this->eP_ <= rhs.eP_)
+			return true;
+
+		return false;
+	}
+
 public:
 	bool operator==(const self_type& rhs) const
 	{
@@ -546,38 +562,38 @@ public:
 		return !(*this == rhs);
 	}
 
-	bool operator<(const self_type& rhs) const
-	{
-		assert(this->dSize_ == rhs.dSize_);
-		if (*this == rhs)
-			return false;
+	//bool operator<(const self_type& rhs) const
+	//{
+	//	assert(this->dSize_ == rhs.dSize_);
+	//	if (*this == rhs)
+	//		return false;
 
-		if(!(this->sP_ < rhs.sP_))
-		{
-			return false;
-		}
+	//	if(!(this->sP_ < rhs.sP_))
+	//	{
+	//		return false;
+	//	}
 
-		if(!(this->eP_ > rhs.eP_))
-		{
-			return false;
-		}
+	//	if(!(this->eP_ > rhs.eP_))
+	//	{
+	//		return false;
+	//	}
 
-		return true;
-	}
+	//	return true;
+	//}
 
-	bool operator>(const self_type& rhs) const
-	{
-		assert(this->dSize_ == rhs.dSize_);
-		if (*this == rhs)
-			return false;
+	//bool operator>(const self_type& rhs) const
+	//{
+	//	assert(this->dSize_ == rhs.dSize_);
+	//	if (*this == rhs)
+	//		return false;
 
-		for (dimensionId d = 0; d < this->dSize_; ++d)
-		{
-			if (this->sP_[d] > rhs.sP_[d] || this->eP_[d] < rhs.eP_[d])
-				return false;
-		}
-		return true;
-	}
+	//	for (dimensionId d = 0; d < this->dSize_; ++d)
+	//	{
+	//		if (this->sP_[d] > rhs.sP_[d] || this->eP_[d] < rhs.eP_[d])
+	//			return false;
+	//	}
+	//	return true;
+	//}
 
 protected:
 	size_type dSize_;
@@ -1261,11 +1277,13 @@ coordinate<Dty_> getOutsideCoor(coordinate<Dty_>& c1, coordinate<Dty_>& c2)
 }
 
 using coor = coordinate<position_t>;
+using pCoor = std::shared_ptr<coor>;
+
 using coorItr = coordinateIterator<position_t>;
 using pCoorItr = std::shared_ptr<coorItr>;
 
 using coorRange = coordinateRange<position_t>;
-using pCoorRangeItr = std::shared_ptr<coorRange>;
+using pCoorRange = std::shared_ptr<coorRange>;
 
 using itemItr = itemIterator<position_t>;
 using pItemItr = std::shared_ptr<itemItr>;

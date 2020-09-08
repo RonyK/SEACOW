@@ -3,9 +3,11 @@
 
 namespace msdb
 {
-chunk::chunk(pChunkDesc desc) : cached_(nullptr), desc_(desc), 
-blockCapacity_(desc->getBlockSpace().area()), blockBitmap_(std::make_shared<bitmap>(this->blockCapacity_, false)),
-serializable(std::make_shared<chunkHeader>())
+chunk::chunk(pChunkDesc desc)
+	: cached_(nullptr), desc_(desc), 
+	blockCapacity_(desc->getBlockSpace().area()),
+	blockBitmap_(std::make_shared<bitmap>(this->blockCapacity_, false)),
+	serializable(std::make_shared<chunkHeader>())
 {
 
 }
@@ -161,6 +163,11 @@ coor chunk::getChunkCoor()
 	return this->desc_->chunkCoor_;
 }
 
+coorRange chunk::getChunkRange()
+{
+	return coorRange(this->desc_->sp_, this->desc_->ep_);
+}
+
 void chunk::free()
 {
 	if (this->isMaterialized())
@@ -169,7 +176,7 @@ void chunk::free()
 	}
 }
 
-void chunk::makeBlocks(const bitmap blockBitmap)
+void chunk::makeBlocks(const bitmap& blockBitmap)
 {
 	assert(blockBitmap.getCapacity() == this->getBlockCapacity());
 	blockId capacity = this->getBlockCapacity();

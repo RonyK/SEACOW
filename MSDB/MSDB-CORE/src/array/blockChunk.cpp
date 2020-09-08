@@ -240,7 +240,7 @@ void blockChunkItemRangeIterator::next()
 				auto bRange = coorRange(bDesc->sp_, bDesc->ep_);
 				auto qRange = coorRange(this->sP_, this->eP_);
 
-				if (bRange < qRange)
+				if (bRange.isFullyInside(qRange))
 				{
 					// Inside, full scan
 					this->curBlockItemItr_ = (**this->bItr_)->getItemRangeIterator(coorRange(bDesc->sp_, bDesc->ep_));
@@ -287,7 +287,7 @@ void blockChunkItemRangeIterator::prev()
 				auto bRange = coorRange(bDesc->sp_, bDesc->ep_);
 				auto qRange = coorRange(this->sP_, this->eP_);
 
-				if (bRange < qRange)
+				if (bRange.isFullyInside(qRange))
 				{
 					// Inside, full scan
 					this->curBlockItemItr_ = (**this->bItr_)->getItemRangeIterator(coorRange(bDesc->sp_, bDesc->ep_));

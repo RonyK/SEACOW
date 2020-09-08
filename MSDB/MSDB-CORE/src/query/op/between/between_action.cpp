@@ -22,73 +22,29 @@ pArray between_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 {
 	pArray inArr = inputArrays[0];
 	pArray outArr = arrayMgr::instance()->makeArray<memBlockArray>(this->getArrayDesc());
-	std::shared_ptr<coor> sp = std::static_pointer_cast<coor>(this->params_[1]->getParam());
-	std::shared_ptr<coor> ep = std::static_pointer_cast<coor>(this->params_[2]->getParam());
+	pCoor sp = std::static_pointer_cast<coor>(this->params_[1]->getParam());
+	pCoor ep = std::static_pointer_cast<coor>(this->params_[2]->getParam());
+	coorRange betweenRange(*sp, *ep);
 
 	for (auto attr : *inArr->getDesc()->attrDescs_)
 	{
 		auto chunkItr = inArr->getChunkIterator();
 		while (!chunkItr->isEnd())
 		{
-			chunkId cId = chunkItr->seqPos();
-			coor chunkSp = chunkItr->getSp();
-			coor chunkEp = chunkItr->getEp();
+			auto inChunk = (**chunkItr);
+			auto chunkRange = inChunk->getChunkRange();
 
-			if ((*sp) < chunkEp && chunkSp < (*ep))
+			if (chunkRange.isIntersect(betweenRange))
 			{
-				auto outChunk = outArr->makeChunk(attr->id_, cId);
-				outChunk->makeAllBlocks();
-				outChunk->bufferRef((**chunkItr));
-				
-				if (!((*sp) <= chunkSp && chunkEp <= (*ep)))
+				auto outChunk = outArr->makeChunk(attr->id_, inChunk->getId());
+				outChunk->bufferRef(inChunk);
+
+				if (chunkRange.isFullyInside(betweenRange))
 				{
-					auto blockItr = outChunk->getBlockIterator();
-					while (!blockItr->isEnd())
-					{
-						auto dSize = (**blockItr)->getDSize();
-						coor blockSp = chunkSp + blockItr->getSp();
-						coor blockEp = chunkSp + blockItr->getEp();
-						coor newSp(dSize);
-						coor newEp(dSize);
-
-						bool outRange = false;
-						for (int d = 0; d< dSize; d++)
-						{				
-							if(blockEp[d] <= (*sp)[d] || (*ep)[d] <= blockSp[d])
-							{
-								outRange = true;
-								break;
-							}
-
-							if (blockSp[d] < (*sp)[d])
-							{
-								newSp[d] = (*sp)[d] - chunkSp[d];
-							} else
-							{
-								newSp[d] = blockSp[d] - chunkSp[d];
-							}
-
-							if ((*ep)[d] < blockEp[d])
-							{
-								newEp[d] = (*ep)[d] - chunkEp[d];
-							}
-							else
-							{
-								newEp[d] = blockEp[d] - chunkEp[d];
-							}
-						}
-
-						if (outRange)
-						{
-							(**blockItr)->setIep(blockItr->getSp()); // TODO:: no item block
-						} else
-						{
-							(**blockItr)->setIsp(newSp);
-							(**blockItr)->setIep(newEp);
-						}
-
-						++(*blockItr);
-					}
+					this->fullyInsideChunk(outChunk, inChunk);
+				}else
+				{
+					this->betweenChunk(outChunk, inChunk, betweenRange);
 				}
 			}
 			++(*chunkItr);
@@ -96,5 +52,54 @@ pArray between_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 	}
 	
 	return outArr;
+}
+void between_action::betweenChunk(pChunk outChunk, pChunk inChunk, coorRange& betweenRange)
+{
+	auto blockItr = inChunk->getBlockIterator();
+	auto betweenRangeInChunk = betweenRange;
+	betweenRangeInChunk.move(inChunk->getDesc()->sp_ * -1);
+
+	while (!blockItr->isEnd())
+	{
+		auto inBlock = (**blockItr);
+		auto blockRange = inBlock->getBlockRange();
+
+		if(blockRange.isIntersect(betweenRangeInChunk))
+		{
+			auto outBlock = outChunk->makeBlock(inBlock->getId());
+
+			if(blockRange.isFullyInside(betweenRangeInChunk))
+			{
+				fullyInsideBlock(outBlock, inBlock);
+			}else
+			{
+				this->betweenBlock(outBlock, inBlock, betweenRangeInChunk);
+			}
+		}
+
+		++(*blockItr);
+	}
+}
+void between_action::fullyInsideChunk(pChunk outChunk, pChunk inChunk)
+{
+	outChunk->makeBlocks(*inChunk->getBlockBitmap());
+}
+void between_action::betweenBlock(pBlock outBlock, pBlock inBlock, coorRange& betweenRangeInChunk)
+{
+	auto inDesc = inBlock->getDesc();
+	auto outDesc = outBlock->getDesc();
+
+	outDesc->isp_ = getOutsideCoor(inDesc->isp_, betweenRangeInChunk.getEp());
+	outDesc->iep_ = getInsideCoor(inDesc->iep_, betweenRangeInChunk.getEp());
+	//outDesc->mSize_ // recalculate
+}
+void between_action::fullyInsideBlock(pBlock outBlock, pBlock inBlock)
+{
+	auto inDesc = inBlock->getDesc();
+	auto outDesc = outBlock->getDesc();
+
+	outDesc->isp_ = inDesc->isp_;
+	outDesc->iep_ = inDesc->iep_;
+	outDesc->mSize_ = inDesc->mSize_;
 }
 }

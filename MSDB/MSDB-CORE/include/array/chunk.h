@@ -37,6 +37,7 @@ public:
 	size_type getDSize();
 	size_type numCells();
 	coor getChunkCoor();
+	coorRange getChunkRange();
 
 protected:
 	pChunkDesc desc_;		// chunk desc
@@ -120,7 +121,7 @@ protected:
 //////////////////////////////
 public:
 	virtual pBlock makeBlock(const blockId bId) = 0;
-	virtual void makeBlocks(const bitmap blockBitmap);
+	virtual void makeBlocks(const bitmap& blockBitmap);
 	virtual void makeAllBlocks();
 	virtual void insertBlock(pBlock inBlock) = 0;
 
