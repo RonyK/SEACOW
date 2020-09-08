@@ -35,7 +35,7 @@ expressionInteger::expressionInteger(int64_t value)
 {
 }
 
-boost::any expressionInteger::getValue(pItemItr iit)
+boost::any expressionInteger::getValue()
 {
 	return this->value_;
 }

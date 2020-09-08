@@ -33,6 +33,9 @@
 #include <op/se_decompression/se_decompression_plan.h>
 #include <op/se_decompression/se_decompression_action.h>
 
+#include <op/naive_filter/naive_filter_plan.h>
+#include <op/naive_filter/naive_filter_action.h>
+
 namespace msdb
 {
 namespace caDummy
@@ -48,14 +51,14 @@ void getWaveletDecode(pArrayDesc sourceArrDesc, eleDefault level,
 					  pQuery& qry);
 
 void getSPIHTEncode(pArrayDesc sourceArrDesc,
-	std::shared_ptr<spiht_encode_plan>& plan,
-	std::shared_ptr<spiht_encode_action>& action,
-	pQuery& qry);
+					std::shared_ptr<spiht_encode_plan>& plan,
+					std::shared_ptr<spiht_encode_action>& action,
+					pQuery& qry);
 
 void getSPIHTDecode(pArrayDesc sourceArrDesc,
-	std::shared_ptr<spiht_decode_plan>& plan,
-	std::shared_ptr<spiht_decode_action>& action,
-	pQuery& qry);
+					std::shared_ptr<spiht_decode_plan>& plan,
+					std::shared_ptr<spiht_decode_action>& action,
+					pQuery& qry);
 
 void getMmtBuild(pArrayDesc sourceArrDesc, eleDefault& level,
 				 std::shared_ptr<mmt_build_plan>& plan,
@@ -102,6 +105,12 @@ void getLoad(pArrayDesc sourceArrDesc,
 			 std::shared_ptr<load_action>& action,
 			 pQuery& qry);
 
+void getNaiveFilter(pArrayDesc sourceArrDesc,
+					pPredicate myPredicate,
+					std::shared_ptr<naive_filter_plan>& plan,
+					std::shared_ptr<naive_filter_action>& action,
+					pQuery& qry);
+
 template <typename plan_, typename action_, typename pset_>
 std::tuple<std::shared_ptr<plan_>, std::shared_ptr<action_>, pQuery>
 getOperator(pArrayDesc sourceArrDesc, parameters& params)
@@ -133,6 +142,18 @@ getLevelArrayParamOperator(pArrayDesc sourceArrDesc, eleDefault& level)
 	parameters params = {
 		std::make_shared<opParamArray>(sourceArrDesc),
 		std::make_shared<opParamConst>(std::make_shared<stableElement>(&level, _ELE_DEFAULT_TYPE))
+	};
+
+	return getOperator<plan_, action_, pset_>(sourceArrDesc, params);
+}
+
+template <typename plan_, typename action_, typename pset_>
+std::tuple<std::shared_ptr<plan_>, std::shared_ptr<action_>, pQuery>
+getPredicateArrayParamOperator(pArrayDesc sourceArrDesc, pPredicate myPredicate)
+{
+	parameters params = {
+		std::make_shared<opParamArray>(sourceArrDesc),
+		std::make_shared<opParamPredicate>(myPredicate)
 	};
 
 	return getOperator<plan_, action_, pset_>(sourceArrDesc, params);

@@ -58,7 +58,8 @@ public:
 	expressionInteger(int64_t value);
 
 public:
-	virtual boost::any getValue(pItemItr iit) override;
+	//virtual boost::any getValue(pItemItr iit) override;
+	virtual boost::any getValue() override;
 
 private:
 	int64_t value_;

@@ -24,7 +24,7 @@ naive_filter_array_pset::naive_filter_array_pset(parameters& pSet)
 	: opArrayParamSet(pSet)
 {
 	assert(this->params_.size() == 2);
-	// TODO::Check second param
+	assert(this->params_[1]->type() == opParamType::PREDICATE);
 }
 
 pArrayDesc naive_filter_array_pset::inferSchema()

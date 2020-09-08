@@ -44,6 +44,7 @@
     <ClInclude Include="test\index\testMMT.h" />
     <ClInclude Include="test\io\testIO.h" />
     <ClInclude Include="test\pch.h" />
+    <ClInclude Include="test\test\op\filter\testFilter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test\array\testArray.cpp" />
@@ -67,6 +68,8 @@
     </ClCompile>
     <ClCompile Include="test\query\op\delta_decode\test_mmt_delta_decode.cpp" />
     <ClCompile Include="test\query\op\delta_encode\test_delta_encode.cpp" />
+    <ClCompile Include="test\test\op\filter\testFilter.cpp" />
+    <ClCompile Include="test\query\op\naive_filter\test_nive_filter.cpp" />
     <ClCompile Include="test\query\op\save\test_save_load.cpp" />
     <ClCompile Include="test\query\op\mmt_build\test_mmt_build.cpp" />
     <ClCompile Include="test\query\op\mmt_load\test_mmt_load.cpp" />
