@@ -37,6 +37,7 @@ pBlock memChunk::makeBlock(const blockId bId)
 void memChunk::insertBlock(pBlock inBlock)
 {
 	this->block_ = inBlock;
+	this->referenceBufferToBlock(inBlock->getId());
 }
 
 void memChunk::referenceBufferToBlock(const blockId bId)
@@ -149,6 +150,11 @@ pBlock memChunk::getBlock(const blockId bId)
 {
 	assert(bId == 0);
 	return this->block_;
+}
+void memChunk::freeBlock(const blockId bid)
+{
+	this->block_ = nullptr;
+	this->blockBitmap_->setNull(bid);
 }
 coor memChunk::getBlockCoor(const blockId bId)
 {

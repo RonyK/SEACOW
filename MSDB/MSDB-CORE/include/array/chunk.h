@@ -46,8 +46,7 @@ protected:
 // Buffer
 //////////////////////////////
 protected:
-	void free();
-	// NOTE::Call a referenceBufferToBlock() in a makeBuffer()
+	void freeBuffer();
 	virtual void makeBuffer() = 0;
 	virtual void referenceBufferToBlock(const blockId bId) = 0;
 	virtual void referenceAllBufferToBlock();
@@ -124,6 +123,7 @@ public:
 	virtual void makeBlocks(const bitmap& blockBitmap);
 	virtual void makeAllBlocks();
 	virtual void insertBlock(pBlock inBlock) = 0;
+	virtual void freeBlock(const blockId bid) = 0;
 
 	// mSize and mOffset size are not setted in the output of getBlockDesc function
 	virtual pBlockDesc getBlockDesc(const blockId bId);

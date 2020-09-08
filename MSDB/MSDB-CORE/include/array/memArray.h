@@ -18,6 +18,7 @@ public:
 public:
 	virtual pChunk makeChunk(const attributeId attrId, const chunkId cId) override;
 	virtual pChunk makeChunk(const chunkDesc& desc) override;
+	virtual void freeChunk(const chunkId cId) override;
 };
 }	// msdb
 #endif	// _MSDB_MEMARRAY_H_

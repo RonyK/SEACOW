@@ -37,6 +37,7 @@ public:
 	virtual pBlock makeBlock(const blockId bId) override;
 	virtual void insertBlock(pBlock inBlock) override;
 	virtual pBlock getBlock(const blockId bId) override;
+	virtual void freeBlock(const blockId bid) override;
 	//virtual blockId getBlockId(pBlockDesc cDesc) override;
 	//virtual blockId getBlockIdFromItemCoor(coor& itemCoor);
 	//virtual blockId getBlockIdFromBlockCoor(coor& blockCoor);

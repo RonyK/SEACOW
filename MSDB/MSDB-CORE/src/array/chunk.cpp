@@ -14,7 +14,7 @@ chunk::chunk(pChunkDesc desc)
 
 chunk::~chunk()
 {
-	this->free();
+	this->freeBuffer();
 }
 
 void chunk::referenceAllBufferToBlock()
@@ -28,7 +28,7 @@ void chunk::referenceAllBufferToBlock()
 
 void chunk::bufferAlloc()
 {
-	this->free();
+	this->freeBuffer();
 	this->makeBuffer();
 	this->cached_->bufferAlloc(this->desc_->mSize_);
 	this->referenceAllBufferToBlock();
@@ -36,7 +36,7 @@ void chunk::bufferAlloc()
 
 void chunk::bufferAlloc(bufferSize size)
 {
-	this->free();
+	this->freeBuffer();
 	this->makeBuffer();
 	this->cached_->bufferAlloc(size);
 	this->desc_->mSize_ = size;
@@ -76,7 +76,7 @@ void chunk::bufferRef(pChunk source)
 {
 	bufferSize size = source->getDesc()->mSize_;
 	//this->bufferRef(source->getBuffer()->getData(), size);
-	this->free();
+	this->freeBuffer();
 	this->makeBuffer();
 	this->getBuffer()->ref(source->getBuffer(), size);
 	this->referenceAllBufferToBlock();
@@ -155,7 +155,7 @@ coorRange chunk::getChunkRange()
 	return coorRange(this->desc_->sp_, this->desc_->ep_);
 }
 
-void chunk::free()
+void chunk::freeBuffer()
 {
 	if (this->isMaterialized())
 	{

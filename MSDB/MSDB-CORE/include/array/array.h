@@ -118,6 +118,7 @@ public:
 			this->chunkBitmap_->setExist((*begin)->getId());
 		}
 	}
+	virtual void freeChunk(const chunkId cId) = 0;
 
 	void copyChunkBitmap(cpBitmap chunkBitmap);
 	void replaceChunkBitmap(pBitmap chunkBitmap);
