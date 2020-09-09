@@ -1248,7 +1248,7 @@ protected:
 
 // Pic less coordinate value on each dimension
 template <typename Dty_>
-coordinate<Dty_> getInsideCoor(coordinate<Dty_>& c1, coordinate<Dty_>& c2)
+coordinate<Dty_> getInsideCoor(const coordinate<Dty_>& c1, const coordinate<Dty_>& c2)
 {
 	coordinate<Dty_> newCoor(c1);
 	for(dimensionId d = 0; d < c1.size(); ++d)
@@ -1263,7 +1263,7 @@ coordinate<Dty_> getInsideCoor(coordinate<Dty_>& c1, coordinate<Dty_>& c2)
 
 // Pic greater coordiante value on each dimension
 template <typename Dty_>
-coordinate<Dty_> getOutsideCoor(coordinate<Dty_>& c1, coordinate<Dty_>& c2)
+coordinate<Dty_> getOutsideCoor(const coordinate<Dty_>& c1, const coordinate<Dty_>& c2)
 {
 	coordinate<Dty_> newCoor(c1);
 	for (dimensionId d = 0; d < c1.size(); ++d)

@@ -69,26 +69,6 @@ protected:
 
 using blockItemItrBase = blockItemIteratorBase<position_t>;
 
-class blockItemIterator : public itemItr, public blockItemItrBase
-{
-public:
-	using self_type = blockItemIterator;
-	using base_type = itemItr;
-
-	using coordinate_type = base_type::coordinate_type;
-	using size_type = base_type::size_type;
-	using dim_type = base_type::dim_type;
-	using dim_pointer = base_type::dim_pointer;
-	using dim_const_pointer = base_type::dim_const_pointer;
-	using dim_reference = base_type::dim_reference;
-	using dim_const_reference = base_type::dim_const_reference;
-
-public:
-	blockItemIterator(void* data, const eleType eType, 
-					  const dimension& dims, const dimension& bSp, 
-					  pBitmap itemBitmap);
-};
-
 class blockItemRangeIterator : public itemRangeItr, public blockItemItrBase
 {
 public:
@@ -109,6 +89,31 @@ public:
 						   const coorRange& range,
 						   const dimension& bSp,
 						   pBitmap itemBitmap);
+};
+
+class blockItemIterator : public blockItemRangeIterator
+{
+public:
+	using self_type = blockItemRangeIterator;
+	using base_type = itemItr;
+
+	using coordinate_type = base_type::coordinate_type;
+	using size_type = base_type::size_type;
+	using dim_type = base_type::dim_type;
+	using dim_pointer = base_type::dim_pointer;
+	using dim_const_pointer = base_type::dim_const_pointer;
+	using dim_reference = base_type::dim_reference;
+	using dim_const_reference = base_type::dim_const_reference;
+
+public:
+	blockItemIterator(void* data, const eleType eType,
+					  const dimension& dims, const dimension& bSp,
+					  pBitmap itemBitmap);
+
+	blockItemIterator(void* data, const eleType eType,
+					  const dimension& dims, const coorRange& irange,
+					  const dimension& bSp,
+					  pBitmap itemBitmap);
 };
 }	// msdb
 #endif	// _MSDB_BLOCKITEM_ITERATOR_H_

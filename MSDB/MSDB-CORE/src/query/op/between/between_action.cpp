@@ -89,17 +89,32 @@ void between_action::betweenBlock(pBlock outBlock, pBlock inBlock, coorRange& be
 	auto inDesc = inBlock->getDesc();
 	auto outDesc = outBlock->getDesc();
 
-	outDesc->isp_ = getOutsideCoor(inDesc->isp_, betweenRangeInChunk.getEp());
-	outDesc->iep_ = getInsideCoor(inDesc->iep_, betweenRangeInChunk.getEp());
-	//outDesc->mSize_ // recalculate
+	outDesc->setIsp(getOutsideCoor(inDesc->getIsp(), betweenRangeInChunk.getSp()));
+	outDesc->setIep(getInsideCoor(inDesc->getIep(), betweenRangeInChunk.getEp()));
+
+	coorRange itRange(outDesc->getIsp(), outDesc->getIep());
+	auto iit = inBlock->getItemRangeIterator(itRange);
+	auto oit = outBlock->getItemRangeIterator(itRange);
+
+	outBlock->initEmptyBitmap();
+	while(!oit->isEnd())
+	{
+		if(iit->isExist())
+		{
+			oit->setExist();
+		}
+		
+		++(*iit);
+		++(*oit);
+	}
 }
 void between_action::fullyInsideBlock(pBlock outBlock, pBlock inBlock)
 {
 	auto inDesc = inBlock->getDesc();
 	auto outDesc = outBlock->getDesc();
 
-	outDesc->isp_ = inDesc->isp_;
-	outDesc->iep_ = inDesc->iep_;
-	outDesc->mSize_ = inDesc->mSize_;
+	outDesc->setIsp(inDesc->getIsp());
+	outDesc->setIep(inDesc->getIep());
+	outBlock->copyBitmap(inBlock->getBitmap());
 }
 }

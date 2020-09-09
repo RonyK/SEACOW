@@ -27,6 +27,13 @@ public:
 						 const dimension& dims,
 						 const dimension& bSp,
 						 pBitmap itemBitmap);
+
+	memBlockItemIterator(void* data,
+						 const eleType eType,
+						 const dimension& dims,
+						 const coorRange& irange,
+						 const dimension& bSp,
+						 pBitmap itemBitmap);
 };
 
 class memBlockItemRangeIterator : public blockItemRangeIterator

@@ -69,6 +69,8 @@ public:
 	void copyBitmap(cpBitmap itemBitmap);
 	void replaceBitmap(pBitmap itemBitmap);
 	void mergeBitmap(pBitmap itemBitmap);
+	void initEmptyBitmap();
+	pBitmap getBitmap();
 
 protected:
 	pBitmap itemBitmap_;

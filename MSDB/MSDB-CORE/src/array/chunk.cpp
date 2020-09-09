@@ -182,10 +182,6 @@ void chunk::makeAllBlocks()
 	{
 		this->makeBlock(bid);
 	}
-	if(this->cached_)
-	{
-		this->referenceAllBufferToBlock();
-	}
 }
 
 pBlockDesc chunk::getBlockDesc(const blockId bId)

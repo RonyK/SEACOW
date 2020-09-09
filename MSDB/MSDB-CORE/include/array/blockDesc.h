@@ -27,6 +27,17 @@ public:
 			  const blockSize mSize = INVALID_BLOCK_SIZE,
 			  const blockSize mOffset = INVALID_BLOCK_SIZE);
 
+public:
+	coor getSp();
+	coor getEp();
+	coor getIsp();
+	coor getIep();
+
+	void setSp(const coor& coor);
+	void setEp(const coor& coor);
+	void setIsp(const coor& coor);
+	void setIep(const coor& coor);
+
 protected:
 	void initBlockCoor();
 
@@ -37,11 +48,13 @@ public:
 	eleType eType_;
 
 	dimension dims_;			// dimensions
+	coor blockCoor_;			// in chunk
+
+private:
 	coor sp_;					// in chunk
 	coor ep_;					// in chunk
 	coor isp_;					// item start point
 	coor iep_;					// item end point
-	coor blockCoor_;			// in chunk
 };
 }
 #endif		// _MSDB_BLOCK_DESC_H_

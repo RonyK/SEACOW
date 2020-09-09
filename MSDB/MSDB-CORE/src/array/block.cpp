@@ -23,21 +23,13 @@ dimensionId block::getDSize()
 {
 	return this->desc_->dims_.size();
 }
-void block::setIsp(coor isp)
-{
-	this->desc_->isp_ = isp;
-}
-void block::setIep(coor iep)
-{
-	this->desc_->iep_ = iep;
-}
 coorRange block::getBlockRange()
 {
-	return coorRange(this->desc_->sp_, this->desc_->ep_);
+	return coorRange(this->desc_->getSp(), this->desc_->getEp());
 }
 coorRange block::getBlockItemRange()
 {
-	return coorRange(this->desc_->isp_, this->desc_->iep_);
+	return coorRange(this->desc_->getIsp(), this->desc_->getIep());
 }
 void block::unlinkFromChunkBuffer()
 {
@@ -74,6 +66,14 @@ void block::replaceBitmap(pBitmap itemBitmap)
 void block::mergeBitmap(pBitmap itemBitmap)
 {
 	this->itemBitmap_->andMerge(*itemBitmap);
+}
+void block::initEmptyBitmap()
+{
+	this->itemBitmap_ = std::make_shared<bitmap>(this->desc_->dims_.area(), false);
+}
+pBitmap block::getBitmap()
+{
+	return this->itemBitmap_;
 }
 void block::print()
 {

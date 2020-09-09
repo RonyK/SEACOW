@@ -7,7 +7,7 @@ const blockId INVALID_BLOCK_ID = static_cast<blockId>(~0);
 
 blockDesc::blockDesc()
 {
-	initBlockCoor();
+	//initBlockCoor();
 	// TODO::initialization
 }
 
@@ -16,11 +16,45 @@ blockDesc::blockDesc(const blockId id, const eleType eType,
 					 const coor& sp, const coor& ep, 
 					 const blockSize mSize, const blockSize mOffset)
 	: id_(id), eType_(eType), 
-	dims_(dims), sp_(sp), ep_(ep), isp_(sp), iep_(ep),
+	dims_(dims), sp_(sp), ep_(ep), isp_(dims.size()), iep_(dims),
 	mSize_(mSize), mOffset_(mOffset),
 	blockCoor_(dims.size())
 {
 	initBlockCoor();
+}
+coor blockDesc::getSp()
+{
+	return this->sp_;
+}
+coor blockDesc::getEp()
+{
+	return this->ep_;
+}
+coor blockDesc::getIsp()
+{
+	return this->isp_;
+}
+coor blockDesc::getIep()
+{
+	return this->iep_;
+}
+void blockDesc::setSp(const coor& coor)
+{
+	this->sp_ = coor;
+	//this->setIsp(getOutsideCoor(this->sp_, this->isp_));
+}
+void blockDesc::setEp(const coor& coor)
+{
+	this->ep_ = coor;
+	//this->setIsp(getInsideCoor());
+}
+void blockDesc::setIsp(const coor& coor)
+{
+	this->isp_ = coor;
+}
+void blockDesc::setIep(const coor& coor)
+{
+	this->iep_ = coor;
 }
 void blockDesc::initBlockCoor()
 {

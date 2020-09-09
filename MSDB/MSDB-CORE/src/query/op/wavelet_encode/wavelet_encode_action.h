@@ -75,8 +75,8 @@ private:
 		//outChunkDesc->id_ = outChunk->getId() * blockSpace.area() + bid;
 		outChunkDesc->dims_ = outChunkDesc->blockDims_;
 		outChunkDesc->chunkCoor_ = inChunkDesc->chunkCoor_ * blockSpace + blockCoor;
-		outChunkDesc->sp_ = inChunkDesc->sp_ + inBlockDesc->sp_;		// csp + bsp
-		outChunkDesc->ep_ = inChunkDesc->sp_ + inBlockDesc->ep_;		// csp + bep
+		outChunkDesc->sp_ = inChunkDesc->sp_ + inBlockDesc->getSp();		// csp + bsp
+		outChunkDesc->ep_ = inChunkDesc->sp_ + inBlockDesc->getEp();		// csp + bep
 		outChunkDesc->mSize_ = inBlockDesc->mSize_;
 
 		pWtChunk outChunk = std::make_shared<wtChunk>(outChunkDesc);
