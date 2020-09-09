@@ -33,43 +33,45 @@ public:
 	template <typename Ty_>
 	bool evaluate(pItemItr iit)
 	{
-		return (this->*evaluateFunc)(iit);
+		// TODO:: change fixed values position
+		// Current: attributeVaue(left), int64(right)
+		return (this->*evaluateFunc)((**iit).get<Ty_>(), boost::any_cast<int64_t>(rhs_->getValue()));
 	}
 
 	template <typename Ty_>
-	bool evaluateEqual(pItemItr iit)
+	bool evaluateEqual(const int64_t v1, const int64_t v2)
 	{
-		return (**iit).get<Ty_>() == boost::any_cast<int64_t>(rhs_->getValue());
+		return v1 == v2;
 	}
 
 	template <typename Ty_>
-	bool evaluateNotEqual(pItemItr iit)
+	bool evaluateNotEqual(const int64_t v1, const int64_t v2)
 	{
-		return (**iit).get<Ty_>() == boost::any_cast<int64_t>(rhs_->getValue());
+		return v1 != v2;
 	}
 
 	template <typename Ty_>
-	bool evaluateGreater(pItemItr iit)
+	bool evaluateGreater(const int64_t v1, const int64_t v2)
 	{
-		return (**iit).get<Ty_>() == boost::any_cast<int64_t>(rhs_->getValue());
+		return v1 < v2;
 	}
 
 	template <typename Ty_>
-	bool evaluateGreaterEqual(pItemItr iit)
+	bool evaluateGreaterEqual(const int64_t v1, const int64_t v2)
 	{
-		return (**iit).get<Ty_>() == boost::any_cast<int64_t>(rhs_->getValue());
+		return v1 <= v2;
 	}
 
 	template <typename Ty_>
-	bool evaluateLess(pItemItr iit)
+	bool evaluateLess(const int64_t v1, const int64_t v2)
 	{
-		return (**iit).get<Ty_>() == boost::any_cast<int64_t>(rhs_->getValue());
+		return v1 > v2;
 	}
 
 	template <typename Ty_>
-	bool evaluateLessEqual(pItemItr iit)
+	bool evaluateLessEqual(const int64_t v1, const int64_t v2)
 	{
-		return (**iit).get<Ty_>() == boost::any_cast<int64_t>(rhs_->getValue());
+		return v1 >= v2;
 	}
 
 protected:
@@ -79,12 +81,12 @@ protected:
 
 private:
 	termType tType_;
-	typedef bool(term::* eFunc)(pItemItr);
+	typedef bool(term::* eFunc)(const int64_t, const int64_t);
 
 	template <typename Ty_>
 	eFunc findEvaluateFunc(termType type)
 	{
-		static bool (term:: * func_ptr[6])(pItemItr) = {
+		static bool (term:: * func_ptr[6])(const int64_t, const int64_t) = {
 			&term::evaluateEqual<Ty_>,
 			&term::evaluateNotEqual<Ty_>,
 			& term::evaluateGreater<Ty_>,
@@ -95,38 +97,7 @@ private:
 
 		return func_ptr[static_cast<int>(type)];
 	}
-	bool (term::* evaluateFunc)(pItemItr);
+	bool (term::* evaluateFunc)(const int64_t, const int64_t);
 };
-
-//class termEqual : public term
-//{
-//public:
-//	termEqual(pExpression lhs, pExpression rhs);
-//
-//public:
-//	template <typename Ty_>
-//	bool evaluate(pItemItr iit)
-//	{
-//		
-//	}
-//};
-//
-//class termGreater : public term
-//{
-//public:
-//	termGreater(pExpression lhs, pExpression rhs);
-//
-//public:
-//	virtual bool evaluate(pItemItr iit);
-//};
-//
-//class termLess : public term
-//{
-//public:
-//	termLess(pExpression lhs, pExpression rhs);
-//
-//public:
-//	virtual bool evaluate(pItemItr iit);
-//};
 }		// msdb
 #endif	// _MSDB_TERM_H_

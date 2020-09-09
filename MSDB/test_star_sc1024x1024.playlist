@@ -81,6 +81,17 @@
                     </Rule>
                   </Rule>
                 </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_naive_filter" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_naive_filter.naive_filter_star1024x1024" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_naive_filter.naive_filter_star1024x1024" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
               </Rule>
             </Rule>
           </Rule>
