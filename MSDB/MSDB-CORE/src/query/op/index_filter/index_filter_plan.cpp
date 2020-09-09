@@ -31,4 +31,45 @@ pArrayDesc index_filter_array_pset::inferSchema()
 
 	return aInferDesc;
 }
+pBitmapTree index_filter_array_pset::inferBottomUpBitmap()
+{
+	pArrayDesc arrDesc = this->inferSchema();
+
+	// TODO::remove a const attribute id and use scan for all attributes
+	for (auto attrDesc : *arrDesc->getAttrDescs())
+	{
+		switch (attrDesc->type_)
+		{
+		case eleType::CHAR:
+			return this->inferBottomUpAttrBitmap<char>(arrDesc, attrDesc);
+			break;
+		case eleType::INT8:
+			return this->inferBottomUpAttrBitmap<int8_t>(arrDesc, attrDesc);
+			break;
+		case eleType::INT16:
+			return this->inferBottomUpAttrBitmap<int16_t>(arrDesc, attrDesc);
+			break;
+		case eleType::INT32:
+			return this->inferBottomUpAttrBitmap<int32_t>(arrDesc, attrDesc);
+			break;
+		case eleType::INT64:
+			return this->inferBottomUpAttrBitmap<int64_t>(arrDesc, attrDesc);
+			break;
+		case eleType::UINT8:
+			return this->inferBottomUpAttrBitmap<uint8_t>(arrDesc, attrDesc);
+			break;
+		case eleType::UINT16:
+			return this->inferBottomUpAttrBitmap<uint16_t>(arrDesc, attrDesc);
+			break;
+		case eleType::UINT32:
+			return this->inferBottomUpAttrBitmap<uint32_t>(arrDesc, attrDesc);
+			break;
+		case eleType::UINT64:
+			return this->inferBottomUpAttrBitmap<uint64_t>(arrDesc, attrDesc);
+			break;
+		default:
+			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
+		}
+	}
 }
+}	// msdb

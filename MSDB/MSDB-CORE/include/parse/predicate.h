@@ -5,6 +5,7 @@
 #include <util/coordinate.h>
 #include <parse/term.h>
 #include <memory>
+#include <index/mmtNode.h>
 
 namespace msdb
 {
@@ -20,6 +21,7 @@ public:
 public:
 	virtual void setEvaluateFunc(eleType eType) = 0;
 	virtual bool evaluate(pItemItr iit) = 0;
+	//virtual bool evaluate(pMmtNode node) = 0;
 
 protected:
 	pTerm lhs_;
@@ -35,6 +37,7 @@ public:
 	virtual void setEvaluateFunc(eleType eType) override;
 
 	virtual bool evaluate(pItemItr iit) override;
+	//virtual bool evaluate(pMmtNode node) override;	// TODO::Implement
 
 	template <typename Ty_>
 	bool evaluateImpl(pItemItr iit)

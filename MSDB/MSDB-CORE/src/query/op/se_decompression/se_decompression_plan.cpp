@@ -37,13 +37,13 @@ pArrayDesc se_decompression_array_pset::inferSchema()
 
 	return std::make_shared<opParamArray::paramType>(*aSourceDesc);
 }
-pBitmap se_decompression_array_pset::inferBottomUpBitmap()
+pBitmapTree se_decompression_array_pset::inferBottomUpBitmap()
 {
 	pArrayDesc desc = this->inferSchema();
 	dimension chunkSpace = desc->getDimDescs()->getChunkSpace();
 	dimension blockSpace = desc->getDimDescs()->getBlockSpace();
 	dimension seChunkSpace = chunkSpace * blockSpace;
 
-	return std::make_shared<bitmap>(seChunkSpace.area(), true);
+	return std::make_shared<bitmapTree>(seChunkSpace.area(), true);
 }
 }	// msdb

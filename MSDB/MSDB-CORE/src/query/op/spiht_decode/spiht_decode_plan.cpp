@@ -25,13 +25,14 @@ spiht_decode_array_pset::spiht_decode_array_pset(parameters& pSet)
 {
 	assert(this->params_.size() == 1);
 }
-pBitmap spiht_decode_array_pset::inferBottomUpBitmap()
+pBitmapTree spiht_decode_array_pset::inferBottomUpBitmap()
 {
 	pArrayDesc desc = this->inferSchema();
 	dimension chunkSpace = desc->getDimDescs()->getChunkSpace();
 	dimension blockSpace = desc->getDimDescs()->getBlockSpace();
 	dimension seChunkSpace = chunkSpace * blockSpace;
 
-	return std::make_shared<bitmap>(seChunkSpace.area(), true);
+	// TODO::merge block bitmaps
+	return std::make_shared<bitmapTree>(seChunkSpace.area(), true);
 }
 }

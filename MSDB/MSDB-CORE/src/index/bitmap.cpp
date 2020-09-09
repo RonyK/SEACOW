@@ -118,7 +118,7 @@ bitmapTree::bitmapTree(const size_t capacity, const bool value)
 bitmapTree::bitmapTree(const bitmapTree& mit)
 	: bitmap(mit), childs_(mit.childs_)
 {
-	for(auto node : this->childs_)
+	for(auto node : mit.childs_)
 	{
 		if(node)
 		{

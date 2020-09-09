@@ -193,6 +193,7 @@
     <ClInclude Include="include\index\mmt.h" />
     <ClInclude Include="include\index\attributeIndex.h" />
     <ClInclude Include="include\index\dimensionIndex.h" />
+    <ClInclude Include="include\index\mmtNode.h" />
     <ClInclude Include="include\io\bitstream.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>

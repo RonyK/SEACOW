@@ -65,7 +65,8 @@ TEST(query_op_mmt_build, mmt_build_sc8x8)
 		for (size_t l = 0; l <= level; l++)
 		{
 			auto levelNodes = nodes[l];
-			MinMaxTreeImpl<dim_type, value_type>::nodeItr nit(2, mmtIndex->getNodeSpace(l).data());
+			//MinMaxTreeImpl<dim_type, value_type>::nodeItr nit(2, mmtIndex->getNodeSpace(l).data());
+			auto nit = mmtIndex->getNodeIterator(l);
 			for (int y = 0; y < chunkNums[0] / pow(2, l); ++y)
 			{
 				for (int x = 0; x < chunkNums[1] / pow(2, l); ++x)
@@ -74,10 +75,10 @@ TEST(query_op_mmt_build, mmt_build_sc8x8)
 					nit.moveTo(blockCoor);
 					auto node = levelNodes.data()[nit.seqPos()];
 
-					std::cout << "[" << x << ", " << y << "] " << static_cast<int>(node->min_) << " ~ " << static_cast<int>(node->max_) << std::endl;
+					std::cout << "[" << x << ", " << y << "] " << static_cast<int>(node->getMin<value_type>()) << " ~ " << static_cast<int>(node->getMax<value_type>()) << std::endl;
 
-					EXPECT_EQ(exMMT_min[l][y][x], node->min_);
-					EXPECT_EQ(exMMT_max[l][y][x], node->max_);
+					EXPECT_EQ(exMMT_min[l][y][x], node->getMin<value_type>());
+					EXPECT_EQ(exMMT_max[l][y][x], node->getMax<value_type>());
 				}
 			}
 		}

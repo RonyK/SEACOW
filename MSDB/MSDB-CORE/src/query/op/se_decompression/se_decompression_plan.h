@@ -25,7 +25,7 @@ public:
 
 public:
 	virtual pArrayDesc inferSchema() override;
-	virtual pBitmap inferBottomUpBitmap() override;
+	virtual pBitmapTree inferBottomUpBitmap() override;
 };
 }		// msdb
 #endif	// _MSDB_SE_DECOMPRESSION_PLAN_H_

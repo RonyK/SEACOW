@@ -23,7 +23,7 @@ public:
 	spiht_decode_array_pset(parameters& pSet);
 
 public:
-	virtual pBitmap inferBottomUpBitmap() override;
+	virtual pBitmapTree inferBottomUpBitmap() override;
 };
 }
 

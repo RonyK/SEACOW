@@ -3,12 +3,9 @@
 #define _MSDB_MMT_H_
 
 #include <array/array.h>
-#include <index/attributeIndex.h>
-#include <io/bitstream.h>
+#include <index/mmtNode.h>
 #include <io/serializable.h>
 #include <util/coordinate.h>
-#include <util/math.h>
-#include <memory>
 #include <utility>
 
 namespace msdb
@@ -16,9 +13,6 @@ namespace msdb
 class MinMaxTree;
 using mmt = MinMaxTree;
 using pMMT = std::shared_ptr<mmt>;
-
-//template <typename Ty_>
-//bit_cnt_type getPrefixPosForPrevLimit(Ty_, bit_cnt_type);
 
 class MinMaxTree : public attributeIndex, public serializable
 {
@@ -113,66 +107,7 @@ public:
 	// MMT NODE					//
 	//////////////////////////////
 public:
-	class mmtNode;
-	using pNode = std::shared_ptr<mmtNode>;
-	using nodeItr = coordinateIterator<Dty_>;
-
-	class mmtNode : public attributeIndex
-	{
-	public:
-		using TyType = Ty_;
-
-		sig_bit_type bMax_;			// significant nit of max value
-		sig_bit_type bMin_;			// significant nit of min value
-		bit_cnt_type bMaxDelta_;	// bMax_ delta from a parent node
-		bit_cnt_type bMinDelta_;	// bMin_ delta from a parent node
-		bit_cnt_type order_;		// n th significant nit
-		bit_cnt_type bits_;			// required bits to represent min/max value
-		Ty_ max_;
-		Ty_ min_;
-
-	public:
-		mmtNode() : bMax_(0), bMin_(0), bits_(0x80), order_(1),
-			bMaxDelta_(0), bMinDelta_(0), max_(0), min_(0)
-		{
-		}
-
-	public:
-		// use function cause of unknown compile error
-		inline void inDelta(bstream& bs)
-		{
-			bs >> setw(this->bits_) >> this->bMaxDelta_ >> this->bMinDelta_;
-		}
-
-		inline void outDelta(bstream& bs)
-		{
-			bs << setw(this->bits_) << this->bMaxDelta_ << this->bMinDelta_;
-		}
-
-		inline void inMinMax(bstream& bs)
-		{
-			bs >> setw(sizeof(Ty_) * CHAR_BIT) >> this->max_ >> this->min_;
-		}
-
-		inline void outMinMax(bstream& bs)
-		{
-			bs << setw(sizeof(Ty_) * CHAR_BIT);
-			bs << max_ << min_;
-		}
-
-		inline void initBits()
-		{
-			this->bits_ = sizeof(Ty_) * CHAR_BIT;
-			this->order_ = 1;
-			this->setMinMaxBits();
-		}
-
-		inline void setMinMaxBits()
-		{
-			this->bMax_ = msb<Ty_>(abs_(max_), this->order_) * SIGN(max_);
-			this->bMin_ = msb<Ty_>(abs_(min_), this->order_) * SIGN(min_);
-		}
-	};
+	using nodeItr = itemIterator<Dty_, pMmtNode>;
 
 protected:
 	// inherit from serializable
@@ -312,7 +247,7 @@ public:
 		for (size_type l = 0; l <= this->maxLevel_; ++l)
 		{
 			// TODO:: Calc blockCnt on each level
-			this->nodes_.push_back(std::vector<pNode>());
+			this->nodes_.push_back(std::vector<pMmtNode>());
 		}
 
 		this->deserializeRoot(bs);
@@ -334,7 +269,7 @@ public:
 
 	nodeItr getNodeIterator(size_type level)
 	{
-		return nodeItr(this->dSize_, this->nodeSpace_[level].data());
+		return nodeItr(this->nodes_[level].data(), this->dSize_, this->nodeSpace_[level].data());
 	}
 
 public:
@@ -358,9 +293,9 @@ protected:
 		// Create new mmtNodes
 		//size_type blockCnt = calcNumItems(
 		//	this->nodeSpace_[0].data(), this->nodeSpace_[0].size());	// block numbers
-		//this->nodes_.push_back(std::vector<pNode>(blockCnt));			// make new node
+		//this->nodes_.push_back(std::vector<pMmtNode>(blockCnt));			// make new node
 
-		this->nodes_.push_back(std::vector<pNode>(this->nodeSpace_[0].area()));
+		this->nodes_.push_back(std::vector<pMmtNode>(this->nodeSpace_[0].area()));
 		while (!cItr->isEnd())
 		{
 			// Setup a start point of blockCoor for blocks in a chunk
@@ -384,9 +319,9 @@ protected:
 		}
 	}
 
-	pNode forwardBuildLeafNode(pBlockItemIterator iit)
+	pMmtNode forwardBuildLeafNode(pBlockItemIterator iit)
 	{
-		pNode node = std::make_shared<mmtNode>();
+		pMmtNode node = std::make_shared<mmtNode>();
 
 		auto value = (**iit).get<Ty_>();
 		//std::cout << "chunk: " << static_cast<int>(value) << ", ";
@@ -400,11 +335,11 @@ protected:
 		{
 			auto v = (**iit).get<Ty_>();
 			//std::cout << static_cast<int>(v) << ", ";
-			if (node->max_ < v)
+			if (node->getMax<Ty_>() < v)
 			{
 				node->max_ = v;
 			}
-			if (node->min_ > v)
+			if (node->getMin<Ty_>() > v)
 			{
 				node->min_ = v;
 			}
@@ -427,7 +362,7 @@ protected:
 		dimension nodeSpace = this->nodeSpace_[level];
 		size_type blockCnt = nodeSpace.area();
 		//const size_type blockCnt = calcNumItems(nodeSpace.data(), nodeSpace.size());
-		this->nodes_.push_back(std::vector<pNode>(this->nodeSpace_[level].area()));
+		this->nodes_.push_back(std::vector<pMmtNode>(this->nodeSpace_[level].area()));
 
 		for (size_t i = 0; i < blockCnt; ++i)
 		{
@@ -436,9 +371,9 @@ protected:
 
 		////////////////////////////////////////
 		// Update min/max values
-		itemIterator<Dty_, pNode> pcit(this->nodes_[level - 1].data(), this->dSize_,
+		itemIterator<Dty_, pMmtNode> pcit(this->nodes_[level - 1].data(), this->dSize_,
 									   prevNodeSpace.data());
-		itemIterator<Dty_, pNode> cit(this->nodes_[level].data(), this->dSize_,
+		itemIterator<Dty_, pMmtNode> cit(this->nodes_[level].data(), this->dSize_,
 									  nodeSpace.data());
 
 		for (size_type i = 0; i < this->nodes_[level - 1].size(); i++)
@@ -457,25 +392,25 @@ protected:
 			// init min, max value
 			if (node->bits_ == 0x80)
 			{
-				node->max_ = (*pcit)->max_;
-				node->min_ = (*pcit)->min_;
+				node->max_ = (*pcit)->getMax<Ty_>();
+				node->min_ = (*pcit)->getMin<Ty_>();
 				node->bits_ = (bit_cnt_type)TyBits_;
 			} else
 			{
 				// compare min max value
-				if (node->max_ < (*pcit)->max_)
+				if (node->getMax<Ty_>() < (*pcit)->getMax<Ty_>())
 				{
-					node->max_ = (*pcit)->max_;
+					node->max_ = (*pcit)->getMax<Ty_>();
 				}
-				if (node->min_ > (*pcit)->min_)
+				if (node->getMin<Ty_>() > (*pcit)->getMin<Ty_>())
 				{
-					node->min_ = (*pcit)->min_;
+					node->min_ = (*pcit)->getMin<Ty_>();
 				}
 			}
 			this->nodes_[level][cit.coorToSeq(cur)] = node;
 
 			//std::cout << "forward-" << std::endl;
-			//std::cout << "[" << cur[0] << ", " << cur[1] << "] : " << static_cast<int>(node->min_) << "~" << static_cast<int>(node->max_) << std::endl;
+			//std::cout << "[" << cur[0] << ", " << cur[1] << "] : " << static_cast<int>(node->getMin<Ty_>()) << "~" << static_cast<int>(node->max_) << std::endl;
 
 			// move to next chunk
 			++pcit;
@@ -501,12 +436,12 @@ protected:
 		{
 			this->nodeSpace_[this->maxLevel_] = nodeSpace;
 		}
-		this->nodes_.push_back(std::vector<pNode>(nodeSpace.area()));
+		this->nodes_.push_back(std::vector<pMmtNode>(nodeSpace.area()));
 		this->nodes_[this->maxLevel_][0] = std::make_shared<mmtNode>();	// Root has a single mmtNode
 
 		////////////////////////////////////////
 		// Update min/max values
-		itemIterator<Dty_, pNode> pcit(this->nodes_[this->maxLevel_ - 1].data(), this->dSize_,
+		itemIterator<Dty_, pMmtNode> pcit(this->nodes_[this->maxLevel_ - 1].data(), this->dSize_,
 									   prevNodeSpace.data());
 
 		auto node = this->nodes_[this->maxLevel_][0];
@@ -515,19 +450,19 @@ protected:
 			// init min, max value
 			if (node->bits_ == 0x80)
 			{
-				node->max_ = (*pcit)->max_;
-				node->min_ = (*pcit)->min_;
+				node->max_ = (*pcit)->getMax<Ty_>();
+				node->min_ = (*pcit)->getMin<Ty_>();
 				node->bits_ = (bit_cnt_type)TyBits_;
 			} else
 			{
 				// compare min max value
-				if (node->max_ < (*pcit)->max_)
+				if (node->getMax<Ty_>() < (*pcit)->getMax<Ty_>())
 				{
-					node->max_ = (*pcit)->max_;
+					node->max_ = (*pcit)->getMax<Ty_>();
 				}
-				if (node->min_ > (*pcit)->min_)
+				if (node->getMin<Ty_>() > (*pcit)->getMin<Ty_>())
 				{
-					node->min_ = (*pcit)->min_;
+					node->min_ = (*pcit)->getMin<Ty_>();
 				}
 			}
 			++pcit;
@@ -541,9 +476,9 @@ protected:
 	{
 		assert(this->nodes_.back().size() == 1);
 
-		this->nodes_.back()[0]->initBits();
-		/*curLevel[i]->initBits();
-		pNode* curLevel = this->nodes_.back().data();
+		this->nodes_.back()[0]->initBits<Ty_>();
+		/*curLevel[i]->initBits<Ty_>();
+		pMmtNode* curLevel = this->nodes_.back().data();
 		for (size_type i = 0; i < this->nodes_.back().size(); i++)
 		{
 			
@@ -553,8 +488,8 @@ protected:
 	// For max level nodes
 	void backwardBuildFromRoot()
 	{
-		pNode rootNode = this->nodes_[this->maxLevel_][0];
-		pNode* curLevel = this->nodes_[this->maxLevel_ - 1].data();
+		pMmtNode rootNode = this->nodes_[this->maxLevel_][0];
+		pMmtNode* curLevel = this->nodes_[this->maxLevel_ - 1].data();
 		for (size_type i = 0; i < this->nodes_[this->maxLevel_ - 1].size(); ++i)
 		{
 			bool isLastBit = (bit_cnt_type)rootNode->order_ + 1 >= TyBits_;
@@ -586,10 +521,10 @@ protected:
 		////////////////////////////////////////
 		// Update nit order for chunks in current level
 		// Prev
-		itemIterator<Dty_, pNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
+		itemIterator<Dty_, pMmtNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
 									   prevLevelDim.data());
 		// Current
-		itemIterator<Dty_, pNode> cit(this->nodes_[level].data(), this->dSize_,
+		itemIterator<Dty_, pMmtNode> cit(this->nodes_[level].data(), this->dSize_,
 									  levelDim.data());
 
 		for (size_type i = 0; i < this->nodes_[level + 1].size(); ++i, ++pcit)
@@ -601,7 +536,7 @@ protected:
 				childBase[d] *= 2;
 			}
 
-			pNode prevNode = (*pcit);
+			pMmtNode prevNode = (*pcit);
 
 			bool isLastBit = (bit_cnt_type)prevNode->order_ + 1 >= TyBits_;
 			bool orderChanged = (prevNode->bMax_ == prevNode->bMin_);	// if bMax_ == bMin_, move on to the next most significant nit
@@ -624,13 +559,13 @@ protected:
 				cit.moveTo(cur);
 
 				// Update
-				pNode cNode = (*cit);
+				pMmtNode cNode = (*cit);
 				backwardUpdateNode(prevNode, cNode, isLastBit, orderChanged, bits);
 			}
 		}
 	}
 
-	void backwardUpdateNode(pNode prevNode, pNode curNode, bool isLastBit, bool orderChanged, bit_cnt_type bits)
+	void backwardUpdateNode(pMmtNode prevNode, pMmtNode curNode, bool isLastBit, bool orderChanged, bit_cnt_type bits)
 	{
 		if (orderChanged)
 		{
@@ -649,7 +584,7 @@ protected:
 				// Move to next significant bit
 				curNode->bits_ = bits;
 				curNode->order_ = prevNode->order_ + 1;
-				curNode->setMinMaxBits();
+				curNode->setMinMaxBits<Ty_>();
 				curNode->bMaxDelta_ = std::max({ abs_(prevNode->bMax_ - curNode->bMax_) - 1, 0 });
 				curNode->bMinDelta_ = std::max({ abs_(curNode->bMin_ - prevNode->bMin_) - 1, 0 });
 				// TODO::Change min, max according order and deltaBits
@@ -659,30 +594,30 @@ protected:
 			// Order not changed
 			curNode->bits_ = bits;
 			curNode->order_ = prevNode->order_;
-			curNode->setMinMaxBits();
+			curNode->setMinMaxBits<Ty_>();
 			curNode->bMaxDelta_ = static_cast<bit_cnt_type>(prevNode->bMax_ - curNode->bMax_);	// max: prev >= cur
 			curNode->bMinDelta_ = static_cast<bit_cnt_type>(curNode->bMin_ - prevNode->bMin_);	// min: prev <= cur
 			// TODO::Change min, max according order and deltaBits
 		}
 
-		curNode->max_ = getMaxBoundary<Ty_>(prevNode->max_, curNode->order_, curNode->bMax_);
-		curNode->min_ = getMinBoundary<Ty_>(prevNode->min_, curNode->order_, curNode->bMin_);
+		curNode->max_ = getMaxBoundary<Ty_>(prevNode->getMax<Ty_>(), curNode->order_, curNode->bMax_);
+		curNode->min_ = getMinBoundary<Ty_>(prevNode->getMin<Ty_>(), curNode->order_, curNode->bMin_);
 	}
 
 	////////////////////////////////////////
 	// Write bits in an outstream
 	void serializeRoot(bstream& bs)
 	{
-		pNode* curLevelNodes = this->nodes_.back().data();
+		pMmtNode* curLevelNodes = this->nodes_.back().data();
 		for (size_type i = 0; i < this->nodes_.back().size(); i++)
 		{
-			curLevelNodes[i]->outMinMax(bs);
+			curLevelNodes[i]->outMinMax<Ty_>(bs);
 		}
 	}
 
 	void serializeNonRoot(bstream& bs, size_type level)
 	{
-		pNode* curLevelNodes = this->nodes_[level].data();
+		pMmtNode* curLevelNodes = this->nodes_[level].data();
 		for (size_type i = 0; i < this->nodes_[level].size(); i++)
 		{
 			curLevelNodes[i]->outDelta(bs);
@@ -698,13 +633,13 @@ protected:
 		auto chunksInDim = this->nodeSpace_[this->maxLevel_];
 		size_type chunkCnt = calcNumItems(chunksInDim.data(), chunksInDim.size());
 		this->nodes_[this->maxLevel_].resize(chunkCnt);	// TODO::If generating Nodes are complete, remove this line.
-		pNode* rootNodes = this->nodes_[this->maxLevel_].data();
+		pMmtNode* rootNodes = this->nodes_[this->maxLevel_].data();
 
 		for (size_type i = 0; i < chunkCnt; i++)
 		{
 			rootNodes[i] = std::make_shared<mmtNode>();
-			rootNodes[i]->inMinMax(bs);
-			rootNodes[i]->initBits();
+			rootNodes[i]->inMinMax<Ty_>(bs);
+			rootNodes[i]->initBits<Ty_>();
 		}
 	}
 
@@ -717,19 +652,19 @@ protected:
 		this->nodes_[level].resize(chunkCnt);
 
 		// Prev
-		itemIterator<Dty_, pNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
+		itemIterator<Dty_, pMmtNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
 									   pChunksInDim.data());
 
 		// Current
-		itemIterator<Dty_, pNode> cit(this->nodes_[level].data(), this->dSize_,
+		itemIterator<Dty_, pMmtNode> cit(this->nodes_[level].data(), this->dSize_,
 									  chunksInDim.data());
 
 		for (size_type i = 0; i < chunkCnt; i++)
 		{
-			pNode cNode = std::make_shared<mmtNode>();
+			pMmtNode cNode = std::make_shared<mmtNode>();
 			(*cit) = cNode;
 			pcit.moveTo(this->getParentCoor(cit.coor()));
-			pNode prevNode = (*pcit);
+			pMmtNode prevNode = (*pcit);
 
 			// if bMax_ == bMin_, move on to the next most significant nit
 			bool orderChanged = prevNode->bMax_ == prevNode->bMin_;
@@ -749,16 +684,16 @@ protected:
 					cNode->bMax_ = prevNode->bMax_ - cNode->bMaxDelta_ - 1;
 					cNode->bMin_ = prevNode->bMin_ - cNode->bMinDelta_ - 1;
 
-					cNode->max_ = getMaxBoundary<Ty_>(prevNode->max_, cNode->order_, cNode->bMax_);
-					cNode->min_ = getMinBoundary<Ty_>(prevNode->min_, cNode->order_, cNode->bMin_);
+					cNode->max_ = getMaxBoundary<Ty_>(prevNode->getMax<Ty_>(), cNode->order_, cNode->bMax_);
+					cNode->min_ = getMinBoundary<Ty_>(prevNode->getMin<Ty_>(), cNode->order_, cNode->bMin_);
 				} else
 				{
 					// order == TyBits_
 					// No more detail
 					cNode->bits_ = 0;
 					cNode->order_ = prevNode->order_;
-					cNode->max_ = prevNode->max_;
-					cNode->min_ = prevNode->min_;
+					cNode->max_ = prevNode->getMax<Ty_>();
+					cNode->min_ = prevNode->getMin<Ty_>();
 				}
 
 			} else
@@ -767,8 +702,8 @@ protected:
 				cNode->bMax_ = prevNode->bMax_ - cNode->bMaxDelta_;
 				cNode->bMin_ = prevNode->bMin_ + cNode->bMinDelta_;
 
-				cNode->max_ = getMaxBoundary<Ty_>(prevNode->max_, cNode->order_, cNode->bMax_);
-				cNode->min_ = getMinBoundary<Ty_>(prevNode->min_, cNode->order_, cNode->bMin_);
+				cNode->max_ = getMaxBoundary<Ty_>(prevNode->getMax<Ty_>(), cNode->order_, cNode->bMax_);
+				cNode->min_ = getMinBoundary<Ty_>(prevNode->getMin<Ty_>(), cNode->order_, cNode->bMin_);
 			}
 			++cit;	// Move to next data
 		}
@@ -850,23 +785,23 @@ public:
 	
 public:
 	// For test
-	std::vector<std::vector<pNode>> getNodes()
+	std::vector<std::vector<pMmtNode>> getNodes()
 	{
 		return this->nodes_;
 	}
 
-	pNode getNode(blockId nodeId, size_type level = 0)
+	pMmtNode getNode(blockId nodeId, size_type level = 0)
 	{
 		return this->nodes_[level][nodeId];
 	}
 
-	pNode getNode(coor& nodeCoor, size_type level = 0)
+	pMmtNode getNode(coor& nodeCoor, size_type level = 0)
 	{
 		auto nit = this->getNodeIterator(level);
 		return this->nodes_[level][nit.coorToSeq(nodeCoor)];
 	};
 
-	pNode getNode(coor& chunkCoor, coor& inner, size_type level = 0)
+	pMmtNode getNode(coor& chunkCoor, coor& inner, size_type level = 0)
 	{
 		auto nit = this->getNodeIterator(level);
 		coor nodeCoor(inner);
@@ -878,7 +813,7 @@ public:
 	}
 
 	// qRange: query range
-	pNode getNode(const coorRange qRange)
+	pMmtNode getNode(const coorRange qRange)
 	{
 		auto rangeDim = qRange.width();
 		coor blockDim(this->blockDims_);
@@ -906,13 +841,13 @@ public:
 		this->nodes_[level][nodeId];
 	}
 
-	void setNode(pNode node, coor& nodeCoor, size_type level = 0)
+	void setNode(pMmtNode node, coor& nodeCoor, size_type level = 0)
 	{
 		auto nit = this->getNodeIterator(level);
 		this->nodes_[level][nit.coorToSeq(nodeCoor)] = node;
 	}
 
-	void setNode(pNode node, coor& chunkCoor, coor& inner, size_type level = 0)
+	void setNode(pMmtNode node, coor& chunkCoor, coor& inner, size_type level = 0)
 	{
 		auto nit = this->getNodeIterator(level);
 		coor nodeCoor(inner);
@@ -944,7 +879,7 @@ private:
 	dimension blockDims_;			// leaf block dimension (num of items)
 	dimension leafInChunkBlockSpace_;	// level dim in chunk (num of blocks)
 	std::vector<dimension> nodeSpace_;	// level dim (num of blocks)
-	std::vector<std::vector<pNode>> nodes_;	// mmt
+	std::vector<std::vector<pMmtNode>> nodes_;	// mmt
 	/*
 	* Here is an example of a 'nodes_' with size 4 (has 0~3 levels).
 	*

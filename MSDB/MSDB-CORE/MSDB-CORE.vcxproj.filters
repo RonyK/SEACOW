@@ -209,6 +209,7 @@
     <ClInclude Include="include\util\timer.h" />
     <ClInclude Include="src\query\op\index_filter\index_filter_plan.h" />
     <ClInclude Include="src\query\op\index_filter\index_filter_action.h" />
+    <ClInclude Include="include\index\mmtNode.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">

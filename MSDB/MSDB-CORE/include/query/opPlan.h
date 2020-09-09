@@ -44,8 +44,8 @@ public:
 
 public:
 	virtual pArrayDesc inferSchema() override;
-	virtual pBitmap inferBottomUpBitmap() override;
-	virtual pBitmap inferTopDownBitmap(pBitmap fromParent) override;
+	virtual pBitmapTree inferBottomUpBitmap() override;
+	virtual pBitmapTree inferTopDownBitmap(pBitmapTree fromParent) override;
 };
 
 class opPlan : public std::enable_shared_from_this<opPlan>
@@ -57,15 +57,15 @@ public:
 	virtual const char* name() = 0;
 	void setParamSet(pParamSet paramSet);
 	virtual pArrayDesc inferSchema();
-	virtual pBitmap inferBitmap();
+	virtual pBitmapTree inferBitmap();
 	virtual pAction getAction();
 	parameters getParam();
 
 protected:
-	virtual pBitmap inferBottomUpBitmap();
-	friend pBitmap opPlanParamSet::inferBottomUpBitmap();
+	virtual pBitmapTree inferBottomUpBitmap();
+	friend pBitmapTree opPlanParamSet::inferBottomUpBitmap();
 
-	virtual pBitmap inferTopDownBitmap();
+	virtual pBitmapTree inferTopDownBitmap();
 	virtual pAction makeAction() = 0;
 
 protected:
@@ -73,7 +73,7 @@ protected:
 
 private:
 	pParamSet inParamSet_;
-	pBitmap outArrBitmap_;
+	pBitmapTree outArrBitmap_;
 	pPlan parentPlan_;
 };
 }

@@ -1015,6 +1015,12 @@ public:
 	{
 	}
 
+	itemIterator(Ty_* ptr, const coordinate<Dty_> dims)
+		: base_type(dims), ptr_(ptr)
+	{
+	}
+	
+
 	itemIterator(const self_type& mit)
 		: base_type(mit), ptr_(mit.ptr_)
 	{

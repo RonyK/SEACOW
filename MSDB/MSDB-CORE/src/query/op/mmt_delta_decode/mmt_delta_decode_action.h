@@ -84,7 +84,7 @@ void mmt_delta_decode_action::chunkDecode(pChunk outChunk, pChunk inChunk,
 		while (!iit->isEnd())
 		{
 			auto inValue = (**iit).get<Ty_>();
-			auto outValue = inValue + node->min_;
+			auto outValue = inValue + node->getMin<Ty_>();
 			(**oit).set<Ty_>(outValue);
 			++(*iit);
 			++(*oit);
