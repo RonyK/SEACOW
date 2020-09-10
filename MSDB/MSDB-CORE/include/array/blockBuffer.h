@@ -15,6 +15,9 @@ class blockBuffer : public chunkBuffer
 public:
 	blockBuffer(void* data, bufferSize size);
 	virtual ~blockBuffer();
+
+public:
+	void refChunkBufferWithoutOwnership(void* data, bufferSize size);
 };
 
 class memBlockBuffer : public blockBuffer

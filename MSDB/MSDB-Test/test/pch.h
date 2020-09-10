@@ -16,3 +16,6 @@
 #include "dummy/dummy.h"
 #include "dummy/opDummy.h"
 #include "dummy/dummy_astronomy.h"
+
+#define _pFuncGetSourceArray_	void(*getSourceArrayIfEmpty)(std::vector<pArray>&)
+#define _vectorSourceArray_		std::vector<pArray> sourceArr

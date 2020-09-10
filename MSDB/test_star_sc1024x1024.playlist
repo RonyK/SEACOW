@@ -1,0 +1,102 @@
+<Playlist Version="2.0">
+  <Rule Name="Includes" Match="Any">
+    <Rule Match="All">
+      <Property Name="Solution" />
+      <Rule Match="Any">
+        <Rule Match="All">
+          <Property Name="Project" Value="MSDB-Test" />
+          <Rule Match="Any">
+            <Rule Match="All">
+              <Property Name="Namespace" Value="" />
+              <Rule Match="Any">
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_mmt_save" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_mmt_save.mmt_save_star1024x1024" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_mmt_save.mmt_save_star1024x1024" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_save" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_save.save_star1024x1024" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_save.save_star1024x1024" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_spiht_encode_decode" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_spiht_encode_decode.spiht_encode_decode_star1024x1024" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_spiht_encode_decode.spiht_encode_decode_star1024x1024" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_se_compression" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_se_compression.se_compression_star1024x1024" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_se_compression.se_compression_star1024x1024" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_se_compression.without_secompression_star1024x1024" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_se_compression.without_secompression_star1024x1024" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_wavelet_encode" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_wavelet_encode.wavelet_encode_star1024x1024" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_wavelet_encode.wavelet_encode_star1024x1024" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_save_load" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_save_load.save_load_star1024x1024" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_save_load.save_load_star1024x1024" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_naive_filter" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_naive_filter.naive_filter_star1024x1024" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_naive_filter.naive_filter_star1024x1024" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+              </Rule>
+            </Rule>
+          </Rule>
+        </Rule>
+      </Rule>
+    </Rule>
+  </Rule>
+</Playlist>

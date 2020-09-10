@@ -51,15 +51,19 @@ void mmt_delta_decode_action::attributeDecode(std::shared_ptr<mmt_delta_decode_a
 
 	while (!cit->isEnd())
 	{
-		// Make new chunk
-		auto cDesc = (**cit)->getDesc();
-		//pChunk deltaChunk = std::make_shared<memBlockChunk>(std::make_shared<chunkDesc>(*cDesc));
-		pChunk deltaChunk = outArr->makeChunk(*cDesc);
-		deltaChunk->makeAllBlocks();
-		deltaChunk->bufferAlloc();
+		if(cit->isExist())
+		{
+			// Make new chunk
+			auto cDesc = (**cit)->getDesc();
+			//pChunk deltaChunk = std::make_shared<memBlockChunk>(std::make_shared<chunkDesc>(*cDesc));
+			pChunk deltaChunk = outArr->makeChunk(*cDesc);
+			deltaChunk->makeAllBlocks();
+			deltaChunk->bufferAlloc();
 
-		this->chunkDecode(deltaChunk, **cit, mmtIndex);
-		//outArr->insertChunk(deltaChunk);
+			this->chunkDecode(deltaChunk, **cit, mmtIndex);
+			//outArr->insertChunk(deltaChunk);
+		}
+		
 		++(*cit);
 	}
 }
@@ -80,7 +84,7 @@ void mmt_delta_decode_action::chunkDecode(pChunk outChunk, pChunk inChunk,
 		while (!iit->isEnd())
 		{
 			auto inValue = (**iit).get<Ty_>();
-			auto outValue = inValue + node->min_;
+			auto outValue = inValue + node->getMin<Ty_>();
 			(**oit).set<Ty_>(outValue);
 			++(*iit);
 			++(*oit);

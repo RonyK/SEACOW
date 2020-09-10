@@ -15,7 +15,7 @@ public:
 public:
 	virtual const char* name() override;
 	//virtual void initParamSets() override;
-	virtual pAction getAction() override;
+	virtual pAction makeAction() override;
 
 };
 

@@ -16,7 +16,7 @@ public:
 public:
 	// opPlan을(를) 통해 상속됨
 	virtual const char* name() override;
-	virtual pAction getAction() override;
+	virtual pAction makeAction() override;
 };
 
 class mmt_delta_encode_array_pset : public opArrayParamSet

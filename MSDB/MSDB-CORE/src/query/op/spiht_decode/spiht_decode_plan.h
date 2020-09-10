@@ -14,13 +14,16 @@ public:
 
 public:
 	virtual const char* name() override;
-	virtual pAction getAction() override;
+	virtual pAction makeAction() override;
 };
 
 class spiht_decode_array_pset : public opArrayParamSet
 {
 public:
 	spiht_decode_array_pset(parameters& pSet);
+
+public:
+	virtual pBitmapTree inferBottomUpBitmap() override;
 };
 }
 

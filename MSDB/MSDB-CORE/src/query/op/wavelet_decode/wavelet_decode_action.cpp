@@ -20,6 +20,7 @@ wavelet_decode_action::~wavelet_decode_action()
 pArray wavelet_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 {
 	assert(inputArrays.size() == 1);
+	auto planBitmap = this->getPlanChunkBitmap();
 
 	pArray inArr = inputArrays[0];
 
@@ -42,7 +43,8 @@ pArray wavelet_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 		(*outArr->getDesc()->getDimDescs())[d]->chunkSize_ = originalChunkDims[d];
 	}
 
-	for (auto attrDesc : *inArr->getDesc()->getAttrDescs())
+	auto attrDescs = inArr->getDesc()->getAttrDescs();
+	for (auto attrDesc : *attrDescs)
 	{
 		switch (attrDesc->type_)
 		{

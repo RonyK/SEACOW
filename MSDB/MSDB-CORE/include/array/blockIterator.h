@@ -22,7 +22,7 @@ public:
 
 public:
 	blockIterator(const dimension dims, 
-				  blockContainer* blocks, bitmap* blockBitmap,
+				  blockContainer* blocks, pBitmap blockBitmap,
 				  const iterateMode itMode);
 
 	blockIterator(const self_type& mit);
@@ -73,7 +73,7 @@ public:
 
 protected:
 	blockContainer* blocks_;
-	bitmap* blockBitmap_;
+	pBitmap blockBitmap_;
 	iterateMode itMode_;
 };
 

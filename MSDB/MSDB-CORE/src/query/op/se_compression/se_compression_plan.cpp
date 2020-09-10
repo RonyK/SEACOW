@@ -16,7 +16,7 @@ const char* se_compression_plan::name()
 	return "se_compression_plan";
 }
 
-pAction se_compression_plan::getAction()
+pAction se_compression_plan::makeAction()
 {
 	return std::make_shared<se_compression_action>();
 }

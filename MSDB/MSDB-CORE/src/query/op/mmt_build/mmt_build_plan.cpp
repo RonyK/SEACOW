@@ -13,7 +13,7 @@ const char* mmt_build_plan::name()
 	return "mmt_build_plan";
 }
 
-pAction mmt_build_plan::getAction()
+pAction mmt_build_plan::makeAction()
 {
 	return std::make_shared<mmt_build_action>();
 }

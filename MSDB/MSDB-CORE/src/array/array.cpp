@@ -8,7 +8,7 @@ arrayBase::arrayBase(pArrayDesc desc)
 	: chunkBitmap_()
 {
 	this->desc_ = desc;
-	this->chunkBitmap_.resize(desc->attrDescs_->size(), bitmap(desc_->dimDescs_->getChunkSpace().area()));
+	this->chunkBitmap_ = std::make_shared<bitmap>(desc_->dimDescs_->getChunkSpace().area(), false);
 }
 arrayBase::~arrayBase()
 {
@@ -22,7 +22,7 @@ pArrayDesc arrayBase::getDesc()
 pChunkIterator arrayBase::getChunkIterator(const iterateMode itMode)
 {
 	return std::make_shared<chunkIterator>(this->desc_->dimDescs_->getChunkSpace(),
-										   &this->chunks_, &(this->chunkBitmap_[0]),
+										   &this->chunks_, this->chunkBitmap_,
 										   itMode);
 }
 arrayBase::size_type arrayBase::getNumChunks()
@@ -38,11 +38,12 @@ coor arrayBase::itemCoorToChunkCoor(const coor& itemCoor)
 	}
 	return chunkCoor;
 }
-void arrayBase::insertChunk(const attributeId attrId, pChunk inputChunk)
+pChunk arrayBase::insertChunk(const attributeId attrId, pChunk inputChunk)
 {
 	assert(attrId < this->desc_->attrDescs_->size());
 	this->chunks_.insert(chunkPair(inputChunk->getId(), inputChunk));
-	this->chunkBitmap_[attrId].setExist(inputChunk->getId());
+	this->chunkBitmap_->setExist(inputChunk->getId());
+	return inputChunk;
 }
 
 void arrayBase::flush()
@@ -60,7 +61,7 @@ void arrayBase::makeChunks(const attributeId attrId, const bitmap& input)
 	chunkId capacity = this->getChunkIterator()->getCapacity();
 	for(chunkId cid = 0; cid < capacity; ++cid)
 	{
-		if(input.isExist(cid) && !this->chunkBitmap_[attrId].isExist(cid))
+		if(input.isExist(cid) && !this->chunkBitmap_->isExist(cid))
 		{
 			this->makeChunk(attrId, cid);
 		}
@@ -107,7 +108,7 @@ chunkId arrayBase::getChunkId(pChunkDesc cDesc)
 chunkId arrayBase::getChunkIdFromItemCoor(const coor& itemCoor)
 {
 	coor chunkCoor = itemCoor;
-	for (dimensionId d = this->desc_->dimDescs_->size() - 1; d != -1; d--)
+	for (dimensionId d = this->desc_->dimDescs_->size() - 1; d != -1; --d)
 	{
 		chunkCoor[d] /= this->desc_->dimDescs_->at(d)->chunkSize_;
 	}
@@ -125,13 +126,34 @@ chunkId arrayBase::getChunkIdFromChunkCoor(const coor& chunkCoor)
 	}
 	return id;
 }
+void arrayBase::copyChunkBitmap(cpBitmap chunkBitmap)
+{
+	this->chunkBitmap_ = std::make_shared<bitmap>(*chunkBitmap);
+}
+void arrayBase::replaceChunkBitmap(pBitmap chunkBitmap)
+{
+	this->chunkBitmap_ = chunkBitmap;
+}
+void arrayBase::mergeChunkBitmap(pBitmap chunkBitmap)
+{
+	this->chunkBitmap_->andMerge(*chunkBitmap);
+}
 void arrayBase::print()
 {
 	auto cit = this->getChunkIterator();
 
 	while (!cit->isEnd())
 	{
-		(**cit)->print();
+		std::cout << "==============================" << std::endl;
+		if(cit->isExist())
+		{
+			(**cit)->print();
+			
+		}else
+		{
+			std::cout << "Chunk (" << cit->seqPos() << ") is not exist" << std::endl;
+		}
+		std::cout << "==============================" << std::endl;
 		++(*cit);
 	}
 }

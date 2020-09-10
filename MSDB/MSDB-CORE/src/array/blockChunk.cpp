@@ -37,16 +37,17 @@ void memBlockChunk::insertBlock(pBlock inBlock)
 {
 	assert(this->blockCapacity_ > inBlock->getId());
 	this->blocks_[inBlock->getId()] = inBlock;
-	this->blockBitmap_.setExist(inBlock->getId());
+	this->blockBitmap_->setExist(inBlock->getId());
+	this->referenceBufferToBlock(inBlock->getId());
 }
 
 void memBlockChunk::referenceBufferToBlock(blockId bId)
 {
 	// Reference block buffers to the chunk buffer
-	if (this->blocks_[bId])
+	if (this->blocks_[bId] && this->cached_)
 	{
 		bufferSize mSizeBlock = this->blocks_[bId]->getDesc()->mSize_;
-		this->blocks_[bId]->linkToChunkBuffer(
+		this->blocks_[bId]->refChunkBufferWithoutOwnership(
 			(char*)this->cached_->getData() + (bId * mSizeBlock),
 			mSizeBlock);
 	}
@@ -58,10 +59,16 @@ pBlock memBlockChunk::getBlock(const blockId bId)
 	return this->blocks_[bId];
 }
 
+void memBlockChunk::freeBlock(const blockId bid)
+{
+	this->blocks_[bid] = nullptr;
+	this->blockBitmap_->setNull(bid);
+}
+
 pBlockIterator memBlockChunk::getBlockIterator(const iterateMode itMode)
 {
 	return std::make_shared<blockIterator>(this->desc_->getBlockSpace(),
-										   &this->blocks_, &this->blockBitmap_,
+										   &this->blocks_, this->blockBitmap_,
 										   itMode);
 }
 
@@ -237,18 +244,18 @@ void blockChunkItemRangeIterator::next()
 			if (this->bItr_->isExist())
 			{
 				auto bDesc = (**this->bItr_)->getDesc();
-				auto bRange = coorRange(bDesc->sp_, bDesc->ep_);
+				auto bRange = coorRange(bDesc->getIsp(), bDesc->getIep());
 				auto qRange = coorRange(this->sP_, this->eP_);
 
-				if (bRange < qRange)
+				if (bRange.isFullyInside(qRange))
 				{
 					// Inside, full scan
-					this->curBlockItemItr_ = (**this->bItr_)->getItemRangeIterator(coorRange(bDesc->sp_, bDesc->ep_));
+					this->curBlockItemItr_ = (**this->bItr_)->getItemRangeIterator(bRange);
 				} else
 				{
 					// Intersect
-					auto sp = getOutsideCoor(bDesc->sp_, this->sP_);
-					auto ep = getInsideCoor(bDesc->ep_, this->eP_);
+					auto sp = getOutsideCoor(bDesc->getIsp(), this->sP_);
+					auto ep = getInsideCoor(bDesc->getIep(), this->eP_);
 					this->curBlockItemItr_ = (**this->bItr_)->getItemRangeIterator(coorRange(sp, ep));
 				}
 
@@ -284,18 +291,18 @@ void blockChunkItemRangeIterator::prev()
 			if (this->bItr_->isExist())
 			{
 				auto bDesc = (**this->bItr_)->getDesc();
-				auto bRange = coorRange(bDesc->sp_, bDesc->ep_);
+				auto bRange = coorRange(bDesc->getIsp(), bDesc->getIep());
 				auto qRange = coorRange(this->sP_, this->eP_);
 
-				if (bRange < qRange)
+				if (bRange.isFullyInside(qRange))
 				{
 					// Inside, full scan
-					this->curBlockItemItr_ = (**this->bItr_)->getItemRangeIterator(coorRange(bDesc->sp_, bDesc->ep_));
+					this->curBlockItemItr_ = (**this->bItr_)->getItemRangeIterator(bRange);
 				} else
 				{
 					// Intersect
-					auto sp = getOutsideCoor(bDesc->sp_, this->sP_);
-					auto ep = getInsideCoor(bDesc->ep_, this->eP_);
+					auto sp = getOutsideCoor(bDesc->getIsp(), this->sP_);
+					auto ep = getInsideCoor(bDesc->getIep(), this->eP_);
 					this->curBlockItemItr_ = (**this->bItr_)->getItemRangeIterator(coorRange(sp, ep));
 				}
 

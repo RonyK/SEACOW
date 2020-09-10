@@ -35,14 +35,21 @@ private:
 		while(!ocItr->isEnd())
 		{
 			std::vector<pChunk> chunks;
+			pBitmap blockBitmap = std::make_shared<bitmap>(blockSpace.area(), false);
+
 			auto chunkCoor = ocItr->coor();
 			auto bSpaceItr = coorItr(blockSpace);
+
 			while (!bSpaceItr.isEnd())
 			{
 				auto blockCoor = bSpaceItr.coor();
 				auto inChunkCoor = chunkCoor * blockSpace + blockCoor;
 
 				icItr->moveTo(inChunkCoor);
+				if(icItr->isExist())
+				{
+					blockBitmap->setExist(bSpaceItr.seqPos());
+				}
 				assert((*icItr)->getDesc()->chunkCoor_ == inChunkCoor);
 				chunks.push_back(**icItr);
 
@@ -50,7 +57,7 @@ private:
 			}
 			// --------------------
 			// TODO::PARALLEL
-			auto outChunk = this->chunkDecode<Ty_>(chunks, chunkDims, w, maxLevel, q);
+			auto outChunk = this->chunkDecode<Ty_>(chunks, chunkDims, blockBitmap, w, maxLevel, q);
 			// --------------------
 			auto cid = outArr->getChunkIdFromChunkCoor(chunkCoor);
 			outChunk->setId(cid);
@@ -60,7 +67,7 @@ private:
 	}
 
 	template <class Ty_>
-	pChunk chunkDecode(std::vector<pChunk>& inChunkList, dimension chunkDims,
+	pChunk chunkDecode(std::vector<pChunk>& inChunkList, dimension chunkDims, pBitmap blockBitmap,
 					   pWavelet w, size_t maxLevel, pQuery q)
 	{
 		auto inChunkDesc = inChunkList[0]->getDesc();
@@ -76,17 +83,21 @@ private:
 
 		pChunk outChunk = std::make_shared<memBlockChunk>(outChunkDesc);
 		outChunk->bufferAlloc();
+		outChunk->replaceBlockBitmap(blockBitmap);
 		outChunk->makeAllBlocks();
 		auto obItr = outChunk->getBlockIterator();
 
-		for (auto inChunk : inChunkList)
+		for (blockId bid = 0; bid < inChunkList.size(); ++bid)
 		{
-			coor chunkCoor = inChunk->getChunkCoor();
-			coor blockCoor = chunkCoor % blockSpace;
-			obItr->moveTo(blockCoor);
+			if(blockBitmap->isExist(bid))
+			{
+				auto inChunk = inChunkList[bid];
+				coor chunkCoor = inChunk->getChunkCoor();
+				coor blockCoor = chunkCoor % blockSpace;
+				obItr->moveTo(blockCoor);
 
-			//coordinate outBlock->;
-			this->blockDecode<Ty_>((**obItr), inChunk->getBlock(0), w, maxLevel, q);
+				this->blockDecode<Ty_>((**obItr), inChunk->getBlock(0), w, maxLevel, q);
+			}
 		}
 
 		return outChunk;

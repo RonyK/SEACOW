@@ -108,23 +108,28 @@ public:
 	// If a chunkBit is setted, arrayBase makes a chunk accordingly.
 	void makeChunks(const attributeId attrId, const bitmap& input);
 
-	void insertChunk(const attributeId attrId, pChunk inputChunk);
+	pChunk insertChunk(const attributeId attrId, pChunk inputChunk);
 	template <class _Iter>
 	void insertChunk(const attributeId attrId, _Iter begin, _Iter end)
 	{
 		for (; begin != end; ++begin)
 		{
 			this->chunks_.insert(chunkPair((*begin)->getId(), *begin));
-			this->chunkBitmap_[attrId].setExist((*begin)->getId());
+			this->chunkBitmap_->setExist((*begin)->getId());
 		}
 	}
+	virtual void freeChunk(const chunkId cId) = 0;
+
+	void copyChunkBitmap(cpBitmap chunkBitmap);
+	void replaceChunkBitmap(pBitmap chunkBitmap);
+	void mergeChunkBitmap(pBitmap chunkBitmap);
 
 	void print();
 
 protected:
 	pArrayDesc desc_;
 	chunkContainer chunks_;		// TODO::Seperate chunk container by attributeId
-	std::vector<bitmap> chunkBitmap_;
+	pBitmap chunkBitmap_;		// Be initialized to false by default
 };
 }	// msdb
 #endif		// _MSDB_ARRAY_H_

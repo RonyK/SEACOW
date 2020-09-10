@@ -4,6 +4,8 @@
 
 #include <query/opAction.h>
 #include <util/math.h>
+#include <op/wavelet_encode/wavelet_encode_array.h>
+#include <compression/spihtChunk.h>
 #include <list>
 
 namespace msdb
@@ -17,6 +19,10 @@ public:
 
 public:
 	pArray execute(std::vector<pArray>& outputArrays, pQuery q);
+	void decodeAttribute(std::shared_ptr<wavelet_encode_array>outArr, pAttributeDesc attrDesc);
+
+	pSpihtChunk makeInChunk(std::shared_ptr<wavelet_encode_array>arr, pAttributeDesc attrDesc, 
+							chunkId cid);
 };
 }
 

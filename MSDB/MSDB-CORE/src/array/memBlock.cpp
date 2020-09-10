@@ -93,21 +93,31 @@ void memBlock::deserialize(bstream& bs)
 
 pBlockItemIterator memBlock::getItemIterator()
 {
+	//return std::make_shared<memBlockItemIterator>(this->cached_->getData(),
+	//											  this->desc_->eType_,
+	//											  this->desc_->dims_,
+	//											  this->desc_->sp_,
+	//											  this->itemBitmap_);
 	return std::make_shared<memBlockItemIterator>(this->cached_->getData(),
-												  this->desc_->eType_,
-												  this->desc_->dims_,
-												  this->desc_->sp_);
+													   this->desc_->eType_,
+													   this->desc_->dims_,
+													   coorRange(this->desc_->getIsp(), this->desc_->getIep()),
+													   this->desc_->getSp(),
+													   this->itemBitmap_);
 }
 
 pBlockItemRangeIterator memBlock::getItemRangeIterator(const coorRange& range)
 {
+	auto sp = getOutsideCoor(this->desc_->getIsp(), range.getSp());
+	auto ep = getInsideCoor(this->desc_->getIep(), range.getEp());
 	return std::make_shared<memBlockItemRangeIterator>(this->cached_->getData(),
 													   this->desc_->eType_,
 													   this->desc_->dims_,
-													   range,
-													   this->desc_->sp_);
+													   coorRange(sp, ep),
+													   this->desc_->getSp(),
+													   this->itemBitmap_);
 }
-void memBlock::linkToChunkBuffer(void* data, bufferSize size)
+void memBlock::refChunkBufferWithoutOwnership(void* data, bufferSize size)
 {
 	this->cached_ = std::make_shared<memBlockBuffer>(data, size);	// TODO::make mem block buffer
 }

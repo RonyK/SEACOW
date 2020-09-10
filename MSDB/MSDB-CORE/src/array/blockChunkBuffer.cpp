@@ -63,7 +63,7 @@ void blockChunkBuffer::copy(void* data, bufferSize size)
 	this->bodySize_ = size;
 }
 
-void blockChunkBuffer::linkToChunkBuffer(void* data, bufferSize size)
+void blockChunkBuffer::refChunkBufferWithoutOwnership(void* data, bufferSize size)
 {
 	this->free();
 	this->isAllocated_ = false;

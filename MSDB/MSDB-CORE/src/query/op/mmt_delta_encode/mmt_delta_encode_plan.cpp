@@ -16,7 +16,7 @@ const char* mmt_delta_encode_plan::name()
 	return "mmt_delta_encode_plan";
 }
 
-pAction mmt_delta_encode_plan::getAction()
+pAction mmt_delta_encode_plan::makeAction()
 {
 	return std::make_shared<mmt_delta_encode_action>();
 }

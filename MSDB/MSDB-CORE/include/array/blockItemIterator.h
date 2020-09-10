@@ -2,8 +2,9 @@
 #ifndef _MSDB_BLOCKITEM_ITERATOR_H_
 #define _MSDB_BLOCKITEM_ITERATOR_H_
 
-#include <util/coordinate.h>
 #include <array/dimension.h>
+#include <index/bitmap.h>
+#include <util/coordinate.h>
 
 namespace msdb
 {
@@ -29,57 +30,44 @@ public:
 	blockItemIteratorBase(void* data, 
 						  const eleType eType, 
 						  const dimension& dims,
-						  const dimension& bSp)
-		: base_type(dims), bSp_(bSp)
+						  const dimension& bSp,
+						  pBitmap itemBitmap)
+		: base_type(dims), bSp_(bSp), itemBitmap_(itemBitmap)
 	{
 	}
 
 public:
-	//coordinate_type coorOut2In(coordinate_type& out)
-	//{
-
-	//}
-
-	//coordinate_type coorIn2Out(coordinate_type& in)
-	//{
-	//}
-
-	//coordinate_type coorIn2Out()
-	//{
-	//}
-
-	//coordinate_type ceP()
-	//{
-	//}
-
-	//coordinate_type outCoor()
-	//{
-	//}
+	bool isExist() const
+	{
+		return this->itemBitmap_->isExist(this->seqPos_);
+	}
+	bool isExist(const size_t seqPos) const
+	{
+		return this->itemBitmap_->isExist(seqPos);
+	}
+	void setExist()
+	{
+		this->itemBitmap_->setExist(this->seqPos_);
+	}
+	void setExist(const size_t seqPos)
+	{
+		this->itemBitmap_->setExist(seqPos);
+	}
+	void setNull(const size_t seqPos)
+	{
+		this->itemBitmap_->setNull(seqPos);
+	}
+	void setNull()
+	{
+		this->itemBitmap_->setNull(this->seqPos_);
+	}
 
 protected:
 	coordinate_type bSp_;
+	pBitmap itemBitmap_;
 };
 
 using blockItemItrBase = blockItemIteratorBase<position_t>;
-
-class blockItemIterator : public itemItr, public blockItemItrBase
-{
-public:
-	using self_type = blockItemIterator;
-	using base_type = itemItr;
-
-	using coordinate_type = base_type::coordinate_type;
-	using size_type = base_type::size_type;
-	using dim_type = base_type::dim_type;
-	using dim_pointer = base_type::dim_pointer;
-	using dim_const_pointer = base_type::dim_const_pointer;
-	using dim_reference = base_type::dim_reference;
-	using dim_const_reference = base_type::dim_const_reference;
-
-public:
-	blockItemIterator(void* data, const eleType eType, 
-					  const dimension& dims, const dimension& bSp);
-};
 
 class blockItemRangeIterator : public itemRangeItr, public blockItemItrBase
 {
@@ -99,8 +87,33 @@ public:
 	blockItemRangeIterator(void* data, const eleType eType,
 						   const dimension& dims,
 						   const coorRange& range,
-						   const dimension& bSp);
+						   const dimension& bSp,
+						   pBitmap itemBitmap);
 };
 
+class blockItemIterator : public blockItemRangeIterator
+{
+public:
+	using self_type = blockItemRangeIterator;
+	using base_type = itemItr;
+
+	using coordinate_type = base_type::coordinate_type;
+	using size_type = base_type::size_type;
+	using dim_type = base_type::dim_type;
+	using dim_pointer = base_type::dim_pointer;
+	using dim_const_pointer = base_type::dim_const_pointer;
+	using dim_reference = base_type::dim_reference;
+	using dim_const_reference = base_type::dim_const_reference;
+
+public:
+	blockItemIterator(void* data, const eleType eType,
+					  const dimension& dims, const dimension& bSp,
+					  pBitmap itemBitmap);
+
+	blockItemIterator(void* data, const eleType eType,
+					  const dimension& dims, const coorRange& irange,
+					  const dimension& bSp,
+					  pBitmap itemBitmap);
+};
 }	// msdb
 #endif	// _MSDB_BLOCKITEM_ITERATOR_H_

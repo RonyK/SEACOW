@@ -18,6 +18,7 @@ pArray save_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 {
 	assert(inputArrays.size() == 1);
 
+	size_t mSizeTotal = 0;
 	pArray sourceArr = inputArrays[0];
 	arrayId arrId = sourceArr->getId();
 
@@ -31,9 +32,13 @@ pArray save_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 				= std::static_pointer_cast<serializable>(**cit);
 			storageMgr::instance()->saveChunk(arrId, attr->id_, (**cit)->getId(),
 											  serialChunk);
+			mSizeTotal += serialChunk->getSerializedSize();
+			//std::cout << serialChunk->getSerializedSize() << std::endl;
 			++(*cit);
 		}
 	}
+
+	std::cout << "mSizeTotal: " << mSizeTotal << std::endl;
 
 	return sourceArr;
 }

@@ -23,8 +23,8 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 	// Build Array
 	pDimensionDescs dimDescs = std::make_shared<dimensionDescs>();
 	dimensionId dimId = 0;
-	dimDescs->push_back(std::make_shared<dimensionDesc>(dimId++, "X", 0, dims[1], chunkDims[1], blockDims[1]));
 	dimDescs->push_back(std::make_shared<dimensionDesc>(dimId++, "Y", 0, dims[0], chunkDims[0], blockDims[0]));
+	dimDescs->push_back(std::make_shared<dimensionDesc>(dimId++, "X", 0, dims[1], chunkDims[1], blockDims[1]));
 
 	pAttributeDescs attrDescs = std::make_shared<attributeDescs>();
 	attributeId attrId = 0;
@@ -50,6 +50,7 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 				sP, eP);
 			pChunk sourceChunk = std::make_shared<memBlockChunk>(cDesc);
 			sourceChunk->bufferAlloc();
+			//sourceChunk->replaceBlockBitmap(std::make_shared<bitmap>(blockDims.area()));
 			sourceChunk->makeAllBlocks();
 
 			// Insert data into chunk
@@ -68,8 +69,8 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 					}
 				}
 				++(*bItr);
-				sourceArr->insertChunk(0, sourceChunk);
 			}
+			sourceArr->insertChunk(0, sourceChunk);
 		}
 	}
 
@@ -182,7 +183,8 @@ using value_type = char;
 static const size_t dataLength = 16;
 static const size_t dimX = 4;
 static const size_t dimY = 4;
-static const size_t maxLevel = 0;
+static const size_t wtLevel = 0;
+static const size_t mmtLevel = 0;
 static const arrayId aid = 441;
 
 extern std::vector<dim_type> dims;
@@ -221,7 +223,7 @@ using value_type = char;
 static const size_t dataLength = 16;
 static const size_t dimX = 4;
 static const size_t dimY = 4;
-static const size_t maxLevel = 0;
+static const size_t wtLevel = 0;
 static const arrayId aid = 441;
 
 extern std::vector<dim_type> dims;
@@ -255,7 +257,8 @@ using value_type = char;
 static const size_t dataLength = 64;
 static const size_t dimX = 8;
 static const size_t dimY = 8;
-static const size_t maxLevel = 2;
+static const size_t wtLevel = 2;
+static const size_t mmtLevel = 2;
 static const arrayId aid = 881;
 
 extern std::vector<dim_type> dims;
@@ -292,7 +295,7 @@ using value_type = int;
 static const size_t dataLength = 64;
 static const size_t dimX = 8;
 static const size_t dimY = 8;
-static const size_t maxLevel = 2;
+static const size_t wtLevel = 2;
 static const arrayId aid = 882;
 
 extern std::vector<dim_type> dims;

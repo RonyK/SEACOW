@@ -3,6 +3,7 @@
 namespace msdb
 {
 opPlan::opPlan()
+	: parentPlan_(nullptr), outArrBitmap_(nullptr), inParamSet_(nullptr)
 {
 }
 void opPlan::setParamSet(pParamSet paramSet)
@@ -23,7 +24,7 @@ pArrayDesc opPlan::inferSchema()
 {
 	return this->inParamSet_->inferSchema();
 }
-pBitmap opPlan::inferBitmap()
+pBitmapTree opPlan::inferBitmap()
 {
 	if (this->outArrBitmap_)
 		return this->outArrBitmap_;
@@ -32,14 +33,29 @@ pBitmap opPlan::inferBitmap()
 	this->outArrBitmap_ = this->inferTopDownBitmap();
 	return outArrBitmap_;
 }
-pBitmap opPlan::inferBottomUpBitmap()
+pBitmapTree opPlan::inferBottomUpBitmap()
 {
 	return this->inParamSet_->inferBottomUpBitmap();
 }
-pBitmap opPlan::inferTopDownBitmap()
+pBitmapTree opPlan::inferTopDownBitmap()
 {
-	//return pBitmap();
-	return nullptr;
+	if(this->parentPlan_)
+	{
+		return this->inParamSet_->inferTopDownBitmap(
+			this->parentPlan_->inferTopDownBitmap());
+	}else
+	{
+		assert(this->outArrBitmap_ != nullptr);
+		return this->outArrBitmap_;
+	}
+}
+pAction opPlan::getAction()
+{
+	auto myAction = this->makeAction();
+	myAction->setParams(this->getParam());
+	myAction->setArrayDesc(this->inferSchema());
+	myAction->setPlanBitmap(this->inferBitmap());
+	return myAction;
 }
 parameters opPlan::getParam()
 {
@@ -79,15 +95,15 @@ pArrayDesc opPlanParamSet::inferSchema()
 		this->params_[0]->getParam());
 	return std::make_shared<arrayDesc>(*sourcePlan->inferSchema());
 }
-pBitmap opPlanParamSet::inferBottomUpBitmap()
+pBitmapTree opPlanParamSet::inferBottomUpBitmap()
 {
 	auto sourcePlan = std::static_pointer_cast<opParamPlan::paramType>(
 		this->params_[0]->getParam());
-	//return std::make_shared<bitmap>(*sourcePlan->inferBottomUpBitmap());
-	return nullptr;
+	return std::make_shared<bitmapTree>(*(sourcePlan->inferBottomUpBitmap()));
+	//return nullptr;
 }
-pBitmap opPlanParamSet::inferTopDownBitmap(pBitmap fromParent)
+pBitmapTree opPlanParamSet::inferTopDownBitmap(pBitmapTree fromParent)
 {
-	return std::make_shared<bitmap>(*fromParent);
+	return std::make_shared<bitmapTree>(*fromParent);
 }
 }

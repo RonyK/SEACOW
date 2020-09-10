@@ -16,7 +16,7 @@ const char* se_decompression_plan::name()
 	return "se_decompression_plan";
 }
 
-pAction se_decompression_plan::getAction()
+pAction se_decompression_plan::makeAction()
 {
 	return std::make_shared<se_decompression_action>();
 }
@@ -36,5 +36,14 @@ pArrayDesc se_decompression_array_pset::inferSchema()
 	std::static_pointer_cast<opParamConst::paramType>(this->params_[1]->getParam())->getData(&level);
 
 	return std::make_shared<opParamArray::paramType>(*aSourceDesc);
+}
+pBitmapTree se_decompression_array_pset::inferBottomUpBitmap()
+{
+	pArrayDesc desc = this->inferSchema();
+	dimension chunkSpace = desc->getDimDescs()->getChunkSpace();
+	dimension blockSpace = desc->getDimDescs()->getBlockSpace();
+	dimension seChunkSpace = chunkSpace * blockSpace;
+
+	return std::make_shared<bitmapTree>(seChunkSpace.area(), true);
 }
 }	// msdb

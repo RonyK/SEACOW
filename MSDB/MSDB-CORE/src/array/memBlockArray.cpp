@@ -24,4 +24,9 @@ pChunk memBlockArray::makeChunk(const chunkDesc& desc)
 	this->insertChunk(desc.attrDesc_->id_, chunkObj);
 	return chunkObj;
 }
+void memBlockArray::freeChunk(const chunkId cId)
+{
+	this->chunks_[cId] = nullptr;
+	this->chunkBitmap_->setNull(cId);
+}
 }	// msdb

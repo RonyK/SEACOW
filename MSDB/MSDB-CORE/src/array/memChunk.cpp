@@ -37,13 +37,14 @@ pBlock memChunk::makeBlock(const blockId bId)
 void memChunk::insertBlock(pBlock inBlock)
 {
 	this->block_ = inBlock;
+	this->referenceBufferToBlock(inBlock->getId());
 }
 
 void memChunk::referenceBufferToBlock(const blockId bId)
 {
-	if (bId == 0 && this->block_)
+	if (bId == 0 && this->block_ && this->cached_)
 	{
-		this->block_->linkToChunkBuffer(this->cached_->getData(), this->block_->getDesc()->mSize_);
+		this->block_->refChunkBufferWithoutOwnership(this->cached_->getData(), this->block_->getDesc()->mSize_);
 	}
 }
 
@@ -149,6 +150,11 @@ pBlock memChunk::getBlock(const blockId bId)
 {
 	assert(bId == 0);
 	return this->block_;
+}
+void memChunk::freeBlock(const blockId bid)
+{
+	this->block_ = nullptr;
+	this->blockBitmap_->setNull(bid);
 }
 coor memChunk::getBlockCoor(const blockId bId)
 {

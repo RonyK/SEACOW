@@ -12,7 +12,7 @@ const char* mmt_save_plan::name()
 {
 	return "mmt_save_plan";
 }
-pAction mmt_save_plan::getAction()
+pAction mmt_save_plan::makeAction()
 {
 	return std::make_shared<mmt_save_action>();
 }

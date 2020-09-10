@@ -2,13 +2,18 @@
 #ifndef _MSDB_BUFFER_H_
 #define _MSDB_BUFFER_H_
 
+#include <memory>
+
 namespace msdb
 {
 using bufferSize = unsigned long long;
 extern const bufferSize INVALID_BUFFER_SIZE;
 
+class buffer;
+using pBuffer = std::shared_ptr<buffer>;
+
 // abstrct class for binary data holding
-class buffer
+class buffer : public std::enable_shared_from_this<buffer>
 {
 public:
 	buffer();
@@ -24,7 +29,7 @@ public:
 	virtual void realloc(bufferSize size) = 0;
 	virtual void copy(void* data, bufferSize size) = 0;			// copy input data
 	virtual void copy(void* data, bufferSize offset, bufferSize size) = 0;
-	virtual void linkToChunkBuffer(void* data, bufferSize size) = 0;
+	virtual void ref(pBuffer refBuffer, bufferSize size) = 0;
 	virtual void free();										// free binary data
 
 	inline bool isAllocated()

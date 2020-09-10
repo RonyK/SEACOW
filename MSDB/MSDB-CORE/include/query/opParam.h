@@ -11,6 +11,7 @@
 namespace msdb
 {
 class opParam;
+class predicate;
 
 using pParameter = std::shared_ptr<opParam>;
 using parameters = std::vector<pParameter>;
@@ -27,6 +28,7 @@ enum class opParamType
 	CONST,
 	INTLIST,
 	COOR,
+	PREDICATE
 };
 
 class opParam : public std::enable_shared_from_this<opParam>
@@ -136,6 +138,22 @@ public:
 
 private:
 	std::shared_ptr<coor> coor_;
+};
+
+class opParamPredicate : public opParam
+{
+public:
+	using paramType = predicate;
+
+public:
+	opParamPredicate(std::shared_ptr<predicate> predicate);
+
+public:
+	virtual opParam::void_pointer getParam();
+	virtual opParamType type();
+
+private:
+	std::shared_ptr<predicate> predicates_;
 };
 
 //////////////////////////////

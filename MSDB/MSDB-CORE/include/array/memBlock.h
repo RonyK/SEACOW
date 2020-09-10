@@ -27,7 +27,7 @@ public:
 // Buffer
 //////////////////////////////
 protected:
-	virtual void linkToChunkBuffer(void* data, bufferSize size) override;
+	virtual void refChunkBufferWithoutOwnership(void* data, bufferSize size) override;
 
 //////////////////////////////
 // Serializable

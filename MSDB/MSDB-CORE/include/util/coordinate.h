@@ -48,6 +48,16 @@ public:
 		memcpy(this->coor_, coor, this->dSize_ * sizeof(dim_type));
 	}
 
+	coordinate(const size_type dSize, const dim_type coor)
+		: dSize_(dSize)
+	{
+		this->coor_ = new dim_type[this->dSize_];
+		for(size_type d = 0; d < this->dSize_; ++d)
+		{
+			this->coor_[d] = coor;
+		}
+	}
+
 	coordinate(const std::vector<dim_type>& coorVec)
 		: dSize_(coorVec.size())
 	{
@@ -525,6 +535,22 @@ public:
 		this->move(offset);
 	}
 
+	bool isIntersect(const self_type& rhs) const
+	{
+		if (this->sP_ < rhs.eP_ && rhs.sP_ < this->eP_)
+			return true;
+
+		return false;
+	}
+
+	bool isFullyInside(const self_type& rhs) const
+	{
+		if (rhs.sP_ <= this->sP_ && this->eP_ <= rhs.eP_)
+			return true;
+
+		return false;
+	}
+
 public:
 	bool operator==(const self_type& rhs) const
 	{
@@ -536,38 +562,38 @@ public:
 		return !(*this == rhs);
 	}
 
-	bool operator<(const self_type& rhs) const
-	{
-		assert(this->dSize_ == rhs.dSize_);
-		if (*this == rhs)
-			return false;
+	//bool operator<(const self_type& rhs) const
+	//{
+	//	assert(this->dSize_ == rhs.dSize_);
+	//	if (*this == rhs)
+	//		return false;
 
-		if(!(this->sP_ < rhs.sP_))
-		{
-			return false;
-		}
+	//	if(!(this->sP_ < rhs.sP_))
+	//	{
+	//		return false;
+	//	}
 
-		if(!(this->eP_ > rhs.eP_))
-		{
-			return false;
-		}
+	//	if(!(this->eP_ > rhs.eP_))
+	//	{
+	//		return false;
+	//	}
 
-		return true;
-	}
+	//	return true;
+	//}
 
-	bool operator>(const self_type& rhs) const
-	{
-		assert(this->dSize_ == rhs.dSize_);
-		if (*this == rhs)
-			return false;
+	//bool operator>(const self_type& rhs) const
+	//{
+	//	assert(this->dSize_ == rhs.dSize_);
+	//	if (*this == rhs)
+	//		return false;
 
-		for (dimensionId d = 0; d < this->dSize_; ++d)
-		{
-			if (this->sP_[d] > rhs.sP_[d] || this->eP_[d] < rhs.eP_[d])
-				return false;
-		}
-		return true;
-	}
+	//	for (dimensionId d = 0; d < this->dSize_; ++d)
+	//	{
+	//		if (this->sP_[d] > rhs.sP_[d] || this->eP_[d] < rhs.eP_[d])
+	//			return false;
+	//	}
+	//	return true;
+	//}
 
 protected:
 	size_type dSize_;
@@ -989,6 +1015,12 @@ public:
 	{
 	}
 
+	itemIterator(Ty_* ptr, const coordinate<Dty_> dims)
+		: base_type(dims), ptr_(ptr)
+	{
+	}
+	
+
 	itemIterator(const self_type& mit)
 		: base_type(mit), ptr_(mit.ptr_)
 	{
@@ -1062,6 +1094,11 @@ public:
 	virtual element getAt(position_t pos)
 	{
 		return element((void*)(ptr_ + (this->seqPos_ + this->posToSeq(pos)) * this->eSize_), this->eType_);
+	}
+
+	eleType getEtype()
+	{
+		return this->eType_;
 	}
 	//////////////////////////////
 
@@ -1217,7 +1254,7 @@ protected:
 
 // Pic less coordinate value on each dimension
 template <typename Dty_>
-coordinate<Dty_> getInsideCoor(coordinate<Dty_>& c1, coordinate<Dty_>& c2)
+coordinate<Dty_> getInsideCoor(const coordinate<Dty_>& c1, const coordinate<Dty_>& c2)
 {
 	coordinate<Dty_> newCoor(c1);
 	for(dimensionId d = 0; d < c1.size(); ++d)
@@ -1232,7 +1269,7 @@ coordinate<Dty_> getInsideCoor(coordinate<Dty_>& c1, coordinate<Dty_>& c2)
 
 // Pic greater coordiante value on each dimension
 template <typename Dty_>
-coordinate<Dty_> getOutsideCoor(coordinate<Dty_>& c1, coordinate<Dty_>& c2)
+coordinate<Dty_> getOutsideCoor(const coordinate<Dty_>& c1, const coordinate<Dty_>& c2)
 {
 	coordinate<Dty_> newCoor(c1);
 	for (dimensionId d = 0; d < c1.size(); ++d)
@@ -1246,10 +1283,19 @@ coordinate<Dty_> getOutsideCoor(coordinate<Dty_>& c1, coordinate<Dty_>& c2)
 }
 
 using coor = coordinate<position_t>;
+using pCoor = std::shared_ptr<coor>;
+
 using coorItr = coordinateIterator<position_t>;
+using pCoorItr = std::shared_ptr<coorItr>;
+
 using coorRange = coordinateRange<position_t>;
+using pCoorRange = std::shared_ptr<coorRange>;
+
 using itemItr = itemIterator<position_t>;
+using pItemItr = std::shared_ptr<itemItr>;
+
 using itemRangeItr = itemRangeIterator<position_t>;
+using pItemRangeItr = std::shared_ptr<itemRangeItr>;
 }
 
 #endif

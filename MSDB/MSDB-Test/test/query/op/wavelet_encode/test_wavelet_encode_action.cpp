@@ -163,21 +163,8 @@ TEST(query_op_wavelet_encode, waveletHaarSimple_2D)
 
 namespace caDummy
 {
-namespace data2D_sc4x4
-{
-TEST(query_op_wavelet_encode, waveletHaarSimple_sc4x4)
-{
-	auto weArr = wavelet_encode(std::vector<pArray>());
-	wavelet_encode_check(weArr);
-
-	//auto wdArr = wavelet_decode(std::vector<pArray>({ weArr }));
-	//wavelet_decode_check(wdArr);
-}
-}	// data2D_sc4x4
-
-namespace data2D_star1024x1024
-{
-TEST(query_op_wavelet_encode, wavelet_encode_star1024x1024)
+template <typename value_type>
+void test_body_wavelet_encode_decode(_pFuncGetSourceArray_, eleDefault wtLevel)
 {
 	bool printFlag = false;
 
@@ -190,7 +177,7 @@ TEST(query_op_wavelet_encode, wavelet_encode_star1024x1024)
 		sourceArr[0]->print();
 	}
 
-	auto weArr = wavelet_encode(sourceArr);
+	auto weArr = wavelet_encode(sourceArr, wtLevel);
 	if (printFlag)
 	{
 		std::cout << "##############################" << std::endl;
@@ -198,7 +185,7 @@ TEST(query_op_wavelet_encode, wavelet_encode_star1024x1024)
 		weArr->print();
 	}
 
-	auto wdArr = wavelet_decode(std::vector<pArray>({ weArr }));
+	auto wdArr = wavelet_decode(std::vector<pArray>({ weArr }), wtLevel);
 	if (printFlag)
 	{
 		std::cout << "##############################" << std::endl;
@@ -209,6 +196,20 @@ TEST(query_op_wavelet_encode, wavelet_encode_star1024x1024)
 	compArrary<value_type>(sourceArr[0], wdArr);
 	//EXPECT_TRUE(false);
 }
+namespace data2D_sc4x4
+{
+TEST(query_op_wavelet_encode, waveletHaarSimple_sc4x4)
+{
+	test_body_wavelet_encode_decode<value_type>(&getSourceArrayIfEmpty, wtLevel);
+}
+}	// data2D_sc4x4
+
+namespace data2D_star1024x1024
+{
+TEST(query_op_wavelet_encode, wavelet_encode_star1024x1024)
+{
+	test_body_wavelet_encode_decode<value_type>(&getSourceArrayIfEmpty, wtLevel);
+}
 }	// data2D_star1024x1024
 
 namespace data2D_tempTest
@@ -217,9 +218,9 @@ TEST(query_op_wavelet_encode, wavelet_encode_testTemp)
 {
 	std::vector<pArray> sourceArr;
 	getSourceArrayIfEmpty(sourceArr);
-	auto weArr = wavelet_encode(sourceArr);
+	auto weArr = wavelet_encode(sourceArr, wtLevel);
 	weArr->print();
-	auto wdArr = wavelet_decode(std::vector<pArray>({ weArr }));
+	auto wdArr = wavelet_decode(std::vector<pArray>({ weArr }), wtLevel);
 	wdArr->print();
 
 	compArrary<value_type>(sourceArr[0], wdArr);

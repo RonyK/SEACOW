@@ -15,7 +15,7 @@ public:
 
 public:
 	virtual const char* name() override;
-	virtual pAction getAction() override;
+	virtual pAction makeAction() override;
 };
 
 class se_decompression_array_pset : public opArrayParamSet
@@ -25,6 +25,7 @@ public:
 
 public:
 	virtual pArrayDesc inferSchema() override;
+	virtual pBitmapTree inferBottomUpBitmap() override;
 };
 }		// msdb
 #endif	// _MSDB_SE_DECOMPRESSION_PLAN_H_

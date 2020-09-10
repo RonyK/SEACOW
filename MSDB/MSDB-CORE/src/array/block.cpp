@@ -3,7 +3,7 @@
 namespace msdb
 {
 block::block(pBlockDesc desc)
-	: desc_(desc)
+	: desc_(desc), itemBitmap_(std::make_shared<bitmap>(desc->dims_.area(), true))
 {
 
 }
@@ -23,13 +23,13 @@ dimensionId block::getDSize()
 {
 	return this->desc_->dims_.size();
 }
-void block::setIsp(coor isp)
+coorRange block::getBlockRange()
 {
-	this->desc_->isp_ = isp;
+	return coorRange(this->desc_->getSp(), this->desc_->getEp());
 }
-void block::setIep(coor iep)
+coorRange block::getBlockItemRange()
 {
-	this->desc_->iep_ = iep;
+	return coorRange(this->desc_->getIsp(), this->desc_->getIep());
 }
 void block::unlinkFromChunkBuffer()
 {
@@ -54,6 +54,26 @@ bool block::isMaterialized() const
 pBlockBuffer block::getBuffer()
 {
 	return this->cached_;
+}
+void block::copyBitmap(cpBitmap itemBitmap)
+{
+	this->itemBitmap_ = std::make_shared<bitmap>(*itemBitmap);
+}
+void block::replaceBitmap(pBitmap itemBitmap)
+{
+	this->itemBitmap_ = itemBitmap;
+}
+void block::mergeBitmap(pBitmap itemBitmap)
+{
+	this->itemBitmap_->andMerge(*itemBitmap);
+}
+void block::initEmptyBitmap()
+{
+	this->itemBitmap_ = std::make_shared<bitmap>(this->desc_->dims_.area(), false);
+}
+pBitmap block::getBitmap()
+{
+	return this->itemBitmap_;
 }
 void block::print()
 {

@@ -21,7 +21,7 @@ public:
 
 public:
 	chunkIterator(const dimension dims,
-				  chunkContainer* chunks, bitmap* chunkBitmap, 
+				  chunkContainer* chunks, pBitmap chunkBitmap, 
 				  iterateMode itMode);
 
 	//chunkIterator(const dimension dims,
@@ -72,7 +72,7 @@ public:
 
 protected:
 	chunkContainer* chunks_;
-	bitmap* chunkBitmap_;
+	pBitmap chunkBitmap_;
 	iterateMode itMode_;
 };
 }	// msdb

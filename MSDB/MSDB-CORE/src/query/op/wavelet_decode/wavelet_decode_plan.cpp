@@ -11,7 +11,7 @@ const char* wavelet_decode_plan::name()
 {
 	return "wavelet_decode";
 }
-pAction wavelet_decode_plan::getAction()
+pAction wavelet_decode_plan::makeAction()
 {
 	auto wdAction = std::make_shared<wavelet_decode_action>();
 	return wdAction;

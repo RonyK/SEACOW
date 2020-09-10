@@ -13,30 +13,6 @@ namespace msdb
 class opPlan;
 using pPlan = std::shared_ptr<opPlan>;
 
-class opPlan : public std::enable_shared_from_this<opPlan>
-{
-public:
-	opPlan();
-
-public:
-	virtual const char* name() = 0;
-	void setParamSet(pParamSet paramSet);
-	virtual pArrayDesc inferSchema();
-	virtual pBitmap inferBitmap();
-	virtual pBitmap inferBottomUpBitmap();
-	virtual pBitmap inferTopDownBitmap();
-	virtual pAction getAction() = 0;
-	parameters getParam();
-
-protected:
-	virtual void setParentPlan(pPlan parentPlan);
-
-private:
-	pParamSet inParamSet_;
-	pBitmap outArrBitmap_;
-	pPlan parentPlan_;
-};
-
 class opParamPlan : public opParam
 {
 public:
@@ -68,8 +44,37 @@ public:
 
 public:
 	virtual pArrayDesc inferSchema() override;
-	virtual pBitmap inferBottomUpBitmap() override;
-	virtual pBitmap inferTopDownBitmap(pBitmap fromParent) override;
+	virtual pBitmapTree inferBottomUpBitmap() override;
+	virtual pBitmapTree inferTopDownBitmap(pBitmapTree fromParent) override;
+};
+
+class opPlan : public std::enable_shared_from_this<opPlan>
+{
+public:
+	opPlan();
+
+public:
+	virtual const char* name() = 0;
+	void setParamSet(pParamSet paramSet);
+	virtual pArrayDesc inferSchema();
+	virtual pBitmapTree inferBitmap();
+	virtual pAction getAction();
+	parameters getParam();
+
+protected:
+	virtual pBitmapTree inferBottomUpBitmap();
+	friend pBitmapTree opPlanParamSet::inferBottomUpBitmap();
+
+	virtual pBitmapTree inferTopDownBitmap();
+	virtual pAction makeAction() = 0;
+
+protected:
+	virtual void setParentPlan(pPlan parentPlan);
+
+private:
+	pParamSet inParamSet_;
+	pBitmapTree outArrBitmap_;
+	pPlan parentPlan_;
 };
 }
 

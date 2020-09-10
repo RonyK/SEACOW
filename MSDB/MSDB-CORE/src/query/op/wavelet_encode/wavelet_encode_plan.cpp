@@ -19,7 +19,7 @@ const char* msdb::wavelet_encode_plan::name()
 //	this->addParamSet(std::make_shared<wavelet_encode_array_pset>());
 //}
 
-pAction wavelet_encode_plan::getAction()
+pAction wavelet_encode_plan::makeAction()
 {
 	return std::make_shared<wavelet_encode_action>();
 }

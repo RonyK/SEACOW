@@ -37,6 +37,7 @@ public:
 	size_type getDSize();
 	size_type numCells();
 	coor getChunkCoor();
+	coorRange getChunkRange();
 
 protected:
 	pChunkDesc desc_;		// chunk desc
@@ -45,8 +46,7 @@ protected:
 // Buffer
 //////////////////////////////
 protected:
-	void free();
-	// NOTE::Call a referenceBufferToBlock() in a makeBuffer()
+	void freeBuffer();
 	virtual void makeBuffer() = 0;
 	virtual void referenceBufferToBlock(const blockId bId) = 0;
 	virtual void referenceAllBufferToBlock();
@@ -57,7 +57,7 @@ public:
 	virtual void bufferCopy(void* data, bufferSize size);
 	virtual void bufferCopy(pChunk source);
 	virtual void bufferCopy(pBlock source);
-	virtual void bufferRef(void* data, bufferSize size);
+	//virtual void bufferRef(void* data, bufferSize size);
 	virtual void bufferRef(pChunk source);
 	bool isMaterialized() const;
 
@@ -120,9 +120,10 @@ protected:
 //////////////////////////////
 public:
 	virtual pBlock makeBlock(const blockId bId) = 0;
-	virtual void makeBlocks(const bitmap blockBitmap);
+	virtual void makeBlocks(const bitmap& blockBitmap);
 	virtual void makeAllBlocks();
 	virtual void insertBlock(pBlock inBlock) = 0;
+	virtual void freeBlock(const blockId bid) = 0;
 
 	// mSize and mOffset size are not setted in the output of getBlockDesc function
 	virtual pBlockDesc getBlockDesc(const blockId bId);
@@ -135,10 +136,15 @@ public:
 	virtual coor getBlockCoor(const blockId bId);
 	virtual pBlockIterator getBlockIterator(
 		const iterateMode itMode = iterateMode::ALL) = 0;
+	void copyBlockBitmap(cpBitmap blockBitmap);
+	void replaceBlockBitmap(pBitmap blockBitmap);
+	void mergeBlockBitmap(pBitmap blockBitmap);
+	pBitmap getBlockBitmap();
+	//cpBitmap getBlockBitmap() const;
 
 protected:
 	size_type blockCapacity_;
-	bitmap blockBitmap_;
+	pBitmap blockBitmap_;		// Be initialized to false by default
 
 //////////////////////////////
 // Item Iterators
@@ -157,24 +163,24 @@ protected:
 	template <class Ty_>
 	void printImp()
 	{
-		auto it = this->getItemIterator();
-		std::cout << "==============================" << std::endl;
-		for (size_t i = 0; i < it->getCapacity() && !it->isEnd(); ++i, ++(*it))
-		{
-			std::cout << (**it).get<Ty_>() << ", ";
-		}
-		std::cout << std::endl << "==============================" << std::endl;
+		//auto it = this->getItemIterator();
+		//std::cout << "==============================" << std::endl;
+		//for (size_t i = 0; i < it->getCapacity() && !it->isEnd(); ++i, ++(*it))
+		//{
+		//	std::cout << (**it).get<Ty_>() << ", ";
+		//}
+		//std::cout << std::endl << "==============================" << std::endl;
 	}
 	template<>
 	void printImp<char>()
 	{
-		auto it = this->getItemIterator();
-		std::cout << "==============================" << std::endl;
-		for (size_t i = 0; i < it->getCapacity() && !it->isEnd(); ++i, ++(*it))
-		{
-			std::cout << static_cast<int>((**it).get<char>()) << ", ";
-		}
-		std::cout << std::endl << "==============================" << std::endl;
+		//auto it = this->getItemIterator();
+		//std::cout << "==============================" << std::endl;
+		//for (size_t i = 0; i < it->getCapacity() && !it->isEnd(); ++i, ++(*it))
+		//{
+		//	std::cout << static_cast<int>((**it).get<char>()) << ", ";
+		//}
+		//std::cout << std::endl << "==============================" << std::endl;
 	}
 
 //////////////////////////////

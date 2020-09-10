@@ -14,18 +14,18 @@ opParamSet::opParamSet(parameters& pSet)
 	}
 }
 
-bool opParamSet::isMatch(parameters pSet)
-{
-	if (this->params_.size() != pSet.size())
-		return false;
-
-	auto it = this->params_.begin();
-	auto iit = pSet.begin();
-	for(; it != this->params_.end(); it++, iit++)
-	{
-		
-	}
-}
+//bool opParamSet::isMatch(parameters pSet)
+//{
+//	if (this->params_.size() != pSet.size())
+//		return false;
+//
+//	auto it = this->params_.begin();
+//	auto iit = pSet.begin();
+//	for(; it != this->params_.end(); ++it, ++iit)
+//	{
+//		
+//	}
+//}
 parameters opParamSet::getParam()
 {
 	return this->params_;
@@ -40,15 +40,15 @@ pArrayDesc opArrayParamSet::inferSchema()
 	pArrayDesc aSourceDesc = std::static_pointer_cast<opParamArray::paramType>(this->params_[0]->getParam());
 	return std::make_shared<opParamArray::paramType>(*aSourceDesc);
 }
-pBitmap opArrayParamSet::inferBottomUpBitmap()
+pBitmapTree opArrayParamSet::inferBottomUpBitmap()
 {
 	pArrayDesc desc = this->inferSchema();
 	dimension chunkSpace = desc->getDimDescs()->getChunkSpace();
 
-	return std::make_shared<bitmap>(chunkSpace.area(), true);
+	return std::make_shared<bitmapTree>(chunkSpace.area(), true);
 }
-pBitmap opArrayParamSet::inferTopDownBitmap(pBitmap fromParent)
+pBitmapTree opArrayParamSet::inferTopDownBitmap(pBitmapTree fromParent)
 {
-	return std::make_shared<bitmap>(*fromParent);
+	return std::make_shared<bitmapTree>(*fromParent);
 }
 }

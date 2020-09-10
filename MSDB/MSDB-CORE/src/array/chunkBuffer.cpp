@@ -6,7 +6,7 @@
 namespace msdb
 {
 chunkBuffer::chunkBuffer()
-	: buffer(), data_(nullptr)
+	: buffer(), data_(nullptr), refBuffer_(nullptr)
 {
 
 }
@@ -73,15 +73,24 @@ void chunkBuffer::copy(void* data, bufferSize offset, bufferSize size)
 {
 	assert(offset + size <= this->bodySize_);
 	memcpy((char*)this->data_ + offset, data, size);
-
 }
 
-// WARNING:: data is deleted when the chunkBuffer is disappear in a destructor.
-void chunkBuffer::linkToChunkBuffer(void* data, bufferSize size)
+void chunkBuffer::ref(pBuffer refBuffer, bufferSize size)
 {
+	assert(size >= refBuffer->size());
+
+	auto refChunkBuffer = std::static_pointer_cast<chunkBuffer>(refBuffer);
 	this->isAllocated_ = false;
-	this->data_ = data;
-	this->bodySize_ = size;
+	this->data_ = refBuffer->getData();
+	this->bodySize_ = size; 
+
+	if(refChunkBuffer->getRefBuffer())
+	{
+		this->refBuffer_ = refChunkBuffer->getRefBuffer();
+	}else
+	{
+		this->refBuffer_ = refChunkBuffer;
+	}
 }
 
 void chunkBuffer::free()
@@ -92,7 +101,13 @@ void chunkBuffer::free()
 		this->isAllocated_ = false;
 		this->bodySize_ = 0;
 		this->data_ = nullptr;
+		this->refBuffer_ = nullptr;
 	}
+}
+
+pChunkBuffer chunkBuffer::getRefBuffer()
+{
+	return this->refBuffer_;
 }
 
 //void chunkBuffer::compress(CompressionMethod cm)

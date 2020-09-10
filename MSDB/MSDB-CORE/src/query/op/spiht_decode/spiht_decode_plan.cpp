@@ -14,7 +14,7 @@ const char* spiht_decode_plan::name()
 	return "spiht_decode_plan";
 }
 
-pAction spiht_decode_plan::getAction()
+pAction spiht_decode_plan::makeAction()
 {
 	return std::make_shared<spiht_decode_action>();
 }
@@ -24,5 +24,15 @@ spiht_decode_array_pset::spiht_decode_array_pset(parameters& pSet)
 	: opArrayParamSet(pSet)
 {
 	assert(this->params_.size() == 1);
+}
+pBitmapTree spiht_decode_array_pset::inferBottomUpBitmap()
+{
+	pArrayDesc desc = this->inferSchema();
+	dimension chunkSpace = desc->getDimDescs()->getChunkSpace();
+	dimension blockSpace = desc->getDimDescs()->getBlockSpace();
+	dimension seChunkSpace = chunkSpace * blockSpace;
+
+	// TODO::merge block bitmaps
+	return std::make_shared<bitmapTree>(seChunkSpace.area(), true);
 }
 }

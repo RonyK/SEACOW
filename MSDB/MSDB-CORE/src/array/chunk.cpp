@@ -3,16 +3,18 @@
 
 namespace msdb
 {
-chunk::chunk(pChunkDesc desc) : cached_(nullptr), desc_(desc), 
-blockCapacity_(desc->getBlockSpace().area()), blockBitmap_(this->blockCapacity_),
-serializable(std::make_shared<chunkHeader>())
+chunk::chunk(pChunkDesc desc)
+	: cached_(nullptr), desc_(desc), 
+	blockCapacity_(desc->getBlockSpace().area()),
+	blockBitmap_(std::make_shared<bitmap>(this->blockCapacity_, false)),
+	serializable(std::make_shared<chunkHeader>())
 {
 
 }
 
 chunk::~chunk()
 {
-	this->free();
+	this->freeBuffer();
 }
 
 void chunk::referenceAllBufferToBlock()
@@ -26,7 +28,7 @@ void chunk::referenceAllBufferToBlock()
 
 void chunk::bufferAlloc()
 {
-	this->free();
+	this->freeBuffer();
 	this->makeBuffer();
 	this->cached_->bufferAlloc(this->desc_->mSize_);
 	this->referenceAllBufferToBlock();
@@ -34,7 +36,7 @@ void chunk::bufferAlloc()
 
 void chunk::bufferAlloc(bufferSize size)
 {
-	this->free();
+	this->freeBuffer();
 	this->makeBuffer();
 	this->cached_->bufferAlloc(size);
 	this->desc_->mSize_ = size;
@@ -61,19 +63,24 @@ void chunk::bufferCopy(pBlock source)
 }
 
 // Copy pointer
-void chunk::bufferRef(void* data, bufferSize size)
-{
-	this->free();
-	this->makeBuffer();
-	this->cached_->linkToChunkBuffer(data, size);
-	this->referenceAllBufferToBlock();
-	this->desc_->mSize_ = size;
-}
+//void chunk::bufferRef(void* data, bufferSize size)
+//{
+//	this->free();
+//	this->makeBuffer();
+//	this->cached_->refChunkBufferWithoutOwnership(data, size);
+//	this->referenceAllBufferToBlock();
+//	this->desc_->mSize_ = size;
+//}
 
 void chunk::bufferRef(pChunk source)
 {
 	bufferSize size = source->getDesc()->mSize_;
-	this->bufferRef(source->getBuffer()->getData(), size);
+	//this->bufferRef(source->getBuffer()->getData(), size);
+	this->freeBuffer();
+	this->makeBuffer();
+	this->getBuffer()->ref(source->getBuffer(), size);
+	this->referenceAllBufferToBlock();
+	this->desc_->mSize_ = size;
 }
 
 bool chunk::isMaterialized() const
@@ -120,34 +127,21 @@ chunk::size_type chunk::numCells()
 }
 void chunk::print()
 {
-	switch (this->desc_->attrDesc_->type_)
+	auto bit = this->getBlockIterator();
+
+	while (!bit->isEnd())
 	{
-	case eleType::BOOL:
-		return this->printImp<bool>();
-	case eleType::CHAR:
-		return this->printImp<char>();
-	case eleType::INT8:
-		return this->printImp<int8_t>();
-	case eleType::INT16:
-		return this->printImp<int16_t>();
-	case eleType::INT32:
-		return this->printImp<int32_t>();
-	case eleType::INT64:
-		return this->printImp<int64_t>();
-	case eleType::UINT8:
-		return this->printImp<uint8_t>();
-	case eleType::UINT16:
-		return this->printImp<uint16_t>();
-	case eleType::UINT32:
-		return this->printImp<uint32_t>();
-	case eleType::UINT64:
-		return this->printImp<uint64_t>();
-	case eleType::FLOAT:
-		return this->printImp<float>();
-	case eleType::DOUBLE:
-		return this->printImp<double>();
-	default:
-		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
+		std::cout << "------------------------------" << std::endl;
+		if (bit->isExist())
+		{
+			(**bit)->print();
+		} else
+		{
+			std::cout << "Block (" << bit->seqPos() << ") is not exist" << std::endl;
+		}
+		std::cout << "------------------------------" << std::endl;
+
+		++(*bit);
 	}
 }
 
@@ -156,7 +150,12 @@ coor chunk::getChunkCoor()
 	return this->desc_->chunkCoor_;
 }
 
-void chunk::free()
+coorRange chunk::getChunkRange()
+{
+	return coorRange(this->desc_->sp_, this->desc_->ep_);
+}
+
+void chunk::freeBuffer()
 {
 	if (this->isMaterialized())
 	{
@@ -164,7 +163,7 @@ void chunk::free()
 	}
 }
 
-void chunk::makeBlocks(const bitmap blockBitmap)
+void chunk::makeBlocks(const bitmap& blockBitmap)
 {
 	assert(blockBitmap.getCapacity() == this->getBlockCapacity());
 	blockId capacity = this->getBlockCapacity();
@@ -182,10 +181,6 @@ void chunk::makeAllBlocks()
 	for(blockId bid = 0; bid < this->blockCapacity_; ++bid)
 	{
 		this->makeBlock(bid);
-	}
-	if(this->cached_)
-	{
-		this->referenceAllBufferToBlock();
 	}
 }
 
@@ -224,4 +219,24 @@ coor chunk::getBlockCoor(const blockId bId)
 {
 	return this->getBlockIterator()->seqToCoor(bId);
 }
+void chunk::copyBlockBitmap(cpBitmap blockBitmap)
+{
+	this->blockBitmap_ = std::make_shared<bitmap>(*blockBitmap);
+}
+void chunk::replaceBlockBitmap(pBitmap blockBitmap)
+{
+	this->blockBitmap_ = blockBitmap;
+}
+void chunk::mergeBlockBitmap(pBitmap blockBitmap)
+{
+	this->blockBitmap_->andMerge(*blockBitmap);
+}
+pBitmap chunk::getBlockBitmap()
+{
+	return this->blockBitmap_;
+}
+//cpBitmap chunk::getBlockBitmap() const
+//{
+//	return this->blockBitmap_;
+//}
 }
