@@ -128,6 +128,18 @@ void getNaiveFilter(pArrayDesc sourceArrDesc,
 	action = std::get<1>(planAction);
 	qry = std::get<2>(planAction);
 }
+void getIndexFilter(pArrayDesc sourceArrDesc,
+					pPredicate myPredicate,
+					std::shared_ptr<index_filter_plan>& plan,
+					std::shared_ptr<index_filter_action>& action,
+					pQuery& qry)
+{
+	auto planAction = getPredicateArrayParamOperator<index_filter_plan, index_filter_action, index_filter_array_pset>(
+		sourceArrDesc, myPredicate);
+	plan = std::get<0>(planAction);
+	action = std::get<1>(planAction);
+	qry = std::get<2>(planAction);
+}
 void getSPIHTEncode(pArrayDesc sourceArrDesc, std::shared_ptr<spiht_encode_plan>& plan, std::shared_ptr<spiht_encode_action>& action, pQuery& qry)
 {
 	auto planAction = getSingleArrayParamOperator<spiht_encode_plan, spiht_encode_action, spiht_encode_array_pset>(sourceArrDesc);

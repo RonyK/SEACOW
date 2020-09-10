@@ -35,6 +35,8 @@
 
 #include <op/naive_filter/naive_filter_plan.h>
 #include <op/naive_filter/naive_filter_action.h>
+#include <op/index_filter/index_filter_plan.h>
+#include <op/index_filter/index_filter_action.h>
 
 namespace msdb
 {
@@ -109,6 +111,12 @@ void getNaiveFilter(pArrayDesc sourceArrDesc,
 					pPredicate myPredicate,
 					std::shared_ptr<naive_filter_plan>& plan,
 					std::shared_ptr<naive_filter_action>& action,
+					pQuery& qry);
+
+void getIndexFilter(pArrayDesc sourceArrDesc,
+					pPredicate myPredicate,
+					std::shared_ptr<index_filter_plan>& plan,
+					std::shared_ptr<index_filter_action>& action,
 					pQuery& qry);
 
 template <typename plan_, typename action_, typename pset_>

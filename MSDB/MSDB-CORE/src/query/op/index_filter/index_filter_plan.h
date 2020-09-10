@@ -8,6 +8,7 @@
 #include <index/mmt.h>
 #include <parse/predicate.h>
 #include <memory>
+#include <list>
 
 namespace msdb
 {
@@ -43,6 +44,7 @@ protected:
 
 		coorItr cit(chunkSpace);
 		coorItr bit(blockSpace);
+		size_t dSize = arrDesc->getDSize();
 
 		auto arrIndex = arrayMgr::instance()->getAttributeIndex(arrDesc->id_, attrDesc->id_);
 		if (arrIndex->getType() != attrIndexType::MMT)
@@ -52,19 +54,90 @@ protected:
 		auto mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
 		auto mmtLevel = mmtIndex->getMaxLevel();
 
-		std::vector<bool> parentTargetNodes;
-		std::vector<bool> curTargetNodes;
-		for(int64_t level = mmtLevel; level > 0; --level)
-		{
-			curTargetNodes.clear();
+		if(inPredicate->evaluateNode(mmtIndex->getNode(mmtLevel, 0)))		// Check root node
+		{	
+			// Target chunk exists
+			// Start searching nodes
+			std::vector<std::vector<bool>> nodes(mmtLevel + 1);
+			size_t childs = (size_t)pow(2, dSize);
+			
+			//////////////////////////////
+			// Level (mmtLevel)
+			nodes[mmtLevel] = std::vector<bool>({ true });
 
-			auto nit = mmtIndex->getNodeIterator(level);
-			while(!nit.isEnd())
+			//////////////////////////////
+			// Level (mmtLevel - 1)
+			size_t curLevel = mmtLevel - 1;
+			if(curLevel > 0)
 			{
-				auto node = (*nit);
-				//inPredicate->evaluate(node);
-				++nit;
+				auto nit = mmtIndex->getNodeIterator(curLevel);
+				nodes[curLevel] = std::vector<bool>(nit.getCapacity(), false);
+
+				while (!nit.isEnd())
+				{
+					if (inPredicate->evaluateNode((*nit)))
+					{
+						nodes[curLevel].push_back(true);
+					} else
+					{
+						nodes[curLevel].push_back(false);
+					}
+					++nit;
+				}
 			}
+			
+			//////////////////////////////
+			// Level (mmtLevel - 2) ~ 0
+			for (curLevel -= 1; curLevel >= 0; --curLevel)
+			{
+				size_t prevLevel = curLevel + 1;
+				auto pcit = mmtIndex->getNodeIterator(prevLevel);
+				auto cit = mmtIndex->getNodeIterator(curLevel);
+				nodes[curLevel] = std::vector<bool>(cit.getCapacity(), false);
+
+				while (!pcit.isEnd())
+				{
+					// check parent
+					if(nodes[prevLevel][pcit.seqPos()])
+					{
+						auto childBase = pcit.coor();
+						for (dimensionId d = 0; d < dSize; ++d)
+						{
+							childBase[d] *= 2;
+						}
+
+						// Iterate childs
+						for (size_t cID = 0; cID < childs; cID++)
+						{
+							// Set child coordinate and move to cit
+							auto cur = childBase;
+							for (dimensionId d = 0; d < dSize; ++d)
+							{
+								if (cID & ((dimensionId)0x1 << d))
+								{
+									cur[d] += 1;
+								}
+							}
+							cit.moveTo(cur);
+
+							if (inPredicate->evaluateNode((*cit)))
+							{
+								nodes[curLevel][cit.seqPos()] = true;
+							} else
+							{
+								nodes[curLevel][cit.seqPos()] = false;
+							}
+						}
+					}
+					++pcit;
+				}
+			}
+
+			// return bitmapTree
+		}else
+		{
+			// No target chunk
+			return std::make_shared<bitmapTree>(chunkSpace.area(), false);
 		}
 	}
 };

@@ -4,6 +4,7 @@
 
 #include <util/coordinate.h>
 #include <parse/expression.h>
+#include <index/mmtNode.h>
 #include <memory>
 
 namespace msdb
@@ -36,6 +37,12 @@ public:
 		// TODO:: change fixed values position
 		// Current: attributeVaue(left), int64(right)
 		return (this->*evaluateFunc)((**iit).get<Ty_>(), boost::any_cast<int64_t>(rhs_->getValue()));
+	}
+
+	template <typename Ty_>
+	bool evaluateNode(pMmtNode node)
+	{
+		return (this->*evaluateNodeFunc)(node, boost::any_cast<int64_t>(rhs_->getValue()));
 	}
 
 	template <typename Ty_>
@@ -74,6 +81,42 @@ public:
 		return v1 >= v2;
 	}
 
+	template <typename Ty_>
+	bool evaluateNodeEqual(const pMmtNode v1, const int64_t v2)
+	{
+		return v1->getMin<Ty_>() <= v2 && v2 <= v1->getMax<Ty_>();
+	}
+
+	template <typename Ty_>
+	bool evaluateNodeNotEqual(const pMmtNode v1, const int64_t v2)
+	{
+		return v2 < v1->getMin<Ty_>() || v1->getMax<Ty_>() < v2;
+	}
+
+	template <typename Ty_>
+	bool evaluateNodeGreater(const pMmtNode v1, const int64_t v2)
+	{
+		return v1->getMin<Ty_>() < v2 ;
+	}
+
+	template <typename Ty_>
+	bool evaluateNodeGreaterEqual(const pMmtNode v1, const int64_t v2)
+	{
+		return v1->getMin<Ty_>() <= v2;
+	}
+
+	template <typename Ty_>
+	bool evaluateNodeLess(const pMmtNode v1, const int64_t v2)
+	{
+		return v1->getMax<Ty_>() > v2;
+	}
+
+	template <typename Ty_>
+	bool evaluateNodeLessEqual(const pMmtNode v1, const int64_t v2)
+	{
+		return v1->getMax<Ty_>() >= v2;
+	}
+
 protected:
 	pExpression lhs_;
 	pExpression rhs_;
@@ -81,8 +124,9 @@ protected:
 
 private:
 	termType tType_;
-	typedef bool(term::* eFunc)(const int64_t, const int64_t);
 
+	typedef bool(term::* eFunc)(const int64_t, const int64_t);
+	bool (term::* evaluateFunc)(const int64_t, const int64_t);
 	template <typename Ty_>
 	eFunc findEvaluateFunc(termType type)
 	{
@@ -97,7 +141,24 @@ private:
 
 		return func_ptr[static_cast<int>(type)];
 	}
-	bool (term::* evaluateFunc)(const int64_t, const int64_t);
+
+	typedef bool(term::* enFunc)(const pMmtNode, const int64_t);
+	bool (term::* evaluateNodeFunc)(const pMmtNode, const int64_t);
+	template <typename Ty_>
+	enFunc findEvaluateNodeFunc(termType type)
+	{
+		static bool (term:: * func_ptr[6])(const pMmtNode, const int64_t) = {
+			&term::evaluateNodeEqual<Ty_>,
+			&term::evaluateNodeNotEqual<Ty_>,
+			&term::evaluateNodeGreater<Ty_>,
+			&term::evaluateNodeGreaterEqual<Ty_>,
+			&term::evaluateNodeLess<Ty_>,
+			&term::evaluateNodeLessEqual<Ty_>
+		};
+
+		return func_ptr[static_cast<int>(type)];
+	}
+	
 };
 }		// msdb
 #endif	// _MSDB_TERM_H_

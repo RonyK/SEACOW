@@ -36,8 +36,9 @@
     <ClCompile Include="test\dummy\dummy_astronomy.cpp" />
     <ClCompile Include="test\query\op\spiht_encode_decode\test_spiht_encode_decode.cpp" />
     <ClCompile Include="test\query\op\save\test_save_load.cpp" />
-    <ClCompile Include="test\query\op\naive_filter\test_nive_filter.cpp" />
     <ClCompile Include="test\test\op\filter\testFilter.cpp" />
+    <ClCompile Include="test\query\op\index_filter\test_index_filter.cpp" />
+    <ClCompile Include="test\query\op\naive_filter\test_naive_filter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">
