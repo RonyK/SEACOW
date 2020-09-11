@@ -92,11 +92,18 @@ void compArrary(pArray lArr, pArray rArr)
 		auto rcItr = rArr->getChunkIterator();
 
 		EXPECT_EQ(lcItr->getCapacity(), rcItr->getCapacity());
+		EXPECT_EQ(lcItr->isEnd(), rcItr->isEnd());
 
 		while (!lcItr->isEnd() && !rcItr->isEnd())
 		{
-			EXPECT_TRUE(lcItr->coor() == rcItr->coor());
-			EXPECT_TRUE(*(**lcItr) == *(**rcItr));
+			EXPECT_EQ(lcItr->isExist(), rcItr->isExist());
+			
+			if(lcItr->isExist())
+			{
+				EXPECT_TRUE(lcItr->coor() == rcItr->coor());
+				EXPECT_TRUE(*(**lcItr) == *(**rcItr));
+			}
+			
 			//if(!(*(**lcItr) == *(**rcItr)))
 			//{
 			//	compChunkItems<Ty_>((**lcItr), (**rcItr));

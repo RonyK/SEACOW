@@ -92,6 +92,17 @@
                     </Rule>
                   </Rule>
                 </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_index_filter" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_index_filter.index_filter_star1024x1024" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_index_filter.index_filter_star1024x1024" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
               </Rule>
             </Rule>
           </Rule>

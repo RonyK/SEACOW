@@ -5,6 +5,7 @@
 #include <pch.h>
 #include <array/attributeId.h>
 #include <parse/predicate.h>
+#include <index/testMMT.h>
 
 #include <op/naive_filter/naive_filter_plan.h>
 #include <op/naive_filter/naive_filter_action.h>
@@ -61,6 +62,66 @@ bool equalTest(pArray arr, int64_t value)
 
 	std::cout << "Filtered values: " << numValues << std::endl;
 	return true;
+}
+
+template <typename value_type>
+pArray test_body_naive_filter(_pFuncGetSourceArray_, pPredicate myPredicate, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01 Source Arr
+	std::vector<pArray> sourceArr;
+	getSourceArrayIfEmpty(sourceArr);
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "Source Arr" << std::endl;
+		sourceArr[0]->print();
+	}
+
+	auto filterArray = naive_filter(sourceArr, myPredicate);
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "Filtered Arr" << std::endl;
+		filterArray->print();
+	}
+
+	//EXPECT_TRUE(false);
+	return filterArray;
+}
+
+template <typename value_type>
+pArray test_body_index_filter(_pFuncGetSourceArray_, pPredicate myPredicate, eleDefault mmtLevel, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01 Source Arr
+	std::vector<pArray> sourceArr;
+	getSourceArrayIfEmpty(sourceArr);
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "Source Arr" << std::endl;
+		sourceArr[0]->print();
+	}
+
+	auto outArr = mmt_build(sourceArr, mmtLevel);
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "MMT Build Arr" << std::endl;
+		outArr->print();
+	}
+
+	auto filteredArr = index_filter(std::vector<pArray>({ outArr }), myPredicate);
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "Filtered Arr" << std::endl;
+		filteredArr->print();
+	}
+
+	//EXPECT_TRUE(false);
+	return filteredArr;
 }
 }		// caDummy
 }		// msdb

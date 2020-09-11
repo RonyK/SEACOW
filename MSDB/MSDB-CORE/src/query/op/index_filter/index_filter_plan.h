@@ -45,16 +45,16 @@ protected:
 		coorItr cit(chunkSpace);
 		coorItr bit(blockSpace);
 		size_t dSize = arrDesc->getDSize();
-
+		
 		auto arrIndex = arrayMgr::instance()->getAttributeIndex(arrDesc->id_, attrDesc->id_);
 		if (arrIndex->getType() != attrIndexType::MMT)
 		{
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_USER_QUERY_ERROR, MSDB_ER_ATTR_INDEX_TYPE_DIFF));
 		}
-		auto mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
-		auto mmtLevel = mmtIndex->getMaxLevel();
+		auto pMmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
+		auto mmtLevel = pMmtIndex->getMaxLevel();
 
-		if(inPredicate->evaluateNode(mmtIndex->getNode(mmtLevel, 0)))		// Check root node
+		if(inPredicate->evaluateNode(pMmtIndex->getNode(mmtLevel, 0)))		// Check root node
 		{	
 			// Target chunk exists
 			// Start searching nodes
@@ -67,78 +67,132 @@ protected:
 
 			//////////////////////////////
 			// Level (mmtLevel - 1)
-			size_t curLevel = mmtLevel - 1;
-			if(curLevel > 0)
+			int64_t curLevel = mmtLevel - 1;
+			if(curLevel >= 0)
 			{
-				auto nit = mmtIndex->getNodeIterator(curLevel);
-				nodes[curLevel] = std::vector<bool>(nit.getCapacity(), false);
-
-				while (!nit.isEnd())
-				{
-					if (inPredicate->evaluateNode((*nit)))
-					{
-						nodes[curLevel].push_back(true);
-					} else
-					{
-						nodes[curLevel].push_back(false);
-					}
-					++nit;
-				}
+				this->inferBoUpBitmapFirstLevel(inPredicate, pMmtIndex, nodes, curLevel, dSize);
 			}
 			
 			//////////////////////////////
 			// Level (mmtLevel - 2) ~ 0
-			for (curLevel -= 1; curLevel >= 0; --curLevel)
+			curLevel -= 1;
+			while (curLevel >= 0)
 			{
-				size_t prevLevel = curLevel + 1;
-				auto pcit = mmtIndex->getNodeIterator(prevLevel);
-				auto cit = mmtIndex->getNodeIterator(curLevel);
-				nodes[curLevel] = std::vector<bool>(cit.getCapacity(), false);
-
-				while (!pcit.isEnd())
-				{
-					// check parent
-					if(nodes[prevLevel][pcit.seqPos()])
-					{
-						auto childBase = pcit.coor();
-						for (dimensionId d = 0; d < dSize; ++d)
-						{
-							childBase[d] *= 2;
-						}
-
-						// Iterate childs
-						for (size_t cID = 0; cID < childs; cID++)
-						{
-							// Set child coordinate and move to cit
-							auto cur = childBase;
-							for (dimensionId d = 0; d < dSize; ++d)
-							{
-								if (cID & ((dimensionId)0x1 << d))
-								{
-									cur[d] += 1;
-								}
-							}
-							cit.moveTo(cur);
-
-							if (inPredicate->evaluateNode((*cit)))
-							{
-								nodes[curLevel][cit.seqPos()] = true;
-							} else
-							{
-								nodes[curLevel][cit.seqPos()] = false;
-							}
-						}
-					}
-					++pcit;
-				}
+				this->inferBoUpBitmapChildLevel(inPredicate, pMmtIndex, nodes, curLevel, dSize);
+				curLevel -= 1;
 			}
 
-			// return bitmapTree
+			return this->inferBoUpBitmapChildLevel(nodes, pMmtIndex,
+												  chunkSpace, blockSpace);
 		}else
 		{
 			// No target chunk
 			return std::make_shared<bitmapTree>(chunkSpace.area(), false);
 		}
+	}
+
+	template <typename Ty_>
+	void inferBoUpBitmapFirstLevel(std::shared_ptr<predicate> inPredicate,
+								   std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>>pMmtIndex, 
+								   std::vector<std::vector<bool>>& nodes,
+								   size_t curLevel, size_t dSize)
+	{
+		auto nit = pMmtIndex->getNodeIterator(curLevel);
+		nodes[curLevel] = std::vector<bool>(nit.getCapacity(), false);
+
+		while (!nit.isEnd())
+		{
+			if (inPredicate->evaluateNode((*nit)))
+			{
+				nodes[curLevel][nit.seqPos()] = true;
+			} else
+			{
+				nodes[curLevel][nit.seqPos()] = false;
+			}
+			++nit;
+		}
+	}
+
+	template <typename Ty_>
+	void inferBoUpBitmapChildLevel(std::shared_ptr<predicate> inPredicate,
+								   std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>>pMmtIndex,
+								   std::vector<std::vector<bool>>& nodes,
+								   size_t curLevel, size_t dSize)
+	{
+		size_t prevLevel = curLevel + 1;
+		size_t childs = (size_t)pow(2, dSize);
+		auto pcit = pMmtIndex->getNodeIterator(prevLevel);
+		auto cit = pMmtIndex->getNodeIterator(curLevel);
+		nodes[curLevel] = std::vector<bool>(cit.getCapacity(), false);
+
+		while (!pcit.isEnd())
+		{
+			// check parent
+			if (nodes[prevLevel][pcit.seqPos()])
+			{
+				auto childBase = pcit.coor();
+				for (dimensionId d = 0; d < dSize; ++d)
+				{
+					childBase[d] *= 2;
+				}
+
+				// Iterate childs
+				for (size_t cID = 0; cID < childs; cID++)
+				{
+					// Set child coordinate and move to cit
+					auto cur = childBase;
+					for (dimensionId d = 0; d < dSize; ++d)
+					{
+						if (cID & ((dimensionId)0x1 << d))
+						{
+							cur[d] += 1;
+						}
+					}
+					cit.moveTo(cur);
+
+					if (inPredicate->evaluateNode((*cit)))
+					{
+						nodes[curLevel][cit.seqPos()] = true;
+					} else
+					{
+						nodes[curLevel][cit.seqPos()] = false;
+					}
+				}
+			}
+			++pcit;
+		}
+	}
+
+	template <typename Ty_>
+	pBitmapTree inferBoUpBitmapChildLevel(std::vector<std::vector<bool>>& nodes, 
+										 std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>>pMmtIndex,
+										 dimension& chunkSpace, dimension& blockSpace)
+	{
+		size_t chunkNums = chunkSpace.area();
+		size_t blockNums = blockSpace.area();
+		size_t chunkLevel = pMmtIndex->getChunkLevel();
+		size_t blockLevel = pMmtIndex->getBlockLevel();
+
+		auto chunkBitmap = std::make_shared<bitmapTree>(chunkNums, false);
+
+		for (chunkId cid = 0; cid < chunkNums; ++cid)
+		{
+			if (nodes[chunkLevel][cid])
+			{
+				chunkBitmap->setExist(cid);
+				size_t offset = cid * blockNums;
+				auto blockBitmap = chunkBitmap->makeChild(cid, blockNums, false);
+				for (blockId bid = 0; bid < blockNums; ++bid)
+				{
+					if (nodes[blockLevel][offset + bid])
+					{
+						blockBitmap->setExist(bid);
+					}
+				}
+			}
+		}
+
+		return chunkBitmap;
 	}
 };
 }		// msdb
