@@ -21,7 +21,7 @@ static const dim_type dimY = 1024;
 //static const dim_type dimY = 2048;
 static const size_t dataLength = dimX * dimY;
 static const size_t wtLevel = 3;
-static const size_t mmtLevel = 2;
+static const size_t mmtLevel = 4;
 static const arrayId aid = 24241;
 
 extern std::vector<dim_type> dims;
@@ -40,10 +40,19 @@ std::vector<pArray> getSourceArray()
 	getDummy(data, dataLength);
 
 	std::vector<pArray> arrs(
-		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_>(data, aid, "data2D_star1024x1024", dims, chunkDims, blockDims, ele_type)) });
+		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_star1024x1024", dims, chunkDims, blockDims, ele_type)) });
 	return arrs;
 }
 
+template<class Aty_ = memBlockArray>
+std::vector<pArray> getSourceArrayDesc()
+{
+	std::vector<pArray> arrs(
+		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_>(aid, "data2D_star1024x1024", dims, chunkDims, blockDims, ele_type)) });
+	return arrs;
+}
+
+void getSourceArrayDesc(std::vector<pArray>& sourceArr);
 void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
 }	// data2D_star1024x1024
 }	// caDummy

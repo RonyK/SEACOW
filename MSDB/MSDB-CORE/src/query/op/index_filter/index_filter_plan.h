@@ -12,6 +12,8 @@
 
 namespace msdb
 {
+//////////////////////////////
+// index_filter_plan
 class index_filter_plan : public opPlan
 {
 public:
@@ -22,20 +24,16 @@ public:
 	virtual pAction makeAction() override;
 };
 
-class index_filter_array_pset : public opArrayParamSet
+//////////////////////////////
+// index_filter_array_pset
+//
+// Base class for pSet class of index_filter operator
+class index_filter_pset
 {
-public:
-	index_filter_array_pset(parameters& pSet);
-
-public:
-	virtual pArrayDesc inferSchema() override;
-	virtual pBitmapTree inferBottomUpBitmap() override;
-
 protected:
 	template<typename Ty_>
-	pBitmapTree inferBottomUpAttrBitmap(pArrayDesc arrDesc, pAttributeDesc attrDesc)
+	pBitmapTree inferBottomUpAttrBitmap(pArrayDesc arrDesc, pAttributeDesc attrDesc, pPredicate inPredicate)
 	{
-		auto inPredicate = std::static_pointer_cast<predicate>(this->params_[1]->getParam());
 		inPredicate->setEvaluateFunc(attrDesc->type_);
 
 		dimension chunkSpace = arrDesc->getDimDescs()->getChunkSpace();
@@ -45,7 +43,7 @@ protected:
 		coorItr cit(chunkSpace);
 		coorItr bit(blockSpace);
 		size_t dSize = arrDesc->getDSize();
-		
+
 		auto arrIndex = arrayMgr::instance()->getAttributeIndex(arrDesc->id_, attrDesc->id_);
 		if (arrIndex->getType() != attrIndexType::MMT)
 		{
@@ -54,13 +52,13 @@ protected:
 		auto pMmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
 		auto mmtLevel = pMmtIndex->getMaxLevel();
 
-		if(inPredicate->evaluateNode(pMmtIndex->getNode(mmtLevel, 0)))		// Check root node
-		{	
+		if (inPredicate->evaluateNode(pMmtIndex->getNode(0, mmtLevel)))		// Check root node
+		{
 			// Target chunk exists
 			// Start searching nodes
 			std::vector<std::vector<bool>> nodes(mmtLevel + 1);
 			size_t childs = (size_t)pow(2, dSize);
-			
+
 			//////////////////////////////
 			// Level (mmtLevel)
 			nodes[mmtLevel] = std::vector<bool>({ true });
@@ -68,11 +66,11 @@ protected:
 			//////////////////////////////
 			// Level (mmtLevel - 1)
 			int64_t curLevel = mmtLevel - 1;
-			if(curLevel >= 0)
+			if (curLevel >= 0)
 			{
 				this->inferBoUpBitmapFirstLevel(inPredicate, pMmtIndex, nodes, curLevel, dSize);
 			}
-			
+
 			//////////////////////////////
 			// Level (mmtLevel - 2) ~ 0
 			curLevel -= 1;
@@ -83,8 +81,8 @@ protected:
 			}
 
 			return this->inferBoUpBitmapChildLevel(nodes, pMmtIndex,
-												  chunkSpace, blockSpace);
-		}else
+												   chunkSpace, blockSpace);
+		} else
 		{
 			// No target chunk
 			return std::make_shared<bitmapTree>(chunkSpace.area(), false);
@@ -93,7 +91,7 @@ protected:
 
 	template <typename Ty_>
 	void inferBoUpBitmapFirstLevel(std::shared_ptr<predicate> inPredicate,
-								   std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>>pMmtIndex, 
+								   std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>>pMmtIndex,
 								   std::vector<std::vector<bool>>& nodes,
 								   size_t curLevel, size_t dSize)
 	{
@@ -164,9 +162,9 @@ protected:
 	}
 
 	template <typename Ty_>
-	pBitmapTree inferBoUpBitmapChildLevel(std::vector<std::vector<bool>>& nodes, 
-										 std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>>pMmtIndex,
-										 dimension& chunkSpace, dimension& blockSpace)
+	pBitmapTree inferBoUpBitmapChildLevel(std::vector<std::vector<bool>>& nodes,
+										  std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>>pMmtIndex,
+										  dimension& chunkSpace, dimension& blockSpace)
 	{
 		size_t chunkNums = chunkSpace.area();
 		size_t blockNums = blockSpace.area();
@@ -194,6 +192,28 @@ protected:
 
 		return chunkBitmap;
 	}
+};
+
+//////////////////////////////
+// index_filter_array_pset
+class index_filter_array_pset : public opArrayParamSet, public index_filter_pset
+{
+public:
+	index_filter_array_pset(parameters& pSet);
+
+public:
+	virtual pBitmapTree inferBottomUpBitmap() override;
+};
+
+//////////////////////////////
+// index_filter_plan_pset
+class index_filter_plan_pset : public opPlanParamSet, public index_filter_pset
+{
+public:
+	index_filter_plan_pset(parameters& pSet);
+
+public:
+	virtual pBitmapTree inferBottomUpBitmap() override;
 };
 }		// msdb
 #endif	// _MSDB_INDEX_FILTER_PLAN_H_

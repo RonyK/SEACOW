@@ -22,7 +22,6 @@
     <ClCompile Include="test\array\testMemChunk.cpp" />
     <ClCompile Include="test\query\op\wavelet_encode\test_wavelet_encode_action.cpp" />
     <ClCompile Include="test\array\testArray.cpp" />
-    <ClCompile Include="test\dummy\opDummy.cpp" />
     <ClCompile Include="test\query\op\mmt_build\test_mmt_build.cpp" />
     <ClCompile Include="test\query\op\mmt_save\test_mmt_save.cpp" />
     <ClCompile Include="test\query\op\mmt_load\test_mmt_load.cpp" />
@@ -39,18 +38,22 @@
     <ClCompile Include="test\test\op\filter\testFilter.cpp" />
     <ClCompile Include="test\query\op\index_filter\test_index_filter.cpp" />
     <ClCompile Include="test\query\op\naive_filter\test_naive_filter.cpp" />
+    <ClCompile Include="test\dummy\opArrayDummy.cpp" />
+    <ClCompile Include="test\dummy\opPlanDummy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">
       <Filter>test\dummy</Filter>
     </ClInclude>
     <ClInclude Include="test\pch.h" />
-    <ClInclude Include="test\dummy\opDummy.h" />
     <ClInclude Include="test\index\testMMT.h" />
     <ClInclude Include="test\io\testIO.h" />
     <ClInclude Include="test\compression\testCompression.h" />
     <ClInclude Include="test\dummy\dummy_astronomy.h" />
     <ClInclude Include="test\test\op\filter\testFilter.h" />
+    <ClInclude Include="test\dummy\opArrayDummy.h" />
+    <ClInclude Include="test\dummy\opPlanDummy.h" />
+    <ClInclude Include="test\dummy\opDummy.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="test">

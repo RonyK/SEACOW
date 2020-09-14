@@ -1,4 +1,5 @@
 #include <query/opParamSet.h>
+#include <query/opPlan.h>
 
 namespace msdb
 {
@@ -13,19 +14,6 @@ opParamSet::opParamSet(parameters& pSet)
 		this->params_.push_back((*it));
 	}
 }
-
-//bool opParamSet::isMatch(parameters pSet)
-//{
-//	if (this->params_.size() != pSet.size())
-//		return false;
-//
-//	auto it = this->params_.begin();
-//	auto iit = pSet.begin();
-//	for(; it != this->params_.end(); ++it, ++iit)
-//	{
-//		
-//	}
-//}
 parameters opParamSet::getParam()
 {
 	return this->params_;
@@ -51,4 +39,29 @@ pBitmapTree opArrayParamSet::inferTopDownBitmap(pBitmapTree fromParent)
 {
 	return std::make_shared<bitmapTree>(*fromParent);
 }
+
+//////////////////////////////
+// opPlanParam
+opPlanParamSet::opPlanParamSet(parameters& pSet)
+	: opParamSet(pSet)
+{
+	assert(this->params_[0]->type() == opParamType::PLAN);		// source plan
 }
+pArrayDesc opPlanParamSet::inferSchema()
+{
+	auto sourcePlan = std::static_pointer_cast<opParamPlan::paramType>(
+		this->params_[0]->getParam());
+	return std::make_shared<arrayDesc>(*sourcePlan->inferSchema());
+}
+pBitmapTree opPlanParamSet::inferBottomUpBitmap()
+{
+	auto sourcePlan = std::static_pointer_cast<opParamPlan::paramType>(
+		this->params_[0]->getParam());
+	return std::make_shared<bitmapTree>(*(sourcePlan->inferBottomUpBitmap()));
+	//return nullptr;
+}
+pBitmapTree opPlanParamSet::inferTopDownBitmap(pBitmapTree fromParent)
+{
+	return std::make_shared<bitmapTree>(*fromParent);
+}
+}	// msdb

@@ -329,6 +329,7 @@
     <ClCompile Include="src\query\op\save\save_plan.cpp" />
     <ClCompile Include="src\query\op\se_compression\se_compression_action.cpp" />
     <ClCompile Include="src\query\op\se_compression\se_compression_plan.cpp" />
+    <ClCompile Include="src\query\query.cpp" />
     <ClCompile Include="src\util\timer.cpp" />
     <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_action.cpp" />
     <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_array.cpp" />

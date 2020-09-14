@@ -39,6 +39,16 @@ public:
 	virtual pBitmapTree inferBottomUpBitmap() override;
 	virtual pBitmapTree inferTopDownBitmap(pBitmapTree fromParent) override;
 };
-}
 
+class opPlanParamSet : public opParamSet
+{
+public:
+	opPlanParamSet(parameters& pSet);
+
+public:
+	virtual pArrayDesc inferSchema() override;
+	virtual pBitmapTree inferBottomUpBitmap() override;
+	virtual pBitmapTree inferTopDownBitmap(pBitmapTree fromParent) override;
+};
+}		// msdb
 #endif	// _MSDB_OPPARAMSET_H_

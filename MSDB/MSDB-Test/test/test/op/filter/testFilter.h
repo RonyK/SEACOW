@@ -6,6 +6,7 @@
 #include <array/attributeId.h>
 #include <parse/predicate.h>
 #include <index/testMMT.h>
+#include <io/testIO.h>
 
 #include <op/naive_filter/naive_filter_plan.h>
 #include <op/naive_filter/naive_filter_action.h>
@@ -17,9 +18,9 @@ namespace msdb
 {
 namespace caDummy
 {
-pArray naive_filter(_vectorSourceArray_, pPredicate myPredicate);
+pArray naive_filter(_vectorSourceArray_, pPredicate myPredicate, pQuery qry = nullptr);
 
-pArray index_filter(_vectorSourceArray_, pPredicate myPredicate);
+pArray index_filter(_vectorSourceArray_, pPredicate myPredicate, pQuery qry = nullptr);
 
 pTerm getEqualTerm(int64_t value, attributeId attrId = 0);
 
@@ -122,6 +123,70 @@ pArray test_body_index_filter(_pFuncGetSourceArray_, pPredicate myPredicate, ele
 
 	//EXPECT_TRUE(false);
 	return filteredArr;
+}
+
+template <typename value_type>
+pArray test_body_load_index_filter(_pFuncGetSourceArray_, 
+								   pPredicate inPredicate, 
+								   eleDefault mmtLevel,
+								   bool printFlag = false)
+{
+	//////////////////////////////
+	// 01 Source Arr
+	std::vector<pArray> saveSourceArr;
+	getSourceArrayIfEmpty(saveSourceArr);
+	if (false)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "Source Arr" << std::endl;
+		saveSourceArr[0]->print();
+	}
+
+	auto outArr = mmt_build(saveSourceArr, mmtLevel);
+	if (false)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "MMT Build Arr" << std::endl;
+		outArr->print();
+	}
+
+	outArr = save(saveSourceArr);
+	if (false)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "Save Arr" << std::endl;
+		outArr->print();
+	}
+	//saveSourceArr.clear();
+	outArr = nullptr;
+
+	//////////////////////////////
+	// 02 Source Arr
+	//std::vector<pArray> filterSourceArr;
+	//getSourceArrayDesc(filterSourceArr);
+	pQuery qry = std::make_shared<query>();
+
+	auto loadPlan = getLoadPlan(saveSourceArr[0]->getDesc(), qry);
+	auto filterPlan = getIndexFilterPlan(loadPlan, inPredicate, qry);
+
+	auto loadAction = loadPlan->getAction();
+	outArr = loadAction->execute(saveSourceArr, qry);
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "Load Arr" << std::endl;
+		outArr->print();
+	}
+
+	auto filterAction = filterPlan->getAction();
+	outArr = filterAction->execute(std::vector<pArray>({ outArr }), qry);
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "Filtered Arr" << std::endl;
+		outArr->print();
+	}
+	return outArr;
 }
 }		// caDummy
 }		// msdb

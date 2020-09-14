@@ -12,14 +12,11 @@ namespace msdb
 {
 namespace caDummy
 {
-template <class Aty_>
-std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string arrayName,
+template <typename Aty_>
+std::shared_ptr<Aty_> get2DCharArray(arrayId aid, std::string arrayName,
 									 dimension dims, dimension chunkDims, dimension blockDims,
 									 eleType eType)
 {
-	dimension chunkNums = dims / chunkDims;
-	dimension blockNums = chunkDims / blockDims;
-
 	// Build Array
 	pDimensionDescs dimDescs = std::make_shared<dimensionDescs>();
 	dimensionId dimId = 0;
@@ -33,8 +30,21 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 	pArrayDesc arrDesc = std::make_shared<arrayDesc>(aid, arrayName.c_str(), dimDescs, attrDescs);
 	std::shared_ptr<Aty_> sourceArr = std::make_shared<Aty_>(arrDesc);
 
+	return sourceArr;
+}
+
+template <typename Aty_, typename Ty_>
+std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string arrayName,
+									 dimension dims, dimension chunkDims, dimension blockDims,
+									 eleType eType)
+{
+	dimension chunkNums = dims / chunkDims;
+	dimension blockNums = chunkDims / blockDims;
+
+	std::shared_ptr<Aty_> sourceArr = get2DCharArray<Aty_>(aid, arrayName, dims, chunkDims, blockDims, eType);
+
 	// Build Chunk
-	char* data = (char*)dummy;
+	Ty_* data = (Ty_*)dummy;
 	for (int y = 0; y < chunkNums[0]; y++)
 	{
 		for (int x = 0; x < chunkNums[1]; x++)
@@ -45,7 +55,7 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 
 			pChunkDesc cDesc = std::make_shared<chunkDesc>(
 				sourceArr->getChunkIdFromItemCoor(sP),
-				attrDescs->at(0),
+				sourceArr->getDesc()->getAttrDescs()->at(0),
 				chunkDims, blockDims,
 				sP, eP);
 			pChunk sourceChunk = std::make_shared<memBlockChunk>(cDesc);
@@ -63,7 +73,7 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 				{
 					for (int ix = 0; ix < blockDims[1]; ++ix)
 					{
-						(**it).setChar(static_cast<char>(
+						(**it).setChar(static_cast<Ty_>(
 							data[(y * chunkDims[0] + blockCoor[0] * blockDims[0] + iy) * dims[1] + (x * chunkDims[1] + blockCoor[1] * blockDims[1] + ix)]));
 						++(*it);
 					}
@@ -180,7 +190,6 @@ void compChunkItems(pChunk lChunk, pChunk rChunk)
 	//EXPECT_EQ(lbItr->isEnd(), rbItr->isEnd());
 }
 
-
 using dim_type = position_t;
 // signed char
 namespace data2D_sc4x4
@@ -216,10 +225,19 @@ std::vector<pArray> getSourceArray()
 	getDummy(data, dataLength);
 
 	std::vector<pArray> arrs(
-		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_>(data, aid, "data2D_sc4x4", dims, chunkDims, blockDims, eleType::CHAR)) });
+		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_sc4x4", dims, chunkDims, blockDims, eleType::CHAR)) });
 	return arrs;
 }
 
+template<class Aty_ = memBlockArray>
+std::vector<pArray> getSourceArrayDesc()
+{
+	std::vector<pArray> arrs(
+		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_>(aid, "data2D_sc4x4", dims, chunkDims, blockDims, eleType::CHAR)) });
+	return arrs;
+}
+
+void getSourceArrayDesc(std::vector<pArray>& sourceArr);
 void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
 }
 
@@ -249,7 +267,7 @@ std::vector<pArray> getSourceArray()
 	getDummy(data, dataLength);
 
 	std::vector<pArray> arrs(
-		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_>(data, aid, "data2D_tempTest", dims, chunkDims, blockDims, eleType::CHAR)) });
+		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_tempTest", dims, chunkDims, blockDims, eleType::CHAR)) });
 	return arrs;
 }
 
@@ -287,7 +305,7 @@ std::vector<pArray> getSourceArray()
 	getDummy(data, dataLength);
 
 	std::vector<pArray> arrs(
-		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_>(data, aid, "data2D_sc8x8", dims, chunkDims, blockDims, eleType::CHAR)) });
+		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_sc8x8", dims, chunkDims, blockDims, eleType::CHAR)) });
 	return arrs;
 }
 

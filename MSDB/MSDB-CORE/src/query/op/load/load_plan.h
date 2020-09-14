@@ -23,5 +23,11 @@ class load_array_pset : public opArrayParamSet
 public:
 	load_array_pset(parameters& pSet);
 };
+
+//class load_plan_pset : public opPlanParamSet
+//{
+//public:
+//	load_plan_pset(parameters& pSet);
+//};
 }	// msdb
 #endif		// _MSDB_OP_LOAD_PLAN_H_

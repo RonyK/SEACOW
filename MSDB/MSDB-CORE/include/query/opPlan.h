@@ -10,44 +10,6 @@
 
 namespace msdb
 {
-class opPlan;
-using pPlan = std::shared_ptr<opPlan>;
-
-class opParamPlan : public opParam
-{
-public:
-	using paramType = opPlan;
-
-public:
-	opParamPlan(pPlan plan);
-
-public:
-	virtual opParam::void_pointer getParam();
-	virtual opParamType type();
-
-private:
-	pPlan plan_;
-};
-
-class opParamPlanPlaceholder : public opParamPlaceholder, public opParamPlan
-{
-public:
-	opParamPlanPlaceholder();
-
-public:
-	virtual opParamType type();
-};
-class opPlanParamSet : public opParamSet
-{
-public:
-	opPlanParamSet(parameters& pSet);
-
-public:
-	virtual pArrayDesc inferSchema() override;
-	virtual pBitmapTree inferBottomUpBitmap() override;
-	virtual pBitmapTree inferTopDownBitmap(pBitmapTree fromParent) override;
-};
-
 class opPlan : public std::enable_shared_from_this<opPlan>
 {
 public:
@@ -76,6 +38,5 @@ private:
 	pBitmapTree outArrBitmap_;
 	pPlan parentPlan_;
 };
-}
-
-#endif		// _MSDB_OPPLAN_H_
+}		// msdb
+#endif	// _MSDB_OPPLAN_H_

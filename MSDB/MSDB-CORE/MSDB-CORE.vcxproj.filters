@@ -97,6 +97,7 @@
     <ClCompile Include="src\util\timer.cpp" />
     <ClCompile Include="src\query\op\index_filter\index_filter_action.cpp" />
     <ClCompile Include="src\query\op\index_filter\index_filter_plan.cpp" />
+    <ClCompile Include="src\query\query.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.h" />
