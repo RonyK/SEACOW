@@ -26,7 +26,7 @@ se_decompression_array_pset::se_decompression_array_pset(parameters& pSet)
 {
 	assert(this->params_.size() == 2);
 	assert(this->params_[0]->type() == opParamType::ARRAY);		// source array
-	assert(this->params_[1]->type() == opParamType::CONST);		// Target level
+	assert(this->params_[1]->type() == opParamType::CONST);		// Target wtLevel
 }
 
 pArrayDesc se_decompression_array_pset::inferSchema()
@@ -38,6 +38,23 @@ pArrayDesc se_decompression_array_pset::inferSchema()
 	return std::make_shared<opParamArray::paramType>(*aSourceDesc);
 }
 pBitmapTree se_decompression_array_pset::inferBottomUpBitmap()
+{
+	pArrayDesc desc = this->inferSchema();
+	dimension chunkSpace = desc->getDimDescs()->getChunkSpace();
+	dimension blockSpace = desc->getDimDescs()->getBlockSpace();
+	dimension seChunkSpace = chunkSpace * blockSpace;
+
+	return std::make_shared<bitmapTree>(seChunkSpace.area(), true);
+}
+
+se_decompression_plan_pset::se_decompression_plan_pset(parameters& pSet)
+	: opPlanParamSet(pSet)
+{
+	assert(this->params_.size() == 2);
+	assert(this->params_[1]->type() == opParamType::CONST);		// Target wtLevel
+}
+
+pBitmapTree se_decompression_plan_pset::inferBottomUpBitmap()
 {
 	pArrayDesc desc = this->inferSchema();
 	dimension chunkSpace = desc->getDimDescs()->getChunkSpace();

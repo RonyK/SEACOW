@@ -25,7 +25,7 @@ public:
 
 protected:
 	virtual pBitmapTree inferBottomUpBitmap();
-	friend pBitmapTree opPlanParamSet::inferBottomUpBitmap();
+	friend pBitmapTree opPlanParamSet::getSourcePlanBottomUpBitmap();
 
 	virtual pBitmapTree inferTopDownBitmap();
 	virtual pAction makeAction() = 0;

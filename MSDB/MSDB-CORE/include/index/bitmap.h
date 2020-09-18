@@ -56,6 +56,7 @@ public:
 	pBitmap makeChild(const size_t seqPos, const size_t capacity, const bool value = false);
 	pBitmap getChild(const size_t seqPos);
 	cpBitmap getChild(const size_t seqPos) const;
+	bool hasChild(const size_t seqPos) const;
 
 	virtual bool isTree();
 

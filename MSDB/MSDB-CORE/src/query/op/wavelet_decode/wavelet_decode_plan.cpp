@@ -22,31 +22,114 @@ wavelet_decode_array_pset::wavelet_decode_array_pset(parameters& pSet)
 {
 	assert(this->params_.size() == 2);
 	assert(this->params_[0]->type() == opParamType::ARRAY);
-	assert(this->params_[1]->type() == opParamType::CONST);		// Target level
+	assert(this->params_[1]->type() == opParamType::CONST);		// Target wtLevel
 }
 
 pArrayDesc wavelet_decode_array_pset::inferSchema()
 {
-
-	//assert(this->params_[2]->type() == opParamType::INTLIST);	// Target dimSchema
-
 	pArrayDesc aSourceDesc = std::static_pointer_cast<opParamArray::paramType>(
 		this->params_[0]->getParam());
 	pArrayDesc aInferDesc = std::make_shared<opParamArray::paramType>(
 		*aSourceDesc);
-	eleDefault level;
-	//std::static_pointer_cast<opParamConst::paramType>(
-	//	this->params_[1]->getParam())->getData(&level);
-
-	//// Reset chunkSize
-	//auto chunkSizes = std::static_pointer_cast<opParamIntList::paramType>(
-	//	this->params_[2]->getParam());
-	//for (dimensionId d = 0; d < aInferDesc->dimDescs_->size(); ++d)
-	//{
-	//	auto dDesc = aInferDesc->dimDescs_[d];
-	//	dDesc->chunkSize_ = chunkSizes->at(d);
-	//}
 
 	return aInferDesc;
+}
+
+wavelet_decode_plan_pset::wavelet_decode_plan_pset(parameters& pSet)
+	: opPlanParamSet(pSet)
+{
+	assert(this->params_.size() == 2);
+	assert(this->params_[1]->type() == opParamType::CONST);		// Target wtLevel
+}
+
+pBitmapTree wavelet_decode_plan_pset::inferBottomUpBitmap()
+{
+	auto fromBottom = this->getSourcePlanBottomUpBitmap();
+
+	auto aDesc = this->inferSchema();
+	dimension chunkSpace = aDesc->getDimDescs()->getChunkSpace();
+	dimension blockSpace = aDesc->getDimDescs()->getBlockSpace();
+	dimension seChunkSpace = chunkSpace * blockSpace;
+
+	auto outChunkItr = coorItr(chunkSpace);
+	auto outBlockItr = coorItr(blockSpace);
+	auto inChunkItr = coorItr(seChunkSpace);
+
+	pBitmapTree outBitmap = std::make_shared<bitmapTree>(seChunkSpace.area(), false);
+
+	while(!inChunkItr.isEnd())
+	{
+		if(fromBottom->isExist(inChunkItr.seqPos()))
+		{
+			outChunkItr.moveTo(inChunkItr.coor() / blockSpace);
+			outBlockItr.moveTo(inChunkItr.coor() % blockSpace);
+
+			outBitmap->setExist(outChunkItr.seqPos());
+
+			if(!outBitmap->hasChild(outChunkItr.seqPos()))
+			{
+				outBitmap->makeChild(outChunkItr.seqPos(), blockSpace.area(), true);
+			}
+
+			auto blockBitmap = outBitmap->getChild(outChunkItr.seqPos());
+			blockBitmap->setExist(outBlockItr.seqPos());
+		}
+
+		++inChunkItr;
+	}
+
+	return outBitmap;
+}
+
+pBitmapTree wavelet_decode_plan_pset::inferTopDownBitmap(pBitmapTree fromParent)
+{
+	auto aDesc = this->inferSchema();
+	dimension chunkSpace = aDesc->getDimDescs()->getChunkSpace();
+	dimension blockSpace = aDesc->getDimDescs()->getBlockSpace();
+	dimension seChunkSpace = chunkSpace * blockSpace;
+
+	auto inChunkItr = coorItr(chunkSpace);
+	auto inBlockItr = coorItr(blockSpace);
+	auto outChunkItr = coorItr(seChunkSpace);
+
+	pBitmapTree outBitmap = std::make_shared<bitmapTree>(seChunkSpace.area(), false);
+
+	while(!inChunkItr.isEnd())
+	{
+		if(fromParent->isExist(inChunkItr.seqPos()))
+		{
+			if(fromParent->isTree() && fromParent->hasChild(inChunkItr.seqPos()))
+			{
+				auto child = fromParent->getChild(inChunkItr.seqPos());
+				inBlockItr.moveToStart();
+				while (!inBlockItr.isEnd())
+				{
+					if(child->isExist(inBlockItr.seqPos()))
+					{
+						dimension outChunkCoor = inBlockItr.coor() + inChunkItr.coor() * blockSpace;
+						outChunkItr.moveTo(outChunkCoor);
+						outBitmap->setExist(outChunkItr.seqPos());
+						outBitmap->makeChild(outChunkItr.seqPos(), 1, true);
+					}
+					++inBlockItr;
+				}
+			}else
+			{
+				// Set all block exsit
+				inBlockItr.moveToStart();
+				while (!inBlockItr.isEnd())
+				{
+					dimension outChunkCoor = inBlockItr.coor() + inChunkItr.coor() * blockSpace;
+					outChunkItr.moveTo(outChunkCoor);
+					outBitmap->setExist(outChunkItr.seqPos());
+					outBitmap->makeChild(outChunkItr.seqPos(), 1, true);	// make block bitmap true
+					++inBlockItr;
+				}
+			}
+		}
+		++inChunkItr;
+	}
+
+	return outBitmap;
 }
 }	// msdb

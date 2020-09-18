@@ -137,6 +137,15 @@ pBitmap bitmapTree::getChild(const size_t seqPos)
 	assert(seqPos < this->childs_.size());
 	return this->childs_[seqPos];
 }
+bool bitmapTree::hasChild(const size_t seqPos) const
+{
+	if(seqPos >= this->childs_.size() || this->childs_[seqPos] == nullptr)
+	{
+		return false;
+	}
+
+	return true;
+}
 cpBitmap bitmapTree::getChild(const size_t seqPos) const
 {
 	assert(seqPos < this->childs_.size());

@@ -26,4 +26,10 @@ mmt_delta_decode_array_pset::mmt_delta_decode_array_pset(parameters& pSet)
 {
 	assert(this->params_.size() == 1);
 }
+
+mmt_delta_decode_plan_pset::mmt_delta_decode_plan_pset(parameters& pSet)
+	: opPlanParamSet(pSet)
+{
+	assert(this->params_.size() == 1);
+}
 }

@@ -49,6 +49,9 @@ public:
 	virtual pArrayDesc inferSchema() override;
 	virtual pBitmapTree inferBottomUpBitmap() override;
 	virtual pBitmapTree inferTopDownBitmap(pBitmapTree fromParent) override;
+
+public:
+	pBitmapTree getSourcePlanBottomUpBitmap();
 };
 }		// msdb
 #endif	// _MSDB_OPPARAMSET_H_

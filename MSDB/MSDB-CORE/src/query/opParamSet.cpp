@@ -55,13 +55,16 @@ pArrayDesc opPlanParamSet::inferSchema()
 }
 pBitmapTree opPlanParamSet::inferBottomUpBitmap()
 {
-	auto sourcePlan = std::static_pointer_cast<opParamPlan::paramType>(
-		this->params_[0]->getParam());
-	return std::make_shared<bitmapTree>(*(sourcePlan->inferBottomUpBitmap()));
-	//return nullptr;
+	return std::make_shared<bitmapTree>(*(this->getSourcePlanBottomUpBitmap()));
 }
 pBitmapTree opPlanParamSet::inferTopDownBitmap(pBitmapTree fromParent)
 {
 	return std::make_shared<bitmapTree>(*fromParent);
+}
+pBitmapTree opPlanParamSet::getSourcePlanBottomUpBitmap()
+{
+	auto sourcePlan = std::static_pointer_cast<opParamPlan::paramType>(
+		this->params_[0]->getParam());
+	return sourcePlan->inferBottomUpBitmap();
 }
 }	// msdb
