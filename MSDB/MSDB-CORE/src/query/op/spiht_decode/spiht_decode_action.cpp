@@ -21,9 +21,12 @@ const char* spiht_decode_action::name()
 	return "spiht_decode_action";
 }
 
-pArray spiht_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
+pArray spiht_decode_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 {
 	assert(inputArrays.size() == 1);
+	//========================================//
+	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
+
 	auto planBitmap = this->getPlanChunkBitmap();
 
 	auto maxLevel = std::static_pointer_cast<wavelet_encode_array>(inputArrays[0])->getMaxLevel();
@@ -40,14 +43,16 @@ pArray spiht_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 
 	for (auto attr : *outArr->getDesc()->attrDescs_)
 	{
-		this->decodeAttribute(std::static_pointer_cast<wavelet_encode_array>(outArr), attr);
+		this->decodeAttribute(std::static_pointer_cast<wavelet_encode_array>(outArr), attr, qry);
 	}
+	qry->getTimer()->pause(0);
+	//========================================//
 
 	return outArr;
 }
 
 void spiht_decode_action::decodeAttribute(std::shared_ptr<wavelet_encode_array> outArr, 
-										  pAttributeDesc attrDesc)
+										  pAttributeDesc attrDesc, pQuery qry)
 {
 	auto cit = outArr->getChunkIterator(iterateMode::ALL);
 
@@ -71,9 +76,16 @@ void spiht_decode_action::decodeAttribute(std::shared_ptr<wavelet_encode_array> 
 			inChunk->makeAllBlocks();
 			inChunk->setMaxLevel(outArr->getMaxLevel());
 
+			//========================================//
+			qry->getTimer()->nextWork(0, workType::IO);
+			//----------------------------------------//
 			pSerializable serialChunk
 				= std::static_pointer_cast<serializable>(inChunk);
 			storageMgr::instance()->loadChunk(outArr->getId(), attrDesc->id_, cid, serialChunk);
+
+			//========================================//
+			qry->getTimer()->nextWork(0, workType::COMPUTING);
+			//----------------------------------------//
 
 			auto outChunk = outArr->makeChunk(*inChunk->getDesc());
 			auto wtOutChunk = std::static_pointer_cast<wtChunk>(outChunk);

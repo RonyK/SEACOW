@@ -2,7 +2,11 @@
 
 namespace msdb
 {
-timer& query::getTimer()
+query::query()
+{
+	this->timer_ = std::make_shared<timer>();
+}
+pTimer query::getTimer()
 {
 	return this->timer_;
 }

@@ -48,7 +48,7 @@ TEST(query_op_mmt_build, mmt_build_sc8x8)
 	// Execute mmt build action
 	auto afterArray = mmtAction->execute(sourceArr, mmtQuery);
 
-	// Result check
+	// Result nextWork
 	for(auto attrDesc : *afterArray->getDesc()->attrDescs_)
 	{
 		auto attrIndex = arrayMgr::instance()->getAttributeIndex(afterArray->getId(), attrDesc->id_);

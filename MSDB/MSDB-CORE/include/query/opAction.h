@@ -7,6 +7,7 @@
 #include <query/opParam.h>
 #include <query/query.h>
 #include <memory>
+#include <util/timer.h>
 
 namespace msdb
 {

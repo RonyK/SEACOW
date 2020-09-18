@@ -24,14 +24,14 @@ public:
 
 public:
 	virtual const char* name() override;
-	virtual pArray execute(std::vector<pArray>& inputArrays, pQuery q) override;
+	virtual pArray execute(std::vector<pArray>& inputArrays, pQuery qry) override;
 
 private:
 	pSeChunk makeInChunk(std::shared_ptr<wavelet_encode_array> arr, pAttributeDesc attrDesc,
 						  chunkId cid, coor chunkCoor);
 
 	template <typename Ty_>
-	void decompressAttribute(std::shared_ptr<wavelet_encode_array>outArr, pAttributeDesc attrDesc)
+	void decompressAttribute(std::shared_ptr<wavelet_encode_array>outArr, pAttributeDesc attrDesc, pQuery qry)
 	{
 		auto arrIndex = arrayMgr::instance()->getAttributeIndex(outArr->getId(), attrDesc->id_);
 		if (arrIndex->getType() != attrIndexType::MMT)
@@ -72,14 +72,15 @@ private:
 				auto mNode = mmtIndex->getNode(chunkCoor, 0);
 				inChunk->rBitFromMMT = getRBitFromMMT(mNode) + static_cast<char>(hasNegative);
 
+				//========================================//
+				qry->getTimer()->nextWork(0, workType::IO);
 				pSerializable serialChunk
 					= std::static_pointer_cast<serializable>(inChunk);
 				storageMgr::instance()->loadChunk(outArr->getId(), attrDesc->id_, inChunk->getId(),
 												  serialChunk);
 
-				//std::cout << "inChunk:: " << std::endl;
-				//inChunk->print();
-
+				//========================================//
+				qry->getTimer()->nextWork(0, workType::COMPUTING);
 				auto outChunk = outArr->makeChunk(*inChunk->getDesc());
 				auto wtOutChunk = std::static_pointer_cast<wtChunk>(outChunk);
 				wtOutChunk->setLevel(inChunk->getLevel());

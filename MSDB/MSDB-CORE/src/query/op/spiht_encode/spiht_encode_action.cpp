@@ -19,9 +19,11 @@ const char* spiht_encode_action::name()
 	return "spiht_encode_action";
 }
 
-pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
+pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 {
 	assert(inputArrays.size() == 1);
+	//========================================//
+	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
 
 	size_t mSizeTotal = 0;
 	pArray sourceArr = inputArrays[0];
@@ -40,10 +42,17 @@ pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 			outChunk->makeAllBlocks();
 			outChunk->bufferRef(inChunk);
 
+			//========================================//
+			qry->getTimer()->nextWork(0, workType::IO);
+			//----------------------------------------//
 			pSerializable serialChunk
 				= std::static_pointer_cast<serializable>(outChunk);
 			storageMgr::instance()->saveChunk(arrId, attr->id_, (outChunk)->getId(),
 											  serialChunk);
+
+			//========================================//
+			qry->getTimer()->nextWork(0, workType::COMPUTING);
+			//----------------------------------------//
 			mSizeTotal += serialChunk->getSerializedSize();
 			//std::cout << serialChunk->getSerializedSize() << std::endl;
 			++(*cit);
@@ -51,6 +60,8 @@ pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 	}
 
 	std::cout << "mSizeTotal: " << mSizeTotal << std::endl;
+	qry->getTimer()->pause(0);
+	//========================================//
 
 	return sourceArr;
 }

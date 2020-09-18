@@ -14,9 +14,13 @@ const char* se_decompression_action::name()
 {
 	return "se_decompression_action";
 }
-pArray se_decompression_action::execute(std::vector<pArray>& inputArrays, pQuery q)
+pArray se_decompression_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 {
 	assert(inputArrays.size() == 1);
+
+	//========================================//
+	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
+
 	auto planBitmap = this->getPlanChunkBitmap();
 
 	auto arrDesc = this->getArrayDesc();
@@ -41,36 +45,39 @@ pArray se_decompression_action::execute(std::vector<pArray>& inputArrays, pQuery
 		switch (attrDesc->type_)
 		{
 		case eleType::CHAR:
-			decompressAttribute<char>(outArr, attrDesc);
+			decompressAttribute<char>(outArr, attrDesc, qry);
 			break;
 		case eleType::INT8:
-			decompressAttribute<int8_t>(outArr, attrDesc);
+			decompressAttribute<int8_t>(outArr, attrDesc, qry);
 			break;
 		case eleType::INT16:
-			decompressAttribute<int16_t>(outArr, attrDesc);
+			decompressAttribute<int16_t>(outArr, attrDesc, qry);
 			break;
 		case eleType::INT32:
-			decompressAttribute<int32_t>(outArr, attrDesc);
+			decompressAttribute<int32_t>(outArr, attrDesc, qry);
 			break;
 		case eleType::INT64:
-			decompressAttribute<int64_t>(outArr, attrDesc);
+			decompressAttribute<int64_t>(outArr, attrDesc, qry);
 			break;
 		case eleType::UINT8:
-			decompressAttribute<uint8_t>(outArr, attrDesc);
+			decompressAttribute<uint8_t>(outArr, attrDesc, qry);
 			break;
 		case eleType::UINT16:
-			decompressAttribute<uint16_t>(outArr, attrDesc);
+			decompressAttribute<uint16_t>(outArr, attrDesc, qry);
 			break;
 		case eleType::UINT32:
-			decompressAttribute<uint32_t>(outArr, attrDesc);
+			decompressAttribute<uint32_t>(outArr, attrDesc, qry);
 			break;
 		case eleType::UINT64:
-			decompressAttribute<uint64_t>(outArr, attrDesc);
+			decompressAttribute<uint64_t>(outArr, attrDesc, qry);
 			break;
 		default:
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 		}
 	}
+
+	qry->getTimer()->pause(0);
+	//========================================//
 
 	return std::static_pointer_cast<arrayBase>(outArr);;
 }

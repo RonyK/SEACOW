@@ -14,9 +14,11 @@ const char* save_action::name()
 {
 	return "save_action";
 }
-pArray save_action::execute(std::vector<pArray>& inputArrays, pQuery q)
+pArray save_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 {
 	assert(inputArrays.size() == 1);
+	//========================================//
+	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
 
 	size_t mSizeTotal = 0;
 	pArray sourceArr = inputArrays[0];
@@ -28,10 +30,17 @@ pArray save_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 
 		while (!cit->isEnd())
 		{
+			//========================================//
+			qry->getTimer()->nextWork(0, workType::IO);
+
 			pSerializable serialChunk
 				= std::static_pointer_cast<serializable>(**cit);
 			storageMgr::instance()->saveChunk(arrId, attr->id_, (**cit)->getId(),
 											  serialChunk);
+
+			//========================================//
+			qry->getTimer()->nextWork(0, workType::COMPUTING);
+
 			mSizeTotal += serialChunk->getSerializedSize();
 			//std::cout << serialChunk->getSerializedSize() << std::endl;
 			++(*cit);
@@ -39,6 +48,8 @@ pArray save_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 	}
 
 	std::cout << "mSizeTotal: " << mSizeTotal << std::endl;
+	qry->getTimer()->pause(0);
+	//========================================//
 
 	return sourceArr;
 }

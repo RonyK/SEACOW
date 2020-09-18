@@ -18,8 +18,11 @@ const char* between_action::name()
 	return "between_action";
 }
 
-pArray between_action::execute(std::vector<pArray>& inputArrays, pQuery q)
+pArray between_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 {
+	//========================================//
+	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
+
 	pArray inArr = inputArrays[0];
 	pArray outArr = arrayMgr::instance()->makeArray<memBlockArray>(this->getArrayDesc());
 	pCoor sp = std::static_pointer_cast<coor>(this->params_[1]->getParam());
@@ -50,7 +53,9 @@ pArray between_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 			++(*chunkItr);
 		}
 	}
-	
+	qry->getTimer()->pause(0);
+	//========================================//
+
 	return outArr;
 }
 void between_action::betweenChunk(pChunk outChunk, pChunk inChunk, coorRange& betweenRange)

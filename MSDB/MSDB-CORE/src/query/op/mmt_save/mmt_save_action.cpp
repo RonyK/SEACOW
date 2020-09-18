@@ -23,6 +23,9 @@ pArray mmt_save_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 {
 	assert(inputArrays.size() == 1);
 
+	//========================================//
+	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
+
 	size_t mSizeTotal = 0;
 	pArray arr = inputArrays[0];
 	arrayId arrId = arr->getId();
@@ -36,12 +39,22 @@ pArray mmt_save_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 		}
 		pMMT mmtIndex = std::static_pointer_cast<mmt>(arrIndex);
 		// dynamic_pointer_cast / C2683
+		
+		//========================================//
+		qry->getTimer()->nextWork(0, workType::IO);
+		//----------------------------------------//
 		storageMgr::instance()->saveAttrIndex(arrId, attr->id_, mmtIndex);
-		mSizeTotal += mmtIndex->getSerializedSize();
 
+		//========================================//
+		qry->getTimer()->nextWork(0, workType::COMPUTING);
+		//----------------------------------------//
+
+		mSizeTotal += mmtIndex->getSerializedSize();
 	}
 
 	std::cout << "mSizeTotal: " << mSizeTotal << std::endl;
+	qry->getTimer()->pause(0);
+	//========================================//
 
 	return arr;
 }

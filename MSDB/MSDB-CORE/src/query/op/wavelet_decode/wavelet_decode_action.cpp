@@ -17,9 +17,12 @@ wavelet_decode_action::~wavelet_decode_action()
 {
 }
 
-pArray wavelet_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
+pArray wavelet_decode_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 {
 	assert(inputArrays.size() == 1);
+	//========================================//
+	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
+
 	auto planBitmap = this->getPlanChunkBitmap();
 
 	pArray inArr = inputArrays[0];
@@ -49,31 +52,31 @@ pArray wavelet_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 		switch (attrDesc->type_)
 		{
 		case eleType::CHAR:
-			attributeDecode<char>(outArr, inArr, attrDesc, w, maxLevel, q);
+			attributeDecode<char>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::INT8:
-			attributeDecode<int8_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			attributeDecode<int8_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::INT16:
-			attributeDecode<int16_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			attributeDecode<int16_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::INT32:
-			attributeDecode<int32_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			attributeDecode<int32_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::INT64:
-			attributeDecode<int64_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			attributeDecode<int64_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::UINT8:
-			attributeDecode<uint8_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			attributeDecode<uint8_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::UINT16:
-			attributeDecode<uint16_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			attributeDecode<uint16_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::UINT32:
-			attributeDecode<uint32_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			attributeDecode<uint32_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::UINT64:
-			attributeDecode<uint64_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			attributeDecode<uint64_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		//case eleType::DOUBLE:
 		//	attributeDecode<double>(inChunk, arrRange,w, d, q);
@@ -82,6 +85,8 @@ pArray wavelet_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 		}
 	}
+	qry->getTimer()->pause(0);
+	//========================================//
 
 	return outArr;
 }

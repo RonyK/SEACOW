@@ -13,10 +13,13 @@ using pQuery = std::shared_ptr<query>;
 class query : std::enable_shared_from_this<query>
 {
 public:
-	timer& getTimer();
+	query();
+
+public:
+	pTimer getTimer();
 
 protected:
-	timer timer_;
+	pTimer timer_;
 };
 }
 

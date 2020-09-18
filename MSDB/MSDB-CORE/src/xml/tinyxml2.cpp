@@ -693,7 +693,7 @@ char* XMLDocument::Identify( char* p, XMLNode** node )
     static const char* commentHeader	= { "<!--" };
     static const char* cdataHeader		= { "<![CDATA[" };
     static const char* dtdHeader		= { "<!" };
-    static const char* elementHeader	= { "<" };	// and a header for everything else; check last.
+    static const char* elementHeader	= { "<" };	// and a header for everything else; nextWork last.
 
     static const int xmlHeaderLen		= 2;
     static const int commentHeaderLen	= 4;
@@ -2286,11 +2286,11 @@ XMLError XMLDocument::LoadFile( const char* filename )
     return _errorID;
 }
 
-// This is likely overengineered template art to have a check that unsigned long value incremented
+// This is likely overengineered template art to have a nextWork that unsigned long value incremented
 // by one still fits into size_t. If size_t type is larger than unsigned long type
-// (x86_64-w64-mingw32 target) then the check is redundant and gcc and clang emit
-// -Wtype-limits warning. This piece makes the compiler select code with a check when a check
-// is useful and code with no check when a check is redundant depending on how size_t and unsigned long
+// (x86_64-w64-mingw32 target) then the nextWork is redundant and gcc and clang emit
+// -Wtype-limits warning. This piece makes the compiler select code with a nextWork when a nextWork
+// is useful and code with no nextWork when a nextWork is redundant depending on how size_t and unsigned long
 // types sizes relate to each other.
 template
 <bool = (sizeof(unsigned long) >= sizeof(size_t))>

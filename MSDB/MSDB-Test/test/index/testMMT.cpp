@@ -88,7 +88,7 @@ namespace data2D_sc4x4
 {
 void mmt_build_test(pArray afterArray)
 {
-	// Result check
+	// Result nextWork
 	for (auto attrDesc : *afterArray->getDesc()->attrDescs_)
 	{
 		auto attrIndex = arrayMgr::instance()->getAttributeIndex(afterArray->getId(), attrDesc->id_);

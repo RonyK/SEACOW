@@ -16,8 +16,11 @@ const char* naive_filter_action::name()
 	return "naive_filter";
 }
 
-pArray naive_filter_action::execute(std::vector<pArray>& inputArrays, pQuery q)
+pArray naive_filter_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 {
+	//========================================//
+	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
+
 	pArray inArr = inputArrays[0];
 	auto inArrDesc = inArr->getDesc();
 	auto outArrDesc = std::make_shared<arrayDesc>(*inArrDesc);
@@ -61,6 +64,9 @@ pArray naive_filter_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 		}
 	}
+
+	qry->getTimer()->pause(0);
+	//========================================//
 
 	return outArr;
 }

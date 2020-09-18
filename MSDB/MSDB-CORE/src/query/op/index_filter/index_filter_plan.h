@@ -125,7 +125,7 @@ protected:
 
 		while (!pcit.isEnd())
 		{
-			// check parent
+			// nextWork parent
 			if (nodes[prevLevel][pcit.seqPos()])
 			{
 				auto childBase = pcit.coor();

@@ -14,19 +14,19 @@ void test_body_spiht(_pFuncGetSourceArray_, eleDefault wtLevel)
 	bool printFlag = false;
 
 	//////////////////////////////
-	myTimer.start(0);
+	myTimer.start(0, "", workType::ARRAY_CONSTRUCTING);
 	// Assing new array id for spiht encode array
 	std::vector<pArray> sourceArr;
 	getSourceArrayIfEmpty(sourceArr);
 	sourceArr[0]->setId(sourceArr[0]->getId() + 4);	// 44445
-	myTimer.check(0, timer::workType::ARRAY_CONSTRUCTING, true);
+	myTimer.nextWork(0, workType::COMPUTING);
 
 	//////////////////////////////
 	auto arr_wavelet_encode = wavelet_encode(sourceArr, wtLevel);
-	myTimer.check(0, timer::workType::COMPUTING);
+	myTimer.nextWork(0, workType::COMPUTING);
 	std::cout << "##############################" << std::endl;
 	std::cout << "Wavelet Encode Arr" << std::endl;
-	myTimer.check(0, timer::workType::LOGGING, true);
+	myTimer.nextWork(0, workType::LOGGING);
 	if (printFlag)
 	{
 		arr_wavelet_encode->print();
@@ -34,32 +34,32 @@ void test_body_spiht(_pFuncGetSourceArray_, eleDefault wtLevel)
 
 	//////////////////////////////
 	auto arr_spiht_encode = spiht_encode(std::vector<pArray>({ arr_wavelet_encode }));
-	myTimer.check(0, timer::workType::COMPUTING);
+	myTimer.nextWork(0, workType::COMPUTING);
 	std::cout << "##############################" << std::endl;
 	std::cout << "SPIHT Encode Arr" << std::endl;
-	myTimer.check(0, timer::workType::LOGGING, true);
+	myTimer.nextWork(0, workType::LOGGING);
 
 	//////////////////////////////
 	auto arr_spiht_decode = spiht_decode(std::vector<pArray>({ arr_spiht_encode }));
-	myTimer.check(0, timer::workType::COMPUTING);
+	myTimer.nextWork(0, workType::COMPUTING);
 	std::cout << "##############################" << std::endl;
 	std::cout << "SPIHT Decode Arr" << std::endl;
 	if (printFlag)
 	{
 		arr_spiht_decode->print();
 	}
-	myTimer.check(0, timer::workType::LOGGING, true);
+	myTimer.nextWork(0, workType::LOGGING);
 
 	//////////////////////////////
 	auto arr_wavelet_decode = wavelet_decode(std::vector<pArray>({ arr_spiht_decode }), wtLevel);
-	myTimer.check(0, timer::workType::COMPUTING, true);
+	myTimer.nextWork(0, workType::COMPUTING);
 	std::cout << "##############################" << std::endl;
 	std::cout << "Wavelet Decode Arr" << std::endl;
 	if (printFlag)
 	{
 		arr_wavelet_decode->print();
 	}
-	myTimer.check(0, timer::workType::LOGGING, true);
+	myTimer.nextWork(0, workType::LOGGING);
 
 	//////////////////////////////
 	compArrary<value_type>(sourceArr[0], arr_wavelet_decode);

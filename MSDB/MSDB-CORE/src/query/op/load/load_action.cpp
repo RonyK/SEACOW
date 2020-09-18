@@ -16,8 +16,11 @@ const char* load_action::name()
 {
 	return "load_action";
 }
-pArray load_action::execute(std::vector<pArray>& inputArrays, pQuery q)
+pArray load_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 {
+	//========================================//
+	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
+
 	assert(inputArrays.size() == 1);
 	auto planChunkBitmap = this->getPlanChunkBitmap();
 
@@ -48,15 +51,24 @@ pArray load_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 				outChunk->makeAllBlocks();
 				//outArr->insertChunk(std::make_shared<memBlockChunk>(outArr->getChunkDesc(attr->id_, cId)));
 
+				//========================================//
+				qry->getTimer()->nextWork(0, workType::IO);
+				//----------------------------------------//
 				pSerializable serialChunk
 					= std::static_pointer_cast<serializable>(**cit);
 				storageMgr::instance()->loadChunk(arrId, attr->id_, (**cit)->getId(),
 												  serialChunk);
+
+				//========================================//
+				qry->getTimer()->nextWork(0, workType::COMPUTING);
+				//----------------------------------------//
 			}
 			
 			++(*cit);
 		}
 	}
+	qry->getTimer()->pause(0);
+	//========================================//
 
 	return outArr;
 }
