@@ -27,15 +27,18 @@ pArray spiht_decode_action::execute(std::vector<pArray>& inputArrays, pQuery qry
 	//========================================//
 	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
 
+	pStableElement ele = std::static_pointer_cast<stableElement>(this->params_[1]->getParam());
+	eleDefault maxLevel;
+	ele->getData(&maxLevel);
+
 	auto planBitmap = this->getPlanChunkBitmap();
+	auto arrDesc = this->getArrayDesc();
+	dimension originalChunkDims = arrDesc->getDimDescs()->getChunkDims();
+	for (dimensionId d = 0; d < arrDesc->getDSize(); ++d)
+	{
+		arrDesc->getDimDescs()->at(d)->chunkSize_ = arrDesc->getDimDescs()->at(d)->blockSize_;
+	}
 
-	auto maxLevel = std::static_pointer_cast<wavelet_encode_array>(inputArrays[0])->getMaxLevel();
-	auto originalChunkDims = std::static_pointer_cast<wavelet_encode_array>(inputArrays[0])->getOrigianlChunkDims();
-
-	//pArray outArr = arrayMgr::instance()->makeArray<wavelet_encode_array>(this->getArrayDesc());
-	//arrayId arrId = outArr->getId();
-	//std::static_pointer_cast<wavelet_encode_array>(outArr)->setMaxLevel(maxLevel);
-	//std::static_pointer_cast<wavelet_encode_array>(outArr)->setOrigianlChunkDims(originalChunkDims);
 	auto outArr = std::make_shared<wavelet_encode_array>(this->getArrayDesc());
 	outArr->setMaxLevel(maxLevel);
 	outArr->setOrigianlChunkDims(originalChunkDims);

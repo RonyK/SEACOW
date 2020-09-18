@@ -62,6 +62,7 @@ void getSPIHTEncode(pArrayDesc sourceArrDesc,
 					pQuery& qry);
 
 void getSPIHTDecode(pArrayDesc sourceArrDesc,
+					eleDefault wtLevel,
 					std::shared_ptr<spiht_decode_plan>& plan,
 					std::shared_ptr<spiht_decode_action>& action,
 					pQuery& qry);

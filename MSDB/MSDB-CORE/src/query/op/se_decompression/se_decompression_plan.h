@@ -27,14 +27,5 @@ public:
 	virtual pArrayDesc inferSchema() override;
 	virtual pBitmapTree inferBottomUpBitmap() override;
 };
-
-class se_decompression_plan_pset : public opPlanParamSet
-{
-public:
-	se_decompression_plan_pset(parameters& pSet);
-
-public:
-	virtual pBitmapTree inferBottomUpBitmap() override;
-};
 }		// msdb
 #endif	// _MSDB_SE_DECOMPRESSION_PLAN_H_

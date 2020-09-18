@@ -177,12 +177,13 @@ void getSPIHTEncode(pArrayDesc sourceArrDesc,
 }
 
 void getSPIHTDecode(pArrayDesc sourceArrDesc, 
+					eleDefault wtLevel,
 					std::shared_ptr<spiht_decode_plan>& plan, 
 					std::shared_ptr<spiht_decode_action>& action, 
 					pQuery& qry)
 {
-	auto planAction = getSingleArrayParamOperator<spiht_decode_plan, spiht_decode_action, spiht_decode_array_pset>(
-		sourceArrDesc, qry);
+	auto planAction = getLevelArrayParamOperator<spiht_decode_plan, spiht_decode_action, spiht_decode_array_pset>(
+		sourceArrDesc, wtLevel, qry);
 	plan = std::get<0>(planAction);
 	action = std::get<1>(planAction);
 	qry = std::get<2>(planAction);

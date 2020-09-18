@@ -21,8 +21,11 @@ pArray se_decompression_action::execute(std::vector<pArray>& inputArrays, pQuery
 	//========================================//
 	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
 
-	auto planBitmap = this->getPlanChunkBitmap();
+	pStableElement ele = std::static_pointer_cast<stableElement>(this->params_[1]->getParam());
+	eleDefault maxLevel;
+	ele->getData(&maxLevel);
 
+	auto planBitmap = this->getPlanChunkBitmap();
 	auto arrDesc = this->getArrayDesc();
 	dimension originalChunkDims = arrDesc->getDimDescs()->getChunkDims();
 	for (dimensionId d = 0; d < arrDesc->getDSize(); ++d)
@@ -30,15 +33,10 @@ pArray se_decompression_action::execute(std::vector<pArray>& inputArrays, pQuery
 		arrDesc->getDimDescs()->at(d)->chunkSize_ = arrDesc->getDimDescs()->at(d)->blockSize_;
 	}
 
-	pStableElement ele = std::static_pointer_cast<stableElement>(this->params_[1]->getParam());
-	eleDefault maxLevel;
-	ele->getData(&maxLevel);
-
 	auto outArr = std::make_shared<wavelet_encode_array>(arrDesc);
 	outArr->setMaxLevel(maxLevel);
 	outArr->setOrigianlChunkDims(originalChunkDims);
 	outArr->copyChunkBitmap(planBitmap);
-	auto arrId = outArr->getId();
 
 	for (auto attrDesc : *outArr->getDesc()->attrDescs_)
 	{

@@ -50,12 +50,12 @@ pArray exe_act_ind_spiht_encode(std::vector<pArray> sourceArr)
 	return spihtAction->execute(sourceArr, spihtQuery);
 }
 
-pArray exe_act_ind_spiht_decode(std::vector<pArray> sourceArr)
+pArray exe_act_ind_spiht_decode(std::vector<pArray> sourceArr, eleDefault level)
 {
 	std::shared_ptr<spiht_decode_plan> spihtPlan;
 	std::shared_ptr<spiht_decode_action> spihtAction;
 	pQuery spihtQuery;
-	getSPIHTDecode(sourceArr[0]->getDesc(), spihtPlan, spihtAction, spihtQuery);
+	getSPIHTDecode(sourceArr[0]->getDesc(), level, spihtPlan, spihtAction, spihtQuery);
 
 	return spihtAction->execute(sourceArr, spihtQuery);
 }

@@ -12,7 +12,7 @@ pArray exe_act_ind_wavelet_encode(std::vector<pArray> sourceArr, eleDefault leve
 pArray exe_act_ind_wavelet_decode(std::vector<pArray> sourceArr, eleDefault level);
 
 pArray exe_act_ind_spiht_encode(std::vector<pArray> sourceArr);
-pArray exe_act_ind_spiht_decode(std::vector<pArray> sourceArr);
+pArray exe_act_ind_spiht_decode(std::vector<pArray> sourceArr, eleDefault level);
 
 pArray exe_act_ind_se_compression(std::vector<pArray> sourceArr);
 pArray exe_act_ind_se_decompression(std::vector<pArray> sourceArr, eleDefault level);

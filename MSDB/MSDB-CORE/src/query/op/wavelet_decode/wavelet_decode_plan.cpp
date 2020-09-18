@@ -51,24 +51,26 @@ pBitmapTree wavelet_decode_plan_pset::inferBottomUpBitmap()
 	dimension blockSpace = aDesc->getDimDescs()->getBlockSpace();
 	dimension seChunkSpace = chunkSpace * blockSpace;
 
+	auto inChunkItr = coorItr(seChunkSpace);
 	auto outChunkItr = coorItr(chunkSpace);
 	auto outBlockItr = coorItr(blockSpace);
-	auto inChunkItr = coorItr(seChunkSpace);
 
-	pBitmapTree outBitmap = std::make_shared<bitmapTree>(seChunkSpace.area(), false);
+	pBitmapTree outBitmap = std::make_shared<bitmapTree>(chunkSpace.area(), false);
 
 	while(!inChunkItr.isEnd())
 	{
 		if(fromBottom->isExist(inChunkItr.seqPos()))
 		{
-			outChunkItr.moveTo(inChunkItr.coor() / blockSpace);
-			outBlockItr.moveTo(inChunkItr.coor() % blockSpace);
+			dimension blockCoor = inChunkItr.coor() % blockSpace;
+			dimension chunkCoor = (inChunkItr.coor() - blockCoor) / blockSpace;	// Divide operator for dimension is rounded up by default
+			outChunkItr.moveTo(chunkCoor);
+			outBlockItr.moveTo(blockCoor);
 
 			outBitmap->setExist(outChunkItr.seqPos());
 
 			if(!outBitmap->hasChild(outChunkItr.seqPos()))
 			{
-				outBitmap->makeChild(outChunkItr.seqPos(), blockSpace.area(), true);
+				outBitmap->makeChild(outChunkItr.seqPos(), blockSpace.area(), false);
 			}
 
 			auto blockBitmap = outBitmap->getChild(outChunkItr.seqPos());

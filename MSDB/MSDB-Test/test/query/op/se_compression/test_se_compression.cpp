@@ -124,7 +124,7 @@ TEST(query_op_se_compression, delta_spiht_star1024x1024)
 		arr_spiht_encode->print();
 	}
 
-	auto arr_spiht_decode = exe_act_ind_spiht_decode(std::vector<pArray>({ arr_spiht_encode }));
+	auto arr_spiht_decode = exe_act_ind_spiht_decode(std::vector<pArray>({ arr_spiht_encode }), wtLevel);
 	std::cout << "##############################" << std::endl;
 	std::cout << "SPIHT Decode Arr" << std::endl;
 	if (printFlag)

@@ -24,7 +24,6 @@ public:
 
 public:
 	virtual pArrayDesc inferSchema() override;
-	// TODO::infer bitmap
 };
 
 class wavelet_decode_plan_pset : public opPlanParamSet

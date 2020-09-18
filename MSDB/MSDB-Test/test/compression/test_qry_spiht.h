@@ -38,7 +38,7 @@ pArray qry_exe_ind_spiht_decode(_vectorSourceArray_,
 								eleDefault wtLevel,
 								bool printFlag = false)
 {
-	auto outArr = exe_act_ind_spiht_decode(std::vector<pArray>({ sourceArr }));
+	auto outArr = exe_act_ind_spiht_decode(std::vector<pArray>({ sourceArr }), wtLevel);
 	if (printFlag)
 	{
 		std::cout << "##############################" << std::endl;
@@ -64,7 +64,7 @@ pArray qry_exe_seq_spiht_decode(_vectorSourceArray_,
 {
 	pQuery qry = std::make_shared<query>();
 
-	auto spDecodePlan = getSPIHTDecodePlan(sourceArr[0]->getDesc(), qry);
+	auto spDecodePlan = getSPIHTDecodePlan(sourceArr[0]->getDesc(), wtLevel, qry);
 	auto wtDecodePlan = getWaveletDecodePlan(spDecodePlan, wtLevel, qry);
 
 	auto outArr = spDecodePlan->getAction()->execute(sourceArr, qry);

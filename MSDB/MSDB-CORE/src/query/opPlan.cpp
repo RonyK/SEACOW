@@ -46,7 +46,8 @@ pBitmapTree opPlan::inferTopDownBitmap()
 	}else
 	{
 		assert(this->outArrBitmap_ != nullptr);
-		return this->outArrBitmap_;
+		return this->inParamSet_->inferTopDownBitmap(
+			this->outArrBitmap_);
 	}
 }
 pAction opPlan::getAction()
