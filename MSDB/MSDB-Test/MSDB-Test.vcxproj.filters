@@ -26,12 +26,9 @@
     <ClCompile Include="test\query\op\mmt_save\test_mmt_save.cpp" />
     <ClCompile Include="test\query\op\mmt_load\test_mmt_load.cpp" />
     <ClCompile Include="test\query\op\delta_encode\test_delta_encode.cpp" />
-    <ClCompile Include="test\index\testMMT.cpp" />
     <ClCompile Include="test\query\op\delta_decode\test_mmt_delta_decode.cpp" />
-    <ClCompile Include="test\io\testIO.cpp" />
     <ClCompile Include="test\array\testBlock.cpp" />
     <ClCompile Include="test\query\op\se_compression\test_se_compression.cpp" />
-    <ClCompile Include="test\compression\testCompression.cpp" />
     <ClCompile Include="test\dummy\dummy_astronomy.cpp" />
     <ClCompile Include="test\query\op\spiht_encode_decode\test_spiht_encode_decode.cpp" />
     <ClCompile Include="test\query\op\save\test_save_load.cpp" />
@@ -41,21 +38,26 @@
     <ClCompile Include="test\dummy\opArrayDummy.cpp" />
     <ClCompile Include="test\dummy\opPlanDummy.cpp" />
     <ClCompile Include="test\dummy\opDummy.cpp" />
+    <ClCompile Include="test\compression\test_action_compression.cpp" />
+    <ClCompile Include="test\index\test_action_mmt.cpp" />
+    <ClCompile Include="test\io\test_action_io.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">
       <Filter>test\dummy</Filter>
     </ClInclude>
     <ClInclude Include="test\pch.h" />
-    <ClInclude Include="test\index\testMMT.h" />
-    <ClInclude Include="test\io\testIO.h" />
-    <ClInclude Include="test\compression\testCompression.h" />
     <ClInclude Include="test\dummy\dummy_astronomy.h" />
     <ClInclude Include="test\test\op\filter\testFilter.h" />
     <ClInclude Include="test\dummy\opArrayDummy.h" />
     <ClInclude Include="test\dummy\opPlanDummy.h" />
     <ClInclude Include="test\dummy\opDummy.h" />
-    <ClInclude Include="test\compression\testSeCompression.h" />
+    <ClInclude Include="test\compression\test_action_compression.h" />
+    <ClInclude Include="test\compression\test_qry_secompression.h" />
+    <ClInclude Include="test\compression\test_qry_spiht.h" />
+    <ClInclude Include="test\index\test_qry_mmt.h" />
+    <ClInclude Include="test\index\test_action_mmt.h" />
+    <ClInclude Include="test\io\test_action_io.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="test">

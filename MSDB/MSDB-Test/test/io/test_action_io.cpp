@@ -1,12 +1,12 @@
 #include <pch.h>
 #include <array/memArray.h>
-#include <io/testIO.h>
+#include <io/test_action_io.h>
 
 namespace msdb
 {
 namespace caDummy
 {
-pArray save(std::vector<pArray> sourceArr, pQuery qry)
+pArray exe_act_ind_save(std::vector<pArray> sourceArr, pQuery qry)
 {
 	std::shared_ptr<save_plan> savePlan;
 	std::shared_ptr<save_action> saveAction;
@@ -16,7 +16,7 @@ pArray save(std::vector<pArray> sourceArr, pQuery qry)
 
 	return afterArray;
 }
-pArray load(std::vector<pArray> sourceArr, pQuery qry)
+pArray exe_act_ind_load(std::vector<pArray> sourceArr, pQuery qry)
 {
 	std::shared_ptr<load_plan> loadPlan;
 	std::shared_ptr<load_action> loadAction;

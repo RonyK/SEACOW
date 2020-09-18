@@ -32,9 +32,9 @@ std::shared_ptr<wavelet_decode_plan> getWaveletDecodePlan(pPlan sourcPlan, eleDe
 //	return std::shared_ptr<spiht_encode_plan>();
 //}
 
-std::shared_ptr<spiht_decode_plan> getSPIHTDecodePlan(pPlan sourcPlan, pQuery qry)
+std::shared_ptr<spiht_decode_plan> getSPIHTDecodePlan(pArrayDesc sourceArrDesc, pQuery qry)
 {
-	return getSinglePlanParamPlan<spiht_decode_plan, spiht_decode_plan_pset>(sourcPlan, qry);
+	return getSingleArrayParamPlan<spiht_decode_plan, spiht_decode_array_pset>(sourceArrDesc, qry);
 }
 
 //////////////////////////////

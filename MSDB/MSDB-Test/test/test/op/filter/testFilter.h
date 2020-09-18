@@ -5,10 +5,11 @@
 #include <pch.h>
 #include <array/attributeId.h>
 #include <parse/predicate.h>
-#include <index/testMMT.h>
-#include <io/testIO.h>
+#include <index/test_action_mmt.h>
+#include <io/test_action_io.h>
+#include <index/test_qry_mmt.h>
 
-#include <compression/testSeCompression.h>
+#include <compression/test_qry_secompression.h>
 
 #include <op/naive_filter/naive_filter_plan.h>
 #include <op/naive_filter/naive_filter_action.h>
@@ -111,7 +112,7 @@ pArray action_execute_index_filter(_pFuncGetSourceArray_,
 		sourceArr[0]->print();
 	}
 
-	auto outArr = mmt_build(sourceArr, mmtLevel);
+	auto outArr = exe_act_ind_mmt_build(sourceArr, mmtLevel);
 	if (printFlag)
 	{
 		std::cout << "##############################" << std::endl;
@@ -148,7 +149,7 @@ pArray action_execute_load_index_filter(_pFuncGetSourceArray_,
 		saveSourceArr[0]->print();
 	}
 
-	auto outArr = mmt_build(saveSourceArr, mmtLevel);
+	auto outArr = exe_act_ind_mmt_build(saveSourceArr, mmtLevel);
 	if (false)
 	{
 		std::cout << "##############################" << std::endl;
@@ -156,7 +157,7 @@ pArray action_execute_load_index_filter(_pFuncGetSourceArray_,
 		outArr->print();
 	}
 
-	outArr = save(saveSourceArr);
+	outArr = exe_act_ind_save(saveSourceArr);
 	if (false)
 	{
 		std::cout << "##############################" << std::endl;
@@ -193,7 +194,7 @@ pArray action_execute_load_index_filter(_pFuncGetSourceArray_,
 		outArr->print();
 	}
 
-	dearDownQuery(qry);
+	tearDownQuery(qry);
 
 	return outArr;
 }
@@ -211,8 +212,8 @@ pArray action_execute_se_index_filter(_pFuncGetSourceArray_,
 	getSourceArrayIfEmpty(saveSourceArr);
 	saveSourceArr[0]->setId(saveSourceArr[0]->getId() + 2);
 
-	action_execute_mmt_build<value_type>(saveSourceArr, mmtLevel, false);
-	action_execute_se_compression<value_type>(saveSourceArr, wtLevel, mmtLevel, false);
+	exe_qry_ind_mmt_build<value_type>(saveSourceArr, mmtLevel, false);
+	exe_qry_ind_se_compression<value_type>(saveSourceArr, wtLevel, mmtLevel, false);
 
 	//////////////////////////////
 	// 02 Index Filter Test
@@ -255,7 +256,7 @@ pArray action_execute_se_index_filter(_pFuncGetSourceArray_,
 		outArr->print();
 	}
 
-	dearDownQuery(qry);
+	tearDownQuery(qry);
 
 	return outArr;
 }

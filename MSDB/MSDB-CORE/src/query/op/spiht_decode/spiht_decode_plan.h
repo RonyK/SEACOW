@@ -25,14 +25,6 @@ public:
 public:
 	virtual pBitmapTree inferBottomUpBitmap() override;
 };
-
-class spiht_decode_plan_pset : public opPlanParamSet
-{
-public:
-	spiht_decode_plan_pset(parameters& pSet);
-
-public:
-};
 }
 
 #endif // _MSDB_OP_SPIHT_DECODE_PLAN_H_

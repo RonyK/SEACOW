@@ -1,6 +1,6 @@
 #include "pch.h"
 
-void msdb::caDummy::dearDownQuery(pQuery qry)
+void msdb::caDummy::tearDownQuery(pQuery qry)
 {
 	auto myTimer = qry->getTimer();
 	myTimer->printTime();

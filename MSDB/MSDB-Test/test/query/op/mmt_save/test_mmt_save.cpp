@@ -1,5 +1,5 @@
 #include <pch.h>
-#include <index/testMMT.h>
+#include <index/test_action_mmt.h>
 #include <system/storageMgr.h>
 
 namespace msdb
@@ -15,9 +15,9 @@ void test_body_mmt_save(_pFuncGetSourceArray_, eleDefault mmtLevel)
     getSourceArrayIfEmpty(sourceArr);
     sourceArr[0]->setId(sourceArr[0]->getId() + 2);
 
-    auto arr_mmt_build = mmt_build(sourceArr, mmtLevel);
+    auto arr_mmt_build = exe_act_ind_mmt_build(sourceArr, mmtLevel);
     std::cout << "##############################" << std::endl;
-    auto arr_mmt_save = mmt_save(std::vector<pArray>({ arr_mmt_build }));
+    auto arr_mmt_save = exe_act_ind_mmt_save(std::vector<pArray>({ arr_mmt_build }));
     std::cout << "##############################" << std::endl;
 
     //EXPECT_TRUE(false);

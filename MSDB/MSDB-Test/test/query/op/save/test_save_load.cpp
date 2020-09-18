@@ -1,7 +1,7 @@
 #include <pch.h>
-#include <index/testMMT.h>
+#include <index/test_action_mmt.h>
 #include <system/storageMgr.h>
-#include <io/testIO.h>
+#include <io/test_action_io.h>
 
 namespace msdb
 {
@@ -21,7 +21,7 @@ void test_body_save(_pFuncGetSourceArray_)
 		sourceArr[0]->print();
 	}
 
-	auto saveArr = save(sourceArr);
+	auto saveArr = exe_act_ind_save(sourceArr);
 	if (printFlag)
 	{
 		std::cout << "##############################" << std::endl;
@@ -29,7 +29,7 @@ void test_body_save(_pFuncGetSourceArray_)
 		saveArr->print();
 	}
 
-	auto loadArr = load(std::vector<pArray>({ saveArr }));
+	auto loadArr = exe_act_ind_load(std::vector<pArray>({ saveArr }));
 	if (printFlag)
 	{
 		std::cout << "##############################" << std::endl;

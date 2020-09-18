@@ -57,7 +57,7 @@ std::shared_ptr<load_plan> getLoadPlan(pArrayDesc sourceArrDesc, pQuery qry);
 std::shared_ptr<wavelet_decode_plan> getWaveletDecodePlan(pPlan sourcPlan, eleDefault wtLevel, pQuery qry);
 
 //std::shared_ptr<spiht_encode_plan> getSPIHTEncodePlan(pPlan sourcPlan, pQuery qry);
-std::shared_ptr<spiht_decode_plan> getSPIHTDecodePlan(pPlan sourcPlan, pQuery qry);
+std::shared_ptr<spiht_decode_plan> getSPIHTDecodePlan(pArrayDesc sourceArrDesc, pQuery qry);
 
 //////////////////////////////
 // Se Compression Operators

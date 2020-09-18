@@ -34,8 +34,4 @@ pBitmapTree spiht_decode_array_pset::inferBottomUpBitmap()
 
 	return std::make_shared<bitmapTree>(seChunkSpace.area(), true);
 }
-spiht_decode_plan_pset::spiht_decode_plan_pset(parameters& pSet)
-	: opPlanParamSet(pSet)
-{
-}
 }

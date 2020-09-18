@@ -1,5 +1,5 @@
 #include <pch.h>
-#include <compression/testCompression.h>
+#include <compression/test_action_compression.h>
 
 #include <op/wavelet_encode/wavelet_encode_plan.h>
 #include <op/wavelet_encode/wavelet_encode_action.h>
@@ -20,7 +20,7 @@ namespace msdb
 {
 namespace caDummy
 {
-pArray wavelet_encode(std::vector<pArray> sourceArr, eleDefault level)
+pArray exe_act_ind_wavelet_encode(std::vector<pArray> sourceArr, eleDefault level)
 {
 	std::shared_ptr<wavelet_encode_plan> wePlan;
 	std::shared_ptr<wavelet_encode_action> weAction;
@@ -30,7 +30,7 @@ pArray wavelet_encode(std::vector<pArray> sourceArr, eleDefault level)
 	return weAction->execute(sourceArr, weQuery);
 }
 
-pArray wavelet_decode(std::vector<pArray> sourceArr, eleDefault level)
+pArray exe_act_ind_wavelet_decode(std::vector<pArray> sourceArr, eleDefault level)
 {
 	std::shared_ptr<wavelet_decode_plan> wdPlan;
 	std::shared_ptr<wavelet_decode_action> wdAction;
@@ -40,7 +40,7 @@ pArray wavelet_decode(std::vector<pArray> sourceArr, eleDefault level)
 	return wdAction->execute(sourceArr, wdQuery);
 }
 
-pArray spiht_encode(std::vector<pArray> sourceArr)
+pArray exe_act_ind_spiht_encode(std::vector<pArray> sourceArr)
 {
 	std::shared_ptr<spiht_encode_plan> spihtPlan;
 	std::shared_ptr<spiht_encode_action> spihtAction;
@@ -50,7 +50,7 @@ pArray spiht_encode(std::vector<pArray> sourceArr)
 	return spihtAction->execute(sourceArr, spihtQuery);
 }
 
-pArray spiht_decode(std::vector<pArray> sourceArr)
+pArray exe_act_ind_spiht_decode(std::vector<pArray> sourceArr)
 {
 	std::shared_ptr<spiht_decode_plan> spihtPlan;
 	std::shared_ptr<spiht_decode_action> spihtAction;
@@ -60,7 +60,7 @@ pArray spiht_decode(std::vector<pArray> sourceArr)
 	return spihtAction->execute(sourceArr, spihtQuery);
 }
 
-pArray se_compression(std::vector<pArray> sourceArr)
+pArray exe_act_ind_se_compression(std::vector<pArray> sourceArr)
 {
 	std::shared_ptr<se_compression_plan> sePlan;
 	std::shared_ptr<se_compression_action> seAction;
@@ -72,7 +72,7 @@ pArray se_compression(std::vector<pArray> sourceArr)
 	return afterArray;
 }
 
-pArray se_decompression(std::vector<pArray> sourceArr, eleDefault level)
+pArray exe_act_ind_se_decompression(std::vector<pArray> sourceArr, eleDefault level)
 {
 	std::shared_ptr<se_decompression_plan> sePlan;
 	std::shared_ptr<se_decompression_action> seAction;
