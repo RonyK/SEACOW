@@ -111,8 +111,6 @@ void getLoad(pArrayDesc sourceArrDesc,
 			 std::shared_ptr<load_action>& action,
 			 pQuery& qry);
 
-std::shared_ptr<load_plan> getLoadPlan(pArrayDesc sourceArrDesc, pQuery qry);
-
 void getNaiveFilter(pArrayDesc sourceArrDesc,
 					pPredicate myPredicate,
 					std::shared_ptr<naive_filter_plan>& plan,

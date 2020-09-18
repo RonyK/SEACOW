@@ -111,6 +111,12 @@ void getSeDecompression(pArrayDesc sourceArrDesc, eleDefault level,
 	action = std::get<1>(planAction);
 	qry = std::get<2>(planAction);
 }
+//std::shared_ptr<se_decompression_plan> getSeDecompression(pArrayDesc sourceArrDesc, eleDefault level,
+//						pQuery& qry)
+//{
+//	return getLevelArrayParamPlan<se_decompression_plan, se_decompression_array_pset>(
+//		sourceArrDesc, level, qry);
+//}
 void getSave(pArrayDesc sourceArrDesc,
 			 std::shared_ptr<save_plan>& plan,
 			 std::shared_ptr<save_action>& action, 
@@ -132,12 +138,6 @@ void getLoad(pArrayDesc sourceArrDesc,
 	plan = std::get<0>(planAction);
 	action = std::get<1>(planAction);
 	qry = std::get<2>(planAction);
-}
-std::shared_ptr<load_plan> getLoadPlan(pArrayDesc sourceArrDesc, pQuery qry)
-{
-	auto planAction = getSingleArrayParamPlan<load_plan, load_array_pset>(
-		sourceArrDesc, qry);
-	return planAction;
 }
 
 void getNaiveFilter(pArrayDesc sourceArrDesc,

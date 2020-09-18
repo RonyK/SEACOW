@@ -38,6 +38,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ClInclude Include="test\compression\testCompression.h" />
+    <ClInclude Include="test\compression\testSeCompression.h" />
     <ClInclude Include="test\dummy\dummy.h" />
     <ClInclude Include="test\dummy\dummy_astronomy.h" />
     <ClInclude Include="test\dummy\opArrayDummy.h" />

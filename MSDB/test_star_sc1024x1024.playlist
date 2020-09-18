@@ -57,6 +57,12 @@
                         <Property Name="DisplayName" Value="query_op_se_compression.without_secompression_star1024x1024" />
                       </Rule>
                     </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_se_compression.se_comrpession_seq_star1014x1024" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_se_compression.se_comrpession_seq_star1014x1024" />
+                      </Rule>
+                    </Rule>
                   </Rule>
                 </Rule>
                 <Rule Match="All">

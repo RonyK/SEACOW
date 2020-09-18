@@ -54,6 +54,7 @@
     <ClInclude Include="test\dummy\opArrayDummy.h" />
     <ClInclude Include="test\dummy\opPlanDummy.h" />
     <ClInclude Include="test\dummy\opDummy.h" />
+    <ClInclude Include="test\compression\testSeCompression.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="test">

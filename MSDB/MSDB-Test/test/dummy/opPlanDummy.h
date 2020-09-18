@@ -46,19 +46,41 @@ namespace msdb
 {
 namespace caDummy
 {
-	//std::shared_ptr<load_plan> getLoadPlan(pPlan sourcPlan, pQuery qry);
-	std::shared_ptr<naive_filter_plan> getNaiveFilterPlan(pPlan sourcPlan, pPredicate inPredicate, pQuery qry);
-	std::shared_ptr<index_filter_plan> getIndexFilterPlan(pPlan sourcPlan, pPredicate inPredicate, pQuery qry);
+//////////////////////////////
+// IO Operators
+std::shared_ptr<save_plan> getSavePlan(pPlan sourcPlan, pQuery qry);
+std::shared_ptr<load_plan> getLoadPlan(pArrayDesc sourceArrDesc, pQuery qry);
 
-	template <typename plan_, typename pset_>
-	std::shared_ptr<plan_>
-		getOpPlan(parameters& params, pQuery myQuery)
-	{
-		auto myPlan = std::make_shared<plan_>();
-		myPlan->setParamSet(std::make_shared<pset_>(params));
+//////////////////////////////
+// Wavelet Operators
+//std::shared_ptr<wavelet_encode_plan> getWaveletEncodePlan(pPlan sourcPlan, eleDefault wtLevel, pQuery qry);
+std::shared_ptr<wavelet_decode_plan> getWaveletDecodePlan(pPlan sourcPlan, eleDefault wtLevel, pQuery qry);
 
-		return myPlan;
-	}
+//std::shared_ptr<spiht_encode_plan> getSPIHTEncodePlan(pPlan sourcPlan, pQuery qry);
+std::shared_ptr<spiht_decode_plan> getSPIHTDecodePlan(pPlan sourcPlan, pQuery qry);
+
+//////////////////////////////
+// Se Compression Operators
+//std::shared_ptr<se_compression_plan> getSeCompressionPlan(pPlan sourcPlan, eleDefault wtLevel, pQuery qry);
+std::shared_ptr<se_decompression_plan> getSeDecompressionPlan(pArrayDesc sourceArrDesc, eleDefault wtLevel, pQuery qry);
+
+//std::shared_ptr<mmt_delta_encode_plan> getMMTDeltaEncodePlan(pPlan sourcPlan, pQuery qry);
+std::shared_ptr<mmt_delta_decode_plan> getMMTDeltaDecodePlan(pPlan sourcPlan, pQuery qry);
+
+//////////////////////////////
+// Filter Operators
+std::shared_ptr<naive_filter_plan> getNaiveFilterPlan(pPlan sourcPlan, pPredicate inPredicate, pQuery qry);
+std::shared_ptr<index_filter_plan> getIndexFilterPlan(pPlan sourcPlan, pPredicate inPredicate, pQuery qry);
+
+template <typename plan_, typename pset_>
+std::shared_ptr<plan_>
+getOpPlan(parameters& params, pQuery myQuery)
+{
+	auto myPlan = std::make_shared<plan_>();
+	myPlan->setParamSet(std::make_shared<pset_>(params));
+
+	return myPlan;
+}
 }		// caDummy
 }		// msdb
 #endif	// _MSDB_OPPLANDUMMY_H_

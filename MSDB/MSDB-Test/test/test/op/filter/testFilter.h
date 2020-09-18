@@ -8,6 +8,8 @@
 #include <index/testMMT.h>
 #include <io/testIO.h>
 
+#include <compression/testSeCompression.h>
+
 #include <op/naive_filter/naive_filter_plan.h>
 #include <op/naive_filter/naive_filter_action.h>
 
@@ -66,7 +68,8 @@ bool equalTest(pArray arr, int64_t value)
 }
 
 template <typename value_type>
-pArray test_body_naive_filter(_pFuncGetSourceArray_, pPredicate myPredicate, bool printFlag = false)
+pArray action_execute_naive_filter(_pFuncGetSourceArray_,
+								   pPredicate myPredicate, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01 Source Arr
@@ -92,7 +95,10 @@ pArray test_body_naive_filter(_pFuncGetSourceArray_, pPredicate myPredicate, boo
 }
 
 template <typename value_type>
-pArray test_body_index_filter(_pFuncGetSourceArray_, pPredicate myPredicate, eleDefault mmtLevel, bool printFlag = false)
+pArray action_execute_index_filter(_pFuncGetSourceArray_, 
+								   pPredicate myPredicate,
+								   eleDefault mmtLevel,
+								   bool printFlag = false)
 {
 	//////////////////////////////
 	// 01 Source Arr
@@ -126,10 +132,10 @@ pArray test_body_index_filter(_pFuncGetSourceArray_, pPredicate myPredicate, ele
 }
 
 template <typename value_type>
-pArray test_body_load_index_filter(_pFuncGetSourceArray_, 
-								   pPredicate inPredicate, 
-								   eleDefault mmtLevel,
-								   bool printFlag = false)
+pArray action_execute_load_index_filter(_pFuncGetSourceArray_,
+										pPredicate inPredicate,
+										eleDefault mmtLevel,
+										bool printFlag = false)
 {
 	//////////////////////////////
 	// 01 Source Arr
@@ -186,6 +192,66 @@ pArray test_body_load_index_filter(_pFuncGetSourceArray_,
 		std::cout << "Filtered Arr" << std::endl;
 		outArr->print();
 	}
+	return outArr;
+}
+
+template <typename value_type>
+pArray action_execute_se_index_filter(_pFuncGetSourceArray_,
+									  pPredicate inPredicate,
+									  eleDefault wtLevel,
+									  eleDefault mmtLevel,
+									  bool printFlag = false)
+{
+	//////////////////////////////
+	// 01 Save Source Arr
+	std::vector<pArray> saveSourceArr;
+	getSourceArrayIfEmpty(saveSourceArr);
+	saveSourceArr[0]->setId(saveSourceArr[0]->getId() + 2);
+
+	action_execute_mmt_build<value_type>(saveSourceArr, mmtLevel, false);
+	action_execute_se_compression<value_type>(saveSourceArr, wtLevel, mmtLevel, false);
+
+	//////////////////////////////
+	// 02 Index Filter Test
+	pQuery qry = std::make_shared<query>();
+
+	auto seDecompPlan = getSeDecompressionPlan(saveSourceArr[0]->getDesc(), wtLevel, qry);
+	auto wtDecodePlan = getWaveletDecodePlan(seDecompPlan, wtLevel, qry);
+	auto deltaDecodePlan = getMMTDeltaDecodePlan(wtDecodePlan, qry);
+	auto filterPlan = getIndexFilterPlan(deltaDecodePlan, inPredicate, qry);
+
+	auto outArr = seDecompPlan->getAction()->execute(saveSourceArr, qry);
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "Se Decomp Arr" << std::endl;
+		outArr->print();
+	}
+
+	outArr = wtDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "Wt Decode Arr" << std::endl;
+		outArr->print();
+	}
+
+	outArr = deltaDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "Delta Decode Arr" << std::endl;
+		outArr->print();
+	}
+
+	outArr = filterPlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "Filtered Arr" << std::endl;
+		outArr->print();
+	}
+
 	return outArr;
 }
 }		// caDummy

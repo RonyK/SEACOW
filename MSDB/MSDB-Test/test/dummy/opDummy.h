@@ -11,6 +11,29 @@ namespace msdb
 {
 namespace caDummy
 {
+template <typename value_type>
+std::vector<pArray> getArrayFromFunction(_pFuncGetSourceArray_, bool printFlag = false)
+{
+	std::vector<pArray> sourceArr;
+	getSourceArrayIfEmpty(sourceArr);
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "Source Arr" << std::endl;
+		sourceArr[0]->print();
+	}
+
+	return sourceArr;
+}
+
+template <typename value_type>
+std::vector<pArray> getArrayDeskFromFunction(_pFuncGetSourceArrayDesc_, bool printFlag = false)
+{
+	std::vector<pArray> sourceArray;
+	getSourceArrayDesc(sourceArr);
+	return sourceArray;
+}
+
 template <typename plan_, typename action_, typename pset_>
 std::tuple<std::shared_ptr<plan_>, std::shared_ptr<action_>, pQuery>
 getSingleArrayParamOperator(pArrayDesc sourceArrDesc, pQuery myQuery = nullptr)
@@ -97,7 +120,7 @@ std::shared_ptr<plan_>
 getLevelPlanParamPlan(pPlan sourcePlan, eleDefault& level, pQuery myQuery = nullptr)
 {
 	parameters params = {
-		std::make_shared<opParamPlan>(sourceArrDesc),
+		std::make_shared<opParamPlan>(sourcePlan),
 		std::make_shared<opParamConst>(std::make_shared<stableElement>(&level, _ELE_DEFAULT_TYPE))
 	};
 

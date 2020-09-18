@@ -11,6 +11,20 @@ pArray mmt_load(std::vector<pArray> sourceArr);
 pArray mmt_delta_encode(std::vector<pArray> sourceArr);
 pArray mmt_delta_decode(std::vector<pArray> sourceArr);
 
+template <typename value_type>
+pArray action_execute_mmt_build(_vectorSourceArray_, eleDefault mmtLevel, bool printFlag = false)
+{
+	auto outArr = mmt_build(sourceArr, mmtLevel);
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "MMT Build Arr" << std::endl;
+		outArr->print();
+	}
+
+	return outArr;
+}
+
 namespace data2D_sc4x4
 {
 //void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr = std::vector<pArray>());
