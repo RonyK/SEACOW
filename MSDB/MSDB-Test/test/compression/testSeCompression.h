@@ -106,6 +106,8 @@ pArray action_execute_se_decompression_seq(_vectorSourceArray_, eleDefault wtLev
 		outArr->print();
 	}
 
+	dearDownQuery(qry);
+
 	return outArr;
 }
 }		// caDummy

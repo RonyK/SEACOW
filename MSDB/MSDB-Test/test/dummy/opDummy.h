@@ -11,6 +11,8 @@ namespace msdb
 {
 namespace caDummy
 {
+void dearDownQuery(pQuery qry);
+
 template <typename value_type>
 std::vector<pArray> getArrayFromFunction(_pFuncGetSourceArray_, bool printFlag = false)
 {

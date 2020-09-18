@@ -57,6 +57,7 @@
     <ClCompile Include="test\dummy\dummy.cpp" />
     <ClCompile Include="test\dummy\dummy_astronomy.cpp" />
     <ClCompile Include="test\dummy\opArrayDummy.cpp" />
+    <ClCompile Include="test\dummy\opDummy.cpp" />
     <ClCompile Include="test\dummy\opPlanDummy.cpp" />
     <ClCompile Include="test\index\testMMT.cpp" />
     <ClCompile Include="test\io\testIO.cpp" />
@@ -148,7 +149,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>%BOOST_ROOT%\lib64-msvc-1427;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%BOOST_ROOT%\stage\lib64-msvc-142;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

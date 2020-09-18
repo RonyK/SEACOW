@@ -113,6 +113,12 @@
                         <Property Name="DisplayName" Value="query_op_index_filter.load_index_filter_star1024x1024" />
                       </Rule>
                     </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_index_filter.index_filter_seq_star1024x1024" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_index_filter.index_filter_seq_star1024x1024" />
+                      </Rule>
+                    </Rule>
                   </Rule>
                 </Rule>
               </Rule>

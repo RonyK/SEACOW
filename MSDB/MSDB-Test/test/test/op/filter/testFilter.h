@@ -192,6 +192,9 @@ pArray action_execute_load_index_filter(_pFuncGetSourceArray_,
 		std::cout << "Filtered Arr" << std::endl;
 		outArr->print();
 	}
+
+	dearDownQuery(qry);
+
 	return outArr;
 }
 
@@ -251,6 +254,8 @@ pArray action_execute_se_index_filter(_pFuncGetSourceArray_,
 		std::cout << "Filtered Arr" << std::endl;
 		outArr->print();
 	}
+
+	dearDownQuery(qry);
 
 	return outArr;
 }

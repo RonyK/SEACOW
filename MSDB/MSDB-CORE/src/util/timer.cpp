@@ -1,8 +1,9 @@
 #include <util/timer.h>
+#include <util/logger.h>
+#include <boost/format.hpp>
 
 namespace msdb
 {
-
 extern std::vector<const char*> strTimerWorkType = {
 	"IDLE", "IO", "COMPUTING", "LOGGING", "ARRAY_CONSTRUCTING", "OTHERS", "TIMER_STOP"
 };
@@ -10,13 +11,15 @@ extern std::vector<const char*> strTimerWorkType = {
 timer::timer()
 	: jobId_(0)
 {
+	static bool isBoostInit = initBoostLogger();
 }
 
 void timer::start(size_t threadId, const std::string& nextJobName, workType nextWorkType)
 {
-	this->curJobIds_[threadId] = this->getNextJobId();
+	auto curJobId = this->getNextJobId();
+	this->curJobIds_[threadId] = curJobId;
 	this->curJobType_[threadId] = nextWorkType;
-	this->curJobName_[threadId] = nextJobName;
+	this->jobName_[curJobId] = nextJobName;
 	this->curJobTimes_[threadId] = std::chrono::system_clock::now();
 }
 
@@ -37,8 +40,10 @@ void timer::nextJob(size_t threadId, const std::string& nextJobName, workType ne
 	{
 		this->nextWork(threadId, nextWorkType);
 	}
-	this->curJobIds_[threadId] = this->getNextJobId();
-	this->curJobName_[threadId] = nextJobName;
+
+	auto curJobId = this->getNextJobId();
+	this->curJobIds_[threadId] = curJobId;
+	this->jobName_[curJobId] = nextJobName;
 }
 
 void timer::pause(size_t threadId)
@@ -55,10 +60,12 @@ void timer::printTime()
 {
 	for (int i = 0; i < this->records_.size(); i++)
 	{
-		std::cout << this->records_[i].threadId << "\t";
-		std::cout << this->records_[i].jobId << "\t";
-		std::cout << strTimerWorkType[static_cast<int>(this->records_[i].stype_)] << "\t";
-		std::cout << this->records_[i].time_.count() << std::endl;
+		BOOST_LOG_TRIVIAL(info) << 
+			this->records_[i].threadId << "\t" << 
+			this->records_[i].jobId << "\t" << 
+			boost::str(boost::format("%.4f") % this->records_[i].time_.count()) << "\t" << 
+			"[" << jobName_[this->records_[i].jobId] << " / " << 
+			strTimerWorkType[static_cast<int>(this->records_[i].stype_)] << "]";
 	}
 }
 size_t timer::getNextJobId()

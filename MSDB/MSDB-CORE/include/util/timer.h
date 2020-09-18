@@ -60,7 +60,7 @@ private:
 	std::map<size_t, workType> curJobType_;
 	std::map<size_t, size_t> curJobIds_;
 	std::map<size_t, std::chrono::system_clock::time_point> curJobTimes_;
-	std::map<size_t, std::string> curJobName_;
+	std::map<size_t, std::string> jobName_;
 };
 }
 

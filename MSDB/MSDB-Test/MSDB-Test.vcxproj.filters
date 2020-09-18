@@ -40,6 +40,7 @@
     <ClCompile Include="test\query\op\naive_filter\test_naive_filter.cpp" />
     <ClCompile Include="test\dummy\opArrayDummy.cpp" />
     <ClCompile Include="test\dummy\opPlanDummy.cpp" />
+    <ClCompile Include="test\dummy\opDummy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">

@@ -166,7 +166,7 @@ TEST(query_op_index_filter, index_filter_seq_star1024x1024)
 										   value, printFlag);
 }	// TEST()
 
-TEST(query_op_index_filter, index_filter_seq_se_seq_sc4x4)
+TEST(query_op_index_filter, index_filter_seq_se_seq_star1024x1024)
 {
 	int64_t value = 5;
 	bool printFlag = true;
