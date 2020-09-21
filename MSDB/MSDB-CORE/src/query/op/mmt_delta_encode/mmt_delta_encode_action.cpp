@@ -16,9 +16,12 @@ const char* mmt_delta_encode_action::name()
 	return "msdb_delta_encode_action";
 }
 
-pArray mmt_delta_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
+pArray mmt_delta_encode_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 {
 	assert(inputArrays.size() == 1);
+
+	//========================================//
+	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
 
 	pArray sourceArr = inputArrays[0];
 	arrayId arrId = sourceArr->getId();
@@ -60,6 +63,8 @@ pArray mmt_delta_encode_action::execute(std::vector<pArray>& inputArrays, pQuery
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 		}
 	}
+	qry->getTimer()->pause(0);
+	//========================================//
 
 	return deltaArr;
 }

@@ -18,9 +18,12 @@ const char* mmt_load_action::name()
 	return "mmt_load_action";
 }
 
-pArray mmt_load_action::execute(std::vector<pArray>& inputArrays, pQuery q)
+pArray mmt_load_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 {
 	assert(inputArrays.size() == 1);
+
+	//========================================//
+	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
 
 	pArray arr = inputArrays[0];
 	auto dims = arr->getDesc()->getDimDescs()->getDims();
@@ -32,10 +35,20 @@ pArray mmt_load_action::execute(std::vector<pArray>& inputArrays, pQuery q)
 	for(auto attr : *arr->getDesc()->getAttrDescs())
 	{
 		pMMT mmtIndex = MinMaxTree::createMMT(attr->type_, dims, chunkDims, blockDims);		// maxLevel is not setted
+
+		//========================================//
+		qry->getTimer()->nextWork(0, workType::IO);
+		//----------------------------------------//
 		storageMgr::instance()->loadAttrIndex(arrId, attr->id_, mmtIndex);
+
+		//========================================//
+		qry->getTimer()->nextWork(0, workType::COMPUTING);
+		//----------------------------------------//
 		arrayMgr::instance()->setAttributeIndex(arrId, attr->id_, mmtIndex);
 	}
+	qry->getTimer()->pause(0);
+	//========================================//
 
-	return pArray();
+	return arr;
 }
 }	// msdb

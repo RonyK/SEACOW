@@ -124,7 +124,7 @@ int example_1()
  *  @dontinclude ./xmltest.cpp
  *  Basic XML file loading.
  *  The basic syntax to load an XML file from
- *  disk and check for an error. (ErrorID()
+ *  disk and nextWork for an error. (ErrorID()
  *  will return 0 for no error.)
  *  @skip example_1()
  *  @until }
@@ -143,7 +143,7 @@ int example_2()
  *  @dontinclude ./xmltest.cpp
  *  Basic XML string parsing.
  *  The basic syntax to parse an XML for
- *  a char* and check for an error. (ErrorID()
+ *  a char* and nextWork for an error. (ErrorID()
  *  will return 0 for no error.)
  *  @skip example_2()
  *  @until }
@@ -177,7 +177,7 @@ int example_3()
 	In this example, we navigate a simple XML
 	file, and read some interesting text. Note
 	that this example doesn't use error
-	checking; working code should check for null
+	checking; working code should nextWork for null
 	pointers when walking an XML tree, or use
 	XMLHandle.
 
@@ -667,7 +667,7 @@ int main( int argc, const char ** argv )
 		doc.LoadFile( "resources/utf8test.xml" );
 		XMLTest( "Load utf8test.xml", false, doc.Error() );
 
-		// Get the attribute "value" from the "Russian" element and check it.
+		// Get the attribute "value" from the "Russian" element and nextWork it.
 		XMLElement* element = doc.FirstChildElement( "document" )->FirstChildElement( "Russian" );
 		const unsigned char correctValue[] = {	0xd1U, 0x86U, 0xd0U, 0xb5U, 0xd0U, 0xbdU, 0xd0U, 0xbdU,
 												0xd0U, 0xbeU, 0xd1U, 0x81U, 0xd1U, 0x82U, 0xd1U, 0x8cU, 0 };
@@ -2314,7 +2314,7 @@ int main( int argc, const char ** argv )
 		printf("%s\n", printer.CStr());
 
 		// No test; it only need to not crash.
-		// Still, wrap it up with a sanity check
+		// Still, wrap it up with a sanity nextWork
 		int nProperty = 0;
 		for (const XMLElement* p = playlist->FirstChildElement("property"); p; p = p->NextSiblingElement("property")) {
 			nProperty++;

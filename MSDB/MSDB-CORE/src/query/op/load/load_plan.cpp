@@ -26,4 +26,9 @@ load_array_pset::load_array_pset(parameters& pSet)
 {
 	assert(this->params_.size() == 1);
 }
+//load_plan_pset::load_plan_pset(parameters& pSet)
+//	: opPlanParamSet(pSet)
+//{
+//	assert(this->params_.size() == 1);
+//}
 }	// msdb

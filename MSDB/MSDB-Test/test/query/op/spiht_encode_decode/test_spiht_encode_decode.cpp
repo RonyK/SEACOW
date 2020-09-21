@@ -1,80 +1,66 @@
 #include <pch.h>
-#include <compression/testCompression.h>
+#include <compression/test_action_compression.h>
+#include <compression/test_qry_spiht.h>
 #include <util/timer.h>
 
 namespace msdb
 {
 namespace caDummy
 {
-
 template <typename value_type>
-void test_body_spiht(_pFuncGetSourceArray_, eleDefault wtLevel)
+pArray test_qry_ind_spiht_encode_decode(_pFuncGetSourceArray_, eleDefault wtLevel)
 {
-	timer myTimer;
 	bool printFlag = false;
-
-	//////////////////////////////
-	myTimer.start(0);
-	// Assing new array id for spiht encode array
+	//auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, printFlag);
+	//sourceArr[0]->setId(sourceArr[0]->getId() + 4);
 	std::vector<pArray> sourceArr;
 	getSourceArrayIfEmpty(sourceArr);
 	sourceArr[0]->setId(sourceArr[0]->getId() + 4);	// 44445
-	myTimer.check(0, timer::workType::ARRAY_CONSTRUCTING, true);
 
-	//////////////////////////////
-	auto arr_wavelet_encode = wavelet_encode(sourceArr, wtLevel);
-	myTimer.check(0, timer::workType::COMPUTING);
-	std::cout << "##############################" << std::endl;
-	std::cout << "Wavelet Encode Arr" << std::endl;
-	myTimer.check(0, timer::workType::LOGGING, true);
-	if (printFlag)
-	{
-		arr_wavelet_encode->print();
-	}
+	qry_exe_ind_spiht_encode<value_type>(sourceArr, wtLevel, printFlag);
+	auto outArr = qry_exe_ind_spiht_decode<value_type>(sourceArr, wtLevel, true);
 
-	//////////////////////////////
-	auto arr_spiht_encode = spiht_encode(std::vector<pArray>({ arr_wavelet_encode }));
-	myTimer.check(0, timer::workType::COMPUTING);
-	std::cout << "##############################" << std::endl;
-	std::cout << "SPIHT Encode Arr" << std::endl;
-	myTimer.check(0, timer::workType::LOGGING, true);
-
-	//////////////////////////////
-	auto arr_spiht_decode = spiht_decode(std::vector<pArray>({ arr_spiht_encode }));
-	myTimer.check(0, timer::workType::COMPUTING);
-	std::cout << "##############################" << std::endl;
-	std::cout << "SPIHT Decode Arr" << std::endl;
-	if (printFlag)
-	{
-		arr_spiht_decode->print();
-	}
-	myTimer.check(0, timer::workType::LOGGING, true);
-
-	//////////////////////////////
-	auto arr_wavelet_decode = wavelet_decode(std::vector<pArray>({ arr_spiht_decode }), wtLevel);
-	myTimer.check(0, timer::workType::COMPUTING, true);
-	std::cout << "##############################" << std::endl;
-	std::cout << "Wavelet Decode Arr" << std::endl;
-	if (printFlag)
-	{
-		arr_wavelet_decode->print();
-	}
-	myTimer.check(0, timer::workType::LOGGING, true);
-
-	//////////////////////////////
-	compArrary<value_type>(sourceArr[0], arr_wavelet_decode);
-
-	//////////////////////////////
-	myTimer.printTime();
-	//EXPECT_TRUE(false);
+	//compArrary<value_type>(sourceArr[0], outArr);
+	return outArr;
 }
+
+template <typename value_type>
+pArray test_qry_seq_spiht_encode_decode(_pFuncGetSourceArray_, eleDefault wtLevel)
+{
+	bool printFlag = false;
+	auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, printFlag);
+	sourceArr[0]->setId(sourceArr[0]->getId() + 4);
+
+	qry_exe_ind_spiht_encode<value_type>(sourceArr, wtLevel, printFlag);
+	auto outArr = qry_exe_seq_spiht_decode<value_type>(sourceArr, wtLevel, true);
+
+	compArrary<value_type>(sourceArr[0], outArr);
+	return outArr;
+}
+namespace data2D_sc4x4
+{
+TEST(query_op_spiht_encode_decode, spiht_encode_decode_ind_sc4x4)
+{
+	test_qry_ind_spiht_encode_decode<value_type>(&getSourceArrayIfEmpty, wtLevel);
+}
+
+TEST(query_op_spiht_encode_decode, spiht_encode_decode_seq_sc4x4)
+{
+	test_qry_seq_spiht_encode_decode<value_type>(&getSourceArrayIfEmpty, wtLevel);
+}
+}	// data2D_sc4x4
 
 namespace data2D_star1024x1024
 {
-TEST(query_op_spiht_encode_decode, spiht_encode_decode_star1024x1024)
+TEST(query_op_spiht_encode_decode, spiht_encode_decode_ind_star1024x1024)
 {
-	test_body_spiht<value_type>(&getSourceArrayIfEmpty, wtLevel);
+	test_qry_ind_spiht_encode_decode<value_type>(&getSourceArrayIfEmpty, wtLevel);
 }
+
+TEST(query_op_spiht_encode_decode, spiht_encode_decode_seq_star1024x1024)
+{
+	test_qry_seq_spiht_encode_decode<value_type>(&getSourceArrayIfEmpty, wtLevel);
 }
-}
-}
+}	// data2D_star1024x1024
+}	// caDummy
+}	// msdb

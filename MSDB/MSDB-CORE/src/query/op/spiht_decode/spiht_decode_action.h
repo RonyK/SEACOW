@@ -18,8 +18,8 @@ public:
 	virtual const char* name() override;
 
 public:
-	pArray execute(std::vector<pArray>& outputArrays, pQuery q);
-	void decodeAttribute(std::shared_ptr<wavelet_encode_array>outArr, pAttributeDesc attrDesc);
+	pArray execute(std::vector<pArray>& outputArrays, pQuery qry);
+	void decodeAttribute(std::shared_ptr<wavelet_encode_array>outArr, pAttributeDesc attrDesc, pQuery qry);
 
 	pSpihtChunk makeInChunk(std::shared_ptr<wavelet_encode_array>arr, pAttributeDesc attrDesc, 
 							chunkId cid);

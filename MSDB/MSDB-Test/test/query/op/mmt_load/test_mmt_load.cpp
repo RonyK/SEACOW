@@ -1,5 +1,5 @@
 #include <pch.h>
-#include <index/testMMT.h>
+#include <index/test_action_mmt.h>
 
 namespace msdb
 {
@@ -14,10 +14,10 @@ pArray test_body_mmt_build(_pFuncGetSourceArray_, eleDefault mmtLevel)
     getSourceArrayIfEmpty(sourceArr);
     sourceArr[0]->setId(sourceArr[0]->getId() + 2);
 
-    auto outArr = mmt_build(sourceArr, mmtLevel);
+    auto outArr = exe_act_ind_mmt_build(sourceArr, mmtLevel);
     std::cout << "##############################" << std::endl;
 
-    outArr = mmt_save(std::vector<pArray>({ outArr }));
+    outArr = exe_act_ind_mmt_save(std::vector<pArray>({ outArr }));
     std::cout << "##############################" << std::endl;
 
     std::cout << "====================" << std::endl;
@@ -27,7 +27,7 @@ pArray test_body_mmt_build(_pFuncGetSourceArray_, eleDefault mmtLevel)
     std::cout << "flush attribute index success" << std::endl;
     std::cout << "====================" << std::endl;
 
-    outArr = mmt_load(std::vector<pArray>({ outArr }));
+    outArr = exe_act_ind_mmt_load(std::vector<pArray>({ outArr }));
     std::cout << "##############################" << std::endl;
 
     //EXPECT_TRUE(false);
@@ -58,8 +58,8 @@ protected:
 
 TEST_F(query_op_mmt_load, mmt_load_sc4x4)
 {
-    //auto arr = mmt_build(std::vector<pArray>(), mmtLevel);
-    //arr = mmt_save(std::vector<pArray>({ arr }));
+    //auto arr = exe_act_ind_mmt_build(std::vector<pArray>(), mmtLevel);
+    //arr = exe_act_ind_mmt_save(std::vector<pArray>({ arr }));
 
     //std::cout << "====================" << std::endl;
     //std::cout << "Setup for load" << std::endl;
@@ -68,7 +68,7 @@ TEST_F(query_op_mmt_load, mmt_load_sc4x4)
     //std::cout << "flush attribute index success" << std::endl;
     //std::cout << "====================" << std::endl;
 
-    //arr = mmt_load(std::vector<pArray>({ arr }));
+    //arr = exe_act_ind_mmt_load(std::vector<pArray>({ arr }));
     auto outArr = test_body_mmt_build<value_type>(&getSourceArrayIfEmpty, mmtLevel);
 
 }	// TEST()

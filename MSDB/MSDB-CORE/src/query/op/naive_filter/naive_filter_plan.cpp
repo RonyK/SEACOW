@@ -27,11 +27,10 @@ naive_filter_array_pset::naive_filter_array_pset(parameters& pSet)
 	assert(this->params_[1]->type() == opParamType::PREDICATE);
 }
 
-pArrayDesc naive_filter_array_pset::inferSchema()
+naive_filter_plan_pset::naive_filter_plan_pset(parameters& pSet)
+	: opPlanParamSet(pSet)
 {
-	auto aSourceDesc = std::static_pointer_cast<opParamArray::paramType>(this->params_[0]->getParam());
-	auto aInferDesc = std::make_shared<opParamArray::paramType>(*aSourceDesc);
-
-	return aInferDesc;
+	assert(this->params_.size() == 2);
+	assert(this->params_[1]->type() == opParamType::PREDICATE);
 }
 }

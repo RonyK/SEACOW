@@ -23,7 +23,16 @@ pAction spiht_decode_plan::makeAction()
 spiht_decode_array_pset::spiht_decode_array_pset(parameters& pSet)
 	: opArrayParamSet(pSet)
 {
-	assert(this->params_.size() == 1);
+	assert(this->params_.size() == 2);
+	assert(this->params_[1]->type() == opParamType::CONST);		// Target wtLevel
+}
+pArrayDesc spiht_decode_array_pset::inferSchema()
+{
+	pArrayDesc aSourceDesc = std::static_pointer_cast<opParamArray::paramType>(this->params_[0]->getParam());
+	eleDefault level;
+	std::static_pointer_cast<opParamConst::paramType>(this->params_[1]->getParam())->getData(&level);
+
+	return std::make_shared<opParamArray::paramType>(*aSourceDesc);
 }
 pBitmapTree spiht_decode_array_pset::inferBottomUpBitmap()
 {
@@ -32,7 +41,6 @@ pBitmapTree spiht_decode_array_pset::inferBottomUpBitmap()
 	dimension blockSpace = desc->getDimDescs()->getBlockSpace();
 	dimension seChunkSpace = chunkSpace * blockSpace;
 
-	// TODO::merge block bitmaps
 	return std::make_shared<bitmapTree>(seChunkSpace.area(), true);
 }
 }

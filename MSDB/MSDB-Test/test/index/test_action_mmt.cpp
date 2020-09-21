@@ -1,6 +1,6 @@
 #pragma once
 #include <pch.h>
-#include <index/testMMT.h>
+#include <index/test_action_mmt.h>
 
 #include <array/arrayMgr.h>
 #include <system/storageMgr.h>
@@ -22,7 +22,7 @@ namespace msdb
 {
 namespace caDummy
 {
-pArray mmt_build(std::vector<pArray> sourceArr, eleDefault level)
+pArray exe_act_ind_mmt_build(std::vector<pArray> sourceArr, eleDefault level)
 {
 	std::shared_ptr<mmt_build_plan> mmtPlan;
 	std::shared_ptr<mmt_build_action> mmtAction;
@@ -35,7 +35,7 @@ pArray mmt_build(std::vector<pArray> sourceArr, eleDefault level)
 	return afterArray;
 }
 
-pArray mmt_save(std::vector<pArray> sourceArr)
+pArray exe_act_ind_mmt_save(std::vector<pArray> sourceArr)
 {
 	std::shared_ptr<mmt_save_plan> mmtPlan;
 	std::shared_ptr<mmt_save_action> mmtAction;
@@ -47,7 +47,7 @@ pArray mmt_save(std::vector<pArray> sourceArr)
 	return afterArray;
 }
 
-pArray mmt_load(std::vector<pArray> sourceArr)
+pArray exe_act_ind_mmt_load(std::vector<pArray> sourceArr)
 {
 	std::shared_ptr<mmt_load_plan> mmtPlan;
 	std::shared_ptr<mmt_load_action> mmtAction;
@@ -60,7 +60,7 @@ pArray mmt_load(std::vector<pArray> sourceArr)
 	return afterArray;
 }
 
-pArray mmt_delta_encode(std::vector<pArray> sourceArr)
+pArray exe_act_ind_mmt_delta_encode(std::vector<pArray> sourceArr)
 {
 	std::shared_ptr<mmt_delta_encode_plan> mmtPlan;
 	std::shared_ptr<mmt_delta_encode_action> mmtAction;
@@ -72,7 +72,7 @@ pArray mmt_delta_encode(std::vector<pArray> sourceArr)
 	return afterArray;
 }
 
-pArray mmt_delta_decode(std::vector<pArray> sourceArr)
+pArray exe_act_ind_mmt_delta_decode(std::vector<pArray> sourceArr)
 {
 	std::shared_ptr<mmt_delta_decode_plan> mmtPlan;
 	std::shared_ptr<mmt_delta_decode_action> mmtAction;
@@ -88,7 +88,7 @@ namespace data2D_sc4x4
 {
 void mmt_build_test(pArray afterArray)
 {
-	// Result check
+	// Result nextWork
 	for (auto attrDesc : *afterArray->getDesc()->attrDescs_)
 	{
 		auto attrIndex = arrayMgr::instance()->getAttributeIndex(afterArray->getId(), attrDesc->id_);
@@ -159,8 +159,8 @@ void mmt_delta_encode_test(std::shared_ptr<mmt_delta_encode_array> arr)
 
 std::shared_ptr<mmt_delta_encode_array> get_mmt_delta_encode_array()
 {
-	auto arr_1 = mmt_build(std::vector<pArray>(), mmtLevel);
-	auto arr_2 = mmt_delta_encode(std::vector<pArray>({ arr_1 }));
+	auto arr_1 = exe_act_ind_mmt_build(std::vector<pArray>(), mmtLevel);
+	auto arr_2 = exe_act_ind_mmt_delta_encode(std::vector<pArray>({ arr_1 }));
 
 	return std::static_pointer_cast<mmt_delta_encode_array>(arr_2);
 }

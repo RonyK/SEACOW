@@ -18,6 +18,8 @@ using parameters = std::vector<pParameter>;
 
 using paramSetId = size_t;
 
+class opPlan;
+using pPlan = std::shared_ptr<opPlan>;
 
 enum class opParamType
 {
@@ -220,7 +222,32 @@ public:
 public:
 	virtual opParamType type();
 };
+
+//////////////////////////////
+// opParamPlan
+class opParamPlan : public opParam
+{
+public:
+	using paramType = opPlan;
+
+public:
+	opParamPlan(pPlan plan);
+
+public:
+	virtual opParam::void_pointer getParam();
+	virtual opParamType type();
+
+private:
+	pPlan plan_;
+};
+
+class opParamPlanPlaceholder : public opParamPlaceholder, public opParamPlan
+{
+public:
+	opParamPlanPlaceholder();
+
+public:
+	virtual opParamType type();
+};
 }
-
-
 #endif		// _MSDB_OPPARAM_H_

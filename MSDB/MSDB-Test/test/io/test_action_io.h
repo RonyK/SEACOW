@@ -19,8 +19,8 @@ void getLoad(pArrayDesc sourceArrDesc,
 			 std::shared_ptr<load_action>& action,
 			 pQuery& qry);
 
-pArray save(std::vector<pArray> sourceArr);
-pArray load(std::vector<pArray> sourceArr);
+pArray exe_act_ind_save(std::vector<pArray> sourceArr, pQuery qry = nullptr);
+pArray exe_act_ind_load(std::vector<pArray> sourceArr, pQuery qry = nullptr);
 
 namespace data2D_sc4x4
 {

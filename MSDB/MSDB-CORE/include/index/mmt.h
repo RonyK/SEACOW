@@ -158,13 +158,26 @@ public:
 	{
 		assert(it->getIterateMode() == iterateMode::EXIST);
 
+		this->blockLevel_ = 0;
+		this->chunkLevel_ = 0;
+
+		for(size_type level = 0; level <= this->maxLevel_; ++level)
+		{
+			auto nSpace = this->getNodeSpace(level);
+			if(this->chunkDims_.area() == nSpace.area())
+			{
+				this->chunkLevel_ = level;
+				break;
+			}
+		}
+
 		this->nodes_.clear();
 
 		//////////////////////////////
 		// Forward build
 		// Set Min/Max values [0 (leaf) level -> maxLevel]
 		this->forwardBuildLeaf(it);
-		for (size_type level = 1; level <= this->maxLevel_; level++)
+		for (size_type level = 1; level <= this->maxLevel_; ++level)
 		{
 			this->forwardBuildNonLeaf(level);
 			if(this->nodes_[level].size() == 1)
@@ -782,6 +795,16 @@ public:
 		}
 		return coorRange(spOut, epOut);
 	}
+
+	_NODISCARD size_type getBlockLevel()
+	{
+		return this->blockLevel_;
+	}
+
+	_NODISCARD size_type getChunkLevel()
+	{
+		return this->chunkLevel_;
+	}
 	
 public:
 	// For test
@@ -874,12 +897,14 @@ private:
 
 private:
 	size_type dSize_;
-	dimension dims_;						// dimensions
-	dimension chunkDims_;
-	dimension blockDims_;			// leaf block dimension (num of items)
+	dimension dims_;					// dimensions
+	dimension chunkDims_;				
+	dimension blockDims_;				// leaf block dimension (num of items)
 	dimension leafInChunkBlockSpace_;	// level dim in chunk (num of blocks)
 	std::vector<dimension> nodeSpace_;	// level dim (num of blocks)
 	std::vector<std::vector<pMmtNode>> nodes_;	// mmt
+	size_type blockLevel_;
+	size_type chunkLevel_;
 	/*
 	* Here is an example of a 'nodes_' with size 4 (has 0~3 levels).
 	*

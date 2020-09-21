@@ -37,12 +37,17 @@
     <IncludePath>$(SolutionDir)MSDB-CORE\include;$(ProjectDir)test;$(SolutionDir)MSDB-CORE\src\query;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemGroup>
-    <ClInclude Include="test\compression\testCompression.h" />
+    <ClInclude Include="test\compression\test_action_compression.h" />
+    <ClInclude Include="test\compression\test_qry_secompression.h" />
+    <ClInclude Include="test\compression\test_qry_spiht.h" />
     <ClInclude Include="test\dummy\dummy.h" />
     <ClInclude Include="test\dummy\dummy_astronomy.h" />
+    <ClInclude Include="test\dummy\opArrayDummy.h" />
     <ClInclude Include="test\dummy\opDummy.h" />
-    <ClInclude Include="test\index\testMMT.h" />
-    <ClInclude Include="test\io\testIO.h" />
+    <ClInclude Include="test\dummy\opPlanDummy.h" />
+    <ClInclude Include="test\index\test_action_mmt.h" />
+    <ClInclude Include="test\index\test_qry_mmt.h" />
+    <ClInclude Include="test\io\test_action_io.h" />
     <ClInclude Include="test\pch.h" />
     <ClInclude Include="test\test\op\filter\testFilter.h" />
   </ItemGroup>
@@ -50,12 +55,14 @@
     <ClCompile Include="test\array\testArray.cpp" />
     <ClCompile Include="test\array\testBlock.cpp" />
     <ClCompile Include="test\array\testMemChunk.cpp" />
-    <ClCompile Include="test\compression\testCompression.cpp" />
+    <ClCompile Include="test\compression\test_action_compression.cpp" />
     <ClCompile Include="test\dummy\dummy.cpp" />
     <ClCompile Include="test\dummy\dummy_astronomy.cpp" />
+    <ClCompile Include="test\dummy\opArrayDummy.cpp" />
     <ClCompile Include="test\dummy\opDummy.cpp" />
-    <ClCompile Include="test\index\testMMT.cpp" />
-    <ClCompile Include="test\io\testIO.cpp" />
+    <ClCompile Include="test\dummy\opPlanDummy.cpp" />
+    <ClCompile Include="test\index\test_action_mmt.cpp" />
+    <ClCompile Include="test\io\test_action_io.cpp" />
     <ClCompile Include="test\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -68,8 +75,9 @@
     </ClCompile>
     <ClCompile Include="test\query\op\delta_decode\test_mmt_delta_decode.cpp" />
     <ClCompile Include="test\query\op\delta_encode\test_delta_encode.cpp" />
+    <ClCompile Include="test\query\op\index_filter\test_index_filter.cpp" />
     <ClCompile Include="test\test\op\filter\testFilter.cpp" />
-    <ClCompile Include="test\query\op\naive_filter\test_nive_filter.cpp" />
+    <ClCompile Include="test\query\op\naive_filter\test_naive_filter.cpp" />
     <ClCompile Include="test\query\op\save\test_save_load.cpp" />
     <ClCompile Include="test\query\op\mmt_build\test_mmt_build.cpp" />
     <ClCompile Include="test\query\op\mmt_load\test_mmt_load.cpp" />
@@ -143,7 +151,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>%BOOST_ROOT%\lib64-msvc-1427;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%BOOST_ROOT%\stage\lib64-msvc-142;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

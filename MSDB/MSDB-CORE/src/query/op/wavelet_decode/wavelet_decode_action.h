@@ -34,12 +34,14 @@ private:
 		auto ocItr = outArr->getChunkIterator(iterateMode::ALL);
 		while(!ocItr->isEnd())
 		{
+			bool isOutChunkEmpty = true;
 			std::vector<pChunk> chunks;
 			pBitmap blockBitmap = std::make_shared<bitmap>(blockSpace.area(), false);
 
 			auto chunkCoor = ocItr->coor();
 			auto bSpaceItr = coorItr(blockSpace);
 
+			// Bring all chunks belong to an outChunk
 			while (!bSpaceItr.isEnd())
 			{
 				auto blockCoor = bSpaceItr.coor();
@@ -48,20 +50,29 @@ private:
 				icItr->moveTo(inChunkCoor);
 				if(icItr->isExist())
 				{
+					assert((*icItr)->getDesc()->chunkCoor_ == inChunkCoor);
 					blockBitmap->setExist(bSpaceItr.seqPos());
+					chunks.push_back(**icItr);
+					isOutChunkEmpty = false;
+				}else
+				{
+					chunks.push_back(nullptr);
 				}
-				assert((*icItr)->getDesc()->chunkCoor_ == inChunkCoor);
-				chunks.push_back(**icItr);
-
 				++bSpaceItr;
 			}
-			// --------------------
-			// TODO::PARALLEL
-			auto outChunk = this->chunkDecode<Ty_>(chunks, chunkDims, blockBitmap, w, maxLevel, q);
-			// --------------------
-			auto cid = outArr->getChunkIdFromChunkCoor(chunkCoor);
-			outChunk->setId(cid);
-			outArr->insertChunk(attrDesc->id_, outChunk);
+
+			if(!isOutChunkEmpty)
+			{
+				// --------------------
+				// TODO::PARALLEL
+				auto outChunk = this->chunkDecode<Ty_>(chunks, chunkDims, blockBitmap, w, maxLevel, q);
+				// --------------------
+
+				auto cid = outArr->getChunkIdFromChunkCoor(chunkCoor);
+				outChunk->setId(cid);
+				outArr->insertChunk(attrDesc->id_, outChunk);
+			}
+			
 			++(*ocItr);
 		}
 	}
@@ -70,7 +81,16 @@ private:
 	pChunk chunkDecode(std::vector<pChunk>& inChunkList, dimension chunkDims, pBitmap blockBitmap,
 					   pWavelet w, size_t maxLevel, pQuery q)
 	{
-		auto inChunkDesc = inChunkList[0]->getDesc();
+		// Find an exist chunk and set inChunkDesc
+		pChunkDesc inChunkDesc;
+		for (blockId bid = 0; bid < inChunkList.size(); ++bid)
+		{
+			if (blockBitmap->isExist(bid))
+			{
+				inChunkDesc = inChunkList[bid]->getDesc();
+				break;
+			}
+		}
 		pChunkDesc outChunkDesc = std::make_shared<chunkDesc>(*inChunkDesc);
 		dimension blockSpace = chunkDims / inChunkDesc->dims_;	// chunkDims == blockDims in outBlock
 		size_t numBlocks = blockSpace.area();

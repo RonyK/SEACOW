@@ -155,4 +155,26 @@ opParamType opParamCoorPlaceholder::type()
 	return opParamType::COOR;
 }
 
+//////////////////////////////
+// opParamPlan
+opParamPlan::opParamPlan(pPlan plan)
+	: plan_(plan)
+{
+}
+opParam::void_pointer opParamPlan::getParam()
+{
+	return this->plan_;
+}
+opParamType opParamPlan::type()
+{
+	return opParamType::PLAN;
+}
+opParamPlanPlaceholder::opParamPlanPlaceholder()
+	: opParamPlaceholder(), opParamPlan(nullptr)
+{
+}
+opParamType opParamPlanPlaceholder::type()
+{
+	return opParamType::PLAN;
+}
 }

@@ -28,6 +28,16 @@ public:
 	virtual pArrayDesc inferSchema() override;
 	// TODO::infer bitmap
 };
+
+class wavelet_encode_plan_pset : public opPlanParamSet
+{
+public:
+	wavelet_encode_plan_pset(parameters& pSet);
+
+public:
+	virtual pArrayDesc inferSchema() override;
+	virtual pBitmapTree inferBottomUpBitmap() override;
+};
 }
 
 #endif		// _MSDB_OP_WAVELET_ENCODE_PLAN_H_

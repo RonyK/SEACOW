@@ -97,6 +97,8 @@
     <ClCompile Include="src\util\timer.cpp" />
     <ClCompile Include="src\query\op\index_filter\index_filter_action.cpp" />
     <ClCompile Include="src\query\op\index_filter\index_filter_plan.cpp" />
+    <ClCompile Include="src\query\query.cpp" />
+    <ClCompile Include="src\util\logger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.h" />
@@ -210,6 +212,7 @@
     <ClInclude Include="src\query\op\index_filter\index_filter_plan.h" />
     <ClInclude Include="src\query\op\index_filter\index_filter_action.h" />
     <ClInclude Include="include\index\mmtNode.h" />
+    <ClInclude Include="include\util\logger.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">

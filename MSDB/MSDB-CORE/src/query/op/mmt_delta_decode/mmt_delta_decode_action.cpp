@@ -15,9 +15,11 @@ const char* mmt_delta_decode_action::name()
 	return "mmt_delta_decode_action";
 }
 
-pArray mmt_delta_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
+pArray mmt_delta_decode_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 {
 	assert(inputArrays.size() == 1);
+	//========================================//
+	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
 
 	std::shared_ptr<mmt_delta_encode_array> sourceArr = std::static_pointer_cast<mmt_delta_encode_array>(inputArrays[0]);
 	arrayId arrId = sourceArr->getId();
@@ -59,6 +61,9 @@ pArray mmt_delta_decode_action::execute(std::vector<pArray>& inputArrays, pQuery
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 		}
 	}
+
+	qry->getTimer()->pause(0);
+	//========================================//
 
 	return std::static_pointer_cast<arrayBase>(deltaArr);
 }

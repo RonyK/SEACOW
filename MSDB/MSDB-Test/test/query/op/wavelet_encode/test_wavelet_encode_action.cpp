@@ -3,7 +3,7 @@
 #include <array/memChunk.h>
 #include <array/memChunkBuffer.h>
 #include <array/dimensionDesc.h>
-#include <compression/testCompression.h>
+#include <compression/test_action_compression.h>
 #include <cmath>
 #include <vector>
 
@@ -177,7 +177,7 @@ void test_body_wavelet_encode_decode(_pFuncGetSourceArray_, eleDefault wtLevel)
 		sourceArr[0]->print();
 	}
 
-	auto weArr = wavelet_encode(sourceArr, wtLevel);
+	auto weArr = exe_act_ind_wavelet_encode(sourceArr, wtLevel);
 	if (printFlag)
 	{
 		std::cout << "##############################" << std::endl;
@@ -185,7 +185,7 @@ void test_body_wavelet_encode_decode(_pFuncGetSourceArray_, eleDefault wtLevel)
 		weArr->print();
 	}
 
-	auto wdArr = wavelet_decode(std::vector<pArray>({ weArr }), wtLevel);
+	auto wdArr = exe_act_ind_wavelet_decode(std::vector<pArray>({ weArr }), wtLevel);
 	if (printFlag)
 	{
 		std::cout << "##############################" << std::endl;
@@ -218,9 +218,9 @@ TEST(query_op_wavelet_encode, wavelet_encode_testTemp)
 {
 	std::vector<pArray> sourceArr;
 	getSourceArrayIfEmpty(sourceArr);
-	auto weArr = wavelet_encode(sourceArr, wtLevel);
+	auto weArr = exe_act_ind_wavelet_encode(sourceArr, wtLevel);
 	weArr->print();
-	auto wdArr = wavelet_decode(std::vector<pArray>({ weArr }), wtLevel);
+	auto wdArr = exe_act_ind_wavelet_decode(std::vector<pArray>({ weArr }), wtLevel);
 	wdArr->print();
 
 	compArrary<value_type>(sourceArr[0], wdArr);

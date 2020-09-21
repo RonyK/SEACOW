@@ -21,11 +21,11 @@ public:
 public:
 	virtual void setEvaluateFunc(eleType eType) = 0;
 	virtual bool evaluate(pItemItr iit) = 0;
-	//virtual bool evaluate(pMmtNode node) = 0;
+	virtual bool evaluateNode(pMmtNode node) = 0;
 
 protected:
-	pTerm lhs_;
-	pTerm rhs_;
+	pTerm lTerm;
+	pTerm rTerm;
 };
 
 class singlePredicate : public predicate
@@ -35,20 +35,28 @@ public:
 
 public:
 	virtual void setEvaluateFunc(eleType eType) override;
-
 	virtual bool evaluate(pItemItr iit) override;
-	//virtual bool evaluate(pMmtNode node) override;	// TODO::Implement
+	virtual bool evaluateNode(pMmtNode node) override;
 
 	template <typename Ty_>
 	bool evaluateImpl(pItemItr iit)
 	{
-		return this->lhs_->evaluate<Ty_>(iit);
+		return this->lTerm->evaluate<Ty_>(iit);
+	}
+
+	template <typename Ty_>
+	bool evaluateNodeImpl(pMmtNode node)
+	{
+		return this->lTerm->evaluateNode<Ty_>(node);
 	}
 
 private:
 	typedef bool(singlePredicate::* eFunc)(pItemItr);
+	typedef bool(singlePredicate::* enFunc)(pMmtNode);
 	eFunc findEvaluateFunc(eleType type);
+	enFunc findEvaluateNodeFunc(eleType type);
 	bool (singlePredicate::* evaluateFunc)(pItemItr);
+	bool (singlePredicate::* evaluateNodeFunc)(pMmtNode);
 };
 
 class andPredicate : public predicate
@@ -58,19 +66,28 @@ public:
 
 public:
 	virtual void setEvaluateFunc(eleType eType) override;
-
 	virtual bool evaluate(pItemItr iit) override;
+	virtual bool evaluateNode(pMmtNode node) override;
 
 	template <typename Ty_>
 	bool evaluateImpl(pItemItr iit)
 	{
-		return this->lhs_->evaluate<Ty_>(iit) && this->rhs_->evaluate<Ty_>(iit);
+		return this->lTerm->evaluate<Ty_>(iit) && this->rTerm->evaluate<Ty_>(iit);
+	}
+
+	template <typename Ty_>
+	bool evaluateNodeImpl(pMmtNode node)
+	{
+		return this->lTerm->evaluateNode<Ty_>(node) && this->rTerm->evaluateNode<Ty_>(node);
 	}
 
 private:
 	typedef bool(andPredicate::* eFunc)(pItemItr);
+	typedef bool(andPredicate::* enFunc)(pMmtNode);
 	eFunc findEvaluateFunc(eleType type);
+	enFunc findEvaluateNodeFunc(eleType type);
 	bool (andPredicate::* evaluateFunc)(pItemItr);
+	bool (andPredicate::* evaluateNodeFunc)(pMmtNode);
 };
 
 class orPredicate : public predicate
@@ -82,17 +99,27 @@ public:
 	virtual void setEvaluateFunc(eleType eType) override;
 
 	virtual bool evaluate(pItemItr iit) override;
+	virtual bool evaluateNode(pMmtNode node) override;
 
 	template <typename Ty_>
 	bool evaluateImpl(pItemItr iit)
 	{
-		return this->lhs_->evaluate<Ty_>(iit) || this->rhs_->evaluate<Ty_>(iit);
+		return this->lTerm->evaluate<Ty_>(iit) || this->rTerm->evaluate<Ty_>(iit);
+	}
+
+	template <typename Ty_>
+	bool evaluateNodeImpl(pMmtNode node)
+	{
+		return this->lTerm->evaluateNode<Ty_>(node) && this->rTerm->evaluateNode<Ty_>(node);
 	}
 
 private:
 	typedef bool(orPredicate::* eFunc)(pItemItr);
+	typedef bool(orPredicate::* enFunc)(pMmtNode);
 	eFunc findEvaluateFunc(eleType type);
+	enFunc findEvaluateNodeFunc(eleType type);
 	bool (orPredicate::* evaluateFunc)(pItemItr);
+	bool (orPredicate::* evaluateNodeFunc)(pMmtNode);
 };
 }		// msdb
 #endif	// _MSDB_PREDICATE_H_

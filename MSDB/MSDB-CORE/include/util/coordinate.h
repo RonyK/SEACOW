@@ -100,6 +100,24 @@ public:
 public:
 	//////////////////////////////
 	// Getter
+	_NODISCARD std::string toString() const
+	{
+		std::ostringstream ss;
+
+		ss << "(";
+		for(dimensionId d = this->dSize_ - 1; d != (dimensionId)-1; --d)
+		{
+			if(d != this->dSize_ - 1)
+			{
+				ss << ", ";
+			}
+			ss << d;
+		}
+
+		ss << ")";
+
+		return ss.str();
+	}
 	_NODISCARD inline constexpr size_type size() const noexcept
 	{
 		return this->dSize_;

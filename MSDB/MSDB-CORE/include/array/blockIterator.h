@@ -28,9 +28,9 @@ public:
 	blockIterator(const self_type& mit);
 
 public:
-	size_type getSeqEnd();
-	bool isExist();
-	bool isExist(blockId cid);
+	virtual size_type getSeqEnd();
+	virtual bool isExist();
+	virtual bool isExist(blockId cid);
 	iterateMode getIterateMode();
 
 	//////////////////////////////
@@ -84,12 +84,12 @@ public:
 	singleBlockIterator(const singleBlockIterator& mit);
 
 public:
-	size_type getSeqEnd();
-	bool isExist();
-	bool isExist(blockId bid);
+	virtual size_type getSeqEnd() override;
+	virtual bool isExist() override;
+	virtual bool isExist(blockId bid) override;
 
-	virtual void next();
-	virtual void prev();
+	virtual void next() override;
+	virtual void prev() override;
 
 	virtual pBlock operator*() { return (this->seqPos_ == 0) ? this->block_ : throw std::out_of_range("blockIterator seq pos > 0"); }
 	virtual pBlock operator->() { return (this->seqPos_ == 0) ? this->block_ : throw std::out_of_range("blockIterator seq pos > 0"); }

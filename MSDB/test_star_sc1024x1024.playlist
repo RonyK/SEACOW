@@ -40,6 +40,18 @@
                         <Property Name="DisplayName" Value="query_op_spiht_encode_decode.spiht_encode_decode_star1024x1024" />
                       </Rule>
                     </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_spiht_encode_decode.spiht_encode_decode_ind_star1024x1024" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_spiht_encode_decode.spiht_encode_decode_ind_star1024x1024" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_spiht_encode_decode.spiht_encode_decode_seq_star1024x1024" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_spiht_encode_decode.spiht_encode_decode_seq_star1024x1024" />
+                      </Rule>
+                    </Rule>
                   </Rule>
                 </Rule>
                 <Rule Match="All">
@@ -55,6 +67,12 @@
                       <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_se_compression.without_secompression_star1024x1024" />
                       <Rule Match="Any">
                         <Property Name="DisplayName" Value="query_op_se_compression.without_secompression_star1024x1024" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_se_compression.se_comrpession_seq_star1014x1024" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_se_compression.se_comrpession_seq_star1014x1024" />
                       </Rule>
                     </Rule>
                   </Rule>
@@ -88,6 +106,29 @@
                       <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_naive_filter.naive_filter_star1024x1024" />
                       <Rule Match="Any">
                         <Property Name="DisplayName" Value="query_op_naive_filter.naive_filter_star1024x1024" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_index_filter" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_index_filter.index_filter_star1024x1024" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_index_filter.index_filter_star1024x1024" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_index_filter.load_index_filter_star1024x1024" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_index_filter.load_index_filter_star1024x1024" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_index_filter.index_filter_seq_star1024x1024" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_index_filter.index_filter_seq_star1024x1024" />
                       </Rule>
                     </Rule>
                   </Rule>

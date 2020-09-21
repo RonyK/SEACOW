@@ -10,29 +10,35 @@
 
 namespace msdb
 {
+class timer;
+using pTimer = std::shared_ptr<timer>;
+
+enum class workType
+{
+	IDLE = 0,
+	IO,
+	COMPUTING,
+	LOGGING,
+	ARRAY_CONSTRUCTING,
+	OTHERS,
+	TIMER_STOP
+};
+
+extern std::vector<const char*> strTimerWorkType;
+
 class timer
 {
-public:
-	//enum class bigType { scan=0, between };
-	//std::vector<const char*> bigString = { "scan", "between" };
-	enum class workType 
-	{ 
-		IDLE = 0,
-		IO,
-		COMPUTING,
-		LOGGING,
-		ARRAY_CONSTRUCTING,
-		OTHERS,
-		TIMER_STOP
-	};
-	std::vector<const char*> strTimerWorkType = { "IDLE", "IO", "COMPUTING", "LOGGING", "ARRAY_CONSTRUCTING", "OTHERS", "TIMER_STOP" };
-
 public:
 	timer();
 
 public:
-	void start(size_t threadId);
-	void check(size_t threadId, workType sType, bool curJobEnd = false);
+	void start(size_t threadId, const std::string& nextJobName, workType nextWorkType);
+	void nextWork(size_t threadId, workType nextWorkType);
+	void nextJob(size_t threadId, const std::string& nextJobName, workType nextWorkType);
+
+	void pause(size_t threadId);
+	void resume(size_t threadId, const std::string& nextJobName, workType nextWorkType);
+
 	void printTime();
 	size_t getNextJobId();
 	// TODO:: Job, Job name, getJobId
@@ -51,8 +57,10 @@ private:
 	std::vector<checkPoint> records_;
 	std::mutex mutexJobId_;
 	size_t jobId_;
+	std::map<size_t, workType> curJobType_;
 	std::map<size_t, size_t> curJobIds_;
 	std::map<size_t, std::chrono::system_clock::time_point> curJobTimes_;
+	std::map<size_t, std::string> jobName_;
 };
 }
 

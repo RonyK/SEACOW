@@ -5,11 +5,11 @@ namespace msdb
 {
 namespace caDummy
 {
-pArray mmt_build(std::vector<pArray> sourceArr, eleDefault level);
-pArray mmt_save(std::vector<pArray> sourceArr);
-pArray mmt_load(std::vector<pArray> sourceArr);
-pArray mmt_delta_encode(std::vector<pArray> sourceArr);
-pArray mmt_delta_decode(std::vector<pArray> sourceArr);
+pArray exe_act_ind_mmt_build(std::vector<pArray> sourceArr, eleDefault level);
+pArray exe_act_ind_mmt_save(std::vector<pArray> sourceArr);
+pArray exe_act_ind_mmt_load(std::vector<pArray> sourceArr);
+pArray exe_act_ind_mmt_delta_encode(std::vector<pArray> sourceArr);
+pArray exe_act_ind_mmt_delta_decode(std::vector<pArray> sourceArr);
 
 namespace data2D_sc4x4
 {

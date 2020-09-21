@@ -21,9 +21,12 @@ class naive_filter_array_pset : public opArrayParamSet
 {
 public: 
 	naive_filter_array_pset(parameters& pSet);
+};
 
+class naive_filter_plan_pset : public opPlanParamSet
+{
 public:
-	virtual pArrayDesc inferSchema() override;
+	naive_filter_plan_pset(parameters& pSet);
 };
 }
 

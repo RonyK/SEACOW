@@ -16,7 +16,7 @@ public:
 	virtual const char* name() override;
 
 public:
-	pArray execute(std::vector<pArray>& inputArrays, pQuery q);
+	pArray execute(std::vector<pArray>& inputArrays, pQuery qry);
 };
 }
 

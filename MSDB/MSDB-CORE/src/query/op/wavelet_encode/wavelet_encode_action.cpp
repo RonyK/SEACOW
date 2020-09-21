@@ -16,9 +16,11 @@ wavelet_encode_action::~wavelet_encode_action()
 {
 }
 
-pArray wavelet_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q)
+pArray wavelet_encode_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 {
 	assert(inputArrays.size() == 1);
+	//========================================//
+	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
 
 	pArray inArr = inputArrays[0];
 
@@ -45,31 +47,31 @@ pArray wavelet_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 		switch (attrDesc->type_)
 		{
 		case eleType::CHAR:
-			attributeEncode<char>(outArr, inArr, attrDesc, w, maxLevel, q);
+			attributeEncode<char>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::INT8:
-			attributeEncode<int8_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			attributeEncode<int8_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::INT16:
-			attributeEncode<int16_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			attributeEncode<int16_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::INT32:
-			attributeEncode<int32_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			attributeEncode<int32_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::INT64:
-			attributeEncode<int64_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			attributeEncode<int64_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::UINT8:
-			attributeEncode<uint8_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			attributeEncode<uint8_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::UINT16:
-			attributeEncode<uint16_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			attributeEncode<uint16_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::UINT32:
-			attributeEncode<uint32_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			attributeEncode<uint32_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::UINT64:
-			attributeEncode<uint64_t>(outArr, inArr, attrDesc, w, maxLevel, q);
+			attributeEncode<uint64_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		//case eleType::DOUBLE:
 		//	attributeEncode<double>(inChunk, arrRange,w, d, q);
@@ -78,6 +80,8 @@ pArray wavelet_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 		}
 	}
+	qry->getTimer()->pause(0);
+	//========================================//
 
 	return outArr;
 }

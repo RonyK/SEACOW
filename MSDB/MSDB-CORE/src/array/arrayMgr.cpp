@@ -38,7 +38,7 @@ pAttrIndex arrayMgr::getAttributeIndex(arrayId arrId, attributeId attrId)
 {
 	assert(arrId != INVALID_ARRAY_ID);
 	//assert(this->attrIndies_.find(arrId) != this->attrIndies_.end());
-	//assert(this->attrIndies_[arrId].find(attrId) != this->attrIndies_[arrId].end());	// check attributeId exist
+	//assert(this->attrIndies_[arrId].find(attrId) != this->attrIndies_[arrId].end());	// nextWork attributeId exist
 
 	if(this->attrIndies_.find(arrId) == this->attrIndies_.end())
 	{
@@ -58,7 +58,7 @@ pDimensionIndex arrayMgr::getDimensionIndex(arrayId arrId, dimensionId dimId)
 {
 	assert(arrId != INVALID_ARRAY_ID);
 	assert(this->dimIndies_.find(arrId) != this->dimIndies_.end());	// Check arrayId exist
-	assert(this->dimIndies_[arrId].find(dimId) != this->dimIndies_[arrId].end());	// check dimensionId exist
+	assert(this->dimIndies_[arrId].find(dimId) != this->dimIndies_[arrId].end());	// nextWork dimensionId exist
 
 	return (this->dimIndies_[arrId])[dimId];
 }

@@ -205,6 +205,11 @@ void getExDelta(value_type* output, size_t length)
 	}
 }
 
+void getSourceArrayDesc(std::vector<pArray>& sourceArr)
+{
+	sourceArr = getSourceArrayDesc();
+}
+
 void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
 {
 	if (sourceArr.empty())
