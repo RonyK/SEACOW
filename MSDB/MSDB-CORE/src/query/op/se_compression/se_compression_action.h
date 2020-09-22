@@ -11,6 +11,7 @@
 #include <query/opAction.h>
 #include <index/mmt.h>
 #include <op/wavelet_encode/wavelet_encode_array.h>
+#include <util/logger.h>
 #include <memory>
 #include <list>
 
@@ -59,11 +60,10 @@ private:
 			storageMgr::instance()->saveChunk(arrId, attr->id_, (outChunk)->getId(),
 											  std::static_pointer_cast<serializable>(outChunk));
 			mSizeTotal += outChunk->getSerializedSize();
-			//std::cout << outChunk->getSerializedSize() << std::endl;
 			++(*cit);
 		}
 
-		std::cout << "mSizeTotal: " << mSizeTotal << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "Total Save Chunk: " << mSizeTotal << " Bytes";
 	}
 
 	template<typename Ty_>

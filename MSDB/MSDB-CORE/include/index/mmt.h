@@ -6,6 +6,7 @@
 #include <index/mmtNode.h>
 #include <io/serializable.h>
 #include <util/coordinate.h>
+#include <util/logger.h>
 #include <utility>
 
 namespace msdb
@@ -341,6 +342,7 @@ protected:
 
 		node->max_ = value;
 		node->min_ = value;
+
 		node->bits_ = (bit_cnt_type)TyBits_;
 		++(*iit);
 
@@ -360,6 +362,8 @@ protected:
 		}
 
 		//std::cout << std::endl << "----------" << std::endl;
+		node->realMin_ = node->min_;
+		node->realMax_ = node->max_;
 		return node;
 	}
 
@@ -405,19 +409,19 @@ protected:
 			// init min, max value
 			if (node->bits_ == 0x80)
 			{
-				node->max_ = (*pcit)->getMax<Ty_>();
-				node->min_ = (*pcit)->getMin<Ty_>();
+				node->realMax_ = node->max_ = (*pcit)->getMax<Ty_>();
+				node->realMin_ = node->min_ = (*pcit)->getMin<Ty_>();
 				node->bits_ = (bit_cnt_type)TyBits_;
 			} else
 			{
 				// compare min max value
 				if (node->getMax<Ty_>() < (*pcit)->getMax<Ty_>())
 				{
-					node->max_ = (*pcit)->getMax<Ty_>();
+					node->realMax_ = node->max_ = (*pcit)->getMax<Ty_>();
 				}
 				if (node->getMin<Ty_>() > (*pcit)->getMin<Ty_>())
 				{
-					node->min_ = (*pcit)->getMin<Ty_>();
+					node->realMin_ = node->min_ = (*pcit)->getMin<Ty_>();
 				}
 			}
 			this->nodes_[level][cit.coorToSeq(cur)] = node;
@@ -463,19 +467,19 @@ protected:
 			// init min, max value
 			if (node->bits_ == 0x80)
 			{
-				node->max_ = (*pcit)->getMax<Ty_>();
-				node->min_ = (*pcit)->getMin<Ty_>();
+				node->realMax_ = node->max_ = (*pcit)->getMax<Ty_>();
+				node->realMin_ = node->min_ = (*pcit)->getMin<Ty_>();
 				node->bits_ = (bit_cnt_type)TyBits_;
 			} else
 			{
 				// compare min max value
 				if (node->getMax<Ty_>() < (*pcit)->getMax<Ty_>())
 				{
-					node->max_ = (*pcit)->getMax<Ty_>();
+					node->realMax_ = node->max_ = (*pcit)->getMax<Ty_>();
 				}
 				if (node->getMin<Ty_>() > (*pcit)->getMin<Ty_>())
 				{
-					node->min_ = (*pcit)->getMin<Ty_>();
+					node->realMin_ = node->min_ = (*pcit)->getMin<Ty_>();
 				}
 			}
 			++pcit;
@@ -889,6 +893,24 @@ public:
 	dimension getBlockDims()
 	{
 		return this->blockDims_;
+	}
+
+	void print()
+	{
+		for(size_type level = 0; level < this->getMaxLevel(); ++level)
+		{
+			BOOST_LOG_TRIVIAL(info) << "==============================";
+			BOOST_LOG_TRIVIAL(info) << "Level: " << level;
+
+			auto levelNodes = this->nodes_[level];
+			int nodeSize = nodeSpace_[level].area();
+
+			for(int i = 0; i < nodeSize; ++i)
+			{
+				auto node = levelNodes[i];
+				node->print<Ty_>();
+			}
+		}
 	}
 
 private:

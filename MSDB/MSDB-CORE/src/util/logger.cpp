@@ -5,9 +5,9 @@ namespace msdb
 bool initBoostLogger()
 {
 	logging::add_file_log(
-		keywords::file_name = "default_%N.log",			// file name pattern
-		keywords::rotation_size = 10 * 1024 * 1024,		// rotate files every 10 MiB
-		keywords::format = "[%TimeStamp%] %Message%"	// log record format
+		keywords::file_name = "log_%Y%m%d_%H%M%S_%5N.log",	// file name pattern
+		keywords::rotation_size = 10 * 1024 * 1024,			// rotate files every 10 MiB
+		keywords::format = "[%TimeStamp%] %Message%"		// log record format
 	);
 	
 	boost::shared_ptr< logging::core > core = logging::core::get();

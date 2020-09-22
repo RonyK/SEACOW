@@ -1,4 +1,5 @@
 #include <query/opPlan.h>
+#include <util/logger.h>
 
 namespace msdb
 {
@@ -52,6 +53,7 @@ pBitmapTree opPlan::inferTopDownBitmap()
 }
 pAction opPlan::getAction()
 {
+	BOOST_LOG_TRIVIAL(info) << "getAction: " << this->name();
 	auto myAction = this->makeAction();
 	myAction->setParams(this->getParam());
 	myAction->setArrayDesc(this->inferSchema());

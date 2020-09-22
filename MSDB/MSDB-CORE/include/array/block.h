@@ -7,6 +7,7 @@
 #include <array/blockDesc.h>
 #include <index/bitmap.h>
 #include <io/bitstream.h>
+#include <util/logger.h>
 #include <memory>
 
 namespace msdb
@@ -86,35 +87,37 @@ protected:
 	void printImp()
 	{
 		auto iit = this->getItemIterator();
+		std::stringstream ss;
 		while(!iit->isEnd())
 		{
 			if(iit->isExist())
 			{
-				std::cout << (**iit).get<Ty_>() << ", ";
+				ss << (**iit).get<Ty_>() << ", ";
 			}else
 			{
-				std::cout << "*, ";
+				ss << "*, ";
 			}
 			++(*iit);
 		}
-		std::cout << std::endl;
+		BOOST_LOG_TRIVIAL(info) << ss.str() << "";
 	}
 	template<>
 	void printImp<char>()
 	{
 		auto iit = this->getItemIterator();
+		std::stringstream ss;
 		while (!iit->isEnd())
 		{
 			if (iit->isExist())
 			{
-				std::cout << static_cast<int>((**iit).get<char>()) << ", ";
+				ss << static_cast<int>((**iit).get<char>()) << ", ";
 			} else
 			{
-				std::cout << "*, ";
+				ss << "*, ";
 			}
 			++(*iit);
 		}
-		std::cout << std::endl;
+		BOOST_LOG_TRIVIAL(info) << ss.str() << "";
 	}
 };
 };

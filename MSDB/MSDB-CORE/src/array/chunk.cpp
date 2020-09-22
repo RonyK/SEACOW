@@ -1,5 +1,6 @@
 #include <array/chunk.h>
 #include <array/memChunkBuffer.h>
+#include <util/logger.h>
 
 namespace msdb
 {
@@ -131,15 +132,15 @@ void chunk::print()
 
 	while (!bit->isEnd())
 	{
-		std::cout << "------------------------------" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "------------------------------\n";
 		if (bit->isExist())
 		{
 			(**bit)->print();
 		} else
 		{
-			std::cout << "Block (" << bit->seqPos() << ") is not exist" << std::endl;
+			BOOST_LOG_TRIVIAL(info) << "Block (" << bit->seqPos() << ") is not exist;";
 		}
-		std::cout << "------------------------------" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "------------------------------\n";
 
 		++(*bit);
 	}

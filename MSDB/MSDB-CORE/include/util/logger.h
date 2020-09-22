@@ -19,3 +19,4 @@ namespace msdb
 bool initBoostLogger();
 }
 #endif	// _MSDB_LOGGER_H_
+ 

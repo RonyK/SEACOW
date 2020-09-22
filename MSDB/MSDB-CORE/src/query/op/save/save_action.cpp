@@ -1,6 +1,7 @@
 #include <op/save/save_action.h>
 #include <array/memArray.h>
 #include <system/storageMgr.h>
+#include <util/logger.h>
 
 namespace msdb
 {
@@ -47,7 +48,7 @@ pArray save_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 		}
 	}
 
-	std::cout << "mSizeTotal: " << mSizeTotal << std::endl;
+	BOOST_LOG_TRIVIAL(info) << "Total Save Chunk: " << mSizeTotal << " Bytes";
 	qry->getTimer()->pause(0);
 	//========================================//
 
