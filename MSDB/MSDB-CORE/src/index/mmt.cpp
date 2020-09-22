@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <index/mmt.h>
 
 namespace msdb

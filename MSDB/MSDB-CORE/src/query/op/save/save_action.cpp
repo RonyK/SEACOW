@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <op/save/save_action.h>
 #include <array/memArray.h>
 #include <system/storageMgr.h>

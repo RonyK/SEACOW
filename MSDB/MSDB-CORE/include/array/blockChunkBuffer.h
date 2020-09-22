@@ -2,9 +2,9 @@
 #ifndef _MSDB_BLOCKCHUNKBUFFER_H_
 #define _MSDB_BLOCKCHUNKBUFFER_H_
 
+#include <stdafx.h>
 #include <array/buffer.h>
 #include <array/block.h>
-#include <vector>
 
 namespace msdb
 {

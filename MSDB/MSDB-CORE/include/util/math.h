@@ -2,11 +2,7 @@
 #ifndef _MSDB_MATH_H_
 #define _MSDB_MATH_H_
 
-#include <type_traits>
-#include <cstdint>
-#include <cassert>
-#include <cstdlib>
-#include <algorithm>
+#include <stdafx.h>
 
 namespace msdb
 {

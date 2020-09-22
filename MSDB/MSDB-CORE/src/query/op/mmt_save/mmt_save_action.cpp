@@ -1,8 +1,8 @@
+#include <stdafx.h>
 #include <array/arrayMgr.h>
 #include <system/storageMgr.h>
 #include <op/mmt_save/mmt_save_action.h>
 #include <index/mmt.h>
-#include <memory>
 
 namespace msdb
 {

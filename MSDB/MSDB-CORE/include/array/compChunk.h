@@ -2,6 +2,7 @@
 #ifndef _MSDB_COMPCHUNK_H_
 #define _MSDB_COMPCHUNK_H_
 
+#include <stdafx.h>
 #include <array/chunk.h>
 
 namespace msdb

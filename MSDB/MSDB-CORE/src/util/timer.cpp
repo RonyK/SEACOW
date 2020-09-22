@@ -1,6 +1,7 @@
+#include <stdafx.h>
 #include <util/timer.h>
 #include <util/logger.h>
-#include <boost/format.hpp>
+
 
 namespace msdb
 {

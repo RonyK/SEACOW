@@ -2,11 +2,11 @@
 #ifndef _MSDB_ARRAYMGR_H_
 #define _MSDB_ARRAYMGR_H_
 
+#include <stdafx.h>
 #include <util/singleton.h>
 #include <array/array.h>
 #include <index/attributeIndex.h>
 #include <index/dimensionIndex.h>
-#include <map>
 
 namespace msdb
 {

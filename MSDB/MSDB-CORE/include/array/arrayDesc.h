@@ -2,12 +2,10 @@
 #ifndef _MSDB_ARRAYDESC_H_
 #define _MSDB_ARRAYDESC_H_
 
-#include <string>
-#include <vector>
+#include <stdafx.h>
 #include <array/arrayId.h>
 #include <array/attributeDesc.h>
 #include <array/dimensionDesc.h>
-#include <memory>
 
 namespace msdb
 {

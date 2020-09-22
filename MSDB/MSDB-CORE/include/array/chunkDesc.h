@@ -2,13 +2,13 @@
 #ifndef _MSDB_CHUNKDESC_H_
 #define _MSDB_CHUNKDESC_H_
 
+#include <stdafx.h>
 #include <array/chunkId.h>
 #include <array/attributeDesc.h>
 #include <array/dimensionDesc.h>
 #include <compression/compression.h>
 #include <util/coordinate.h>
 #include <array/buffer.h>
-#include <memory>
 
 namespace msdb
 {

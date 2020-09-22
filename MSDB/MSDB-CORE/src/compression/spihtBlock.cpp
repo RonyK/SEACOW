@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <compression/spihtBlock.h>
 
 namespace msdb

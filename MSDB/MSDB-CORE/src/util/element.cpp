@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <util/element.h>
 #include <system/exceptions.h>
 

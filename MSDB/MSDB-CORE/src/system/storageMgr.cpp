@@ -1,10 +1,9 @@
+#include <stdafx.h>
 #include <system/storageMgr.h>
 #include <system/exceptions.h>
 #include <array/chunkId.h>
 #include <array/configArrays.h>
-#include <xml/tinyxml2.h>
 #include <util/logger.h>
-#include <fstream>
 
 namespace msdb
 {

@@ -2,13 +2,12 @@
 #ifndef _MSDB_ARRAY_H_
 #define _MSDB_ARRAY_H_
 
+#include <stdafx.h>
 #include <array/arrayDesc.h>
 #include <array/chunk.h>
 #include <array/chunkIterator.h>
 #include <util/coordinate.h>
 #include <index/bitmap.h>
-#include <memory>
-#include <map>
 
 namespace msdb
 {

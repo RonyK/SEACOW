@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <array/chunkIterator.h>
 
 namespace msdb

@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <op/mmt_delta_decode/mmt_delta_decode_plan.h>
 #include <op/mmt_delta_decode/mmt_delta_decode_action.h>
 

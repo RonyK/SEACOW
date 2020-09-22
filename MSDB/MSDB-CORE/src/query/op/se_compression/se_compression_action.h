@@ -2,6 +2,7 @@
 #ifndef _MSDB_OP_SE_COMPRESSION_ACTION_H_
 #define _MSDB_OP_SE_COMPRESSION_ACTION_H_
 
+#include <stdafx.h>
 #include <array/arrayMgr.h>
 #include <array/memBlock.h>
 #include <system/storageMgr.h>
@@ -12,8 +13,6 @@
 #include <index/mmt.h>
 #include <op/wavelet_encode/wavelet_encode_array.h>
 #include <util/logger.h>
-#include <memory>
-#include <list>
 
 namespace msdb
 {

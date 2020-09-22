@@ -2,11 +2,10 @@
 #ifndef _MSDB_DIMENSIONDESC_H_
 #define _MSDB_DIMENSIONDESC_H_
 
+#include <stdafx.h>
 #include <util/coordinate.h>
 #include <array/dimensionId.h>
 #include <array/dimension.h>
-#include <string>
-#include <vector>
 
 namespace msdb
 {

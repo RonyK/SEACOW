@@ -57,10 +57,8 @@
     <ClCompile Include="src\system\exceptions.cpp" />
     <ClCompile Include="src\system\storageMgr.cpp" />
     <ClCompile Include="src\util\singleton.cpp" />
-    <ClCompile Include="src\compression\compact.cpp" />
     <ClCompile Include="src\compression\daubechies.cpp" />
     <ClCompile Include="src\compression\haar.cpp" />
-    <ClCompile Include="src\compression\mmt_old.cpp" />
     <ClCompile Include="src\compression\wavelet.cpp" />
     <ClCompile Include="src\xml\tinyxml2.cpp" />
     <ClCompile Include="src\array\chunkItemIterator.cpp" />
@@ -144,7 +142,6 @@
     <ClInclude Include="include\io\bitstream.h" />
     <ClInclude Include="include\io\io.h" />
     <ClInclude Include="include\io\serializable.h" />
-    <ClInclude Include="include\query\operator.h" />
     <ClInclude Include="include\query\opParam.h" />
     <ClInclude Include="include\query\opParamSet.h" />
     <ClInclude Include="include\query\query.h" />
@@ -160,7 +157,6 @@
     <ClInclude Include="include\util\element.h" />
     <ClInclude Include="include\util\math.h" />
     <ClInclude Include="include\util\singleton.h" />
-    <ClInclude Include="include\util\stringUtil.h" />
     <ClInclude Include="include\util\waveletIterator.h" />
     <ClInclude Include="include\compression\compact.h" />
     <ClInclude Include="include\compression\haar.h" />
@@ -213,6 +209,7 @@
     <ClInclude Include="src\query\op\index_filter\index_filter_action.h" />
     <ClInclude Include="include\index\mmtNode.h" />
     <ClInclude Include="include\util\logger.h" />
+    <ClInclude Include="include\stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">

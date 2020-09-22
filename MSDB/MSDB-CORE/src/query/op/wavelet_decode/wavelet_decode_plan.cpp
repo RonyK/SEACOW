@@ -1,6 +1,6 @@
+#include <stdafx.h>
 #include <op/wavelet_decode/wavelet_decode_plan.h>
 #include <op/wavelet_decode/wavelet_decode_action.h>
-#include <cassert>
 
 namespace msdb
 {

@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <array/chunkDesc.h>
 
 namespace msdb

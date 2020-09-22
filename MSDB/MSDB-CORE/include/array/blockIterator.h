@@ -2,6 +2,7 @@
 #ifndef _MSDB_BLOCKITERATOR_H_
 #define _MSDB_BLOCKITERATOR_H_
 
+#include <stdafx.h>
 #include <array/blockContainer.h>
 #include <index/bitmap.h>
 #include <util/coordinate.h>

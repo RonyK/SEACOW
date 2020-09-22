@@ -2,9 +2,9 @@
 #ifndef _MSDB_OP_SPIHT_ENCODE_ACTION_H_
 #define _MSDB_OP_SPIHT_ENCODE_ACTION_H_
 
+#include <stdafx.h>
 #include <query/opAction.h>
 #include <util/math.h>
-#include <list>
 
 namespace msdb
 {

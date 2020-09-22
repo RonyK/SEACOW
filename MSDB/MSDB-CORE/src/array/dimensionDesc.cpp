@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <array/dimensionDesc.h>
 #include <util/math.h>
 

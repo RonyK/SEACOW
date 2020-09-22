@@ -2,6 +2,7 @@
 #ifndef _MSDB_MEMBLOCKITEMITERATOR_H_
 #define _MSDB_MEMBLOCKITEMITERATOR_H_
 
+#include <stdafx.h>
 #include <array/blockItemIterator.h>
 #include <index/bitmap.h>
 

@@ -2,9 +2,9 @@
 #ifndef _MSDB_CHUNKBUFFER_H_
 #define _MSDB_CHUNKBUFFER_H_
 
+#include <stdafx.h>
 #include <array/buffer.h>
 #include <compression/compression.h>
-#include <memory>
 
 namespace msdb
 {

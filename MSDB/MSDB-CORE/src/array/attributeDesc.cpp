@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <array/attributeDesc.h>
 #include <util/element.h>
 

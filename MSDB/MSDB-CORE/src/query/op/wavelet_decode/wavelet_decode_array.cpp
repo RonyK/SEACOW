@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <op/wavelet_decode/wavelet_decode_array.h>
 
 namespace msdb

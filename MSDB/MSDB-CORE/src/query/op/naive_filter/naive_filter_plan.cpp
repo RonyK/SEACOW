@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <op/naive_filter/naive_filter_plan.h>
 #include <op/naive_filter/naive_filter_action.h>
 #include <cassert>

@@ -2,6 +2,8 @@
 #ifndef _MSDB_SINGLETON_H_
 #define _MSDB_SINGLETON_H_
 
+#include <stdafx.h>
+
 namespace msdb
 {
 	template <typename _derived>

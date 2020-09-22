@@ -2,8 +2,8 @@
 #ifndef _MSDB_QUERY_H_
 #define _MSDB_QUERY_H_
 
+#include <stdafx.h>
 #include <util/timer.h>
-#include <memory>
 
 namespace msdb
 {

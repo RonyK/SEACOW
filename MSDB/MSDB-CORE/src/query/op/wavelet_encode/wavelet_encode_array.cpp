@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <op/wavelet_encode/wavelet_encode_array.h>
 #include <compression/wtChunk.h>
 

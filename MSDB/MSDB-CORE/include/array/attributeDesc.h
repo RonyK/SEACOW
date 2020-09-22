@@ -2,11 +2,9 @@
 #ifndef _MSDB_ATTRIBUTEDESC_H_
 #define _MSDB_ATTRIBUTEDESC_H_
 
+#include <stdafx.h>
 #include <array/attributeId.h>
 #include <util/element.h>
-#include <string>
-#include <vector>
-#include <memory>
 
 namespace msdb
 {

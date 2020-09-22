@@ -2,13 +2,11 @@
 #ifndef _MSDB_MMTNODE_H_
 #define _MSDB_MMTNODE_H_
 
-#include <boost/any.hpp>
+#include <stdafx.h>
 #include <index/attributeIndex.h>
 #include <util/math.h>
 #include <util/logger.h>
 #include <io/bitstream.h>
-
-#include <memory>
 
 namespace msdb
 {

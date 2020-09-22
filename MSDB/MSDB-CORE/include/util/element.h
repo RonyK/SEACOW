@@ -2,8 +2,7 @@
 #ifndef _MSDB_ELEMENT_H_
 #define _MSDB_ELEMENT_H_
 
-#include <cstdint>
-#include <memory>
+#include <stdafx.h>
 
 namespace msdb
 {

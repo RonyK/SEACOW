@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <op/index_filter/index_filter_plan.h>
 #include <op/index_filter/index_filter_action.h>
 

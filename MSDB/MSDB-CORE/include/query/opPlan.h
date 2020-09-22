@@ -2,11 +2,10 @@
 #ifndef _MSDB_OPPLAN_H_
 #define _MSDB_OPPLAN_H_
 
+#include <stdafx.h>
 #include <array/arrayDesc.h>
 #include <query/opParamSet.h>
 #include <query/opAction.h>
-#include <vector>
-#include <memory>
 
 namespace msdb
 {

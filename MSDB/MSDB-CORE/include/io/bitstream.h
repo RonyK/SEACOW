@@ -2,14 +2,7 @@
 #ifndef _MSDB_BITSTRINGSTREAM_H_
 #define _MSDB_BITSTRINGSTREAM_H_
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <bitset>
-#include <cassert>
-#include <algorithm>
-#include <iosfwd>
-#include <type_traits>
+#include <stdafx.h>
 
 namespace msdb
 {

@@ -2,6 +2,7 @@
 #ifndef _MSDB_OP_MMT_DELTA_DECODE_ACTION_H_
 #define _MSDB_OP_MMT_DELTA_DECODE_ACTION_H_
 
+#include <stdafx.h>
 #include <array/arrayMgr.h>
 #include <array/blockChunk.h>
 #include <query/opAction.h>

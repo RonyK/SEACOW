@@ -2,9 +2,9 @@
 #ifndef _MSDB_OPPARAM_H_
 #define _MSDB_OPPARAM_H_
 
+#include <stdafx.h>
 #include <array/arrayDesc.h>
 #include <util/element.h>
-#include <memory>
 
 #define _MSDB_MAKE_PARAM(p)		std::shared_ptr<opParam>(new p())
 
@@ -29,8 +29,8 @@ enum class opParamType
 	DIMENSION,
 	CONST,
 	INTLIST,
+	PREDICATE,
 	COOR,
-	PREDICATE
 };
 
 class opParam : public std::enable_shared_from_this<opParam>

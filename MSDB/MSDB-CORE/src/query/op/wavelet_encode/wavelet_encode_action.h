@@ -2,6 +2,7 @@
 #ifndef _MSDB_OP_WAVELET_ENCODE_ACTION_H_
 #define _MSDB_OP_WAVELET_ENCODE_ACTION_H_
 
+#include <stdafx.h>
 #include <compression/wavelet.h>
 #include <compression/wtChunk.h>
 #include <query/opAction.h>

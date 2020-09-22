@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <array/chunk.h>
 #include <array/memChunkBuffer.h>
 #include <util/logger.h>

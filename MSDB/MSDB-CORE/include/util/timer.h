@@ -2,11 +2,7 @@
 #ifndef _MSDB_TIMER_H_
 #define _MSDB_TIMER_H_
 
-#include <chrono>
-#include <iostream>
-#include <vector>
-#include <mutex>
-#include <map>
+#include <stdafx.h>
 
 namespace msdb
 {

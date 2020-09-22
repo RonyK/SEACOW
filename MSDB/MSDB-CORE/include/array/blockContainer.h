@@ -2,9 +2,8 @@
 #ifndef _MSDB_BLOCKCONTAINER_H_
 #define _MSDB_BLOCKCONTAINER_H_
 
+#include <stdafx.h>
 #include <array/block.h>
-#include <vector>
-//#include <map>
 
 namespace msdb
 {

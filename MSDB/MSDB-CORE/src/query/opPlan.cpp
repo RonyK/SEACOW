@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <query/opPlan.h>
 #include <util/logger.h>
 

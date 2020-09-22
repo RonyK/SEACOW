@@ -1,8 +1,4 @@
-#include <iostream>
-#include <cstring>
-#include <cassert>
-#include <cmath>
-#include <vector>
+#include <stdafx.h>
 #include <util/coordinate.h>
 #include <compression/wavelet.h>
 #include <compression/haar.h>

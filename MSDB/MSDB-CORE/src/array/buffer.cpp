@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <array/buffer.h>
 #include <assert.h>
 #include <system/exceptions.h>

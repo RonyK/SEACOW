@@ -1,6 +1,6 @@
+#include <stdafx.h>
 #include <array/array.h>
 #include <util/math.h>
-#include <cmath>
 #include <util/logger.h>
 
 namespace msdb

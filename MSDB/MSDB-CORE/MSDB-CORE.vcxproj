@@ -107,8 +107,9 @@
       <CompileAs>CompileAsCpp</CompileAs>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>%BOOST_ROOT%</AdditionalIncludeDirectories>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <MinimalRebuild>true</MinimalRebuild>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+      <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -204,13 +205,13 @@
     <ClInclude Include="include\parse\expression.h" />
     <ClInclude Include="include\parse\predicate.h" />
     <ClInclude Include="include\parse\term.h" />
-    <ClInclude Include="include\query\operator.h" />
     <ClInclude Include="include\query\opParam.h" />
     <ClInclude Include="include\query\opParamSet.h" />
     <ClInclude Include="include\query\query.h" />
     <ClInclude Include="include\array\arrayMgr.h" />
     <ClInclude Include="include\query\opAction.h" />
     <ClInclude Include="include\query\opPlan.h" />
+    <ClInclude Include="include\stdafx.h" />
     <ClInclude Include="include\system\config.h" />
     <ClInclude Include="include\system\errorCodes.h" />
     <ClInclude Include="include\system\exceptions.h" />
@@ -221,7 +222,6 @@
     <ClInclude Include="include\util\logger.h" />
     <ClInclude Include="include\util\math.h" />
     <ClInclude Include="include\util\singleton.h" />
-    <ClInclude Include="include\util\stringUtil.h" />
     <ClInclude Include="include\util\waveletIterator.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
@@ -368,14 +368,8 @@
     <ClCompile Include="src\system\exceptions.cpp" />
     <ClCompile Include="src\system\storageMgr.cpp" />
     <ClCompile Include="src\util\singleton.cpp" />
-    <ClCompile Include="src\compression\compact.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="src\compression\daubechies.cpp" />
     <ClCompile Include="src\compression\haar.cpp" />
-    <ClCompile Include="src\compression\mmt_old.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="src\compression\wavelet.cpp" />
     <ClCompile Include="src\xml\tinyxml2.cpp" />
   </ItemGroup>

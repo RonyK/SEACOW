@@ -2,12 +2,12 @@
 #ifndef _MSDB_OP_MMT_DELTA_ENCODE_ACTION_H_
 #define _MSDB_OP_MMT_DELTA_ENCODE_ACTION_H_
 
+#include <stdafx.h>
 #include <array/arrayMgr.h>
 #include <array/blockChunk.h>
 #include <index/mmt.h>
 #include <query/opAction.h>
 #include <op/mmt_delta_encode/mmt_delta_encode_array.h>
-#include <memory>
 
 namespace msdb
 {

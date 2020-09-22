@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <op/mmt_delta_encode/mmt_delta_encode_array.h>
 
 namespace msdb

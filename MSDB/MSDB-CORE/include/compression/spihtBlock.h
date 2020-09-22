@@ -2,9 +2,9 @@
 #ifndef _MSDB_SPIHTBLOCK_H_
 #define _MSDB_SPIHTBLOCK_H_
 
+#include <stdafx.h>
 #include <array/memBlock.h>
 #include <io/bitstream.h>
-#include <list>
 
 namespace msdb
 {

@@ -2,12 +2,11 @@
 #ifndef _MSDB_OP_WAVELET_DECODE_ACTION_H_
 #define _MSDB_OP_WAVELET_DECODE_ACTION_H_
 
+#include <stdafx.h>
 #include <array/blockChunk.h>
 #include <compression/wavelet.h>
 #include <query/opAction.h>
 #include <util/math.h>
-#include <vector>
-#include <list>
 
 namespace msdb
 {

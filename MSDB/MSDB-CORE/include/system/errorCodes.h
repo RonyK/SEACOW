@@ -2,7 +2,7 @@
 #ifndef _MSDB_ERRORCODES_H_
 #define _MSDB_ERRORCODES_H_
 
-#include <iostream>
+#include <stdafx.h>
 
 namespace msdb
 {

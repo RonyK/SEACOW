@@ -2,13 +2,13 @@
 #ifndef _MSDB_BLOCK_H_
 #define _MSDB_BLOCK_H_
 
+#include <stdafx.h>
 #include <array/blockItemIterator.h>
 #include <array/blockBuffer.h>
 #include <array/blockDesc.h>
 #include <index/bitmap.h>
 #include <io/bitstream.h>
 #include <util/logger.h>
-#include <memory>
 
 namespace msdb
 {

@@ -2,10 +2,8 @@
 #ifndef _MSDB_WAVELET_H_
 #define _MSDB_WAVELET_H_
 
+#include <stdafx.h>
 #include <util/coordinate.h>
-#include <iostream>
-#include <vector>
-#include <memory>
 
 namespace msdb
 {
