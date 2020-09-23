@@ -84,7 +84,7 @@ void storageMgr::saveAttrIndex(arrayId arrId, attributeId attrId, pSerializable 
 	this->getOfstream(fs, this->getArrayIndexPath(arrId) / std::to_string(attrId), 
 					  strIndexFilExtension);
 	serialObj->serialize(fs);
-	BOOST_LOG_TRIVIAL(info) << "Save Attribute Index: " << serialObj->getSerializedSize() << " Bytes";
+	BOOST_LOG_TRIVIAL(debug) << "Save Attribute Index: " << serialObj->getSerializedSize() << " Bytes";
 	fs.close();
 }
 
@@ -121,7 +121,7 @@ void storageMgr::saveChunk(arrayId arrId, attributeId attrId, chunkId chkId, pSe
 	this->getOfstream(fs, this->getChunkPath(arrId, attrId, chkId), 
 					  strChunkFilExtension);
 	serialObj->serialize(fs);
-	BOOST_LOG_TRIVIAL(info) << "Save Chunk: " << serialObj->getSerializedSize() << " Bytes";
+	BOOST_LOG_TRIVIAL(debug) << "Save Chunk: " << serialObj->getSerializedSize() << " Bytes";
 	fs.close();
 }
 

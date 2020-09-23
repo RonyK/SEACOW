@@ -61,7 +61,7 @@ void timer::printTime()
 {
 	for (int i = 0; i < this->records_.size(); i++)
 	{
-		BOOST_LOG_TRIVIAL(info) << 
+		BOOST_LOG_TRIVIAL(debug) << 
 			this->records_[i].threadId << "\t" << 
 			this->records_[i].jobId << "\t" << 
 			boost::str(boost::format("%.4f") % this->records_[i].time_.count()) << "\t" << 

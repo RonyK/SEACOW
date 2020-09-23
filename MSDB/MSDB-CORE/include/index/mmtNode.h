@@ -7,6 +7,7 @@
 #include <util/math.h>
 #include <util/logger.h>
 #include <io/bitstream.h>
+#include <array/dimension.h>
 
 namespace msdb
 {
@@ -30,11 +31,17 @@ public:
 	boost::any min_;
 	boost::any realMax_;
 	boost::any realMin_;
+	// For Test
+	dimension chunkCoor_;
+	dimension blockCoor_;
+	dimension nodeCoor_;
+	size_t seqPos_;
 
 public:
 	mmtNode() : bMax_(0), bMin_(0), bits_(0x80), order_(1),
-		bMaxDelta_(0), bMinDelta_(0), max_(0), min_(0), 
-		vBits_(0), realMin_(0), realMax_(0)
+		bMaxDelta_(0), bMinDelta_(0), max_(0), min_(0),
+		vBits_(0), realMin_(0), realMax_(0),
+		chunkCoor_(1), blockCoor_(1), nodeCoor_(1), seqPos_(0)
 	{
 	}
 
@@ -111,8 +118,7 @@ public:
 	template <typename Ty_>
 	inline void print()
 	{
-		BOOST_LOG_TRIVIAL(info) << "--------------------";
-		BOOST_LOG_TRIVIAL(info) << static_cast<int64_t>(this->getMin<Ty_>())
+		BOOST_LOG_TRIVIAL(debug) << static_cast<int64_t>(this->getMin<Ty_>())
 			<< "(" << static_cast<int64_t>(this->bMin_) << ", " << static_cast<int64_t>(this->bMinDelta_) << ")~"
 			<< static_cast<int64_t>(this->getMax<Ty_>())
 			<< "(" << static_cast<int64_t>(this->bMax_) << ", " << static_cast<int64_t>(this->bMaxDelta_)
@@ -120,6 +126,24 @@ public:
 			<< " / v: " << static_cast<int64_t>(this->vBits_)
 			<< " / or: " << static_cast<int64_t>(this->order_)
 			<< "/ real: " << static_cast<int64_t>(this->getRealMin<Ty_>()) << "~" << static_cast<int64_t>(this->getRealMax<Ty_>());
+	}
+
+	template <typename Ty_>
+	inline std::string toString()
+	{
+		std::stringstream ss;
+
+		ss << static_cast<int64_t>(this->getMin<Ty_>())
+			<< "(" << static_cast<int64_t>(this->bMin_) << ", " << static_cast<int64_t>(this->bMinDelta_) << ")~"
+			<< static_cast<int64_t>(this->getMax<Ty_>())
+			<< "(" << static_cast<int64_t>(this->bMax_) << ", " << static_cast<int64_t>(this->bMaxDelta_)
+			<< ") / b: " << static_cast<int64_t>(this->bits_)
+			<< " / v: " << static_cast<int64_t>(this->vBits_)
+			<< " / or: " << static_cast<int64_t>(this->order_)
+			<< "/ real: " << static_cast<int64_t>(this->getRealMin<Ty_>()) << "~" << static_cast<int64_t>(this->getRealMax<Ty_>()) << "\n"
+			<< this->chunkCoor_.toString() << " / " << this->blockCoor_.toString() << " / " << this->nodeCoor_.toString();
+
+		return ss.str();
 	}
 };
 

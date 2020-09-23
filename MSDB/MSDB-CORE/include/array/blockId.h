@@ -2,7 +2,7 @@
 #ifndef _MSDB_BLOCKID_H_
 #define _MSDB_BLOCKID_H_
 
-#include <stdafx.h>
+#include <cstdint>
 
 namespace msdb
 {

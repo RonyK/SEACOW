@@ -99,7 +99,7 @@ protected:
 			}
 			++(*iit);
 		}
-		BOOST_LOG_TRIVIAL(info) << ss.str() << "";
+		BOOST_LOG_TRIVIAL(debug) << ss.str() << "";
 	}
 	template<>
 	void printImp<char>()
@@ -117,7 +117,7 @@ protected:
 			}
 			++(*iit);
 		}
-		BOOST_LOG_TRIVIAL(info) << ss.str() << "";
+		BOOST_LOG_TRIVIAL(debug) << ss.str() << "";
 	}
 };
 };

@@ -103,13 +103,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <ShowIncludes>true</ShowIncludes>
+      <ShowIncludes>false</ShowIncludes>
       <CompileAs>CompileAsCpp</CompileAs>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>%BOOST_ROOT%</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <MinimalRebuild>false</MinimalRebuild>
-      <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -149,7 +149,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.h" />
     <ClInclude Include="include\array\array.h" />
     <ClInclude Include="include\array\arrayDesc.h" />
     <ClInclude Include="include\array\arrayId.h" />
@@ -272,7 +271,6 @@
     <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_plan.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.cpp" />
     <ClCompile Include="src\array\memBlockArray.cpp" />
     <ClCompile Include="src\compression\spihtChunk.cpp" />
     <ClCompile Include="src\array\blockItemIterator.cpp" />
@@ -348,6 +346,7 @@
     <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_array.cpp" />
     <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_plan.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\util\element.cpp" />
     <ClCompile Include="src\array\chunk.cpp" />

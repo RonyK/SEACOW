@@ -54,7 +54,7 @@ pBitmapTree opPlan::inferTopDownBitmap()
 }
 pAction opPlan::getAction()
 {
-	BOOST_LOG_TRIVIAL(info) << "getAction: " << this->name();
+	BOOST_LOG_TRIVIAL(debug) << "getAction: " << this->name();
 	auto myAction = this->makeAction();
 	myAction->setParams(this->getParam());
 	myAction->setArrayDesc(this->inferSchema());

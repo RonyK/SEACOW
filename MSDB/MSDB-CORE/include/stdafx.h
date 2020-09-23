@@ -1,8 +1,12 @@
 #pragma once
+
+#ifndef _MSDB_STDAFX_H_
+#define _MSDB_STDAFX_H_
+
 #include <iostream>
 #include <cstdint>
-#include <cassert>
 #include <cstdlib>
+#include <cassert>
 #include <cmath>
 #include <cstdint>
 #include <string>
@@ -12,6 +16,7 @@
 #include <type_traits>
 #include <algorithm>
 
+
 // For bitstream
 #include <bitset>
 
@@ -19,6 +24,7 @@
 #include <iosfwd>
 #include <fstream>
 #include <filesystem>
+
 #include <memory>
 
 // For timer
@@ -41,10 +47,16 @@
 #include <boost/log/utility/setup/file.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
 
+// For xml
 #include <xml/tinyxml2.h>
+
+// For cassert
+#define assertm(exp, msg) assert(((void)msg, exp))
 
 namespace logging = boost::log;
 namespace src = boost::log::sources;
 namespace sinks = boost::log::sinks;
 namespace keywords = boost::log::keywords;
 namespace attrs = boost::log::attributes;
+
+#endif	// _MSDB_STDAFX_H_

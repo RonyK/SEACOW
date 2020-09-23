@@ -109,7 +109,7 @@ public:
 			{
 				ss << ", ";
 			}
-			ss << d;
+			ss << this->coor_[d];
 		}
 
 		ss << ")";

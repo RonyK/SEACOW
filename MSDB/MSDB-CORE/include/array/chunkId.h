@@ -2,7 +2,7 @@
 #ifndef _MSDB_CHUNK_ID_H_
 #define _MSDB_CHUNK_ID_H_
 
-#include <stdafx.h>
+#include <cstdint>
 
 namespace msdb
 {

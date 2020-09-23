@@ -62,7 +62,7 @@ pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery qry
 		}
 	}
 
-	BOOST_LOG_TRIVIAL(info) << "Total Save Chunk: " << mSizeTotal << " Bytes";
+	BOOST_LOG_TRIVIAL(debug) << "Total Save Chunk: " << mSizeTotal << " Bytes";
 	qry->getTimer()->pause(0);
 	//========================================//
 

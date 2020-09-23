@@ -133,15 +133,15 @@ void chunk::print()
 
 	while (!bit->isEnd())
 	{
-		BOOST_LOG_TRIVIAL(info) << "------------------------------\n";
+		BOOST_LOG_TRIVIAL(debug) << "------------------------------\n";
 		if (bit->isExist())
 		{
 			(**bit)->print();
 		} else
 		{
-			BOOST_LOG_TRIVIAL(info) << "Block (" << bit->seqPos() << ") is not exist;";
+			BOOST_LOG_TRIVIAL(debug) << "Block (" << bit->seqPos() << ") is not exist;";
 		}
-		BOOST_LOG_TRIVIAL(info) << "------------------------------\n";
+		BOOST_LOG_TRIVIAL(debug) << "------------------------------\n";
 
 		++(*bit);
 	}

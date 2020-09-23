@@ -325,6 +325,13 @@ protected:
 				auto lNode = this->forwardBuildLeafNode(bItemItr);
 				this->setNode(lNode, cItr->coor(), bItr->coor());
 
+
+#ifndef NDEBUG
+				if (lNode->getMin<Ty_>() < 0)
+				{
+					BOOST_LOG_TRIVIAL(warning) << "Wrong MMT value at " << cItr->coor().toString() << "|" << bItr->coor().toString() << ": " << lNode->getMin<Ty_>();
+				}
+#endif
 				//std::cout << "leaf forward-" << std::endl;
 				//std::cout << "[" << blockCoor[0] << ", " << blockCoor[1] << "] : " << static_cast<int>(lNode->min_) << "~" << static_cast<int>(lNode->max_) << std::endl;
 				++(*bItr);	// Move on a next block in the chunk
@@ -338,11 +345,8 @@ protected:
 	{
 		pMmtNode node = std::make_shared<mmtNode>();
 
-		auto value = (**iit).get<Ty_>();
-		//std::cout << "chunk: " << static_cast<int>(value) << ", ";
-
-		node->max_ = value;
-		node->min_ = value;
+		node->max_ = (**iit).get<Ty_>();
+		node->min_ = (**iit).get<Ty_>();
 
 		node->bits_ = (bit_cnt_type)TyBits_;
 		++(*iit);
@@ -362,9 +366,9 @@ protected:
 			++(*iit);
 		}
 
-		//std::cout << std::endl << "----------" << std::endl;
 		node->realMin_ = node->min_;
 		node->realMax_ = node->max_;
+
 		return node;
 	}
 
@@ -750,7 +754,7 @@ protected:
 			{
 				if(nodeSpace[d] == 1)
 				{
-					// nodes canno be merged.
+					// nodes cannot be merged.
 					break;
 				}
 			}
@@ -864,11 +868,6 @@ public:
 		return nullptr;
 	};
 
-	void setNode(blockId nodeId, size_type level = 0)
-	{
-		this->nodes_[level][nodeId];
-	}
-
 	void setNode(pMmtNode node, coor& nodeCoor, size_type level = 0)
 	{
 		auto nit = this->getNodeIterator(level);
@@ -884,6 +883,10 @@ public:
 			nodeCoor[d] += chunkCoor[d] * this->leafInChunkBlockSpace_[d];
 		}
 		this->nodes_[level][nit.coorToSeq(nodeCoor)] = node;
+		node->chunkCoor_ = chunkCoor;
+		node->blockCoor_ = inner;
+		node->nodeCoor_ = nodeCoor;
+		node->seqPos_ = nit.coorToSeq(nodeCoor);
 	}
 
 	dimension getNodeSpace(size_type level)
@@ -900,8 +903,7 @@ public:
 	{
 		for(size_type level = 0; level < this->getMaxLevel(); ++level)
 		{
-			BOOST_LOG_TRIVIAL(info) << "==============================";
-			BOOST_LOG_TRIVIAL(info) << "Level: " << level;
+			BOOST_LOG_TRIVIAL(debug) << "==============================\n" << "Level: " << level;
 
 			auto levelNodes = this->nodes_[level];
 			int nodeSize = nodeSpace_[level].area();

@@ -2,7 +2,7 @@
 #ifndef _MSDB_ARRAY_ID_H_
 #define _MSDB_ARRAY_ID_H_
 
-#include <stdafx.h>
+#include <cstdint>
 
 namespace msdb
 {

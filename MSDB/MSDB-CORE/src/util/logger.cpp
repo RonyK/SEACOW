@@ -13,7 +13,7 @@ bool initBoostLogger()
 	
 	boost::shared_ptr< logging::core > core = logging::core::get();
 	core->set_filter(
-		logging::trivial::severity >= logging::trivial::info
+		logging::trivial::severity >= logging::trivial::trace
 	);
 
 	core->add_global_attribute("LineID", attrs::counter< unsigned int >(1));

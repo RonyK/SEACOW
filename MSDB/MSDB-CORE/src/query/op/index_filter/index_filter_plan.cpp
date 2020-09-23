@@ -69,6 +69,7 @@ pBitmapTree index_filter_array_pset::inferBottomUpBitmap()
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 		}
 	}
+	return nullptr;
 }
 
 //////////////////////////////
@@ -118,5 +119,6 @@ pBitmapTree index_filter_plan_pset::inferBottomUpBitmap()
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 		}
 	}
+	return nullptr;
 }
 }	// msdb
