@@ -19,10 +19,17 @@ pArray test_body_mmt_build(_pFuncGetSourceArray_, eleDefault mmtLevel)
 	sourceArr[0]->setId(sourceArr[0]->getId() + 2);
 
 	auto arr_mmt_build = exe_act_ind_mmt_build(sourceArr, mmtLevel);
-	std::cout << "##############################" << std::endl;
 
 	//EXPECT_TRUE(false);
 	return arr_mmt_build;
+}
+
+template <typename value_type>
+void print_mmt(pArray arr, attributeId attrId)
+{
+	auto attrIndex = arrayMgr::instance()->getAttributeIndex(arr->getId(), attrId);
+	auto myMMT = std::static_pointer_cast<MinMaxTreeImpl<position_t, value_type>>(attrIndex);
+	myMMT->print();
 }
 
 namespace data2D_sc4x4
@@ -34,56 +41,25 @@ TEST(query_op_mmt_build, mmt_build_sc4x4)
 }	// TEST()
 }	// data2D_sc4x4
 
-namespace data2D_sc8x8
+namespace data2D_saturn1024x1024
 {
-TEST(query_op_mmt_build, mmt_build_sc8x8)
+TEST(query_op_mmt_build, mmt_build_data2D_saturn1024x1024)
 {
-	std::vector<pArray> sourceArr = getSourceArray();
-	eleDefault level = 2;
-	std::shared_ptr<mmt_build_plan> mmtPlan;
-	std::shared_ptr<mmt_build_action> mmtAction;
-	pQuery mmtQuery;
-	getMmtBuild(sourceArr[0]->getDesc(), level, mmtPlan, mmtAction, mmtQuery);
+	auto output = test_body_mmt_build<value_type>(&getSourceArrayIfEmpty, mmtLevel);
 
-	// Execute mmt build action
-	auto afterArray = mmtAction->execute(sourceArr, mmtQuery);
-
-	// Result nextWork
-	for(auto attrDesc : *afterArray->getDesc()->attrDescs_)
-	{
-		auto attrIndex = arrayMgr::instance()->getAttributeIndex(afterArray->getId(), attrDesc->id_);
-		EXPECT_TRUE(attrIndex != nullptr);
-
-		std::shared_ptr<MinMaxTreeImpl<dim_type, value_type>> mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<dim_type, value_type>>(attrIndex);
-		auto nodes = mmtIndex->getNodes();
-		EXPECT_EQ(nodes.size(), level + 1);
-
-		value_type exMMT_min[3][4][4];
-		value_type exMMT_max[3][4][4];
-		getExMMTBuilded(exMMT_min, exMMT_max, 3 * 4 * 4);
-
-		for (size_t l = 0; l <= level; l++)
-		{
-			auto levelNodes = nodes[l];
-			//MinMaxTreeImpl<dim_type, value_type>::nodeItr nit(2, mmtIndex->getNodeSpace(l).data());
-			auto nit = mmtIndex->getNodeIterator(l);
-			for (int y = 0; y < chunkNums[0] / pow(2, l); ++y)
-			{
-				for (int x = 0; x < chunkNums[1] / pow(2, l); ++x)
-				{
-					coor blockCoor({ y, x });
-					nit.moveTo(blockCoor);
-					auto node = levelNodes.data()[nit.seqPos()];
-
-					std::cout << "[" << x << ", " << y << "] " << static_cast<int>(node->getMin<value_type>()) << " ~ " << static_cast<int>(node->getMax<value_type>()) << std::endl;
-
-					EXPECT_EQ(exMMT_min[l][y][x], node->getMin<value_type>());
-					EXPECT_EQ(exMMT_max[l][y][x], node->getMax<value_type>());
-				}
-			}
-		}
-	}
+	print_mmt<value_type>(output, 0);
 }	// TEST()
-}	// data2D_sc8x8
+}	// data2D_saturn1024x1024
+
+namespace data2D_mars4096x2048
+{
+TEST(query_op_mmt_build, mmt_build_data2D_mars4096x2048)
+{
+	auto output = test_body_mmt_build<value_type>(&getSourceArrayIfEmpty, mmtLevel);
+
+	//output->print();
+	//print_mmt<value_type>(output, 0);
+}	// TEST()
+}	// mars4096x2048
 }	// caDummy
 }	// msdb

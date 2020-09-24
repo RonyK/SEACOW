@@ -33,6 +33,8 @@ std::shared_ptr<Aty_> get2DCharArray(arrayId aid, std::string arrayName,
 	return sourceArr;
 }
 
+inline char unsignedCharToSigned(char value);
+
 template <typename Aty_, typename Ty_>
 std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string arrayName,
 									 dimension dims, dimension chunkDims, dimension blockDims,
@@ -73,8 +75,18 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 				{
 					for (int ix = 0; ix < blockDims[1]; ++ix)
 					{
+						size_t seqPos = (y * chunkDims[0] + blockCoor[0] * blockDims[0] + iy) * dims[1] + (x * chunkDims[1] + blockCoor[1] * blockDims[1] + ix);
 						(**it).setChar(static_cast<Ty_>(
-							data[(y * chunkDims[0] + blockCoor[0] * blockDims[0] + iy) * dims[1] + (x * chunkDims[1] + blockCoor[1] * blockDims[1] + ix)]));
+							data[seqPos]));
+
+#ifndef NDEBUG
+						if(data[seqPos] / 2 < 0)
+						{
+							BOOST_LOG_TRIVIAL(warning) << "at: " << seqPos << "(" << x << "," << y << ")|(" << ix << "," << iy << ")=>" << static_cast<int64_t>(data[seqPos]) << ", " << static_cast<int64_t>(data[seqPos]);
+						}
+
+						assert(data[(y * chunkDims[0] + blockCoor[0] * blockDims[0] + iy) * dims[1] + (x * chunkDims[1] + blockCoor[1] * blockDims[1] + ix)] / 2 >= 0);
+#endif
 						++(*it);
 					}
 				}
@@ -246,10 +258,10 @@ namespace data2D_tempTest
 using value_type = char;
 
 static const size_t dataLength = 16;
-static const size_t dimX = 4;
+static const size_t dimX = 8;
 static const size_t dimY = 4;
 static const size_t wtLevel = 0;
-static const arrayId aid = 441;
+static const arrayId aid = 9991;
 
 extern std::vector<dim_type> dims;
 extern std::vector<dim_type> chunkNums;
