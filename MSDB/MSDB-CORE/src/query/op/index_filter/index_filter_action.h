@@ -2,6 +2,7 @@
 #ifndef _MSDB_INDEX_FILTER_ACTION_H_
 #define _MSDB_INDEX_FILTER_ACTION_H_
 
+#include <stdafx.h>
 #include <query/opAction.h>
 #include <parse/predicate.h>
 

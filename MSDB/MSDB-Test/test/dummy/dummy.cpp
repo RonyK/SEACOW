@@ -5,6 +5,11 @@ namespace msdb
 {
 namespace caDummy
 {
+inline char unsignedCharToSigned(char value)
+{
+	return value - 128;
+}
+
 namespace data2D_sc4x4
 {
 std::vector<dim_type> dims = { dimY, dimX };

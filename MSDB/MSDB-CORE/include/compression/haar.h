@@ -2,6 +2,8 @@
 #ifndef _MSDB_HAAR_H_
 #define _MSDB_HAAR_H_
 
+#include <stdafx.h>
+
 namespace msdb
 {
 	namespace haar

@@ -2,6 +2,7 @@
 #ifndef _MSDB_STORAGEMGR_H_
 #define _MSDB_STORAGEMGR_H_
 
+#include <stdafx.h>
 #include <array/arrayId.h>
 #include <array/chunkId.h>
 #include <array/attributeId.h>
@@ -9,9 +10,6 @@
 #include <io/bitstream.h>
 #include <io/serializable.h>
 #include <system/config.h>
-#include <iostream>
-#include <string>
-#include <filesystem>
 
 namespace msdb
 {

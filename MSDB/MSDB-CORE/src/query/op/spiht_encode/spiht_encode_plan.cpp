@@ -1,6 +1,6 @@
+#include <stdafx.h>
 #include <op/spiht_encode/spiht_encode_plan.h>
 #include <op/spiht_encode/spiht_encode_action.h>
-#include <cassert>
 
 namespace msdb
 {

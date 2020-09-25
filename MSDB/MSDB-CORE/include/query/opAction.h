@@ -2,11 +2,11 @@
 #ifndef _MSDB_OPACTION_H_
 #define _MSDB_OPACTION_H_
 
+#include <stdafx.h>
 #include <array/array.h>
 #include <array/arrayDesc.h>
 #include <query/opParam.h>
 #include <query/query.h>
-#include <memory>
 #include <util/timer.h>
 
 namespace msdb

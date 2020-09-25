@@ -2,12 +2,12 @@
 #ifndef _MSDB_OP_MMT_DELTA_ENCODE_ACTION_H_
 #define _MSDB_OP_MMT_DELTA_ENCODE_ACTION_H_
 
+#include <stdafx.h>
 #include <array/arrayMgr.h>
 #include <array/blockChunk.h>
 #include <index/mmt.h>
 #include <query/opAction.h>
 #include <op/mmt_delta_encode/mmt_delta_encode_array.h>
-#include <memory>
 
 namespace msdb
 {
@@ -62,11 +62,17 @@ void mmt_delta_encode_action::chunkEncode(pChunk outChunk, pChunk inChunk,
 {
 	auto ibItr = inChunk->getBlockIterator();
 	auto obItr = outChunk->getBlockIterator();
+
 	while (!ibItr->isEnd())
 	{
 		auto iit = (**ibItr)->getItemIterator();
 		auto oit = (**obItr)->getItemIterator();
 		auto node = mmtIndex->getNode(inChunk->getDesc()->chunkCoor_, ibItr->coor());
+
+#ifndef NDEBUG
+		Ty_ min_ = (**iit).get<Ty_>();
+		Ty_ max_ = (**iit).get<Ty_>();
+#endif
 
 		// Block encode
 		while (!iit->isEnd())
@@ -74,9 +80,21 @@ void mmt_delta_encode_action::chunkEncode(pChunk outChunk, pChunk inChunk,
 			auto inValue = (**iit).get<Ty_>();
 			auto outValue = inValue - node->getMin<Ty_>();
 			(**oit).set<Ty_>(outValue);
+#ifndef NDEBUG
+			assert(outValue >= 0);
+			if (min_ > outValue)
+				min_ = outValue;
+			if (max_ < outValue)
+				max_ = outValue;
+#endif
+
 			++(*iit);
 			++(*oit);
 		}
+
+#ifndef NDEBUG
+		BOOST_LOG_TRIVIAL(trace) << "Delta encode " << inChunk->getDesc()->chunkCoor_.toString() << "|" << ibItr->coor().toString() << "=> min: " << static_cast<int64_t>(min_) << ", max: " << static_cast<int64_t>(max_) << ", mmt: " << node->toString<Ty_>();
+#endif
 
 		++(*ibItr);
 		++(*obItr);

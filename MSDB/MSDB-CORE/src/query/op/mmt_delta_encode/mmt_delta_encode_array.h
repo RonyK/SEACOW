@@ -2,9 +2,9 @@
 #ifndef _MSDB_OPMMT_DELTA_ENCODE_ARRAY_H_
 #define _MSDB_OPMMT_DELTA_ENCODE_ARRAY_H_
 
+
 #include <array/memBlockArray.h>
 #include <index/mmt.h>
-#include <map>
 
 namespace msdb
 {

@@ -1,6 +1,6 @@
+#include <stdafx.h>
 #include <op/mmt_save/mmt_save_plan.h>
 #include <op/mmt_save/mmt_save_action.h>
-#include <cassert>
 
 namespace msdb
 {

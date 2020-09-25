@@ -2,10 +2,9 @@
 #ifndef _MSDB_EXPRESSION_H_
 #define _MSDB_EXPRESSION_H_
 
+#include <stdafx.h>
 #include <util/coordinate.h>
 #include <array/attributeId.h>
-#include <memory>
-#include <boost/any.hpp>
 
 namespace msdb
 {

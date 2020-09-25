@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <array/memBlockArray.h>
 #include <array/blockChunk.h>
 

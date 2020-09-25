@@ -2,7 +2,7 @@
 #ifndef _MSDB_BUFFER_H_
 #define _MSDB_BUFFER_H_
 
-#include <memory>
+#include <stdafx.h>
 
 namespace msdb
 {

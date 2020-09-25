@@ -2,7 +2,7 @@
 #ifndef _MSDB_CONFIG_H_
 #define _MSDB_CONFIG_H_
 
-#include <xml/tinyxml2.h>
+#include <stdafx.h>
 
 namespace msdb
 {

@@ -1,5 +1,5 @@
+#include <stdafx.h>
 #include <array/arrayMgr.h>
-#include <cassert>
 
 namespace msdb
 {

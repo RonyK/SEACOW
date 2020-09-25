@@ -13,9 +13,9 @@ namespace msdb
 namespace caDummy
 {
 template <typename value_type>
-pArray exe_qry_ind_se_compression(_vectorSourceArray_, 
-									 eleDefault wtLevel, eleDefault mmtLevel,
-									 bool printFlag = false)
+pArray exe_qry_ind_se_compression(_vectorSourceArray_,
+								  eleDefault wtLevel, eleDefault mmtLevel,
+								  bool printFlag = false)
 {
 	auto outArr = exe_act_ind_mmt_delta_encode(sourceArr);
 	if (printFlag)
@@ -45,9 +45,9 @@ pArray exe_qry_ind_se_compression(_vectorSourceArray_,
 }
 
 template <typename value_type>
-pArray exe_qry_ind_se_decompression(_vectorSourceArray_, 
-									   eleDefault wtLevel, eleDefault mmtLevel, 
-									   bool printFlag = false)
+pArray exe_qry_ind_se_decompression(_vectorSourceArray_,
+									eleDefault wtLevel, eleDefault mmtLevel,
+									bool printFlag = false)
 {
 	auto outArr = exe_act_ind_se_decompression(sourceArr, wtLevel);
 	if (printFlag)
@@ -78,8 +78,8 @@ pArray exe_qry_ind_se_decompression(_vectorSourceArray_,
 
 template <typename value_type>
 pArray exe_qry_seq_se_decompression(_vectorSourceArray_,
-										   eleDefault wtLevel, eleDefault mmtLevel, 
-										   bool printFlag = false)
+									eleDefault wtLevel, eleDefault mmtLevel,
+									bool printFlag = false)
 {
 	pQuery qry = std::make_shared<query>();
 
@@ -95,7 +95,7 @@ pArray exe_qry_seq_se_decompression(_vectorSourceArray_,
 		outArr->print();
 	}
 
-	
+
 	outArr = wtDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
 	if (printFlag)
 	{
@@ -113,6 +113,78 @@ pArray exe_qry_seq_se_decompression(_vectorSourceArray_,
 	}
 
 	tearDownQuery(qry);
+
+	return outArr;
+}
+
+template <typename value_type>
+pArray exe_qry_ind_delta_spiht_encode(_vectorSourceArray_,
+									  eleDefault wtLevel, eleDefault mmtLevel,
+									  bool printFlag = false)
+{
+	auto outArr = exe_act_ind_mmt_build(sourceArr, mmtLevel);
+	if (false)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "MMT Build Arr" << std::endl;
+		outArr->print();
+	}
+
+	outArr = exe_act_ind_mmt_delta_encode(std::vector<pArray>({ outArr }));
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "Delta Arr" << std::endl;
+		outArr->print();
+	}
+
+	outArr = exe_act_ind_wavelet_encode(std::vector<pArray>({ outArr }), wtLevel);
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "Wavelet Encode Arr" << std::endl;
+		outArr->print();
+	}
+
+	outArr = exe_act_ind_spiht_encode(std::vector<pArray>({ outArr }));
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "SPIHT Encode Arr" << std::endl;
+		outArr->print();
+	}
+
+	return outArr;
+}
+
+template <typename value_type>
+pArray exe_qry_ind_delta_spiht_decode(_vectorSourceArray_,
+									  eleDefault wtLevel, eleDefault mmtLevel,
+									  bool printFlag = false)
+{
+	auto outArr = exe_act_ind_spiht_decode(sourceArr, wtLevel);
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "SPIHT Decode Arr" << std::endl;
+		outArr->print();
+	}
+
+	outArr = exe_act_ind_wavelet_decode(std::vector<pArray>({ outArr }), wtLevel);
+	std::cout << "##############################" << std::endl;
+	std::cout << "Wavelet Decode Arr" << std::endl;
+	if (printFlag)
+	{
+		outArr->print();
+	}
+
+	outArr = exe_act_ind_mmt_delta_decode(std::vector<pArray>({ outArr }));
+	std::cout << "##############################" << std::endl;
+	std::cout << "Delta Decode Arr" << std::endl;
+	if (printFlag)
+	{
+		outArr->print();
+	}
 
 	return outArr;
 }

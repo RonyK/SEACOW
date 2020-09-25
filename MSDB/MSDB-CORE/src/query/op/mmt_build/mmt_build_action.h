@@ -2,6 +2,7 @@
 #ifndef _MSDB_MMT_BUILD_ACTION_H_
 #define _MSDB_MMT_BUILD_ACTION_H_
 
+#include <stdafx.h>
 #include <query/opAction.h>
 
 namespace msdb

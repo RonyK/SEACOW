@@ -1,6 +1,7 @@
+#include <stdafx.h>
 #include <array/array.h>
 #include <util/math.h>
-#include <cmath>
+#include <util/logger.h>
 
 namespace msdb
 {
@@ -144,16 +145,16 @@ void arrayBase::print()
 
 	while (!cit->isEnd())
 	{
-		std::cout << "==============================" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "==============================\n";
 		if(cit->isExist())
 		{
 			(**cit)->print();
 			
 		}else
 		{
-			std::cout << "Chunk (" << cit->seqPos() << ") is not exist" << std::endl;
+			BOOST_LOG_TRIVIAL(debug) << "Chunk (" << cit->seqPos() << ") is not exist\n";
 		}
-		std::cout << "==============================" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "==============================\n";
 		++(*cit);
 	}
 }

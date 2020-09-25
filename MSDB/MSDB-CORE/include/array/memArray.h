@@ -2,6 +2,7 @@
 #ifndef _MSDB_MEMARRAY_H_
 #define _MSDB_MEMARRAY_H_
 
+#include <stdafx.h>
 #include <array/array.h>
 
 namespace msdb

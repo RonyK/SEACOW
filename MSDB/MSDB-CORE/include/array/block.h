@@ -2,12 +2,13 @@
 #ifndef _MSDB_BLOCK_H_
 #define _MSDB_BLOCK_H_
 
+#include <stdafx.h>
 #include <array/blockItemIterator.h>
 #include <array/blockBuffer.h>
 #include <array/blockDesc.h>
 #include <index/bitmap.h>
 #include <io/bitstream.h>
-#include <memory>
+#include <util/logger.h>
 
 namespace msdb
 {
@@ -86,35 +87,37 @@ protected:
 	void printImp()
 	{
 		auto iit = this->getItemIterator();
+		std::stringstream ss;
 		while(!iit->isEnd())
 		{
 			if(iit->isExist())
 			{
-				std::cout << (**iit).get<Ty_>() << ", ";
+				ss << (**iit).get<Ty_>() << ", ";
 			}else
 			{
-				std::cout << "*, ";
+				ss << "*, ";
 			}
 			++(*iit);
 		}
-		std::cout << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << ss.str() << "";
 	}
 	template<>
 	void printImp<char>()
 	{
 		auto iit = this->getItemIterator();
+		std::stringstream ss;
 		while (!iit->isEnd())
 		{
 			if (iit->isExist())
 			{
-				std::cout << static_cast<int>((**iit).get<char>()) << ", ";
+				ss << static_cast<int>((**iit).get<char>()) << ", ";
 			} else
 			{
-				std::cout << "*, ";
+				ss << "*, ";
 			}
 			++(*iit);
 		}
-		std::cout << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << ss.str() << "";
 	}
 };
 };

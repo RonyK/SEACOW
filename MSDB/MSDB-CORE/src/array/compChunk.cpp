@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <array/compChunk.h>
 
 namespace msdb

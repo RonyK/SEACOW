@@ -1,9 +1,8 @@
+#include <stdafx.h>
 #include <op/wavelet_encode/wavelet_encode_action.h>
 #include <op/wavelet_encode/wavelet_encode_array.h>
 #include <compression/haar.h>
 #include <util/math.h>
-#include <list>
-#include <memory>
 
 namespace msdb
 {

@@ -6,7 +6,6 @@
 #include <array/blockId.h>
 #include <array/dimensionDesc.h>
 #include <util/coordinate.h>
-#include <memory>
 
 namespace msdb
 {

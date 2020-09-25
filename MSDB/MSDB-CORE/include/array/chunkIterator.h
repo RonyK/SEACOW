@@ -2,6 +2,7 @@
 #ifndef _MSDB_CHUNKITERATOR_H_
 #define _MSDB_CHUNKITERATOR_H_
 
+#include <stdafx.h>
 #include <array/chunkContainer.h>
 #include <index/bitmap.h>
 #include <util/coordinate.h>

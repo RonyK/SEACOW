@@ -2,10 +2,10 @@
 #ifndef _MSDB_TERM_H_
 #define _MSDB_TERM_H_
 
+#include <stdafx.h>
 #include <util/coordinate.h>
 #include <parse/expression.h>
 #include <index/mmtNode.h>
-#include <memory>
 
 namespace msdb
 {

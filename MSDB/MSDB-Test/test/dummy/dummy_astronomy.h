@@ -15,8 +15,8 @@ namespace data2D_star1024x1024
 using value_type = char;
 static const eleType ele_type = eleType::CHAR;
 
-static const dim_type dimX = 512;
-static const dim_type dimY = 512;
+static const dim_type dimX = 1024;
+static const dim_type dimY = 1024;
 static const size_t dataLength = dimX * dimY;
 static const size_t wtLevel = 3;
 static const size_t mmtLevel = 4;
@@ -59,8 +59,8 @@ namespace data2D_saturn1024x1024
 using value_type = char;
 static const eleType ele_type = eleType::CHAR;
 
-static const dim_type dimX = 1024;
-static const dim_type dimY = 1024;
+static const dim_type dimX = 32;
+static const dim_type dimY = 32;
 static const size_t dataLength = dimX * dimY;
 static const size_t wtLevel = 3;
 static const size_t mmtLevel = 4;
@@ -147,11 +147,14 @@ namespace data2D_mars4096x2048
 using value_type = char;
 static const eleType ele_type = eleType::CHAR;
 
-static const dim_type dimX = 1024;
-static const dim_type dimY = 1024;
+//static const dim_type dimX = 4096;
+//static const dim_type dimY = 2048;
+static const dim_type dimX = 64;
+static const dim_type dimY = 64;
 static const size_t dataLength = dimX * dimY;
 static const size_t wtLevel = 3;
-static const size_t mmtLevel = 4;
+//static const size_t mmtLevel = 4;
+static const size_t mmtLevel = 0;
 static const arrayId aid = 40960;
 
 extern std::vector<dim_type> dims;

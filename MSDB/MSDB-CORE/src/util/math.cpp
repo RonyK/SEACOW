@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <util/math.h>
 
 namespace msdb

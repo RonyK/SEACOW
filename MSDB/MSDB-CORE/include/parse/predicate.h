@@ -2,9 +2,9 @@
 #ifndef _MSDB_PREDICATE_H_
 #define _MSDB_PREDICATE_H_
 
+#include <stdafx.h>
 #include <util/coordinate.h>
 #include <parse/term.h>
-#include <memory>
 #include <index/mmtNode.h>
 
 namespace msdb

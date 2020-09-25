@@ -2,6 +2,7 @@
 #ifndef _MSDB_DIMENSION_H_
 #define _MSDB_DIMENSION_H_
 
+#include <stdafx.h>
 #include <util/coordinate.h>
 
 namespace msdb

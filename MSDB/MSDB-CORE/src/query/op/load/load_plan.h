@@ -2,6 +2,7 @@
 #ifndef _MSDB_OP_LOAD_PLAN_H_
 #define _MSDB_OP_LOAD_PLAN_H_
 
+#include <stdafx.h>
 #include <query/opPlan.h>
 #include <query/opParamSet.h>
 

@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <op/mmt_delta_decode/mmt_delta_decode_array.h>
 #include <array/blockChunk.h>
 

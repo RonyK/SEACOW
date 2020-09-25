@@ -1,6 +1,6 @@
+#include <stdafx.h>
 #include <op/between/between_plan.h>
 #include <op/between/between_action.h>
-#include <cassert>
 
 namespace msdb
 {

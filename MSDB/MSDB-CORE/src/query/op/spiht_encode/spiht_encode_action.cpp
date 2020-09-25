@@ -1,8 +1,10 @@
+#include <stdafx.h>
 #include <op/spiht_encode/spiht_encode_action.h>
 #include <op/wavelet_encode/wavelet_encode_array.h>
 #include <system/storageMgr.h>
 #include <array/memChunk.h>
 #include <compression/spihtChunk.h>
+#include <util/logger.h>
 
 namespace msdb
 {
@@ -22,6 +24,7 @@ const char* spiht_encode_action::name()
 pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 {
 	assert(inputArrays.size() == 1);
+
 	//========================================//
 	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
 
@@ -59,7 +62,7 @@ pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery qry
 		}
 	}
 
-	std::cout << "mSizeTotal: " << mSizeTotal << std::endl;
+	BOOST_LOG_TRIVIAL(debug) << "Total Save Chunk: " << mSizeTotal << " Bytes";
 	qry->getTimer()->pause(0);
 	//========================================//
 

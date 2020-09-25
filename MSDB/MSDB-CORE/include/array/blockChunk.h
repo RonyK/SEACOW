@@ -2,10 +2,10 @@
 #ifndef _MSDB_BLOCKEDCHUNK_H_
 #define _MSDB_BLOCKEDCHUNK_H_
 
+#include <stdafx.h>
 #include <array/chunkIterator.h>
 #include <array/memChunkItemIterator.h>
 #include <util/coordinate.h>
-#include <map>
 
 namespace msdb
 {

@@ -2,11 +2,11 @@
 #ifndef _MSDB_OP_SPIHT_DECODE_ACTION_H
 #define _MSDB_OP_SPIHT_DECODE_ACTION_H
 
+#include <stdafx.h>
 #include <query/opAction.h>
 #include <util/math.h>
 #include <op/wavelet_encode/wavelet_encode_array.h>
 #include <compression/spihtChunk.h>
-#include <list>
 
 namespace msdb
 {

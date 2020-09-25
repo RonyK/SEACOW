@@ -1,5 +1,5 @@
+#include <stdafx.h>
 #include <compression/haar.h>
-#include <cmath>
 
 namespace msdb
 {

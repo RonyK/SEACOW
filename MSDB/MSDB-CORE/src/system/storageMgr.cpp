@@ -1,9 +1,9 @@
+#include <stdafx.h>
 #include <system/storageMgr.h>
 #include <system/exceptions.h>
-#include <array/configArrays.h>
-#include <xml/tinyxml2.h>
-#include <fstream>
 #include <array/chunkId.h>
+#include <array/configArrays.h>
+#include <util/logger.h>
 
 namespace msdb
 {
@@ -84,6 +84,7 @@ void storageMgr::saveAttrIndex(arrayId arrId, attributeId attrId, pSerializable 
 	this->getOfstream(fs, this->getArrayIndexPath(arrId) / std::to_string(attrId), 
 					  strIndexFilExtension);
 	serialObj->serialize(fs);
+	BOOST_LOG_TRIVIAL(debug) << "Save Attribute Index: " << serialObj->getSerializedSize() << " Bytes";
 	fs.close();
 }
 
@@ -120,6 +121,7 @@ void storageMgr::saveChunk(arrayId arrId, attributeId attrId, chunkId chkId, pSe
 	this->getOfstream(fs, this->getChunkPath(arrId, attrId, chkId), 
 					  strChunkFilExtension);
 	serialObj->serialize(fs);
+	BOOST_LOG_TRIVIAL(debug) << "Save Chunk: " << serialObj->getSerializedSize() << " Bytes";
 	fs.close();
 }
 

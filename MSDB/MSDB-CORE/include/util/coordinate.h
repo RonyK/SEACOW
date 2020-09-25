@@ -2,13 +2,11 @@
 #ifndef _MSDB_COORDINATE_H_
 #define _MSDB_COORDINATE_H_
 
+#include <stdafx.h>
 #include <util/element.h>
 #include <util/math.h>
 #include <system/exceptions.h>
 #include <array/dimensionId.h>
-#include <iostream>
-#include <cassert>
-#include <vector>
 #include <initializer_list>
 
 namespace msdb
@@ -111,7 +109,7 @@ public:
 			{
 				ss << ", ";
 			}
-			ss << d;
+			ss << this->coor_[d];
 		}
 
 		ss << ")";

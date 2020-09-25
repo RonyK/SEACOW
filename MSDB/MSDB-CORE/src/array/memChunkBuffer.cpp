@@ -1,6 +1,6 @@
+#include <stdafx.h>
 #include <array/memChunkBuffer.h>
 #include <system/exceptions.h>
-#include <cassert>
 
 namespace msdb
 {

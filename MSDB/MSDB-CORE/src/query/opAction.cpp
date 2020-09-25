@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <query/opAction.h>
 
 namespace msdb

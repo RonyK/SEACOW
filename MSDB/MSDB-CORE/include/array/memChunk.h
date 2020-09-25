@@ -2,6 +2,7 @@
 #ifndef _MSDB_MEMCHUNK_H_
 #define _MSDB_MEMCHUNK_H_
 
+#include <stdafx.h>
 #include <array/chunk.h>
 #include <array/chunkIterator.h>
 

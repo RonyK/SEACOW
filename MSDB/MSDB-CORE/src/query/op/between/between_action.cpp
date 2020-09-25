@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <op/between/between_action.h>
 #include <array/arrayMgr.h>
 #include <array/blockChunk.h>

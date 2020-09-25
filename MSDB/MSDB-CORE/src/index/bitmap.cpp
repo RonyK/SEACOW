@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <index/bitmap.h>
 
 namespace msdb

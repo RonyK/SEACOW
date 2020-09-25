@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <array/blockDesc.h>
 
 namespace msdb

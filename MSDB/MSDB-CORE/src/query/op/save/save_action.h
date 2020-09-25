@@ -2,6 +2,7 @@
 #ifndef _MSDB_OP_SAVE_ACTION_H_
 #define _MSDB_OP_SAVE_ACTION_H_
 
+#include <stdafx.h>
 #include <array/arrayMgr.h>
 #include <query/opAction.h>
 #include <index/mmt.h>

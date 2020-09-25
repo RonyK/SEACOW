@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <op/se_decompression/se_decompression_plan.h>
 #include <op/se_decompression/se_decompression_action.h>
 
@@ -46,7 +47,7 @@ pBitmapTree se_decompression_array_pset::inferBottomUpBitmap()
 	dimension blockSpace = desc->getDimDescs()->getBlockSpace();
 	dimension seChunkSpace = chunkSpace * blockSpace;
 
-	BOOST_LOG_TRIVIAL(info) << "Se Decomp Array Chunk Space: " << seChunkSpace.area();
+	BOOST_LOG_TRIVIAL(debug) << "Se Decomp Array Chunk Space: " << seChunkSpace.area();
 
 	return std::make_shared<bitmapTree>(seChunkSpace.area(), true);
 }

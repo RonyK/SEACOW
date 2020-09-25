@@ -2,10 +2,9 @@
 #ifndef _MSDB_OPPARAMSET_H_
 #define _MSDB_OPPARAMSET_H_
 
+#include <stdafx.h>
 #include <query/opParam.h>
 #include <index/bitmap.h>
-#include <vector>
-#include <memory>
 
 namespace msdb
 {

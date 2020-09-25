@@ -2,12 +2,8 @@
 #ifndef _MSDB_FILE_H_
 #define _MSDB_FILE_H_
 
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <filesystem>
+#include <stdafx.h>
 #include <util/singleton.h>
-#include <vector>
 
 namespace msdb
 {

@@ -2,7 +2,7 @@
 #ifndef _MSDB_DIMENSION_INDEX_H_
 #define _MSDB_DIMENSION_INDEX_H_
 
-#include <memory>
+#include <stdafx.h>
 
 namespace msdb
 {

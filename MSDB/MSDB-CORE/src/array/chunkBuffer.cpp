@@ -1,7 +1,6 @@
+#include <stdafx.h>
 #include <array/chunkBuffer.h>
 #include <system/exceptions.h>
-#include <iostream>
-#include <algorithm>
 
 namespace msdb
 {

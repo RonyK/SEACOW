@@ -2,6 +2,7 @@
 #ifndef _MSDB_IO_H_
 #define _MSDB_IO_H_
 
+#include <stdafx.h>
 #include <system/exceptions.h>
 
 #define _MSDB_TRY_IO_BEGIN	_MSDB_TRY_BEGIN

@@ -2,12 +2,11 @@
 #ifndef _MSDB_CONFIGARRAYS_H_
 #define _MSDB_CONFIGARRAYS_H_
 
+#include <stdafx.h>
 #include <array/arrayDesc.h>
 #include <array/attributeDesc.h>
 #include <array/dimensionDesc.h>
 #include <system/config.h>
-#include <xml/tinyxml2.h>
-#include <vector>
 
 // Meta data for arrays is recorded in XML file at the config folder.
 

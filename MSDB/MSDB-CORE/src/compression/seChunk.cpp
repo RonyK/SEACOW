@@ -1,5 +1,5 @@
+#include <stdafx.h>
 #include <compression/seChunk.h>
-
 #include <array/chunk.h>
 
 namespace msdb

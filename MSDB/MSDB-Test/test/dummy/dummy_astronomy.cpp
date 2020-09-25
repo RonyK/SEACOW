@@ -60,8 +60,10 @@ namespace data2D_saturn1024x1024
 {
 std::vector<dim_type> dims = { dimY, dimX };
 std::vector<dim_type> chunkNums = { 8, 8 };
+//std::vector<dim_type> chunkNums = { 1, 1 };
 std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
 std::vector<dim_type> blockNums = { 4, 4 };
+//std::vector<dim_type> blockNums = { 1, 1 };
 std::vector<dim_type> blockDims = { chunkDims[0] / blockNums[0], chunkDims[1] / blockNums[1] };
 
 void getDummy(value_type* output, size_t length)
@@ -75,15 +77,6 @@ void getDummy(value_type* output, size_t length)
 	while (in && i < dataLength)
 	{
 		in >> c;
-		//switch(c)
-		//{
-		//case '{':
-		//case '}':
-		//case ',':
-		//case ' ':
-		//	continue;
-		//}
-		//std::cout << "[" << i << "]" << c << std::endl;
 		output[i++] = c;
 	}
 	in.close();
@@ -153,9 +146,11 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
 namespace data2D_mars4096x2048
 {
 std::vector<dim_type> dims = { dimY, dimX };
-std::vector<dim_type> chunkNums = { 8, 8 };
+//std::vector<dim_type> chunkNums = { 16, 8 };
+std::vector<dim_type> chunkNums = { 1, 1 };
 std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
-std::vector<dim_type> blockNums = { 4, 4 };
+//std::vector<dim_type> blockNums = { 4, 4 };
+std::vector<dim_type> blockNums = { 1, 1 };
 std::vector<dim_type> blockDims = { chunkDims[0] / blockNums[0], chunkDims[1] / blockNums[1] };
 
 void getDummy(value_type* output, size_t length)
@@ -164,21 +159,12 @@ void getDummy(value_type* output, size_t length)
 	std::ifstream in("Mars_Viking_MDIM21_ClrMosaic_1km_4096x2048_gray.txt");
 	assert(in.is_open() == true);
 
-	int c;
-	int i = 0;
-	while (in && i < dataLength)
+	int64_t c;
+	int64_t i = 0;
+	while (in && i < length)
 	{
 		in >> c;
-		//switch(c)
-		//{
-		//case '{':
-		//case '}':
-		//case ',':
-		//case ' ':
-		//	continue;
-		//}
-		//std::cout << "[" << i << "]" << c << std::endl;
-		output[i++] = c;
+		output[i++] = c / 2;
 	}
 	in.close();
 }

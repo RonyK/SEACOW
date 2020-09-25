@@ -2,10 +2,10 @@
 #ifndef _MSDB_SE_CHUNK_H_
 #define _MSDB_SE_CHUNK_H_
 
+#include <stdafx.h>
 #include <array/blockChunk.h>
 #include <array/block.h>
 #include <compression/waveletUtil.h>
-#include <vector>
 
 namespace msdb
 {

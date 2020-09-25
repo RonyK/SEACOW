@@ -1,7 +1,7 @@
+#include <stdafx.h>
 #include <op/wavelet_encode/wavelet_encode_plan.h>
 #include <op/wavelet_encode/wavelet_encode_action.h>
 #include <util/math.h>
-#include <cassert>
 
 namespace msdb
 {

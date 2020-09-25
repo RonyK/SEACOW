@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <op/se_compression/se_compression_plan.h>
 #include <op/se_compression/se_compression_action.h>
 

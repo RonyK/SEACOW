@@ -2,6 +2,7 @@
 #ifndef _MSDB_OP_SE_COMPRESSION_ACTION_H_
 #define _MSDB_OP_SE_COMPRESSION_ACTION_H_
 
+#include <stdafx.h>
 #include <array/arrayMgr.h>
 #include <array/memBlock.h>
 #include <system/storageMgr.h>
@@ -11,8 +12,7 @@
 #include <query/opAction.h>
 #include <index/mmt.h>
 #include <op/wavelet_encode/wavelet_encode_array.h>
-#include <memory>
-#include <list>
+#include <util/logger.h>
 
 namespace msdb
 {
@@ -59,11 +59,10 @@ private:
 			storageMgr::instance()->saveChunk(arrId, attr->id_, (outChunk)->getId(),
 											  std::static_pointer_cast<serializable>(outChunk));
 			mSizeTotal += outChunk->getSerializedSize();
-			//std::cout << outChunk->getSerializedSize() << std::endl;
 			++(*cit);
 		}
 
-		std::cout << "mSizeTotal: " << mSizeTotal << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "Total Save Chunk: " << mSizeTotal << " Bytes";
 	}
 
 	template<typename Ty_>
@@ -78,6 +77,8 @@ private:
 		//auto mNode = mmtIndex->getNode(inChunk->getId(), 0);
 		auto mNode = mmtIndex->getNode(chunkCoor, 0);
 		outChunk->rBitFromMMT = getRBitFromMMT(mNode) + static_cast<char>(hasNegative);
+
+		BOOST_LOG_TRIVIAL(trace) << "Chunkcoor: " << chunkCoor.toString() << " / MMT NODE: " << mNode->toString<Ty_>();
 		assert(outChunk->rBitFromMMT <= sizeof(Ty_) * CHAR_BIT);
 
 		pBlock outBlock = outChunk->getBlock(0);
@@ -89,7 +90,15 @@ private:
 		{
 			bit_cnt_type requiredBits = this->compressBand<Ty_>(outBlock, getBandRange(0, bandDims)) + static_cast<char>(hasNegative);
 			outChunk->rBitFromDelta.push_back(requiredBits);
+#ifndef NDEBUG
+			if (requiredBits > outChunk->rBitFromMMT)
+			{
+				BOOST_LOG_TRIVIAL(warning) << "CompressChunk()=> requriedBits: " << static_cast<int64_t>(requiredBits) << ", "
+					<< "rBitFromMMT: " << static_cast<int64_t>(outChunk->rBitFromMMT) << "\n"
+					<< "MMT NODE: " << mNode->toString<Ty_>();
+			}
 			assert(requiredBits <= outChunk->rBitFromMMT);
+#endif
 		}
 		
 		for(size_t level = 0; level <= inChunk->getLevel(); ++level)
@@ -98,7 +107,18 @@ private:
 			{
 				bit_cnt_type requiredBits = this->compressBand<Ty_>(outBlock, getBandRange(band, bandDims)) + static_cast<char>(hasNegative);
 				outChunk->rBitFromDelta.push_back(requiredBits);
+
+#ifndef NDEBUG
+				if(requiredBits > outChunk->rBitFromMMT)
+				{
+					BOOST_LOG_TRIVIAL(warning) << "CompressChunk()=> requriedBits: " << static_cast<int64_t>(requiredBits) << ", " 
+						<< "rBitFromMMT: " << static_cast<int64_t>(outChunk->rBitFromMMT) << "\n"
+						<< "MMT NODE: " << mNode->toString<Ty_>();
+					BOOST_LOG_TRIVIAL(warning) << "Chunkcoor: " << chunkCoor.toString();
+					outBlock->print();
+				}
 				assert(requiredBits <= outChunk->rBitFromMMT);
+#endif
 			}
 			
 			bandDims *= 2;
@@ -112,6 +132,9 @@ private:
 	{
 		auto bItemItr = curBlock->getItemRangeIterator(bandRange);
 		bit_cnt_type maxValueBits = 0;
+#ifndef NDEBUG
+		Ty_ maxValue;
+#endif
 
 		while(!bItemItr->isEnd())
 		{
@@ -120,10 +143,16 @@ private:
 			if (maxValueBits < valueBits)
 			{
 				maxValueBits = valueBits;
+#ifndef NDEBUG
+				maxValue = value;
+#endif
 			}
 			++(*bItemItr);
 		}
 
+#ifndef NDEBUG
+		BOOST_LOG_TRIVIAL(trace) << "Max value: " << static_cast<int>(maxValue) << ", maxValueBits: " << static_cast<int>(maxValueBits);
+#endif
 		return maxValueBits;
 	}
 };

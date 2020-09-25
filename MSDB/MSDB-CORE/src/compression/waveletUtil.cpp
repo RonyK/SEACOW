@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <compression/waveletUtil.h>
 
 namespace msdb

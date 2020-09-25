@@ -2,8 +2,8 @@
 #ifndef _MSDB_CHUNKCONTAINER_H_
 #define _MSDB_CHUNKCONTAINER_H_
 
+#include <stdafx.h>
 #include <array/chunk.h>
-#include <map>
 
 namespace msdb
 {

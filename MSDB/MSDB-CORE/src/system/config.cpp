@@ -1,3 +1,4 @@
+#include <stdafx.h>
 #include <system/config.h>
 #include <xml/tinyxml2.h>
 
