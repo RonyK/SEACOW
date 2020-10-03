@@ -36,6 +36,7 @@ public:
 	dimension blockCoor_;
 	dimension nodeCoor_;
 	size_t seqPos_;
+	pMmtNode parent_;
 
 public:
 	mmtNode() : bMax_(0), bMin_(0), bits_(0x80), order_(1),
@@ -89,6 +90,13 @@ public:
 	{
 		this->bMax_ = msb<Ty_>(abs_(boost::any_cast<Ty_>(max_)), this->order_) * SIGN(boost::any_cast<Ty_>(max_));
 		this->bMin_ = msb<Ty_>(abs_(boost::any_cast<Ty_>(min_)), this->order_) * SIGN(boost::any_cast<Ty_>(min_));
+
+#ifndef NDEBUG
+		if(this->bMax_ < 0 || this->bMin_ < 0)
+		{
+			BOOST_LOG_TRIVIAL(warning) << "bMax: " << this->bMax_ << ", bMin: " << this->bMin_;
+		}
+#endif
 	}
 
 	template <typename Ty_>

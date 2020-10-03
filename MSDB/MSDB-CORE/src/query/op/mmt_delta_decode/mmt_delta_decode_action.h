@@ -79,7 +79,7 @@ void mmt_delta_decode_action::chunkDecode(pChunk outChunk, pChunk inChunk,
 	{
 		auto iit = (**ibItr)->getItemIterator();
 		auto oit = (**obItr)->getItemIterator();
-		auto node = mmtIndex->getNode(inChunk->getDesc()->chunkCoor_, ibItr->coor());
+		auto node = mmtIndex->getNode(inChunk->getDesc()->chunkCoor_, ibItr->coor(), mmtIndex->getBlockLevel());
 
 		// Block encode
 		while (!iit->isEnd())

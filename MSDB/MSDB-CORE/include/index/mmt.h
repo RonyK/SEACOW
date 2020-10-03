@@ -35,14 +35,14 @@ protected:
 		virtual void serialize(std::ostream& os) override
 		{
 			std::cout << "Header serialize" << std::endl;
-			std::cout << this->version_ << ", " << this->bodySize_ << ", " << static_cast<int>(this->eType_) << ", " << this->maxLevel_ << std::endl;
+			std::cout << this->version_ << ", " << this->bodySize_ << ", " << static_cast<int>(this->eType_) << ", " << this->lowerLevel_ << std::endl;
 
 			int eTypeOut = static_cast<int>(this->eType_);
 			os.write((char*)(&this->version_), sizeof(this->version_));
 			os.write((char*)(&this->bodySize_), sizeof(this->bodySize_));
 			os.write((char*)(&eTypeOut), sizeof(int));
-			os.write((char*)(&this->maxLevel_), sizeof(this->maxLevel_));
-			//os << this->version_ << this->size_ << static_cast<int>(this->eType_) << this->maxLevel_;
+			os.write((char*)(&this->lowerLevel_), sizeof(this->lowerLevel_));
+			//os << this->version_ << this->size_ << static_cast<int>(this->eType_) << this->lowerLevel_;
 			// operator<< outputs the values in ASCII CODE (TEXT).
 		}
 		virtual void deserialize(std::istream& is) override
@@ -53,17 +53,17 @@ protected:
 			is.read((char*)(&this->version_), sizeof(this->version_));
 			is.read((char*)(&this->bodySize_), sizeof(this->bodySize_));
 			is.read((char*)(&eTypeIn), sizeof(int));
-			is.read((char*)(&this->maxLevel_), sizeof(this->maxLevel_));
+			is.read((char*)(&this->lowerLevel_), sizeof(this->lowerLevel_));
 			this->eType_ = static_cast<eleType>(eTypeIn);
 
-			//is >> this->version_ >> this->size_ >> eTypeIn >> maxLevel_;
-			std::cout << this->version_ << ", " << this->bodySize_ << ", " << static_cast<int>(this->eType_) << ", " << this->maxLevel_ << std::endl;
+			//is >> this->version_ >> this->size_ >> eTypeIn >> lowerLevel_;
+			std::cout << this->version_ << ", " << this->bodySize_ << ", " << static_cast<int>(this->eType_) << ", " << this->lowerLevel_ << std::endl;
 		}
 
 	public:
 		//eleType dType_;	// dimension eType, not used, fixed now.
 		eleType eType_;		// element eType
-		size_type maxLevel_;
+		size_type lowerLevel_;
 	};
 
 public:
@@ -83,10 +83,11 @@ public:
 						  const dimension& dim,
 						  const dimension& chunkDim,
 						  const dimension& blockDim,
-						  size_const maxLevel = 0);
+						  size_const lowerLevel = 0);
 
 protected:
 	eleType eType_;
+	size_type lowerLevel_;
 	size_type maxLevel_;
 };
 template <typename Dty_, typename Ty_>
@@ -118,7 +119,7 @@ protected:
 		auto curHeader = std::static_pointer_cast<mmtHeader>(this->getHeader());
 		curHeader->version_ = MinMaxTree::mmtHeader::mmt_header_version;
 		curHeader->bodySize_ = this->serializedSize_;
-		curHeader->maxLevel_ = this->maxLevel_;
+		curHeader->lowerLevel_ = this->lowerLevel_;
 		curHeader->eType_ = this->eType_;
 	}
 
@@ -126,13 +127,12 @@ protected:
 	virtual void updateFromHeader() override
 	{
 		auto curHeader = std::static_pointer_cast<mmtHeader>(this->getHeader());
-		this->maxLevel_ = curHeader->maxLevel_;
+		this->lowerLevel_ = curHeader->lowerLevel_;
 		this->serializedSize_ = curHeader->bodySize_;
 		this->eType_ = curHeader->eType_;
 
-		this->initNodeSpace(this->dims_, this->chunkDims_, this->blockDims_, this->maxLevel_);
-		// Limits maxLevel according the size of nodeSpace vector initialized above.
-		this->maxLevel_ = this->nodeSpace_.size() - 1;
+		this->initNodeSpace();
+		this->findChunkBlockLevel();
 	}
 
 	//////////////////////////////
@@ -141,15 +141,11 @@ protected:
 public:
 	MinMaxTreeImpl(const eleType eType, 
 				   const dimension& dim, const dimension& chunkDim, const dimension& blockDim,
-				   size_const maxLevel = 0)
-		: MinMaxTree(eType, maxLevel), dims_(dim), dSize_(dim.size()), chunkDims_(chunkDim), blockDims_(blockDim),
-		leafInChunkBlockSpace_(chunkDim / blockDim), TySize_(getEleSize(eType)), 
+				   size_const lowerLevel = 0)
+		: MinMaxTree(eType, lowerLevel), dims_(dim), dSize_(dim.size()), chunkDims_(chunkDim), blockDims_(blockDim),
+		leafDims_(blockDim / pow(2, lowerLevel)), blockSpace_(chunkDim / blockDim), TySize_(getEleSize(eType)),
 		TyBits_(getEleSize(eType)* CHAR_BIT)
-	{
-		this->initNodeSpace(dim, chunkDim, blockDim, maxLevel);
-		// Limits maxLevel according the size of nodeSpace vector initialized above.
-		this->maxLevel_ = this->nodeSpace_.size() - 1;
-	}
+	{}
 
 	~MinMaxTreeImpl() {}
 
@@ -160,24 +156,15 @@ public:
 	{
 		assert(it->getIterateMode() == iterateMode::EXIST);
 
-		this->blockLevel_ = 0;
-		this->chunkLevel_ = 0;
-
-		for(size_type level = 0; level <= this->maxLevel_; ++level)
-		{
-			auto nSpace = this->getNodeSpace(level);
-			if(this->chunkDims_.area() == nSpace.area())
-			{
-				this->chunkLevel_ = level;
-				break;
-			}
-		}
-
+		//////////////////////////////
+		// Init values
+		this->initNodeSpace();
+		this->findChunkBlockLevel();
 		this->nodes_.clear();
 
 		//////////////////////////////
 		// Forward build
-		// Set Min/Max values [0 (leaf) level -> maxLevel]
+		// Set Min/Max values [0 (leaf) level -> refineLevel]
 		this->forwardBuildLeaf(it);
 		for (size_type level = 1; level <= this->maxLevel_; ++level)
 		{
@@ -197,7 +184,7 @@ public:
 
 		//////////////////////////////
 		// Backward Build
-		// Set bits [maxLevel -> 0 level]
+		// Set bits [refineLevel -> 0 level]
 		this->backwardBuildRoot();
 
 		if(this->maxLevel_ >= 1)
@@ -212,26 +199,19 @@ public:
 		//////////////////////////////
 	}
 
-	// ********************
-	// * Not used
-	//void serialize(void* output, size_const length)
-	//{
-	//	bstream bs;
-	//	this->serialize(bs);
-	//
-	//	if (length < (bs.size() + CHAR_BIT - 1) / CHAR_BIT)
-	//	{
-	//		throw std::length_error();
-	//	}
-	//
-	//	memcpy(output, bs.data(), (bs.size() + CHAR_BIT - 1) / CHAR_BIT);
-	//}
+	nodeItr getNodeIterator(size_type level)
+	{
+		return nodeItr(this->nodes_[level].data(), this->dSize_, this->nodeSpace_[level].data());
+	}
 
+	//////////////////////////////
+	// MMT Serialize			//
+	//////////////////////////////
 	void serialize(bstream& bs)
 	{
 		size_type maxLevel = this->nodes_.size() - 1;
 
-		if (maxLevel == -1)
+		if (maxLevel == (size_type)-1)
 		{
 			return;		// Empty
 		}
@@ -282,11 +262,6 @@ public:
 		this->deserialize(bs);
 	}
 
-	nodeItr getNodeIterator(size_type level)
-	{
-		return nodeItr(this->nodes_[level].data(), this->dSize_, this->nodeSpace_[level].data());
-	}
-
 public:
 	coordinate<Dty_> chunkCoorToBlockCoor(const coordinate<Dty_>& chunkCoor, const dimension& chunkDimForBlock)
 	{
@@ -306,42 +281,40 @@ protected:
 	{
 		////////////////////////////////////////
 		// Create new mmtNodes
-		//size_type blockCnt = calcNumItems(
-		//	this->nodeSpace_[0].data(), this->nodeSpace_[0].size());	// block numbers
-		//this->nodes_.push_back(std::vector<pMmtNode>(blockCnt));			// make new node
-
 		this->nodes_.push_back(std::vector<pMmtNode>(this->nodeSpace_[0].area()));
+		dimension leafSpace = this->blockDims_ / this->leafDims_;
+		coorItr leafItr = coorItr(leafSpace);
+
 		while (!cItr->isEnd())
 		{
 			// Setup a start point of blockCoor for blocks in a chunk
-			//coorItr bit(this->leafInChunkBlockSpace_);
 			auto bItr = (**cItr)->getBlockIterator();
 			while (!bItr->isEnd())
 			{
-				//auto bItemBdy = this->getBlockItemBoundary(bit->coor());
-				//auto iit = (**cItr)->getItemRangeIterator(bItemBdy);
-				
-				auto bItemItr = (**bItr)->getItemIterator();
-				auto lNode = this->forwardBuildLeafNode(bItemItr);
-				this->setNode(lNode, cItr->coor(), bItr->coor());
-
+				leafItr.moveToStart();
+				while(!leafItr.isEnd())
+				{
+					auto bItemItr = (**bItr)->getItemRangeIterator(
+						coorRange(leafItr.coor() * this->leafDims_, leafItr.coor() * this->leafDims_ + this->leafDims_));
+					auto lNode = this->forwardInitLeafNode(bItemItr);
+					this->setNode(lNode, cItr->coor(), bItr->coor(), leafItr.coor());
 
 #ifndef NDEBUG
-				if (lNode->getMin<Ty_>() < 0)
-				{
-					BOOST_LOG_TRIVIAL(warning) << "Wrong MMT value at " << cItr->coor().toString() << "|" << bItr->coor().toString() << ": " << lNode->getMin<Ty_>();
-				}
+					if (lNode->getMin<Ty_>() < 0)
+					{
+						BOOST_LOG_TRIVIAL(warning) << "Wrong MMT value at " << cItr->coor().toString() << "|" << bItr->coor().toString() << ": " << lNode->getMin<Ty_>();
+					}
+					++leafItr;
 #endif
-				//std::cout << "leaf forward-" << std::endl;
-				//std::cout << "[" << blockCoor[0] << ", " << blockCoor[1] << "] : " << static_cast<int>(lNode->min_) << "~" << static_cast<int>(lNode->max_) << std::endl;
+				}
 				++(*bItr);	// Move on a next block in the chunk
 			}
 
-			++(*cItr);	// Move on a next chunk
+			++(*cItr);		// Move on a next chunk
 		}
 	}
 
-	pMmtNode forwardBuildLeafNode(pBlockItemIterator iit)
+	pMmtNode forwardInitLeafNode(pBlockItemRangeIterator iit)
 	{
 		pMmtNode node = std::make_shared<mmtNode>();
 
@@ -372,7 +345,7 @@ protected:
 		return node;
 	}
 
-	// For level 1 ~ maxLevel
+	// For level 1 ~ refineLevel
 	// Notes: In this method, prev is a lower level nodes (finer)
 	void forwardBuildNonLeaf(const size_type level)
 	{
@@ -524,7 +497,7 @@ protected:
 		}
 	}
 
-	// Except max level nodes ((maxLevel - 1) -> level 0 )
+	// Except max level nodes ((refineLevel - 1) -> level 0 )
 	void backwardBuildNonRoot(const size_type level)
 	{
 		assert(level < this->nodes_.size() - 2);		// Not for max level nodes
@@ -582,6 +555,7 @@ protected:
 
 				// Update
 				pMmtNode cNode = (*cit);
+				cNode->parent_ = prevNode;
 				backwardUpdateNode(prevNode, cNode, isLastBit, orderChanged, bits);
 			}
 		}
@@ -595,10 +569,10 @@ protected:
 			if (isLastBit)
 			{
 				// The last bit. Has no more next significant bit
-				curNode->bits_ = 0;
+				curNode->bits_ = prevNode->bits_;
 				curNode->order_ = prevNode->order_;
-				curNode->bMax_ = 0;
-				curNode->bMin_ = 0;
+				curNode->bMax_ = prevNode->bMax_;
+				curNode->bMin_ = prevNode->bMin_;
 				curNode->bMaxDelta_ = 0;
 				curNode->bMinDelta_ = 0;
 			} else
@@ -622,8 +596,19 @@ protected:
 			// TODO::Change min, max according order and deltaBits
 		}
 
+#ifndef NDEBUG
+		Ty_ tMax = curNode->getMax<Ty_>();
+		Ty_ tMin = curNode->getMin<Ty_>();
+#endif
 		curNode->max_ = getMaxBoundary<Ty_>(prevNode->getMax<Ty_>(), curNode->order_, curNode->bMax_);
 		curNode->min_ = getMinBoundary<Ty_>(prevNode->getMin<Ty_>(), curNode->order_, curNode->bMin_);
+
+		if(curNode->getMax<Ty_>() < curNode->getRealMax<Ty_>() || curNode->getMin<Ty_>() > curNode->getRealMin<Ty_>())
+		{
+			assert(curNode->getMax<Ty_>() >= curNode->getRealMax<Ty_>());
+			assert(curNode->getMin<Ty_>() >= curNode->getRealMin<Ty_>());
+		}
+
 	}
 
 	////////////////////////////////////////
@@ -652,10 +637,10 @@ protected:
 	{
 		////////////////////////////////////////
 		// Create new mmtNodes
-		auto chunksInDim = this->nodeSpace_[this->maxLevel_];
+		auto chunksInDim = this->nodeSpace_[this->lowerLevel_];
 		size_type chunkCnt = calcNumItems(chunksInDim.data(), chunksInDim.size());
-		this->nodes_[this->maxLevel_].resize(chunkCnt);	// TODO::If generating Nodes are complete, remove this line.
-		pMmtNode* rootNodes = this->nodes_[this->maxLevel_].data();
+		this->nodes_[this->lowerLevel_].resize(chunkCnt);	// TODO::If generating Nodes are complete, remove this line.
+		pMmtNode* rootNodes = this->nodes_[this->lowerLevel_].data();
 
 		for (size_type i = 0; i < chunkCnt; i++)
 		{
@@ -705,6 +690,12 @@ protected:
 					cNode->order_ = prevNode->order_ + 1;
 					cNode->bMax_ = prevNode->bMax_ - cNode->bMaxDelta_ - 1;
 					cNode->bMin_ = prevNode->bMin_ - cNode->bMinDelta_ - 1;
+#ifndef NDEBUG
+					if(cNode->bMax_ < 0 || cNode->bMin_ < 0)
+					{
+						BOOST_LOG_TRIVIAL(warning) << "bMax: " << cNode->bMax_ << ", bMin: " << cNode->bMin_;
+					}
+#endif
 
 					cNode->max_ = getMaxBoundary<Ty_>(prevNode->getMax<Ty_>(), cNode->order_, cNode->bMax_);
 					cNode->min_ = getMinBoundary<Ty_>(prevNode->getMin<Ty_>(), cNode->order_, cNode->bMin_);
@@ -724,6 +715,13 @@ protected:
 				cNode->bMax_ = prevNode->bMax_ - cNode->bMaxDelta_;
 				cNode->bMin_ = prevNode->bMin_ + cNode->bMinDelta_;
 
+#ifndef NDEBUG
+				if (cNode->bMax_ < 0 || cNode->bMin_ < 0)
+				{
+					BOOST_LOG_TRIVIAL(warning) << "bMax: " << cNode->bMax_ << ", bMin: " << cNode->bMin_;
+				}
+#endif
+
 				cNode->max_ = getMaxBoundary<Ty_>(prevNode->getMax<Ty_>(), cNode->order_, cNode->bMax_);
 				cNode->min_ = getMinBoundary<Ty_>(prevNode->getMin<Ty_>(), cNode->order_, cNode->bMin_);
 			}
@@ -737,44 +735,55 @@ protected:
 	//////////////////////////////
 	// Calculate number of chunk on each dimension using the dimension sizes and chunk sizes
 	// If any dimension cannot be merged, stops calculating node spaces.
-	void initNodeSpace(const dimension& dims,
-					   const dimension& chunkDims,
-					   const dimension& blockDims,
-					   const size_type maxLevel)
+	void initNodeSpace()
 	{
 		this->nodeSpace_.clear();
-		for (size_type level = 0; level <= maxLevel; ++level)
-		{
-			dimension chunkSpace = dims / chunkDims;
-			dimension blockSpace = chunkDims / blockDims;
-			dimension nodeSpace = chunkSpace * blockSpace / pow(2, level);
-			this->nodeSpace_.push_back(nodeSpace);
+		dimension nodeSpace = (this->dims_ / this->blockDims_) * pow(2, this->lowerLevel_);
+		size_type level = 0;
 
+		while(true)
+		{
+			this->nodeSpace_.push_back(nodeSpace);
 			for(dimensionId d = 0; d < this->dSize_; ++d)
 			{
-				if(nodeSpace[d] == 1)
+				if(nodeSpace[d] <= 1)
 				{
-					// nodes cannot be merged.
-					break;
+					// nodes cannot be merged farther.
+					this->maxLevel_ = level;
+					return;
 				}
+			}
+			nodeSpace /= 2;
+			++level;
+		}
+	}
+
+	void findChunkBlockLevel()
+	{
+		this->blockLevel_ = 0;
+		this->chunkLevel_ = 0;
+		dimension blockSpace = this->dims_ / this->blockDims_;
+		dimension chunkSpace = this->dims_ / this->chunkDims_;
+
+		for (size_type level = 0; level <= this->maxLevel_; ++level)
+		{
+			auto nSpace = this->getNodeSpace(level);
+			if (blockSpace.area() == nSpace.area())
+			{
+				this->blockLevel_ = level;
+			}
+			if (chunkSpace.area() == nSpace.area())
+			{
+				this->chunkLevel_ = level;
+				return;
 			}
 		}
 	}
 
-	//_NODISCARD coordinate<Dty_> getChildBaseCoor(coordinate<Dty_>& parentCoor)
-	//{
-	//	coordinate<Dty_> childBase = parentCoor;
-	//	for (dimensionId d = 0; d < this->dSize_; d++)
-	//	{
-	//		childBase[d] *= 2;
-	//	}
-	//	return childBase;
-	//}
-
 	_NODISCARD coordinate<Dty_> getParentCoor(coordinate<Dty_>& childCoor)
 	{
 		coordinate<Dty_> coorParent = childCoor;
-		for (dimensionId d = 0; d < this->dSize_; d++)
+		for (dimensionId d = 0; d < this->dSize_; ++d)
 		{
 			coorParent[d] /= 2;
 		}
@@ -783,13 +792,13 @@ protected:
 
 public:
 	// chunkCoor: coordinate of a chunk that contains the block
-	// inner: inner coordiante of blocks in a chunk
+	// blockCoor: blockCoor coordiante of blocks in a chunk
 	_NODISCARD coordinate<Dty_> getBlockCoor(coordinate<Dty_>& chunkCoor, coordinate<Dty_>& inner)
 	{
 		coordinate<Dty_> blockCoor(inner);
 		for (dimensionId d = 0; d < this->dSize_; ++d)
 		{
-			blockCoor[d] += chunkCoor[d] * this->leafInChunkBlockSpace_[d];
+			blockCoor[d] += chunkCoor[d] * this->blockSpace_[d];
 		}
 		return blockCoor;
 	}
@@ -805,12 +814,15 @@ public:
 		return coorRange(spOut, epOut);
 	}
 
-	_NODISCARD size_type getBlockLevel()
+	_NODISCARD dimension getLeafDim() const
+	{
+		return this->leafDims_;
+	}
+	_NODISCARD size_type getBlockLevel() const
 	{
 		return this->blockLevel_;
 	}
-
-	_NODISCARD size_type getChunkLevel()
+	_NODISCARD size_type getChunkLevel() const
 	{
 		return this->chunkLevel_;
 	}
@@ -839,7 +851,7 @@ public:
 		coor nodeCoor(inner);
 		for (dimensionId d = 0; d < this->dSize_; ++d)
 		{
-			nodeCoor[d] += chunkCoor[d] * this->leafInChunkBlockSpace_[d];
+			nodeCoor[d] += chunkCoor[d] * this->blockSpace_[d];
 		}
 		return this->nodes_[level][nit.coorToSeq(nodeCoor)];
 	}
@@ -874,17 +886,16 @@ public:
 		this->nodes_[level][nit.coorToSeq(nodeCoor)] = node;
 	}
 
-	void setNode(pMmtNode node, coor& chunkCoor, coor& inner, size_type level = 0)
+	void setNode(pMmtNode node, coor& chunkCoor, coor& blockCoor, coor& inner, size_t level = 0)
 	{
 		auto nit = this->getNodeIterator(level);
+		dimension leafSpace = this->blockDims_ / this->leafDims_;
 		coor nodeCoor(inner);
-		for (dimensionId d = 0; d < this->dSize_; ++d)
-		{
-			nodeCoor[d] += chunkCoor[d] * this->leafInChunkBlockSpace_[d];
-		}
+		nodeCoor += (blockCoor * leafSpace) + (chunkCoor * this->blockSpace_ * leafSpace);
+
 		this->nodes_[level][nit.coorToSeq(nodeCoor)] = node;
 		node->chunkCoor_ = chunkCoor;
-		node->blockCoor_ = inner;
+		node->blockCoor_ = blockCoor;
 		node->nodeCoor_ = nodeCoor;
 		node->seqPos_ = nit.coorToSeq(nodeCoor);
 	}
@@ -915,7 +926,6 @@ public:
 			}
 		}
 	}
-
 private:
 	const size_type TySize_;
 	const size_type TyBits_;
@@ -925,7 +935,8 @@ private:
 	dimension dims_;					// dimensions
 	dimension chunkDims_;				
 	dimension blockDims_;				// leaf block dimension (num of items)
-	dimension leafInChunkBlockSpace_;	// level dim in chunk (num of blocks)
+	dimension leafDims_;				// leaf dim
+	dimension blockSpace_;
 	std::vector<dimension> nodeSpace_;	// level dim (num of blocks)
 	std::vector<std::vector<pMmtNode>> nodes_;	// mmt
 	size_type blockLevel_;

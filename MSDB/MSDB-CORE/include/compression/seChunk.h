@@ -35,7 +35,6 @@ public:
 	template<typename Ty_>
 	void serialize(bstream& bs)
 	{
-		//std::cout << "Serialize Chunk" << std::endl;
 		pBlock myBlock = this->blocks_.at(0);
 
 		size_t dSize = this->getDSize();
@@ -43,84 +42,109 @@ public:
 		dimension inBlockDims = this->getDesc()->getBlockDims();
 		dimension bandDims = inBlockDims / std::pow(2, this->level_ + 1);
 
-		size_t bandSeqId = 0;
-		// Band 0
+		size_t seqId = 0;
+		// Level 0
 		{
-			this->serializeBand<Ty_>(bs, myBlock, bandSeqId, 0, bandDims);
-			++bandSeqId;
-		}
-
-		for (size_t level = 0; level <= this->level_; ++level)
-		{
-			for (size_t band = 1; band <= numBandsInLevel; ++band, ++bandSeqId)
+			for (size_t band = 0; band <= numBandsInLevel; ++band, ++seqId)
 			{
-				this->serializeBand<Ty_>(bs, myBlock, bandSeqId, band, bandDims);
+				this->serializeBand<Ty_>(bs, myBlock, seqId, band, bandDims);
 			}
-
-			bandDims *= 2;
 		}
+
+		this->serializeChildLevelBand<Ty_>(bs, myBlock, seqId, bandDims, numBandsInLevel);
 	}
 
 	template<typename Ty_>
 	void serializeBand(bstream& bs, pBlock myBlock,
-					   size_t bandSeqId, size_t bandId, dimension bandDims)
+					   size_t seqId, size_t bandId,  dimension& bandDims)
 	{
-		//std::cout << "==SerializeBand==" << std::endl;
-		bit_cnt_type requiredBits = this->rBitFromDelta[bandSeqId];
-		//std::cout << "rBit: " << static_cast<int>(requiredBits) << " / gap : " << static_cast<int>(this->rBitFromMMT - requiredBits) << std::endl;;
-		//bs.print();
-		assert(this->rBitFromMMT >= requiredBits);
-		//std::cout << static_cast<int>(this->rBitFromMMT - requiredBits) << " / " << static_cast<int>(this->rBitFromMMT) << std::endl;
-		this->serializeGap(bs, this->rBitFromMMT - requiredBits);
-		//bs.print();
+		bit_cnt_type rbFromDelta = this->rBitFromDelta[seqId];
+		bit_cnt_type rbFromMMT = this->rBitFromMMT[seqId];
+#ifndef NDEBUG
+		BOOST_LOG_TRIVIAL(trace) << "seqId: " << static_cast<int>(seqId) << ", setw: " << static_cast<int>(rbFromDelta);
+		BOOST_LOG_TRIVIAL(trace) << "rBitFromMMT: " << static_cast<int>(rbFromMMT) << "/ from Delta: " << static_cast<int>(rbFromDelta);
+		if(rbFromMMT < rbFromDelta)
+		{
+			BOOST_LOG_TRIVIAL(warning) << "rBitFromMMT: " << static_cast<int>(rbFromMMT) << "/ from Delta: " << static_cast<int>(rbFromDelta);
+		}
+		assert(rbFromMMT >= rbFromDelta);
+#endif
 
-		bs << setw(requiredBits);
+		this->serializeGap(bs, rbFromMMT - rbFromDelta);
+		bs << setw(rbFromDelta);
+		Ty_ signMask = 0x1 << rbFromDelta - 1;
+
 		auto bItemItr = myBlock->getItemRangeIterator(getBandRange(bandId, bandDims));
 		while (!bItemItr->isEnd())
 		{
+			//Ty_ value = (**bItemItr).get<Ty_>();
+			//bs << (**bItemItr).get<Ty_>();
+			//++(*bItemItr);
+
 			Ty_ value = (**bItemItr).get<Ty_>();
-			bs << (**bItemItr).get<Ty_>();
+			if (value < 0)
+			{
+				value = abs_(value);
+				value |= signMask;
+			}
+			bs << value;
 			++(*bItemItr);
-			//std::cout << "Value: " << static_cast<int>(value) << std::endl;
-			//bs.print();
 		}
 	}
 
 	template <typename Ty_>
-	void deserializeBand(bstream& bs, pBlock myBlock,
-						 const size_t bandSeqId, const size_t bandId, dimension& bandDims)
+	void serializeChildLevelBand(bstream& bs, pBlock inBlock, size_t seqId, dimension& bandDims, size_t numBandsInLevel)
 	{
-		size_t gap = this->deserializeGap(bs);
-		size_t requiredBit = this->rBitFromMMT - gap;
-		//std::cout << static_cast<int>(gap) << " / " << static_cast<int>(this->rBitFromMMT) << std::endl;
-		assert(gap <= this->rBitFromMMT);
-
-		bs >> setw(requiredBit);
-		Ty_ signMask = 0x1 << requiredBit - 1;
-		Ty_ negativeMask = (Ty_)-1 - (signMask - 1);
-		
-		auto bItemItr = myBlock->getItemRangeIterator(getBandRange(bandId, bandDims));
-		while (!bItemItr->isEnd())
+		auto dSize = this->getDSize();
+		for (size_t level = 1; level <= this->level_; ++level)
 		{
-			Ty_ value = 0;
-			bs >> value;
-			if(value & signMask)
+			auto innerSize = pow(2, level);
+			dimension innerSpace = dimension(dSize, innerSize);
+			coorItr innerItr(innerSpace);
+			while (!innerItr.isEnd())
 			{
-				value |= negativeMask;
+				coor innerCoor(innerItr.coor() + this->getChunkCoor() * innerSpace);
+				BOOST_LOG_TRIVIAL(trace) << "area: " << static_cast<int>(innerCoor.area());
+				for (size_t band = 1; band <= numBandsInLevel; ++band)
+				{
+					dimension targetSp = getBandRange(band, bandDims * pow(2, level)).getSp() + innerItr.coor() * bandDims;
+					dimension targetEp = targetSp + bandDims;
+					auto bItemItr = inBlock->getItemRangeIterator(coorRange(targetSp, targetEp));
+
+					bit_cnt_type rbFromDelta = this->rBitFromDelta[seqId];
+					bit_cnt_type rbFromMMT = this->rBitFromMMT[seqId];
+
+#ifndef NDEBUG
+					BOOST_LOG_TRIVIAL(trace) << "seqId: " << static_cast<int>(seqId) << ", setw: " << static_cast<int>(rbFromDelta);
+					BOOST_LOG_TRIVIAL(trace) << "rBitFromMMT: " << static_cast<int>(rbFromMMT) << "/ from Delta: " << static_cast<int>(rbFromDelta);
+					BOOST_LOG_TRIVIAL(trace) << targetSp.toString() << ", " << targetEp.toString();
+					if (rbFromMMT < rbFromDelta)
+					{
+						BOOST_LOG_TRIVIAL(warning) << "rBitFromMMT: " << static_cast<int>(rbFromMMT) << "/ from Delta: " << static_cast<int>(rbFromDelta);
+					}
+					assert(rbFromMMT >= rbFromDelta);
+#endif
+
+					this->serializeGap(bs, rbFromMMT - rbFromDelta);
+					bs << setw(rbFromDelta);
+					Ty_ signMask = 0x1 << rbFromDelta - 1;
+
+					while (!bItemItr->isEnd())
+					{
+						Ty_ value = (**bItemItr).get<Ty_>();
+						if (value < 0)
+						{
+							value = abs_(value);
+							value |= signMask;
+						}
+						bs << value;
+						++(*bItemItr);
+					}
+					++seqId;
+				}
+				++innerItr;
 			}
-
-			(**bItemItr).set<Ty_>(value);
-			++(*bItemItr);
 		}
-
-		//while (!bItemItr->isEnd())
-		//{
-		//	Ty_ value;
-		//	bs >> value;
-		//	(**bItemItr).set<Ty_>(value);
-
-		//	++(*bItemItr);
-		//}
 	}
 
 	template<typename Ty_>
@@ -133,96 +157,145 @@ public:
 		dimension inBlockDims = this->getDesc()->getBlockDims();
 		dimension bandDims = inBlockDims / std::pow(2, this->level_ + 1);
 
-		size_t bandSeqId = 0;
-		// Band 0
+		size_t seqId = 0;
+		// Level 0
 		{
-			this->deserializeBand<Ty_>(bs, myBlock, bandSeqId, 0, bandDims);
+			for(size_t band = 0; band <= numBandsInLevel; ++band, ++seqId)
+			{
+				this->deserializeBand<Ty_>(bs, myBlock, seqId, band, bandDims);
+			}
 		}
 
-		for (size_t level = 0; level <= this->level_; ++level)
+		this->deserializeChildLevelBand<Ty_>(bs, myBlock, seqId, bandDims, numBandsInLevel);
+	}
+
+	template <typename Ty_>
+	void deserializeBand(bstream& bs, pBlock myBlock,
+						 const size_t seqId, const size_t bandId, dimension& bandDims)
+	{
+		size_t gap = this->deserializeGap(bs);
+		bit_cnt_type rbFromMMT = this->rBitFromMMT[seqId];
+		size_t rbFromDelta = rbFromMMT - gap;
+#ifndef DEBUG
+		BOOST_LOG_TRIVIAL(trace) << "seqId: " << static_cast<int>(seqId) << ", setw: " << static_cast<int>(rbFromDelta);
+		BOOST_LOG_TRIVIAL(trace) << "fromMMT: " << static_cast<int>(rbFromMMT) << ", gap: " << static_cast<int>(gap) << ", rbDelta: " << static_cast<int>(rbFromDelta);
+		if (rbFromMMT < gap)
 		{
-			for (size_t band = 1; band <= numBandsInLevel; ++band, ++bandSeqId)
+			BOOST_LOG_TRIVIAL(warning) << "deserializeBand";
+			BOOST_LOG_TRIVIAL(warning) << "fromMMT: " << static_cast<int>(rbFromMMT) << ", gap: " << static_cast<int>(gap) << ", rbDelta: " << static_cast<int>(rbFromDelta);
+		}
+		assert(rbFromMMT >= gap);
+#endif
+
+		bs >> setw(rbFromDelta);
+		Ty_ signMask = 0x1 << rbFromDelta - 1;
+		//Ty_ negativeMask = (Ty_)-1 - (signMask - 1);
+		Ty_ negativeMask = (Ty_)-1 ^ signMask;
+
+		auto bItemItr = myBlock->getItemRangeIterator(getBandRange(bandId, bandDims));
+		while (!bItemItr->isEnd())
+		{
+			Ty_ value = 0;
+			bs >> value;
+			if (value & signMask)
 			{
-				this->deserializeBand<Ty_>(bs, myBlock, bandSeqId, band, bandDims);
+				value &= negativeMask;
+				value *= -1;
 			}
 
-			bandDims *= 2;
+			(**bItemItr).set<Ty_>(value);
+			++(*bItemItr);
 		}
-
-		//size_t gap = this->deserializeGap(bs);
-
-		//size_t bit = this->rBitFromMMT - gap;
-		//bs >> setw(bit);
-		//auto bItemItr = myBlock->getItemIterator();
-		//while (!bItemItr->isEnd())
-		//{
-		//	Ty_ value;
-		//	bs >> value;
-		//	(**bItemItr).set<Ty_>(value);
-
-		//	++(*bItemItr);
-		//}
-
-		//auto it = this->getBlockIterator();
-		//blockId bid = 0;
-		//while (!it->isEnd())
-		//{
-		//	//(*bit)->deserialize(bs);
-		//	bs >> setw(1);
-		//	size_t gap = 0;
-		//	char gapBit = 0;
-		//	do
-		//	{
-		//		bs >> gapBit;
-		//		++gap;
-		//	} while (gapBit = 1);
-
-		//	size_t bit = this->rBitFromMMT[bid] - gap;
-		//	bs >> setw(bit);
-		//	auto bItemItr = (**it)->getItemIterator();
-		//	while(!bItemItr->isEnd())
-		//	{
-		//		Ty_ value;
-		//		bs >> value;
-		//		(**bItemItr).set<Ty_>(value);
-
-		//		++(*bItemItr);
-		//	}
-
-		//	++(*it);
-		//	++bid;
-		//}
 	}
+
+	template <typename Ty_>
+	void deserializeChildLevelBand(bstream& bs, pBlock inBlock, size_t seqId, dimension& bandDims, size_t numBandsInLevel)
+	{
+		auto dSize = this->getDSize();
+		for (size_t level = 1; level <= this->level_; ++level)
+		{
+			auto innerSize = pow(2, level);
+			dimension innerSpace = dimension(dSize, innerSize);
+			coorItr innerItr(innerSpace);
+			while (!innerItr.isEnd())
+			{
+				coor innerCoor(innerItr.coor() + this->getChunkCoor() * innerSpace);
+				BOOST_LOG_TRIVIAL(trace) << "area: " << static_cast<int>(innerCoor.area());
+				for (size_t band = 1; band <= numBandsInLevel; ++band)
+				{
+					dimension targetSp = getBandRange(band, bandDims * pow(2, level)).getSp() + innerItr.coor() * bandDims;
+					dimension targetEp = targetSp + bandDims;
+					auto bItemItr = inBlock->getItemRangeIterator(coorRange(targetSp, targetEp));
+					
+					size_t gap = this->deserializeGap(bs);
+					bit_cnt_type rbFromMMT = this->rBitFromMMT[seqId];
+					size_t rbFromDelta = rbFromMMT - gap;
+#ifndef DEBUG
+					BOOST_LOG_TRIVIAL(trace) << targetSp.toString() << ", " << targetEp.toString();
+					BOOST_LOG_TRIVIAL(trace) << "seqId: " << static_cast<int>(seqId) << ", setw: " << static_cast<int>(rbFromDelta);
+					BOOST_LOG_TRIVIAL(trace) << "fromMMT: " << static_cast<int>(rbFromMMT) << ", gap: " << static_cast<int>(gap) << ", rbDelta: " << static_cast<int>(rbFromDelta);
+					if (rbFromMMT < gap)
+					{
+						BOOST_LOG_TRIVIAL(warning) << "deserializeChildLevelBand: " << static_cast<int>(level) << ", " << seqId;
+						BOOST_LOG_TRIVIAL(warning) << "fromMMT: " << static_cast<int>(rbFromMMT) << ", gap: " << static_cast<int>(gap) << ", rbDelta: " << static_cast<int>(rbFromDelta);
+					}
+					assert(rbFromMMT >= gap);
+#endif
+
+					bs >> setw(rbFromDelta);
+					Ty_ signMask = 0x1 << rbFromDelta - 1;
+					//Ty_ negativeMask = (Ty_)-1 - (signMask - 1);
+					Ty_ negativeMask = (Ty_)-1 ^ signMask;
+
+					while (!bItemItr->isEnd())
+					{
+						Ty_ value = 0;
+						bs >> value;
+						if (value & signMask)
+						{
+							value &= negativeMask;
+							value *= -1;
+						}
+
+						(**bItemItr).set<Ty_>(value);
+						++(*bItemItr);
+					}
+					++seqId;
+				}
+				++innerItr;
+			}
+		}
+	}
+
 protected:
 	size_t level_;
 	//chunkId sourceChunkId_;
 
 public:
-	bit_cnt_type rBitFromMMT;	// required bits from MMT node
+	std::vector<bit_cnt_type> rBitFromMMT;	// required bits from MMT node
 	std::vector<bit_cnt_type> rBitFromDelta;	// required bits from delta array
 };
 
 template <typename mmtNode>
-bit_cnt_type getRBitFromMMT(mmtNode node)
+bit_cnt_type getRBitFromMMT(mmtNode node, bool hasNegative = true)
 {
 	if (node->order_ > 1)
 	{
 		if (SIGN(node->bMax_) > 0)
 		{
-			return node->bMax_;
+			return node->bMax_ + static_cast<char>(hasNegative);
 		}
 
-		return abs_(node->bMin_);
+		return abs_(node->bMin_) + static_cast<char>(hasNegative);
 	}
 
 	if (SIGN(node->bMax_) != SIGN(node->bMin_))
 	{
 		// bMax > 0
-		//return std::max((bit_cnt_type)node->bMax_, (bit_cnt_type)abs_(node->bMin_)) + 1;	// 여기 왜 1을 추가한거지?
-		return std::max((bit_cnt_type)node->bMax_, (bit_cnt_type)abs_(node->bMin_));
+		return std::max((bit_cnt_type)node->bMax_, (bit_cnt_type)abs_(node->bMin_)) + static_cast<char>(hasNegative);
 	}
 
-	return std::max((bit_cnt_type)abs_(node->bMax_), (bit_cnt_type)abs_(node->bMin_));
+	return std::max((bit_cnt_type)abs_(node->bMax_), (bit_cnt_type)abs_(node->bMin_)) + static_cast<char>(hasNegative);
 }
 }	// msdb
 #endif		// _MSDB_SE_CHUNK_H_
