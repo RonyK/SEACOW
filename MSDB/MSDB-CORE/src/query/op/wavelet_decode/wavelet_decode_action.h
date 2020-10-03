@@ -31,6 +31,7 @@ private:
 		size_t numBlocks = blockSpace.area();
 
 		auto ocItr = outArr->getChunkIterator(iterateMode::ALL);
+
 		while(!ocItr->isEnd())
 		{
 			bool isOutChunkEmpty = true;
@@ -38,7 +39,7 @@ private:
 			pBitmap blockBitmap = std::make_shared<bitmap>(blockSpace.area(), false);
 
 			auto chunkCoor = ocItr->coor();
-			auto bSpaceItr = coorItr(blockSpace);
+			coorItr bSpaceItr(blockSpace);
 
 			// Bring all chunks belong to an outChunk
 			while (!bSpaceItr.isEnd())
@@ -47,14 +48,22 @@ private:
 				auto inChunkCoor = chunkCoor * blockSpace + blockCoor;
 
 				icItr->moveTo(inChunkCoor);
-				if(icItr->isExist())
+				//BOOST_LOG_TRIVIAL(debug) << inChunkCoor.toString();
+				//if(icItr->isExist() && (**icItr) == nullptr)
+				//{
+				//	BOOST_LOG_TRIVIAL(debug) << "exist but null";
+				//}
+
+				if(icItr->isExist() && (**icItr) != nullptr)
 				{
+					//BOOST_LOG_TRIVIAL(debug) << "exist";
 					assert((*icItr)->getDesc()->chunkCoor_ == inChunkCoor);
 					blockBitmap->setExist(bSpaceItr.seqPos());
 					chunks.push_back(**icItr);
 					isOutChunkEmpty = false;
 				}else
 				{
+					//BOOST_LOG_TRIVIAL(debug) << "null";
 					chunks.push_back(nullptr);
 				}
 				++bSpaceItr;
@@ -62,6 +71,7 @@ private:
 
 			if(!isOutChunkEmpty)
 			{
+				//BOOST_LOG_TRIVIAL(debug) << "[" << ocItr->seqPos() << "]: chunk exist";
 				// --------------------
 				// TODO::PARALLEL
 				auto outChunk = this->chunkDecode<Ty_>(chunks, chunkDims, blockBitmap, w, maxLevel, q);
@@ -70,6 +80,9 @@ private:
 				auto cid = outArr->getChunkIdFromChunkCoor(chunkCoor);
 				outChunk->setId(cid);
 				outArr->insertChunk(attrDesc->id_, outChunk);
+			}else
+			{
+				//BOOST_LOG_TRIVIAL(debug) << "[" << ocItr->seqPos() << "]: chunk empty";
 			}
 			
 			++(*ocItr);
@@ -90,6 +103,7 @@ private:
 				break;
 			}
 		}
+
 		pChunkDesc outChunkDesc = std::make_shared<chunkDesc>(*inChunkDesc);
 		dimension blockSpace = chunkDims / inChunkDesc->dims_;	// chunkDims == blockDims in outBlock
 		size_t numBlocks = blockSpace.area();
@@ -102,8 +116,8 @@ private:
 
 		pChunk outChunk = std::make_shared<memBlockChunk>(outChunkDesc);
 		outChunk->bufferAlloc();
-		outChunk->replaceBlockBitmap(blockBitmap);
 		outChunk->makeAllBlocks();
+		outChunk->replaceBlockBitmap(blockBitmap);
 		auto obItr = outChunk->getBlockIterator();
 
 		for (blockId bid = 0; bid < inChunkList.size(); ++bid)

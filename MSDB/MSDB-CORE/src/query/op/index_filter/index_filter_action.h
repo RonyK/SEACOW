@@ -25,6 +25,7 @@ private:
 		inPredicate->setEvaluateFunc(attrDesc->type_);
 		auto inChunkItr = inArr->getChunkIterator();
 
+		std::stringstream ss;
 		while (!inChunkItr->isEnd())
 		{
 			if (inChunkItr->isExist())
@@ -37,10 +38,18 @@ private:
 				if (isEmptyChunk)
 				{
 					outArr->freeChunk(inChunk->getId());
+					//BOOST_LOG_TRIVIAL(debug) << "[" << inChunk->getId() << "]: isEmpty";
 				}
+
+				//ss << "[" << inChunkItr->seqPos() << "]: true / ";
+			}else
+			{
+				//ss << "[" << inChunkItr->seqPos() << "]: false / ";
 			}
+			
 			++(*inChunkItr);
 		}
+		//BOOST_LOG_TRIVIAL(debug) << ss.str();
 	}
 
 	template <class Ty_>

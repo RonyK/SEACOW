@@ -32,7 +32,11 @@ pBitmapTree opPlan::inferBitmap()
 		return this->outArrBitmap_;
 
 	this->outArrBitmap_ = this->inferBottomUpBitmap();
+	//BOOST_LOG_TRIVIAL(debug) << this->name() << " BottomUp";
+	//this->outArrBitmap_->print();
 	this->outArrBitmap_ = this->inferTopDownBitmap();
+	//BOOST_LOG_TRIVIAL(debug) << this->name() << " TopDown";
+	//this->outArrBitmap_->print();
 	return outArrBitmap_;
 }
 pBitmapTree opPlan::inferBottomUpBitmap()

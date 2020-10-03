@@ -170,10 +170,10 @@ Ty_ getMaxBoundary(Ty_ prevLimit, bit_cnt_type order, sig_bit_type sigBitPos)
 
 		// prefix_copy: (prevLimit | ~static_cast<Ty_>(calcMaxLimit(prefixPos)))
 		// 1's: calcMaxLimit(sigBitPos)
-		auto a = prevLimit;
-		auto b = calcMaxLimit(prefixPos);
-		auto c = ~static_cast<Ty_>(calcMaxLimit(prefixPos));
-		auto d = calcMaxLimit(sigBitPos);
+		//auto a = prevLimit;
+		//auto b = calcMaxLimit(prefixPos);
+		//auto c = ~static_cast<Ty_>(calcMaxLimit(prefixPos));
+		//auto d = calcMaxLimit(sigBitPos);
 		return (prevLimit & ~static_cast<Ty_>(calcMaxLimit(prefixPos))) | calcMaxLimit(sigBitPos);
 	} else
 	{

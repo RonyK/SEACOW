@@ -88,6 +88,24 @@ void bitmap::orMerge(bitmap& mit)
 		this->data_[i] = (bool)this->data_[i] | (bool)mit[i];
 	}
 }
+void bitmap::print() const
+{
+	size_t capacity = this->getCapacity();
+	std::stringstream ss;
+	for (size_t i = 0; i < capacity; ++i)
+	{
+		ss << "[" << i << "]: ";
+		if(this->data_[i])
+		{
+			ss << "true / ";
+		}else
+		{
+			ss << "false / ";
+		}
+	}
+
+	BOOST_LOG_TRIVIAL(debug) << ss.str();
+}
 std::vector<bool>::reference bitmap::operator[](size_t seqPos)
 {
 	assert(seqPos < this->data_.size());

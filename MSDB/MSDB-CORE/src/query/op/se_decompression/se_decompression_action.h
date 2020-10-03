@@ -83,7 +83,7 @@ private:
 				auto wtOutChunk = std::static_pointer_cast<wtChunk>(outChunk);
 				wtOutChunk->setLevel(inChunk->getLevel());
 				wtOutChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
-				wtOutChunk->makeAllBlocks();
+				wtOutChunk->makeBlocks(*inChunk->getBlockBitmap());
 				outChunk->bufferRef(inChunk);
 			}
 

@@ -33,6 +33,7 @@ public:
 	void andMerge(bitmap& mit);
 	void orMerge(bitmap& mit);
 
+	void print() const;
 public:
 	std::vector<bool>::reference operator[](size_t seqPos);
 	const bool& operator[](size_t seqPos) const;

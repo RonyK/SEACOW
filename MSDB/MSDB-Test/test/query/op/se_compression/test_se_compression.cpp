@@ -92,7 +92,7 @@ pArray test_qry_ind_delte_spiht_encode_decode(_pFuncGetSourceArray_,
 	auto outArr = exe_qry_ind_delta_spiht_decode<value_type>(sourceArr, wtLevel, mmtLevel, printFlag);
 
 	compArrary<value_type>(sourceArr[0], outArr);
-
+	BOOST_LOG_TRIVIAL(debug) << "Array: " << sourceArr[0]->getDesc()->name_;
 	return outArr;
 }
 

@@ -59,6 +59,7 @@ void mmt_delta_decode_action::attributeDecode(std::shared_ptr<mmt_delta_decode_a
 			//pChunk deltaChunk = std::make_shared<memBlockChunk>(std::make_shared<chunkDesc>(*cDesc));
 			pChunk deltaChunk = outArr->makeChunk(*cDesc);
 			deltaChunk->makeAllBlocks();
+			deltaChunk->replaceBlockBitmap((**cit)->getBlockBitmap());
 			deltaChunk->bufferAlloc();
 
 			this->chunkDecode(deltaChunk, **cit, mmtIndex);
@@ -77,18 +78,21 @@ void mmt_delta_decode_action::chunkDecode(pChunk outChunk, pChunk inChunk,
 	auto obItr = outChunk->getBlockIterator();
 	while (!ibItr->isEnd())
 	{
-		auto iit = (**ibItr)->getItemIterator();
-		auto oit = (**obItr)->getItemIterator();
-		auto node = mmtIndex->getNode(inChunk->getDesc()->chunkCoor_, ibItr->coor(), mmtIndex->getBlockLevel());
-
-		// Block encode
-		while (!iit->isEnd())
+		if(ibItr->isExist())
 		{
-			auto inValue = (**iit).get<Ty_>();
-			auto outValue = inValue + node->getMin<Ty_>();
-			(**oit).set<Ty_>(outValue);
-			++(*iit);
-			++(*oit);
+			auto iit = (**ibItr)->getItemIterator();
+			auto oit = (**obItr)->getItemIterator();
+			auto node = mmtIndex->getNode(inChunk->getDesc()->chunkCoor_, ibItr->coor(), mmtIndex->getBlockLevel());
+
+			// Block encode
+			while (!iit->isEnd())
+			{
+				auto inValue = (**iit).get<Ty_>();
+				auto outValue = inValue + node->getMin<Ty_>();
+				(**oit).set<Ty_>(outValue);
+				++(*iit);
+				++(*oit);
+			}
 		}
 
 		++(*ibItr);

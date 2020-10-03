@@ -96,7 +96,7 @@ pArray action_execute_naive_filter(_pFuncGetSourceArray_,
 }
 
 template <typename value_type>
-pArray action_execute_index_filter(_pFuncGetSourceArray_, 
+pArray action_execute_index_filter(_pFuncGetSourceArray_,
 								   pPredicate myPredicate,
 								   eleDefault mmtLevel,
 								   bool printFlag = false)
@@ -200,6 +200,82 @@ pArray action_execute_load_index_filter(_pFuncGetSourceArray_,
 }
 
 template <typename value_type>
+pArray action_execute_spiht_index_filter(_pFuncGetSourceArray_,
+										 pPredicate inPredicate,
+										 eleDefault wtLevel,
+										 eleDefault mmtLevel,
+										 bool printFlag = false)
+{
+	//////////////////////////////
+	// 01 Save Source Arr
+	std::vector<pArray> saveSourceArr;
+	getSourceArrayIfEmpty(saveSourceArr);
+	saveSourceArr[0]->setId(saveSourceArr[0]->getId() + 3);
+	if (false)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "Source Arr" << std::endl;
+		saveSourceArr[0]->print();
+	}
+
+	auto outArr = exe_act_ind_wavelet_encode(saveSourceArr, wtLevel);
+	if (false)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "WT Encode Arr" << std::endl;
+		outArr->print();
+	}
+
+	outArr = exe_act_ind_spiht_encode(std::vector<pArray>({ outArr }));
+	if (false)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "SPIHT Encode Arr" << std::endl;
+		outArr->print();
+	}
+	outArr = nullptr;
+
+	//////////////////////////////
+	// 02 Index Filter Test
+	pQuery qry = std::make_shared<query>();
+
+	auto spihtPlan = getSPIHTDecodePlan(saveSourceArr[0]->getDesc(), wtLevel, qry);
+	auto wtDecodePlan = getWaveletDecodePlan(spihtPlan, wtLevel, qry);
+	auto filterPlan = getNaiveFilterPlan(wtDecodePlan, inPredicate, qry);
+
+	outArr = spihtPlan->getAction()->execute(saveSourceArr, qry);
+	outArr->getChunkBitmap()->print();
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "Se Decomp Arr" << std::endl;
+		outArr->print();
+	}
+
+	outArr = wtDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	outArr->getChunkBitmap()->print();
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "Wt Decode Arr" << std::endl;
+		outArr->print();
+	}
+
+	outArr = filterPlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	outArr->getChunkBitmap()->print();
+	if (printFlag)
+	{
+		std::cout << "##############################" << std::endl;
+		std::cout << "Filtered Arr" << std::endl;
+		outArr->print();
+	}
+
+	tearDownQuery(qry);
+
+	return outArr;
+}
+
+template <typename value_type>
 pArray action_execute_se_index_filter(_pFuncGetSourceArray_,
 									  pPredicate inPredicate,
 									  eleDefault wtLevel,
@@ -213,7 +289,7 @@ pArray action_execute_se_index_filter(_pFuncGetSourceArray_,
 	saveSourceArr[0]->setId(saveSourceArr[0]->getId() + 2);
 
 	exe_qry_ind_mmt_build<value_type>(saveSourceArr, mmtLevel, false);
-	exe_qry_ind_se_compression<value_type>(saveSourceArr, wtLevel, mmtLevel, false);
+	//exe_qry_ind_se_compression<value_type>(saveSourceArr, wtLevel, mmtLevel, false);
 
 	//////////////////////////////
 	// 02 Index Filter Test
@@ -225,6 +301,7 @@ pArray action_execute_se_index_filter(_pFuncGetSourceArray_,
 	auto filterPlan = getIndexFilterPlan(deltaDecodePlan, inPredicate, qry);
 
 	auto outArr = seDecompPlan->getAction()->execute(saveSourceArr, qry);
+	//outArr->getChunkBitmap()->print();
 	if (printFlag)
 	{
 		std::cout << "##############################" << std::endl;
@@ -233,6 +310,7 @@ pArray action_execute_se_index_filter(_pFuncGetSourceArray_,
 	}
 
 	outArr = wtDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	//outArr->getChunkBitmap()->print();
 	if (printFlag)
 	{
 		std::cout << "##############################" << std::endl;
@@ -241,6 +319,7 @@ pArray action_execute_se_index_filter(_pFuncGetSourceArray_,
 	}
 
 	outArr = deltaDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	//outArr->getChunkBitmap()->print();
 	if (printFlag)
 	{
 		std::cout << "##############################" << std::endl;
@@ -249,6 +328,7 @@ pArray action_execute_se_index_filter(_pFuncGetSourceArray_,
 	}
 
 	outArr = filterPlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	//outArr->getChunkBitmap()->print();
 	if (printFlag)
 	{
 		std::cout << "##############################" << std::endl;

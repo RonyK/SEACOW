@@ -35,6 +35,7 @@ pArray wavelet_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 	auto weArray = std::static_pointer_cast<wavelet_encode_array>(inArr);
 	auto originalChunkDims = weArray->getOrigianlChunkDims();
 
+
 	//////////////////////////////
 	// Build wavelet_decode_array
 	auto outArr = std::make_shared<wavelet_decode_array>(this->getArrayDesc(), maxLevel);
