@@ -29,8 +29,8 @@ public:
 	virtual void serialize(std::ostream& os) override;
 	virtual void deserialize(std::istream& is) override;
 
-	void serializeGap(bstream& bs, size_t gap);
-	bit_cnt_type deserializeGap(bstream& bs);
+	void serializeGap(bstream& bs, int64_t gap);
+	int64_t deserializeGap(bstream& bs);
 
 	template<typename Ty_>
 	void serialize(bstream& bs)
@@ -61,13 +61,13 @@ public:
 		bit_cnt_type rbFromDelta = this->rBitFromDelta[seqId];
 		bit_cnt_type rbFromMMT = this->rBitFromMMT[seqId];
 #ifndef NDEBUG
-		BOOST_LOG_TRIVIAL(trace) << "seqId: " << static_cast<int>(seqId) << ", setw: " << static_cast<int>(rbFromDelta);
-		BOOST_LOG_TRIVIAL(trace) << "rBitFromMMT: " << static_cast<int>(rbFromMMT) << "/ from Delta: " << static_cast<int>(rbFromDelta);
-		if(rbFromMMT < rbFromDelta)
-		{
-			BOOST_LOG_TRIVIAL(warning) << "rBitFromMMT: " << static_cast<int>(rbFromMMT) << "/ from Delta: " << static_cast<int>(rbFromDelta);
-		}
-		assert(rbFromMMT >= rbFromDelta);
+		//BOOST_LOG_TRIVIAL(trace) << "seqId: " << static_cast<int>(seqId) << ", setw: " << static_cast<int>(rbFromDelta);
+		//BOOST_LOG_TRIVIAL(trace) << "rBitFromMMT: " << static_cast<int>(rbFromMMT) << "/ from Delta: " << static_cast<int>(rbFromDelta);
+		//if(rbFromMMT < rbFromDelta)
+		//{
+		//	BOOST_LOG_TRIVIAL(warning) << "rBitFromMMT: " << static_cast<int>(rbFromMMT) << "/ from Delta: " << static_cast<int>(rbFromDelta);
+		//}
+		//assert(rbFromMMT >= rbFromDelta);
 #endif
 
 		this->serializeGap(bs, rbFromMMT - rbFromDelta);
@@ -104,7 +104,7 @@ public:
 			while (!innerItr.isEnd())
 			{
 				coor innerCoor(innerItr.coor() + this->getChunkCoor() * innerSpace);
-				BOOST_LOG_TRIVIAL(trace) << "area: " << static_cast<int>(innerCoor.area());
+				//BOOST_LOG_TRIVIAL(trace) << "area: " << static_cast<int>(innerCoor.area());
 				for (size_t band = 1; band <= numBandsInLevel; ++band)
 				{
 					dimension targetSp = getBandRange(band, bandDims * pow(2, level)).getSp() + innerItr.coor() * bandDims;
@@ -115,14 +115,14 @@ public:
 					bit_cnt_type rbFromMMT = this->rBitFromMMT[seqId];
 
 #ifndef NDEBUG
-					BOOST_LOG_TRIVIAL(trace) << "seqId: " << static_cast<int>(seqId) << ", setw: " << static_cast<int>(rbFromDelta);
-					BOOST_LOG_TRIVIAL(trace) << "rBitFromMMT: " << static_cast<int>(rbFromMMT) << "/ from Delta: " << static_cast<int>(rbFromDelta);
-					BOOST_LOG_TRIVIAL(trace) << targetSp.toString() << ", " << targetEp.toString();
-					if (rbFromMMT < rbFromDelta)
-					{
-						BOOST_LOG_TRIVIAL(warning) << "rBitFromMMT: " << static_cast<int>(rbFromMMT) << "/ from Delta: " << static_cast<int>(rbFromDelta);
-					}
-					assert(rbFromMMT >= rbFromDelta);
+					//BOOST_LOG_TRIVIAL(trace) << "seqId: " << static_cast<int>(seqId) << ", setw: " << static_cast<int>(rbFromDelta);
+					//BOOST_LOG_TRIVIAL(trace) << "rBitFromMMT: " << static_cast<int>(rbFromMMT) << "/ from Delta: " << static_cast<int>(rbFromDelta);
+					//BOOST_LOG_TRIVIAL(trace) << targetSp.toString() << ", " << targetEp.toString();
+					//if (rbFromMMT < rbFromDelta)
+					//{
+					//	BOOST_LOG_TRIVIAL(warning) << "rBitFromMMT: " << static_cast<int>(rbFromMMT) << "/ from Delta: " << static_cast<int>(rbFromDelta);
+					//}
+					//assert(rbFromMMT >= rbFromDelta);
 #endif
 
 					this->serializeGap(bs, rbFromMMT - rbFromDelta);
@@ -177,14 +177,14 @@ public:
 		bit_cnt_type rbFromMMT = this->rBitFromMMT[seqId];
 		size_t rbFromDelta = rbFromMMT - gap;
 #ifndef DEBUG
-		BOOST_LOG_TRIVIAL(trace) << "seqId: " << static_cast<int>(seqId) << ", setw: " << static_cast<int>(rbFromDelta);
-		BOOST_LOG_TRIVIAL(trace) << "fromMMT: " << static_cast<int>(rbFromMMT) << ", gap: " << static_cast<int>(gap) << ", rbDelta: " << static_cast<int>(rbFromDelta);
-		if (rbFromMMT < gap)
-		{
-			BOOST_LOG_TRIVIAL(warning) << "deserializeBand";
-			BOOST_LOG_TRIVIAL(warning) << "fromMMT: " << static_cast<int>(rbFromMMT) << ", gap: " << static_cast<int>(gap) << ", rbDelta: " << static_cast<int>(rbFromDelta);
-		}
-		assert(rbFromMMT >= gap);
+		//BOOST_LOG_TRIVIAL(trace) << "seqId: " << static_cast<int>(seqId) << ", setw: " << static_cast<int>(rbFromDelta);
+		//BOOST_LOG_TRIVIAL(trace) << "fromMMT: " << static_cast<int>(rbFromMMT) << ", gap: " << static_cast<int>(gap) << ", rbDelta: " << static_cast<int>(rbFromDelta);
+		//if (rbFromMMT < gap)
+		//{
+		//	BOOST_LOG_TRIVIAL(warning) << "deserializeBand";
+		//	BOOST_LOG_TRIVIAL(warning) << "fromMMT: " << static_cast<int>(rbFromMMT) << ", gap: " << static_cast<int>(gap) << ", rbDelta: " << static_cast<int>(rbFromDelta);
+		//}
+		//assert(rbFromMMT >= gap);
 #endif
 
 		bs >> setw(rbFromDelta);
@@ -220,7 +220,7 @@ public:
 			while (!innerItr.isEnd())
 			{
 				coor innerCoor(innerItr.coor() + this->getChunkCoor() * innerSpace);
-				BOOST_LOG_TRIVIAL(trace) << "area: " << static_cast<int>(innerCoor.area());
+				//BOOST_LOG_TRIVIAL(trace) << "area: " << static_cast<int>(innerCoor.area());
 				for (size_t band = 1; band <= numBandsInLevel; ++band)
 				{
 					dimension targetSp = getBandRange(band, bandDims * pow(2, level)).getSp() + innerItr.coor() * bandDims;
@@ -231,15 +231,15 @@ public:
 					bit_cnt_type rbFromMMT = this->rBitFromMMT[seqId];
 					size_t rbFromDelta = rbFromMMT - gap;
 #ifndef DEBUG
-					BOOST_LOG_TRIVIAL(trace) << targetSp.toString() << ", " << targetEp.toString();
-					BOOST_LOG_TRIVIAL(trace) << "seqId: " << static_cast<int>(seqId) << ", setw: " << static_cast<int>(rbFromDelta);
-					BOOST_LOG_TRIVIAL(trace) << "fromMMT: " << static_cast<int>(rbFromMMT) << ", gap: " << static_cast<int>(gap) << ", rbDelta: " << static_cast<int>(rbFromDelta);
-					if (rbFromMMT < gap)
-					{
-						BOOST_LOG_TRIVIAL(warning) << "deserializeChildLevelBand: " << static_cast<int>(level) << ", " << seqId;
-						BOOST_LOG_TRIVIAL(warning) << "fromMMT: " << static_cast<int>(rbFromMMT) << ", gap: " << static_cast<int>(gap) << ", rbDelta: " << static_cast<int>(rbFromDelta);
-					}
-					assert(rbFromMMT >= gap);
+					//BOOST_LOG_TRIVIAL(trace) << targetSp.toString() << ", " << targetEp.toString();
+					//BOOST_LOG_TRIVIAL(trace) << "seqId: " << static_cast<int>(seqId) << ", setw: " << static_cast<int>(rbFromDelta);
+					//BOOST_LOG_TRIVIAL(trace) << "fromMMT: " << static_cast<int>(rbFromMMT) << ", gap: " << static_cast<int>(gap) << ", rbDelta: " << static_cast<int>(rbFromDelta);
+					//if (rbFromMMT < gap)
+					//{
+					//	BOOST_LOG_TRIVIAL(warning) << "deserializeChildLevelBand: " << static_cast<int>(level) << ", " << seqId;
+					//	BOOST_LOG_TRIVIAL(warning) << "fromMMT: " << static_cast<int>(rbFromMMT) << ", gap: " << static_cast<int>(gap) << ", rbDelta: " << static_cast<int>(rbFromDelta);
+					//}
+					//assert(rbFromMMT >= gap);
 #endif
 
 					bs >> setw(rbFromDelta);

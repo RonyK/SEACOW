@@ -113,18 +113,28 @@ void seChunk::deserialize(std::istream& is)
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 	}
 }
-void seChunk::serializeGap(bstream& bs, size_t gap)
+void seChunk::serializeGap(bstream& bs, int64_t gap)
 {
+	if(gap < 0)
+	{
+		bs << setw(1) << 0x1;
+	}else
+	{
+		bs << setw(1) << 0x0;
+	}
 	if(gap)
 	{
-		bs << setw(gap);
+		bs << setw(abs_(gap));
 		bs << (uint64_t)0;
 	}
 	bs << setw(1) << 0x1;
 }
-bit_cnt_type seChunk::deserializeGap(bstream& bs)
+int64_t seChunk::deserializeGap(bstream& bs)
 {
 	bs >> setw(1);
+	char negiveGap;
+	bs >> negiveGap;
+
 	size_t gap = 0;
 	char gapBit = 0;
 	do
@@ -132,6 +142,11 @@ bit_cnt_type seChunk::deserializeGap(bstream& bs)
 		bs >> gapBit;
 		++gap;
 	} while (gapBit != 1);
+
+	if(negiveGap)
+	{
+		return (gap - 1) * -1;
+	}
 	return gap - 1;
 }
 }	// msdb

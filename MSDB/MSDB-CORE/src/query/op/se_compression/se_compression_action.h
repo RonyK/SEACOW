@@ -145,11 +145,11 @@ private:
 			outChunk->rBitFromMMT.push_back(fromMMT);
 
 #ifndef NDEBUG
-			BOOST_LOG_TRIVIAL(trace) << "level: " << static_cast<int>(0) << ", band: " << static_cast<int>(band);
-			BOOST_LOG_TRIVIAL(trace) << mNode->toString<Ty_>();
+			//BOOST_LOG_TRIVIAL(trace) << "chunk: " << static_cast<int64_t>(outChunk->getId()) << ", level: " << static_cast<int>(0) << ", band: " << static_cast<int>(band);
+			//BOOST_LOG_TRIVIAL(trace) << mNode->toString<Ty_>();
 #endif
 
-			assert(requiredBits <= fromMMT);
+			//assert(requiredBits <= fromMMT);
 		}
 	}
 
@@ -167,10 +167,11 @@ private:
 			auto innerSize = pow(2, level);
 			dimension innerSpace = dimension(dSize, innerSize);
 			coorItr innerItr(innerSpace);
+			auto blockLevel = mmtIndex->getBlockLevel();
 			while (!innerItr.isEnd())
 			{
 				coor innerCoor(innerItr.coor() + outChunk->getChunkCoor() * innerSpace);
-				auto mNode = mmtIndex->getNode(innerCoor, mmtIndex->getBlockLevel() - level);
+				auto mNode = mmtIndex->getNode(innerCoor, blockLevel - level);
 				bit_cnt_type rbFromMMT = getRBitFromMMT(mNode, hasNegative);
 				for (size_t band = 1; band <= numBandsInLevel; ++band)
 				{
@@ -182,15 +183,33 @@ private:
 					outChunk->rBitFromMMT.push_back(rbFromMMT);
 
 #ifndef NDEBUG
-					BOOST_LOG_TRIVIAL(trace) << "level: " << static_cast<int>(level) << ", band: " << static_cast<int>(band);
-					BOOST_LOG_TRIVIAL(trace) << mNode->toString<Ty_>();
+					//BOOST_LOG_TRIVIAL(trace) << "level: " << static_cast<int>(level) << ", band: " << static_cast<int>(band);
+					//if(band == 1)
+					//{
+					//	// band 1, 2, 3 has same mmtnode
+					//	BOOST_LOG_TRIVIAL(trace) << mNode->toString<Ty_>();
+					//}
 
-					if(rbFromDelta > rbFromMMT)
-					{
-						BOOST_LOG_TRIVIAL(warning) << "rBitFromMMT: " << static_cast<int>(rbFromMMT) << "/ from Delta: " << static_cast<int>(rbFromDelta);
-						BOOST_LOG_TRIVIAL(warning) << mNode->toString<Ty_>();
-						assert(rbFromDelta <= rbFromMMT);
-					}
+					//if(rbFromDelta > rbFromMMT)
+					//{
+					//	BOOST_LOG_TRIVIAL(warning) << "rBitFromMMT: " << static_cast<int>(rbFromMMT) << "/ from Delta: " << static_cast<int>(rbFromDelta);
+					//	BOOST_LOG_TRIVIAL(warning) << mNode->toString<Ty_>();
+					//	BOOST_LOG_TRIVIAL(warning) << "chunk: " << static_cast<int64_t>(outChunk->getId())
+					//		<< ", level: " << static_cast<int>(level) << ", band: " << static_cast<int>(band) 
+					//		<< ", innerCoor: " << innerCoor.toString() << ", innerSpace: " << innerSpace.toString();
+					//	BOOST_LOG_TRIVIAL(warning) << mNode->toString<Ty_>();
+					//	BOOST_LOG_TRIVIAL(warning) << "range: " << targetSp.toString() << "~" << targetEp.toString();
+					//	auto iit = outBlock->getItemRangeIterator(coorRange(targetSp, targetEp));
+					//	std::stringstream ss;
+					//	while(!iit->isEnd())
+					//	{
+					//		ss << static_cast<int64_t>((**iit).get<Ty_>()) << ", ";
+					//		++(*iit);
+					//	}
+					//	BOOST_LOG_TRIVIAL(debug) << ss.str();
+
+					//	//assert(rbFromDelta <= rbFromMMT);
+					//}
 #endif
 				}
 

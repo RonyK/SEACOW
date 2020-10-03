@@ -153,10 +153,10 @@ private:
 				{
 					inChunk->rBitFromMMT.push_back(rbFromMMT);
 
-#ifndef NDEBUG
-					BOOST_LOG_TRIVIAL(trace) << "level: " << level << ", band: " << band;
-					BOOST_LOG_TRIVIAL(trace) << mNode->toString<Ty_>();
-#endif
+//#ifndef NDEBUG
+//					BOOST_LOG_TRIVIAL(trace) << "level: " << level << ", band: " << band;
+//					BOOST_LOG_TRIVIAL(trace) << mNode->toString<Ty_>();
+//#endif
 				}
 
 				++innerItr;

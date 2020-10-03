@@ -285,6 +285,8 @@ protected:
 		dimension leafSpace = this->blockDims_ / this->leafDims_;
 		coorItr leafItr = coorItr(leafSpace);
 
+		BOOST_LOG_TRIVIAL(debug) << "leaf Space: " << leafSpace.toString();
+
 		while (!cItr->isEnd())
 		{
 			// Setup a start point of blockCoor for blocks in a chunk
@@ -300,12 +302,13 @@ protected:
 					this->setNode(lNode, cItr->coor(), bItr->coor(), leafItr.coor());
 
 #ifndef NDEBUG
-					if (lNode->getMin<Ty_>() < 0)
-					{
-						BOOST_LOG_TRIVIAL(warning) << "Wrong MMT value at " << cItr->coor().toString() << "|" << bItr->coor().toString() << ": " << lNode->getMin<Ty_>();
-					}
-					++leafItr;
+					//if (lNode->getMin<Ty_>() < 0)
+					//{
+					//	BOOST_LOG_TRIVIAL(warning) << "Wrong MMT value at " << cItr->coor().toString() << "|" << bItr->coor().toString() << ": " << lNode->getMin<Ty_>();
+					//}
 #endif
+					++leafItr;
+
 				}
 				++(*bItr);	// Move on a next block in the chunk
 			}
@@ -892,6 +895,9 @@ public:
 		dimension leafSpace = this->blockDims_ / this->leafDims_;
 		coor nodeCoor(inner);
 		nodeCoor += (blockCoor * leafSpace) + (chunkCoor * this->blockSpace_ * leafSpace);
+
+		BOOST_LOG_TRIVIAL(trace) << "setNode at level: " << static_cast<int64_t>(level) << ", chunkCoor: " << chunkCoor.toString() << ", blockCoor: " << blockCoor.toString()
+			<< ", inner: " << inner.toString() << ", nodeCoor: " << nodeCoor.toString() << ", seq: " << nit.coorToSeq(nodeCoor);
 
 		this->nodes_[level][nit.coorToSeq(nodeCoor)] = node;
 		node->chunkCoor_ = chunkCoor;
