@@ -76,17 +76,7 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 					for (int ix = 0; ix < blockDims[1]; ++ix)
 					{
 						size_t seqPos = (y * chunkDims[0] + blockCoor[0] * blockDims[0] + iy) * dims[1] + (x * chunkDims[1] + blockCoor[1] * blockDims[1] + ix);
-						(**it).setChar(static_cast<Ty_>(
-							data[seqPos]));
-
-#ifndef NDEBUG
-						if(data[seqPos] / 2 < 0)
-						{
-							BOOST_LOG_TRIVIAL(warning) << "at: " << seqPos << "(" << x << "," << y << ")|(" << ix << "," << iy << ")=>" << static_cast<int64_t>(data[seqPos]) << ", " << static_cast<int64_t>(data[seqPos]);
-						}
-
-						assert(data[(y * chunkDims[0] + blockCoor[0] * blockDims[0] + iy) * dims[1] + (x * chunkDims[1] + blockCoor[1] * blockDims[1] + ix)] / 2 >= 0);
-#endif
+						(**it).setChar(static_cast<Ty_>(data[seqPos]));
 						++(*it);
 					}
 				}
@@ -258,9 +248,10 @@ namespace data2D_tempTest
 using value_type = char;
 
 static const size_t dataLength = 16;
-static const size_t dimX = 8;
+static const size_t dimX = 4;
 static const size_t dimY = 4;
 static const size_t wtLevel = 0;
+static const size_t mmtLevel = 0;
 static const arrayId aid = 9991;
 
 extern std::vector<dim_type> dims;
@@ -283,6 +274,15 @@ std::vector<pArray> getSourceArray()
 	return arrs;
 }
 
+template<class Aty_ = memBlockArray>
+std::vector<pArray> getSourceArrayDesc()
+{
+	std::vector<pArray> arrs(
+		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_>(aid, "data2D_tempTest", dims, chunkDims, blockDims, eleType::CHAR)) });
+	return arrs;
+}
+
+void getSourceArrayDesc(std::vector<pArray>& sourceArr);
 void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
 }
 
@@ -322,29 +322,8 @@ std::vector<pArray> getSourceArray()
 }
 
 void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
-}
-
-// signed integer
-namespace data2D_si8x8
-{
-using value_type = int;
-
-static const size_t dataLength = 64;
-static const size_t dimX = 8;
-static const size_t dimY = 8;
-static const size_t wtLevel = 2;
-static const arrayId aid = 882;
-
-extern std::vector<dim_type> dims;
-extern std::vector<dim_type> chunkDims;
-extern std::vector<dim_type> chunkNums;
-
-void getDummy(char* output, size_t length);
-void getWTDummy(char* output, size_t length);
-void getExDummy(char* output, size_t length);
-void getExMMTBuilded(char* output, size_t length);
-}	// data2D_si8x8
-}
-}
+}	// data2D_sc8x8
+}	// caDummy
+}	// msdb
 
 #endif	//_MSDB_DUMMY_H_

@@ -11,12 +11,13 @@ namespace caDummy
 {
 const int se_array_id = 2;
 const int delta_spiht_array_id = 3;
+
 template <typename value_type>
 pArray test_qry_ind_secomp_sedecomp(_pFuncGetSourceArray_,
 									_pFuncGetSourceArrayDesc_,
-									eleDefault wtLevel, eleDefault mmtLevel)
+									eleDefault wtLevel, eleDefault mmtLevel,
+									bool printFlag = false)
 {
-	bool printFlag = false;
 	auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, printFlag);
 	sourceArr[0]->setId(sourceArr[0]->getId() + se_array_id);
 
@@ -25,6 +26,21 @@ pArray test_qry_ind_secomp_sedecomp(_pFuncGetSourceArray_,
 	auto outArr = exe_qry_ind_se_decompression<value_type>(sourceArr, wtLevel, mmtLevel, printFlag);
 
 	compArrary<value_type>(sourceArr[0], outArr);
+	return outArr;
+}
+
+template <typename value_type>
+pArray test_qry_ind_secomp(_pFuncGetSourceArray_,
+						   _pFuncGetSourceArrayDesc_,
+						   eleDefault wtLevel, eleDefault mmtLevel)
+{
+	bool printFlag = false;
+	auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, printFlag);
+	sourceArr[0]->setId(sourceArr[0]->getId() + se_array_id);
+
+	exe_qry_ind_mmt_build<value_type>(sourceArr, mmtLevel, printFlag);
+	auto outArr = exe_qry_ind_se_compression<value_type>(sourceArr, wtLevel, mmtLevel, printFlag);
+
 	return outArr;
 }
 
@@ -82,14 +98,21 @@ pArray test_qry_ind_delte_spiht_encode_decode(_pFuncGetSourceArray_,
 
 namespace data2D_sc4x4
 {
-TEST(query_op_se_compression, se_compression_sc4x4)
+TEST(query_op_se_compression, se_comp_decomp_ind_sc4x4)
 {
 	test_qry_ind_secomp_sedecomp<value_type>(&getSourceArrayIfEmpty,
 											 &getSourceArrayDesc,
 											 wtLevel, mmtLevel);		// 443
 }
 
-TEST(query_op_se_compression, se_comrpession_seq_sc4x4)
+TEST(query_op_se_compression, se_comp_ind_sc4x4)
+{
+	test_qry_ind_secomp<value_type>(&getSourceArrayIfEmpty,
+									&getSourceArrayDesc,
+									wtLevel, mmtLevel);		// 443
+}
+
+TEST(query_op_se_compression, se_comr_decomp_seq_sc4x4)
 {
 	bool printFlag = false;
 	test_qry_seq_secomp_sedecomp<value_type>(&getSourceArrayIfEmpty,
@@ -99,16 +122,30 @@ TEST(query_op_se_compression, se_comrpession_seq_sc4x4)
 }
 }   // data2D_sc4x4
 
-namespace data2D_star1024x1024
+namespace data2D_tempTest
 {
-TEST(query_op_se_compression, se_compression_star1024x1024)
+TEST(query_op_se_compression, se_compr_decomp_ind_data2D_tempTest)
 {
+	bool printFlag = true;
 	test_qry_ind_secomp_sedecomp<value_type>(&getSourceArrayIfEmpty,
 											 &getSourceArrayDesc,
-											 wtLevel, mmtLevel);		// 19422
+											 wtLevel, mmtLevel,
+											 printFlag);		// 19422
+}	// TEST()
+}	// data2D_tempTest
+
+namespace data2D_star1024x1024
+{
+TEST(query_op_se_compression, se_compr_decomp_ind_star1024x1024)
+{
+	bool printFlag = false;
+	test_qry_ind_secomp_sedecomp<value_type>(&getSourceArrayIfEmpty,
+											 &getSourceArrayDesc,
+											 wtLevel, mmtLevel, 
+											 printFlag);		// 19422
 }	// TEST()
 
-TEST(query_op_se_compression, se_comrpession_seq_star1014x1024)
+TEST(query_op_se_compression, se_compr_decomp_seq_star1014x1024)
 {
 	bool printFlag = false;
 	test_qry_seq_secomp_sedecomp<value_type>(&getSourceArrayIfEmpty,
@@ -117,7 +154,7 @@ TEST(query_op_se_compression, se_comrpession_seq_star1014x1024)
 											 printFlag);				// 19422
 }	// TEST()
 
-TEST(query_op_delta_spiht_compression, delta_spiht_star1024x1024)
+TEST(query_op_delta_spiht_compression, delta_spiht_ind_star1024x1024)
 {
 	bool printFlag = false;
 	test_qry_ind_delte_spiht_encode_decode<value_type>(&getSourceArrayIfEmpty,
@@ -128,7 +165,7 @@ TEST(query_op_delta_spiht_compression, delta_spiht_star1024x1024)
 
 namespace data2D_saturn1024x1024
 {
-TEST(query_op_se_compression, se_comrpession_seq_saturn1014x1024)
+TEST(query_op_se_compression, se_compr_decomp_seq_saturn1014x1024)
 {
 	bool printFlag = false;
 	test_qry_seq_secomp_sedecomp<value_type>(&getSourceArrayIfEmpty,
@@ -138,9 +175,9 @@ TEST(query_op_se_compression, se_comrpession_seq_saturn1014x1024)
 }	// TEST()
 }	// data2D_saturn1024x1024
 
-namespace data2D_mars4096x2048
+namespace data2D_solar1024x1024
 {
-TEST(query_op_se_compression, se_comrpession_seq_mars4096x2048)
+TEST(query_op_se_compression, se_compr_decomp_seq_solar1024x1024)
 {
 	bool printFlag = false;
 	test_qry_seq_secomp_sedecomp<value_type>(&getSourceArrayIfEmpty,
@@ -148,7 +185,19 @@ TEST(query_op_se_compression, se_comrpession_seq_mars4096x2048)
 											 wtLevel, mmtLevel,
 											 printFlag);						// 19362
 }	// TEST()
-TEST(query_op_spiht_delta, delta_spiht_encode_decode_mars4096x2048)
+}	// data2D_solar1024x1024
+
+namespace data2D_mars4096x2048
+{
+TEST(query_op_se_compression, se_compr_decomp_seq_mars4096x2048)
+{
+	bool printFlag = false;
+	test_qry_seq_secomp_sedecomp<value_type>(&getSourceArrayIfEmpty,
+											 &getSourceArrayDesc,
+											 wtLevel, mmtLevel,
+											 printFlag);						// 19362
+}	// TEST()
+TEST(query_op_spiht_delta, delta_spiht_encode_decode_ind_mars4096x2048)
 {
 	bool printFlag = false;
 	test_qry_ind_delte_spiht_encode_decode<value_type>(&getSourceArrayIfEmpty,
@@ -156,9 +205,9 @@ TEST(query_op_spiht_delta, delta_spiht_encode_decode_mars4096x2048)
 													   printFlag);						// 19362
 }	// TEST()
 
-TEST(query_op_spiht_delta, delta_spiht_encode_mars4096x2048)
+TEST(query_op_spiht_delta, delta_spiht_encode_ind_mars4096x2048)
 {
-	bool printFlag = true;
+	bool printFlag = false;
 	test_qry_ind_delte_spiht_encode<value_type>(&getSourceArrayIfEmpty,
 												wtLevel, mmtLevel,
 												printFlag);						// 19362

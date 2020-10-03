@@ -71,6 +71,32 @@ TEST(query_op_spiht_encode_decode, spiht_encode_decode_seq_star1024x1024)
 }
 }	// data2D_star1024x1024
 
+namespace data2D_saturn1024x1024
+{
+TEST(query_op_spiht_encode_decode, spiht_encode_decode_ind_saturn1024x1024)
+{
+	test_qry_ind_spiht_encode_decode<value_type>(&getSourceArrayIfEmpty, wtLevel);
+}
+
+TEST(query_op_spiht_encode_decode, spiht_encode_decode_seq_saturn1024x1024)
+{
+	test_qry_seq_spiht_encode_decode<value_type>(&getSourceArrayIfEmpty, wtLevel);
+}
+}	// data2D_saturn1024x1024
+
+namespace data2D_solar1024x1024
+{
+TEST(query_op_spiht_encode_decode, spiht_encode_decode_ind_solar1024x1024)
+{
+	test_qry_ind_spiht_encode_decode<value_type>(&getSourceArrayIfEmpty, wtLevel);
+}
+
+TEST(query_op_spiht_encode_decode, spiht_encode_decode_seq_solar1024x1024)
+{
+	test_qry_seq_spiht_encode_decode<value_type>(&getSourceArrayIfEmpty, wtLevel);
+}
+}	// data2D_solar1024x1024
+
 namespace data2D_mars4096x2048
 {
 TEST(query_op_spiht_encode, spiht_encode_ind_mars4096x2048)
