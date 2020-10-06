@@ -3,6 +3,7 @@
 #define _MSDB_INDEX_FILTER_ACTION_H_
 
 #include <stdafx.h>
+#include <array/block.h>
 #include <query/opAction.h>
 #include <parse/predicate.h>
 

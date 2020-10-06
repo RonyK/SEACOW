@@ -32,11 +32,23 @@ pBitmapTree opPlan::inferBitmap()
 		return this->outArrBitmap_;
 
 	this->outArrBitmap_ = this->inferBottomUpBitmap();
-	//BOOST_LOG_TRIVIAL(debug) << this->name() << " BottomUp";
-	//this->outArrBitmap_->print();
+#ifndef NDEBUG
+	BOOST_LOG_TRIVIAL(debug) << this->name() << " BottomUp";
+	this->outArrBitmap_->print();
+#endif
 	this->outArrBitmap_ = this->inferTopDownBitmap();
-	//BOOST_LOG_TRIVIAL(debug) << this->name() << " TopDown";
-	//this->outArrBitmap_->print();
+#ifndef NDEBUG
+	BOOST_LOG_TRIVIAL(debug) << this->name() << " TopDown";
+	this->outArrBitmap_->print();
+	for (int i = 0; i < this->outArrBitmap_->getCapacity(); ++i)
+	{
+		if(this->outArrBitmap_->hasChild(i))
+		{
+			BOOST_LOG_TRIVIAL(debug) << "Block Bitmap of Chunk [" << i << "]";
+			this->outArrBitmap_->getChild(i)->print();
+		}
+	}
+#endif
 	return outArrBitmap_;
 }
 pBitmapTree opPlan::inferBottomUpBitmap()

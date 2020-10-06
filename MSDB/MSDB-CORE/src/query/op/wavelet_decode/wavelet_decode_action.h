@@ -38,14 +38,14 @@ private:
 			std::vector<pChunk> chunks;
 			pBitmap blockBitmap = std::make_shared<bitmap>(blockSpace.area(), false);
 
-			auto chunkCoor = ocItr->coor();
+			auto outChunkCoor = ocItr->coor();
 			coorItr bSpaceItr(blockSpace);
 
 			// Bring all chunks belong to an outChunk
 			while (!bSpaceItr.isEnd())
 			{
 				auto blockCoor = bSpaceItr.coor();
-				auto inChunkCoor = chunkCoor * blockSpace + blockCoor;
+				auto inChunkCoor = outChunkCoor * blockSpace + blockCoor;
 
 				icItr->moveTo(inChunkCoor);
 				//BOOST_LOG_TRIVIAL(debug) << inChunkCoor.toString();
@@ -74,10 +74,11 @@ private:
 				//BOOST_LOG_TRIVIAL(debug) << "[" << ocItr->seqPos() << "]: chunk exist";
 				// --------------------
 				// TODO::PARALLEL
-				auto outChunk = this->chunkDecode<Ty_>(chunks, chunkDims, blockBitmap, w, maxLevel, q);
+				auto outChunk = this->chunkDecode<Ty_>(chunks, outChunkCoor, chunkDims, 
+													   blockSpace, blockBitmap, w, maxLevel, q);
 				// --------------------
 
-				auto cid = outArr->getChunkIdFromChunkCoor(chunkCoor);
+				auto cid = outArr->getChunkIdFromChunkCoor(outChunkCoor);
 				outChunk->setId(cid);
 				outArr->insertChunk(attrDesc->id_, outChunk);
 			}else
@@ -90,7 +91,10 @@ private:
 	}
 
 	template <class Ty_>
-	pChunk chunkDecode(std::vector<pChunk>& inChunkList, dimension chunkDims, pBitmap blockBitmap,
+	pChunk chunkDecode(std::vector<pChunk>& inChunkList, 
+					   const coor& outChunkCoor, const dimension& chunkDims, 
+					   const dimension& blockSpace,
+					   pBitmap blockBitmap,
 					   pWavelet w, size_t maxLevel, pQuery q)
 	{
 		// Find an exist chunk and set inChunkDesc
@@ -105,11 +109,10 @@ private:
 		}
 
 		pChunkDesc outChunkDesc = std::make_shared<chunkDesc>(*inChunkDesc);
-		dimension blockSpace = chunkDims / inChunkDesc->dims_;	// chunkDims == blockDims in outBlock
 		size_t numBlocks = blockSpace.area();
 
 		outChunkDesc->dims_ = chunkDims;
-		outChunkDesc->chunkCoor_ = inChunkDesc->sp_ / chunkDims;
+		outChunkDesc->chunkCoor_ = outChunkCoor;
 		outChunkDesc->sp_ = inChunkDesc->sp_;
 		outChunkDesc->ep_ = inChunkDesc->sp_ + chunkDims;
 		outChunkDesc->mSize_ *= numBlocks;

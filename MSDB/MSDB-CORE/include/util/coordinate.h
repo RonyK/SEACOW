@@ -37,6 +37,13 @@ public:
 		: dSize_(dSize)
 	{
 		this->coor_ = new dim_type[this->dSize_]();
+#ifndef NDEBUG
+		if(this->dSize_ >= 2)
+		{
+			this->x_ = this->coor_ + 1;
+			this->y_ = this->coor_;
+		}
+#endif
 	}
 
 	coordinate(const size_type dSize, dim_const_pointer coor)
@@ -44,6 +51,13 @@ public:
 	{
 		this->coor_ = new dim_type[this->dSize_];
 		memcpy(this->coor_, coor, this->dSize_ * sizeof(dim_type));
+#ifndef NDEBUG
+		if (this->dSize_ >= 2)
+		{
+			this->x_ = this->coor_ + 1;
+			this->y_ = this->coor_;
+		}
+#endif
 	}
 
 	coordinate(const size_type dSize, const dim_type coor)
@@ -54,6 +68,13 @@ public:
 		{
 			this->coor_[d] = coor;
 		}
+#ifndef NDEBUG
+		if (this->dSize_ >= 2)
+		{
+			this->x_ = this->coor_ + 1;
+			this->y_ = this->coor_;
+		}
+#endif
 	}
 
 	coordinate(const std::vector<dim_type>& coorVec)
@@ -61,6 +82,13 @@ public:
 	{
 		this->coor_ = new dim_type[coorVec.size()];
 		memcpy(this->coor_, coorVec.data(), coorVec.size() * sizeof(dim_type));
+#ifndef NDEBUG
+		if (this->dSize_ >= 2)
+		{
+			this->x_ = this->coor_ + 1;
+			this->y_ = this->coor_;
+		}
+#endif
 	}
 
 	coordinate(const self_type& mit)
@@ -68,6 +96,13 @@ public:
 	{
 		this->coor_ = new dim_type[this->dSize_];
 		memcpy(this->coor_, mit.coor_, mit.dSize_ * sizeof(dim_type));
+#ifndef NDEBUG
+		if (this->dSize_ >= 2)
+		{
+			this->x_ = this->coor_ + 1;
+			this->y_ = this->coor_;
+		}
+#endif
 	}
 
 	self_type& operator=(self_type& rhs)
@@ -75,6 +110,13 @@ public:
 		this->dSize_ = rhs.dSize_;
 		this->coor_ = new dim_type[this->dSize_];
 		memcpy(this->coor_, rhs.coor_, rhs.dSize_ * sizeof(dim_type));
+#ifndef NDEBUG
+		if (this->dSize_ >= 2)
+		{
+			this->x_ = this->coor_ + 1;
+			this->y_ = this->coor_;
+		}
+#endif
 		return *this;
 	}
 
@@ -88,6 +130,13 @@ public:
 		{
 			this->coor_[d] = *it;
 		}
+#ifndef NDEBUG
+		if (this->dSize_ >= 2)
+		{
+			this->x_ = this->coor_ + 1;
+			this->y_ = this->coor_;
+		}
+#endif
 	}
 
 	~coordinate()
@@ -232,6 +281,14 @@ public:
 		this->coor_ = new dim_type[mit.dSize_];
 		this->memcpyCoor(this->coor_, mit.coor_);
 
+#ifndef NDEBUG
+		if (this->dSize_ >= 2)
+		{
+			this->x_ = this->coor_ + 1;
+			this->y_ = this->coor_;
+		}
+#endif
+
 		return *this;
 	}
 	self_type& operator=(const dim_type* mit)
@@ -370,6 +427,10 @@ protected:
 protected:
 	size_type dSize_;
 	dim_pointer coor_;
+#ifndef NDEBUG
+	dim_pointer x_;
+	dim_pointer y_;
+#endif
 };
 
 template <typename Dty_>

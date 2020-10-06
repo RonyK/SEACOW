@@ -113,39 +113,57 @@ void compArrary(pArray lArr, pArray rArr)
 			if(lcItr->isExist())
 			{
 				EXPECT_TRUE(lcItr->coor() == rcItr->coor());
-				EXPECT_TRUE(*(**lcItr) == *(**rcItr));
+#ifndef NDEBUG
+				//if(!(*(**lcItr) == *(**rcItr)))
+				//{
+				//	BOOST_LOG_TRIVIAL(debug) << "NOT EQUAL";
+				//	BOOST_LOG_TRIVIAL(debug) << "LEFT: ";
+				//	(**lcItr)->print();
+				//	BOOST_LOG_TRIVIAL(debug) << "RIGHT: ";
+				//	(**lcItr)->print();
+				//}
+#endif
+				//EXPECT_TRUE(*(**lcItr) == *(**rcItr));
+
+				auto lbItr = (*lcItr)->getBlockIterator();
+				auto rbItr = (*rcItr)->getBlockIterator();
+
+				while (!lbItr->isEnd() && !rbItr->isEnd())
+				{
+					EXPECT_EQ(lbItr->isExist(), rbItr->isExist());
+					if(lbItr->isExist())
+					{
+						auto liItr = (*lbItr)->getItemIterator();
+						auto riItr = (*rbItr)->getItemIterator();
+
+						while (!liItr->isEnd() && !riItr->isEnd())
+						{
+							EXPECT_EQ(liItr->isExist(), riItr->isExist());
+
+							if(liItr->isExist())
+							{
+								Ty_ li = (**liItr).get<Ty_>();
+								Ty_ ri = (**riItr).get<Ty_>();
+
+								if (li != ri)
+								{
+									BOOST_LOG_TRIVIAL(debug) << "Diff : " << static_cast<int64_t>(li) << ", " << static_cast<int64_t>(ri);
+									BOOST_LOG_TRIVIAL(debug) << "Chunk: " << lcItr->coor().toString() << " / Block: " << lbItr->coor().toString() << " / Item: " << liItr->coor().toString();
+								}
+								EXPECT_EQ(li, ri);
+							}
+
+							++(*liItr);
+							++(*riItr);
+						}
+
+						EXPECT_EQ(liItr->isEnd(), riItr->isEnd());
+					}
+
+					++(*lbItr);
+					++(*rbItr);
+				}
 			}
-			
-			//if(!(*(**lcItr) == *(**rcItr)))
-			//{
-			//	compChunkItems<Ty_>((**lcItr), (**rcItr));
-			//}
-			//auto lbItr = (*lcItr)->getBlockIterator();
-			//auto rbItr = (*rcItr)->getBlockIterator();
-
-			//while (!lbItr->isEnd() && !rbItr->isEnd())
-			//{
-			//	auto liItr = (*lbItr)->getItemIterator();
-			//	auto riItr = (*rbItr)->getItemIterator();
-
-			//	while (!liItr->isEnd() && !riItr->isEnd())
-			//	{
-			//		Ty_ li = (**liItr).get<Ty_>();
-			//		Ty_ ri = (**riItr).get<Ty_>();
-
-			//		EXPECT_EQ(li, ri);
-
-			//		++(*liItr);
-			//		++(*riItr);
-			//	}
-
-			//	EXPECT_EQ(liItr->isEnd(), riItr->isEnd());
-
-			//	++(*lbItr);
-			//	++(*rbItr);
-			//}
-
-			//EXPECT_EQ(lbItr->isEnd(), rbItr->isEnd());
 
 			++(*lcItr);
 			++(*rcItr);

@@ -26,7 +26,7 @@ public:
 //////////////////////////////
 // index_filter_array_pset
 //
-// Base class for pSet class of index_filter operator
+// Base class for pSet class of exe_act_ind_index_filter operator
 class index_filter_pset
 {
 protected:
@@ -171,17 +171,23 @@ protected:
 		size_t blockLevel = pMmtIndex->getBlockLevel();
 
 		auto chunkBitmap = std::make_shared<bitmapTree>(chunkNums, false);
+		auto chunkItr = coorItr(chunkSpace);
+		auto blockItr = coorItr(blockSpace);
+		auto nodeItr = coorItr(chunkSpace * blockSpace);
 
 		for (chunkId cid = 0; cid < chunkNums; ++cid)
 		{
+			auto chunkCoor = chunkItr.seqToCoor(cid);
 			if (nodes[chunkLevel][cid])
 			{
 				chunkBitmap->setExist(cid);
-				size_t offset = cid * blockNums;
 				auto blockBitmap = chunkBitmap->makeChild(cid, blockNums, false);
+
 				for (blockId bid = 0; bid < blockNums; ++bid)
 				{
-					if (nodes[blockLevel][offset + bid])
+					auto blockCoor = blockItr.seqToCoor(bid);
+					auto nodeCoor = chunkCoor * blockSpace + blockCoor;
+					if (nodes[blockLevel][nodeItr.coorToSeq(nodeCoor)])
 					{
 						blockBitmap->setExist(bid);
 					}

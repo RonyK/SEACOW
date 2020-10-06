@@ -88,6 +88,7 @@ protected:
 	{
 		auto iit = this->getItemIterator();
 		std::stringstream ss;
+		ss << "Block [" << static_cast<int64_t>(this->getId()) << "]";
 		while(!iit->isEnd())
 		{
 			if(iit->isExist())
@@ -108,6 +109,7 @@ protected:
 		auto colNum = dim[this->getDSize() - 1];
 		auto iit = this->getItemIterator();
 		std::stringstream ss;
+		ss << "Block [" << static_cast<int64_t>(this->getId()) << "]";
 		int col = 0;
 		while (!iit->isEnd())
 		{

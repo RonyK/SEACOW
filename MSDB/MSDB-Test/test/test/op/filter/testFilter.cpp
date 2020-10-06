@@ -5,7 +5,7 @@ namespace msdb
 {
 namespace caDummy
 {
-pArray naive_filter(_vectorSourceArray_, pPredicate myPredicate, pQuery qry)
+pArray exe_act_ind_naive_filter(_vectorSourceArray_, pPredicate myPredicate, pQuery qry)
 {
 	std::shared_ptr<naive_filter_plan> filterPlan;
 	std::shared_ptr<naive_filter_action> filterAction;
@@ -15,7 +15,7 @@ pArray naive_filter(_vectorSourceArray_, pPredicate myPredicate, pQuery qry)
 
 	return afterArray;
 }
-pArray index_filter(_vectorSourceArray_, pPredicate myPredicate, pQuery qry)
+pArray exe_act_ind_index_filter(_vectorSourceArray_, pPredicate myPredicate, pQuery qry)
 {
 	std::shared_ptr<index_filter_plan> filterPlan;
 	std::shared_ptr<index_filter_action> filterAction;

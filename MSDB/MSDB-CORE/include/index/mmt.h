@@ -896,8 +896,8 @@ public:
 		coor nodeCoor(inner);
 		nodeCoor += (blockCoor * leafSpace) + (chunkCoor * this->blockSpace_ * leafSpace);
 
-		BOOST_LOG_TRIVIAL(trace) << "setNode at level: " << static_cast<int64_t>(level) << ", chunkCoor: " << chunkCoor.toString() << ", blockCoor: " << blockCoor.toString()
-			<< ", inner: " << inner.toString() << ", nodeCoor: " << nodeCoor.toString() << ", seq: " << nit.coorToSeq(nodeCoor);
+		//BOOST_LOG_TRIVIAL(trace) << "setNode at level: " << static_cast<int64_t>(level) << ", chunkCoor: " << chunkCoor.toString() << ", blockCoor: " << blockCoor.toString()
+		//	<< ", inner: " << inner.toString() << ", nodeCoor: " << nodeCoor.toString() << ", seq: " << nit.coorToSeq(nodeCoor);
 
 		this->nodes_[level][nit.coorToSeq(nodeCoor)] = node;
 		node->chunkCoor_ = chunkCoor;

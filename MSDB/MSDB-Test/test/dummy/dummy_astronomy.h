@@ -59,8 +59,8 @@ namespace data2D_saturn1024x1024
 using value_type = char;
 static const eleType ele_type = eleType::CHAR;
 
-static const dim_type dimX = 1024;
-static const dim_type dimY = 1024;
+static const dim_type dimX = 512;
+static const dim_type dimY = 512;
 static const size_t dataLength = dimX * dimY;
 static const size_t wtLevel = 3;
 static const size_t mmtLevel = 3;

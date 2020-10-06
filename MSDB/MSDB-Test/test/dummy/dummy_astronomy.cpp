@@ -49,7 +49,7 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
 namespace data2D_saturn1024x1024
 {
 std::vector<dim_type> dims = { dimY, dimX };
-std::vector<dim_type> chunkNums = { 8, 8 };
+std::vector<dim_type> chunkNums = { 4, 4 };
 std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
 std::vector<dim_type> blockNums = { 4, 4 };
 std::vector<dim_type> blockDims = { chunkDims[0] / blockNums[0], chunkDims[1] / blockNums[1] };
@@ -87,7 +87,7 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
 namespace data2D_solar1024x1024
 {
 std::vector<dim_type> dims = { dimY, dimX };
-std::vector<dim_type> chunkNums = { 8, 8 };
+std::vector<dim_type> chunkNums = { 4, 4 };
 std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
 std::vector<dim_type> blockNums = { 4, 4 };
 std::vector<dim_type> blockDims = { chunkDims[0] / blockNums[0], chunkDims[1] / blockNums[1] };
@@ -125,7 +125,7 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
 namespace data2D_mars4096x2048
 {
 std::vector<dim_type> dims = { dimY, dimX };
-std::vector<dim_type> chunkNums = { 16, 8 };
+std::vector<dim_type> chunkNums = { 8, 4 };
 std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
 std::vector<dim_type> blockNums = { 4, 4 };
 std::vector<dim_type> blockDims = { chunkDims[0] / blockNums[0], chunkDims[1] / blockNums[1] };

@@ -66,19 +66,53 @@ public:
 	{
 		if(this->getId() != mit.getId())
 		{
+			BOOST_LOG_TRIVIAL(debug) << "Chunk IDs are different";
 			return false;
 		}
 
 		// TODO::Compare desc
 		if(this->desc_->mSize_ != mit.getDesc()->mSize_)
 		{
+			BOOST_LOG_TRIVIAL(debug) << "Chunk mSizes are different";
 			return false;
 		}
 		
-		if(memcmp(this->cached_->getReadData(), mit.cached_->getReadData(), this->desc_->mSize_))
+		auto n = memcmp(this->cached_->getReadData(), mit.cached_->getReadData(), this->desc_->mSize_);
+		if(n)
 		{
-			//auto lbItr = (*lcItr)->getBlockIterator();
-			//auto rbItr = (*rcItr)->getBlockIterator();
+			//BOOST_LOG_TRIVIAL(debug) << "Chunk data are different";
+			//{
+			//	auto lReadData = this->cached_->getReadData();
+
+			//	std::stringstream ss;
+			//	ss << std::hex;
+
+			//	for (int i = 0; i < this->desc_->mSize_; ++i)
+			//	{
+			//		ss << (int)(*((char*)lReadData + i)) << " ";
+			//	}
+
+			//	BOOST_LOG_TRIVIAL(debug) << ss.str();
+			//}
+			//
+			//BOOST_LOG_TRIVIAL(debug) << "==============================";
+			//
+			//{
+			//	auto rReadData = mit.cached_->getReadData();
+
+			//	std::stringstream ss;
+			//	ss << std::hex;
+
+			//	for (int i = 0; i < this->desc_->mSize_; ++i)
+			//	{
+			//		ss << (int)(*((char*)rReadData + i)) << " ";
+			//	}
+
+			//	BOOST_LOG_TRIVIAL(debug) << ss.str();
+			//}
+
+			auto lbItr = this->getBlockIterator();
+			//auto rbItr = mit.getBlockIterator();
 
 			//while (!lbItr->isEnd() && !rbItr->isEnd())
 			//{
@@ -105,6 +139,8 @@ public:
 			//EXPECT_EQ(lbItr->isEnd(), rbItr->isEnd());
 			return false;
 		}
+
+		BOOST_LOG_TRIVIAL(debug) << "Chunks are same";
 
 		return true;
 	}
