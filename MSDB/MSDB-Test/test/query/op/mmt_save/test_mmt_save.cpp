@@ -13,7 +13,7 @@ void test_body_mmt_save(_pFuncGetSourceArray_, eleDefault mmtLevel)
 
     std::vector<pArray> sourceArr;
     getSourceArrayIfEmpty(sourceArr);
-    sourceArr[0]->setId(sourceArr[0]->getId() + 2);
+    sourceArr[0]->setId(sourceArr[0]->getId() + se_array_id);
 
     auto arr_mmt_build = exe_act_ind_mmt_build(sourceArr, mmtLevel);
     std::cout << "##############################" << std::endl;
@@ -57,7 +57,7 @@ protected:
 
 namespace data2D_sc4x4
 {
-TEST_F(query_op_mmt_save, mmt_serialize_sc4x4)
+TEST_F(query_op_mmt_save, sc4x4_mmt_serialize)
 {
     // Should build mmt before
     std::vector<pArray> sourceArr = getSourceArray();
@@ -77,26 +77,42 @@ TEST_F(query_op_mmt_save, mmt_serialize_sc4x4)
     }
 }
 
-TEST_F(query_op_mmt_save, mmt_save_sc4x4)
+TEST_F(query_op_mmt_save, sc4x4_mmt_save)
 {
     test_body_mmt_save<value_type>(&getSourceArrayIfEmpty, mmtLevel);
 }	// TEST()
 }	// data2D_sc4x4
 
-namespace data2D_sc8x8
-{
-TEST_F(query_op_mmt_save, mmt_save_sc8x8)
-{
-    test_body_mmt_save<value_type>(&getSourceArrayIfEmpty, mmtLevel);
-}	// TEST()
-}	// data2D_sc8x8
-
 namespace data2D_star1024x1024
 {
-TEST_F(query_op_mmt_save, mmt_save_star1024x1024)
+TEST_F(query_op_mmt_save, star1024x1024_mmt_save)
 {
     test_body_mmt_save<value_type>(&getSourceArrayIfEmpty, mmtLevel);        // 24243
 }   // TEST
 }   // data2D_star1024x1024
+
+namespace data2D_saturn1024x1024
+{
+TEST_F(query_op_mmt_save, saturn1024x1024_mmt_save)
+{
+    test_body_mmt_save<value_type>(&getSourceArrayIfEmpty, mmtLevel);        // 24243
+}   // TEST
+}   // data2D_saturn1024x1024
+
+namespace data2D_solar1024x1024
+{
+TEST_F(query_op_mmt_save, solar1024x1024_mmt_save)
+{
+    test_body_mmt_save<value_type>(&getSourceArrayIfEmpty, mmtLevel);        // 24243
+}   // TEST
+}   // data2D_solar1024x1024
+
+namespace data2D_mars4096x2048
+{
+TEST_F(query_op_mmt_save, mars4096x2048_mmt_save)
+{
+    test_body_mmt_save<value_type>(&getSourceArrayIfEmpty, mmtLevel);        // 24243
+}   // TEST
+}   // data2D_mars4096x2048
 }	// caDummy
 }	// msdb

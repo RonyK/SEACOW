@@ -25,7 +25,7 @@ std::shared_ptr<Aty_> get2DCharArray(arrayId aid, std::string arrayName,
 
 	pAttributeDescs attrDescs = std::make_shared<attributeDescs>();
 	attributeId attrId = 0;
-	attrDescs->push_back(std::make_shared<attributeDesc>(attrId++, "ATTR_1", eleType::CHAR));		// SIGNED CHAR
+	attrDescs->push_back(std::make_shared<attributeDesc>(attrId++, "ATTR_1", eType));		// SIGNED CHAR
 
 	pArrayDesc arrDesc = std::make_shared<arrayDesc>(aid, arrayName.c_str(), dimDescs, attrDescs);
 	std::shared_ptr<Aty_> sourceArr = std::make_shared<Aty_>(arrDesc);

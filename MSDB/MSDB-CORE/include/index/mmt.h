@@ -599,19 +599,15 @@ protected:
 			// TODO::Change min, max according order and deltaBits
 		}
 
-#ifndef NDEBUG
-		Ty_ tMax = curNode->getMax<Ty_>();
-		Ty_ tMin = curNode->getMin<Ty_>();
-#endif
+//#ifndef NDEBUG
+//		Ty_ tMax = curNode->getMax<Ty_>();
+//		Ty_ tMin = curNode->getMin<Ty_>();
+//#endif
 		curNode->max_ = getMaxBoundary<Ty_>(prevNode->getMax<Ty_>(), curNode->order_, curNode->bMax_);
 		curNode->min_ = getMinBoundary<Ty_>(prevNode->getMin<Ty_>(), curNode->order_, curNode->bMin_);
 
-		if(curNode->getMax<Ty_>() < curNode->getRealMax<Ty_>() || curNode->getMin<Ty_>() > curNode->getRealMin<Ty_>())
-		{
-			assert(curNode->getMax<Ty_>() >= curNode->getRealMax<Ty_>());
-			assert(curNode->getMin<Ty_>() >= curNode->getRealMin<Ty_>());
-		}
-
+		assert(curNode->getMax<Ty_>() >= curNode->getRealMax<Ty_>());
+		assert(curNode->getMin<Ty_>() <= curNode->getRealMin<Ty_>());
 	}
 
 	////////////////////////////////////////
