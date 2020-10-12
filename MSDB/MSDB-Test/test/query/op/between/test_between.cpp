@@ -15,8 +15,8 @@ TEST(query_op_between, between_star1024x1024)
 
 	
 
-	coor sp = { 0, 32 };
-	coor ep = { 3, 35 };
+	coor sp = { 0, 125 };
+	coor ep = { 6, 129 };
 
 	parameters params = {
 		std::make_shared<opParamArray>(sourceArr[0]->getDesc()),
@@ -30,7 +30,9 @@ TEST(query_op_between, between_star1024x1024)
 	auto betweenAction = std::static_pointer_cast<between_action>(betweenPlan->getAction());
 
 	auto outArr = betweenAction->execute(sourceArr, betweenQuery);
-	// (**sourceArr[0]->getChunkIterator())->print();
+	auto it = sourceArr[0]->getChunkIterator();
+	++(*it);
+	(**it)->print();
 	outArr->print();
 }
 }

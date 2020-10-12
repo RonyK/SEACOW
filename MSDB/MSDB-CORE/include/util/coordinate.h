@@ -614,10 +614,35 @@ public:
 
 	bool isIntersect(const self_type& rhs) const
 	{
-		if (this->sP_ < rhs.eP_ && rhs.sP_ < this->eP_)
-			return true;
+		bool first;
+		bool second;
 
-		return false;
+		dimensionId d;
+		for (d = 0; d < rhs.dSize_; ++d)
+		{
+			if (this->sP_[d] >= rhs.eP_[d])
+			{
+				break;
+			}
+		}
+		if (d == rhs.dSize_)
+			first = true;
+		else
+			first = false;
+
+		for (d = 0; d < rhs.dSize_; ++d)
+		{
+			if (rhs.sP_[d] >= this->eP_[d])
+			{
+				break;
+			}
+		}
+		if (d == rhs.dSize_)
+			second = true;
+		else
+			second = false;
+
+		return first && second;
 	}
 
 	bool isFullyInside(const self_type& rhs) const

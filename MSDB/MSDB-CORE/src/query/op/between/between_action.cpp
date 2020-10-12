@@ -96,8 +96,10 @@ void between_action::betweenBlock(pBlock outBlock, pBlock inBlock, coorRange& be
 	auto inDesc = inBlock->getDesc();
 	auto outDesc = outBlock->getDesc();
 
-	outDesc->setIsp(getOutsideCoor(inDesc->getIsp(), betweenRangeInChunk.getSp()));
-	outDesc->setIep(getInsideCoor(inDesc->getIep(), betweenRangeInChunk.getEp()));
+	outDesc->setIsp(getOutsideCoor(inDesc->getSp(), betweenRangeInChunk.getSp()));
+	outDesc->setIep(getInsideCoor(inDesc->getEp(), betweenRangeInChunk.getEp()));
+	outDesc->setIsp(outDesc->getIsp() - outDesc->getSp());	// Isp: global -> local
+	outDesc->setIep(outDesc->getIep() - outDesc->getSp());
 	outBlock->initEmptyBitmap();
 
 	coorRange itRange(outDesc->getIsp(), outDesc->getIep());
