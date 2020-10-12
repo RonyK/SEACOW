@@ -41,6 +41,7 @@ pArray between_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 			if (chunkRange.isIntersect(betweenRange))
 			{
 				auto outChunk = outArr->makeChunk(attr->id_, inChunk->getId());
+
 				outChunk->bufferRef(inChunk);
 
 				if (chunkRange.isFullyInside(betweenRange))
@@ -97,12 +98,12 @@ void between_action::betweenBlock(pBlock outBlock, pBlock inBlock, coorRange& be
 
 	outDesc->setIsp(getOutsideCoor(inDesc->getIsp(), betweenRangeInChunk.getSp()));
 	outDesc->setIep(getInsideCoor(inDesc->getIep(), betweenRangeInChunk.getEp()));
+	outBlock->initEmptyBitmap();
 
 	coorRange itRange(outDesc->getIsp(), outDesc->getIep());
 	auto iit = inBlock->getItemRangeIterator(itRange);
 	auto oit = outBlock->getItemRangeIterator(itRange);
-
-	outBlock->initEmptyBitmap();
+	
 	while(!oit->isEnd())
 	{
 		if(iit->isExist())
