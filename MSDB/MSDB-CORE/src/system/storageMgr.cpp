@@ -121,7 +121,7 @@ void storageMgr::saveChunk(arrayId arrId, attributeId attrId, chunkId chkId, pSe
 	this->getOfstream(fs, this->getChunkPath(arrId, attrId, chkId), 
 					  strChunkFilExtension);
 	serialObj->serialize(fs);
-	BOOST_LOG_TRIVIAL(debug) << "Save Chunk: " << serialObj->getSerializedSize() << " Bytes";
+	BOOST_LOG_TRIVIAL(debug) << "Save Chunk[" << chkId << "] : " << serialObj->getSerializedSize() << " Bytes";
 	fs.close();
 }
 

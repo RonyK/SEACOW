@@ -38,7 +38,7 @@ void blockChunkBuffer::bufferAlloc(bufferSize size)
 	}
 
 	this->isAllocated_ = true;
-	this->data_ = new char[size];
+	this->data_ = new char[size]();
 	this->bodySize_ = size;
 	this->isAllocated_ = true;
 }
@@ -47,7 +47,7 @@ void blockChunkBuffer::realloc(bufferSize size)
 {
 	assert(size > 0);
 
-	void* re = new char[size];
+	void* re = new char[size]();
 	memcpy(re, this->data_, std::min(size, this->bodySize_));
 	this->free();
 
@@ -59,7 +59,7 @@ void blockChunkBuffer::realloc(bufferSize size)
 void blockChunkBuffer::copy(void* data, bufferSize size)
 {
 	this->isAllocated_ = true;
-	this->data_ = new char[size];
+	this->data_ = new char[size]();
 	memcpy(this->data_, data, size);
 	this->bodySize_ = size;
 }

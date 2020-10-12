@@ -119,6 +119,7 @@ public:
 	}
 	virtual void freeChunk(const chunkId cId) = 0;
 
+	cpBitmap getChunkBitmap() const;
 	void copyChunkBitmap(cpBitmap chunkBitmap);
 	void replaceChunkBitmap(pBitmap chunkBitmap);
 	void mergeChunkBitmap(pBitmap chunkBitmap);

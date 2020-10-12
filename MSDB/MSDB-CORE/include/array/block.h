@@ -88,6 +88,7 @@ protected:
 	{
 		auto iit = this->getItemIterator();
 		std::stringstream ss;
+		ss << "Block [" << static_cast<int64_t>(this->getId()) << "]";
 		while(!iit->isEnd())
 		{
 			if(iit->isExist())
@@ -104,8 +105,12 @@ protected:
 	template<>
 	void printImp<char>()
 	{
+		auto dim = this->getDesc()->dims_;
+		auto colNum = dim[this->getDSize() - 1];
 		auto iit = this->getItemIterator();
 		std::stringstream ss;
+		ss << "Block [" << static_cast<int64_t>(this->getId()) << "]";
+		int col = 0;
 		while (!iit->isEnd())
 		{
 			if (iit->isExist())
@@ -116,6 +121,11 @@ protected:
 				ss << "*, ";
 			}
 			++(*iit);
+			if(++col == colNum)
+			{
+				ss << "\n";
+				col = 0;
+			}
 		}
 		BOOST_LOG_TRIVIAL(debug) << ss.str() << "";
 	}

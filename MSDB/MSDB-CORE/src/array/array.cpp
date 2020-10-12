@@ -127,6 +127,10 @@ chunkId arrayBase::getChunkIdFromChunkCoor(const coor& chunkCoor)
 	}
 	return id;
 }
+cpBitmap arrayBase::getChunkBitmap() const
+{
+	return this->chunkBitmap_;
+}
 void arrayBase::copyChunkBitmap(cpBitmap chunkBitmap)
 {
 	this->chunkBitmap_ = std::make_shared<bitmap>(*chunkBitmap);

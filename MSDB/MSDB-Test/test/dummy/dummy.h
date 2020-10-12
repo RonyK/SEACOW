@@ -25,7 +25,7 @@ std::shared_ptr<Aty_> get2DCharArray(arrayId aid, std::string arrayName,
 
 	pAttributeDescs attrDescs = std::make_shared<attributeDescs>();
 	attributeId attrId = 0;
-	attrDescs->push_back(std::make_shared<attributeDesc>(attrId++, "ATTR_1", eleType::CHAR));		// SIGNED CHAR
+	attrDescs->push_back(std::make_shared<attributeDesc>(attrId++, "ATTR_1", eType));		// SIGNED CHAR
 
 	pArrayDesc arrDesc = std::make_shared<arrayDesc>(aid, arrayName.c_str(), dimDescs, attrDescs);
 	std::shared_ptr<Aty_> sourceArr = std::make_shared<Aty_>(arrDesc);
@@ -123,39 +123,57 @@ void compArrary(pArray lArr, pArray rArr)
 			if(lcItr->isExist())
 			{
 				EXPECT_TRUE(lcItr->coor() == rcItr->coor());
-				EXPECT_TRUE(*(**lcItr) == *(**rcItr));
+#ifndef NDEBUG
+				//if(!(*(**lcItr) == *(**rcItr)))
+				//{
+				//	BOOST_LOG_TRIVIAL(debug) << "NOT EQUAL";
+				//	BOOST_LOG_TRIVIAL(debug) << "LEFT: ";
+				//	(**lcItr)->print();
+				//	BOOST_LOG_TRIVIAL(debug) << "RIGHT: ";
+				//	(**lcItr)->print();
+				//}
+#endif
+				//EXPECT_TRUE(*(**lcItr) == *(**rcItr));
+
+				auto lbItr = (*lcItr)->getBlockIterator();
+				auto rbItr = (*rcItr)->getBlockIterator();
+
+				while (!lbItr->isEnd() && !rbItr->isEnd())
+				{
+					EXPECT_EQ(lbItr->isExist(), rbItr->isExist());
+					if(lbItr->isExist())
+					{
+						auto liItr = (*lbItr)->getItemIterator();
+						auto riItr = (*rbItr)->getItemIterator();
+
+						while (!liItr->isEnd() && !riItr->isEnd())
+						{
+							EXPECT_EQ(liItr->isExist(), riItr->isExist());
+
+							if(liItr->isExist())
+							{
+								Ty_ li = (**liItr).get<Ty_>();
+								Ty_ ri = (**riItr).get<Ty_>();
+
+								if (li != ri)
+								{
+									BOOST_LOG_TRIVIAL(debug) << "Diff : " << static_cast<int64_t>(li) << ", " << static_cast<int64_t>(ri);
+									BOOST_LOG_TRIVIAL(debug) << "Chunk: " << lcItr->coor().toString() << " / Block: " << lbItr->coor().toString() << " / Item: " << liItr->coor().toString();
+								}
+								EXPECT_EQ(li, ri);
+							}
+
+							++(*liItr);
+							++(*riItr);
+						}
+
+						EXPECT_EQ(liItr->isEnd(), riItr->isEnd());
+					}
+
+					++(*lbItr);
+					++(*rbItr);
+				}
 			}
-			
-			//if(!(*(**lcItr) == *(**rcItr)))
-			//{
-			//	compChunkItems<Ty_>((**lcItr), (**rcItr));
-			//}
-			//auto lbItr = (*lcItr)->getBlockIterator();
-			//auto rbItr = (*rcItr)->getBlockIterator();
-
-			//while (!lbItr->isEnd() && !rbItr->isEnd())
-			//{
-			//	auto liItr = (*lbItr)->getItemIterator();
-			//	auto riItr = (*rbItr)->getItemIterator();
-
-			//	while (!liItr->isEnd() && !riItr->isEnd())
-			//	{
-			//		Ty_ li = (**liItr).get<Ty_>();
-			//		Ty_ ri = (**riItr).get<Ty_>();
-
-			//		EXPECT_EQ(li, ri);
-
-			//		++(*liItr);
-			//		++(*riItr);
-			//	}
-
-			//	EXPECT_EQ(liItr->isEnd(), riItr->isEnd());
-
-			//	++(*lbItr);
-			//	++(*rbItr);
-			//}
-
-			//EXPECT_EQ(lbItr->isEnd(), rbItr->isEnd());
 
 			++(*lcItr);
 			++(*rcItr);
@@ -258,9 +276,10 @@ namespace data2D_tempTest
 using value_type = char;
 
 static const size_t dataLength = 16;
-static const size_t dimX = 8;
+static const size_t dimX = 4;
 static const size_t dimY = 4;
 static const size_t wtLevel = 0;
+static const size_t mmtLevel = 0;
 static const arrayId aid = 9991;
 
 extern std::vector<dim_type> dims;
@@ -283,6 +302,15 @@ std::vector<pArray> getSourceArray()
 	return arrs;
 }
 
+template<class Aty_ = memBlockArray>
+std::vector<pArray> getSourceArrayDesc()
+{
+	std::vector<pArray> arrs(
+		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_>(aid, "data2D_tempTest", dims, chunkDims, blockDims, eleType::CHAR)) });
+	return arrs;
+}
+
+void getSourceArrayDesc(std::vector<pArray>& sourceArr);
 void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
 }
 
@@ -322,29 +350,8 @@ std::vector<pArray> getSourceArray()
 }
 
 void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
-}
-
-// signed integer
-namespace data2D_si8x8
-{
-using value_type = int;
-
-static const size_t dataLength = 64;
-static const size_t dimX = 8;
-static const size_t dimY = 8;
-static const size_t wtLevel = 2;
-static const arrayId aid = 882;
-
-extern std::vector<dim_type> dims;
-extern std::vector<dim_type> chunkDims;
-extern std::vector<dim_type> chunkNums;
-
-void getDummy(char* output, size_t length);
-void getWTDummy(char* output, size_t length);
-void getExDummy(char* output, size_t length);
-void getExMMTBuilded(char* output, size_t length);
-}	// data2D_si8x8
-}
-}
+}	// data2D_sc8x8
+}	// caDummy
+}	// msdb
 
 #endif	//_MSDB_DUMMY_H_

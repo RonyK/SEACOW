@@ -22,7 +22,7 @@ mmt_build_array_pset::mmt_build_array_pset(parameters& pSet)
 	: opArrayParamSet(pSet)
 {
 	assert(this->params_.size() == 2);
-	assert(this->params_[1]->type() == opParamType::CONST);		// Target level
+	assert(this->params_[1]->type() == opParamType::CONST);		// Target refine level
 }
 
 pArrayDesc mmt_build_array_pset::inferSchema()

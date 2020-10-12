@@ -222,12 +222,12 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
 		sourceArr = getSourceArray();
 	}
 }
-}
+}	// data2D_sc4x4
 
 namespace data2D_tempTest
 {
 std::vector<dim_type> dims = { dimY, dimX };
-std::vector<dim_type> chunkNums = { 2, 2 };
+std::vector<dim_type> chunkNums = { 1, 1 };
 std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
 
 std::vector<dim_type> blockNums = { 1, 1 };
@@ -236,10 +236,10 @@ std::vector<dim_type> blockDims = { chunkDims[0] / blockNums[0], chunkDims[1] / 
 void getDummy(value_type* output, size_t length)
 {
 	const static value_type arr[][4] = {
-		{-122,	-120,	-118,	-118},
-		{-120,	-124,	-123,	-123},
-		{-84,	127,	-123,	-123},
-		{-92,	-19,	-111,	-123}
+		{3, 3, 2, 2},
+		{3, 3, 2, 4},
+		{4, 14, 13, 4},
+		{4, 2, 3, 12}
 	};
 
 	for (int y = 0; y < 4; y++)
@@ -251,6 +251,11 @@ void getDummy(value_type* output, size_t length)
 	}
 }
 
+void getSourceArrayDesc(std::vector<pArray>& sourceArr)
+{
+	sourceArr = getSourceArrayDesc();
+}
+
 void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
 {
 	if (sourceArr.empty())
@@ -258,7 +263,7 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
 		sourceArr = getSourceArray();
 	}
 }
-}
+}	// data2D_tempTest
 
 namespace data2D_sc8x8
 {
@@ -388,83 +393,5 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
 	}
 }
 }
-
-namespace data2D_si8x8
-{
-std::vector<dim_type> dims = { 8, 8 };
-std::vector<dim_type> chunkDims = { 2, 2 };
-std::vector<dim_type> chunkNums = { 4, 4 };
-
-void getDummy(value_type* output, size_t length)
-{
-	const static value_type arr[dimY][dimX] = {
-		{105, 91, 94, 66,		6, 26, 52, 40	},
-		{115, 101, 74, 50,		4, 32, -40, -56	},
-		{108, 100, 75, 71,		24, 12, -1, 3	},
-		{100, 96, 79, 67,		30, 18, -3, -3	},
-		{115, 103, 93, 103,		62, 54, 54, 38	},
-		{109, 101, 95, 113,		48, 44, 64, 44	},
-		{118, 110, 105, 107,	63, 59, 63, 57	},
-		{108, 100, 81, 87,		55, 47, 49, 47	}
-	};
-
-	for (int y = 0; y < dimY; y++)
-	{
-		for (int x = 0; x < dimX; x++)
-		{
-			output[y * dimX + x] = arr[y][x];
-		}
-	}
-}
-
-void getWTDummy(value_type* output, size_t length)
-{
-	//assert(length == dimY * dimX);
-	// Wavelet represent array as a band-wise fashion
-	//const static value_type arr[dimY][dimY / 2][dimX / 2] = {
-	//	{ {6, 4}, {4, 2}},
-	//	{ {1, 1}, {3, 1}},
-	//	{ {2, 0}, {1, 0}},
-	//	{ {0, 1}, {0, 1}}
-	//};
-
-	// In multi-dimensional fashion
-	//{
-	//	{6, 4, 1, 1 },
-	//	{4, 2, 3, 1 },
-	//	{2, 0, 0, 1 },
-	//	{1, 0, 0, 1 }
-	//};
-
-	//const value_type* seqArr = (value_type*)arr;
-
-	//for (int i = 0; i < dimY * dimX; i++)
-	//{
-	//	output[i] = seqArr[i];
-	//}
-}
-
-void getExSerialMMT(value_type* output, size_t length)
-{
-	assert(length > 21);
-	const static value_type arr[21] = {
-		0x00, 0x00, 0x00, 0x76, 0xFF,
-		0xFF, 0xFF, 0xC8, 0x0C, 0x10,
-		0x0D, 0x0C, 0x40, 0x90, 0x05,
-		0x1A, 0x44, 0x18, 0x58, 0x18,
-		0x5A
-	};
-
-	for (size_t i = 0; i < 21; i++)
-	{
-		output[i] = arr[i];
-	}
-}
-
-void getExDummy(value_type* output, size_t length)
-{
-	// TODO :: Implement getExDummy()
-}
-}
-}
-}
+}	// caDummy
+}	// msdb

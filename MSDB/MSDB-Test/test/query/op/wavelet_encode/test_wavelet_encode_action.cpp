@@ -198,7 +198,7 @@ void test_body_wavelet_encode_decode(_pFuncGetSourceArray_, eleDefault wtLevel)
 }
 namespace data2D_sc4x4
 {
-TEST(query_op_wavelet_encode, waveletHaarSimple_sc4x4)
+TEST(query_op_wavelet_encode, sc4x4_waveletHaarSimple)
 {
 	test_body_wavelet_encode_decode<value_type>(&getSourceArrayIfEmpty, wtLevel);
 }
@@ -206,7 +206,7 @@ TEST(query_op_wavelet_encode, waveletHaarSimple_sc4x4)
 
 namespace data2D_star1024x1024
 {
-TEST(query_op_wavelet_encode, wavelet_encode_star1024x1024)
+TEST(query_op_wavelet_encode, star1024x1024_wavelet_encode)
 {
 	test_body_wavelet_encode_decode<value_type>(&getSourceArrayIfEmpty, wtLevel);
 }
@@ -214,7 +214,7 @@ TEST(query_op_wavelet_encode, wavelet_encode_star1024x1024)
 
 namespace data2D_tempTest
 {
-TEST(query_op_wavelet_encode, wavelet_encode_testTemp)
+TEST(query_op_wavelet_encode, testTemp_wavelet_encode)
 {
 	std::vector<pArray> sourceArr;
 	getSourceArrayIfEmpty(sourceArr);

@@ -89,8 +89,10 @@ private:
 		{
 			coorRange arrRange = outChunkDesc->blockDims_ / pow(2, level);
 			this->levelEncode<Ty_>(outChunk, arrRange, w, level, q);
-			//std::cout << "Level Encode" << std::endl;
-			//outChunk->print();
+#ifndef NDEBUG
+			//BOOST_LOG_TRIVIAL(trace) << "wtEncode level: " << level;
+			//outChunk->getBlock(0)->print();
+#endif
 		}
 		return outChunk;
 	}
@@ -103,6 +105,10 @@ private:
 		for(dimensionId d = 0; d < dSize; ++d)
 		{
 			this->dimensionEncode<Ty_>(outChunk, arrRange, d, w, q);
+#ifndef NDEBUG
+			//BOOST_LOG_TRIVIAL(trace) << "wtEncode dimension: " << d;
+			//outChunk->getBlock(0)->print();
+#endif
 		}
 	}
 

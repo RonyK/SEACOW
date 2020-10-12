@@ -24,3 +24,5 @@
 #include <dummy/opPlanDummy.h>
 #include <dummy/dummy_astronomy.h>
 
+static const int se_array_id = 2;
+static const int delta_spiht_array_id = 3;

@@ -7,6 +7,6 @@
 
 namespace msdb
 {
-coorRange getBandRange(size_t bandId, coor& bandDims);
+coorRange getBandRange(const size_t bandId, const coor& bandDims);
 }		// msdb
 #endif	// _MSDB_WAVELETUTIL_H_

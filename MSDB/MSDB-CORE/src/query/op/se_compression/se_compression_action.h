@@ -73,67 +73,38 @@ private:
 		size_t dSize = inChunk->getDSize();
 		pSeChunk outChunk = this->makeOutChunk(inChunk);
 
-		coor chunkCoor = inChunk->getChunkCoor();
-		//auto mNode = mmtIndex->getNode(inChunk->getId(), 0);
-		auto mNode = mmtIndex->getNode(chunkCoor, 0);
-		outChunk->rBitFromMMT = getRBitFromMMT(mNode) + static_cast<char>(hasNegative);
-
-		BOOST_LOG_TRIVIAL(trace) << "Chunkcoor: " << chunkCoor.toString() << " / MMT NODE: " << mNode->toString<Ty_>();
-		assert(outChunk->rBitFromMMT <= sizeof(Ty_) * CHAR_BIT);
+#ifndef NDEBUG
+		//BOOST_LOG_TRIVIAL(trace) << "Chunkcoor: " << chunkCoor.toString() << " / MMT NODE: " << mNode->toString<Ty_>();
+		//assert(outChunk->rBitFromMMT <= sizeof(Ty_) * CHAR_BIT);
+#endif
 
 		pBlock outBlock = outChunk->getBlock(0);
 		size_t numBandsInLevel = std::pow(2, dSize) - 1;
 		dimension inBlockDims = inChunk->getDesc()->getBlockDims();
 		dimension bandDims = inBlockDims / std::pow(2, inChunk->getLevel() + 1);
 
-		// Do band 0 in max level
-		{
-			bit_cnt_type requiredBits = this->compressBand<Ty_>(outBlock, getBandRange(0, bandDims)) + static_cast<char>(hasNegative);
-			outChunk->rBitFromDelta.push_back(requiredBits);
-#ifndef NDEBUG
-			if (requiredBits > outChunk->rBitFromMMT)
-			{
-				BOOST_LOG_TRIVIAL(warning) << "CompressChunk()=> requriedBits: " << static_cast<int64_t>(requiredBits) << ", "
-					<< "rBitFromMMT: " << static_cast<int64_t>(outChunk->rBitFromMMT) << "\n"
-					<< "MMT NODE: " << mNode->toString<Ty_>();
-			}
-			assert(requiredBits <= outChunk->rBitFromMMT);
-#endif
-		}
-		
-		for(size_t level = 0; level <= inChunk->getLevel(); ++level)
-		{
-			for(size_t band = 1; band <= numBandsInLevel; ++band)
-			{
-				bit_cnt_type requiredBits = this->compressBand<Ty_>(outBlock, getBandRange(band, bandDims)) + static_cast<char>(hasNegative);
-				outChunk->rBitFromDelta.push_back(requiredBits);
+		// For Level 0
+		this->findRequiredBitsForRootLevel(outChunk, outBlock, 
+										   mmtIndex, 
+										   bandDims, 
+										   numBandsInLevel, hasNegative);
 
-#ifndef NDEBUG
-				if(requiredBits > outChunk->rBitFromMMT)
-				{
-					BOOST_LOG_TRIVIAL(warning) << "CompressChunk()=> requriedBits: " << static_cast<int64_t>(requiredBits) << ", " 
-						<< "rBitFromMMT: " << static_cast<int64_t>(outChunk->rBitFromMMT) << "\n"
-						<< "MMT NODE: " << mNode->toString<Ty_>();
-					BOOST_LOG_TRIVIAL(warning) << "Chunkcoor: " << chunkCoor.toString();
-					outBlock->print();
-				}
-				assert(requiredBits <= outChunk->rBitFromMMT);
-#endif
-			}
-			
-			bandDims *= 2;
-		}
+		// For child level
+		this->findRequiredBitsForChildLevel(outChunk, outBlock, 
+											mmtIndex,
+											bandDims, inChunk->getLevel(),
+											numBandsInLevel, hasNegative);
 
 		return outChunk;
 	}
 
 	template <class Ty_>
-	bit_cnt_type compressBand(pBlock curBlock, const coorRange& bandRange)
+	bit_cnt_type findRequiredBits(pBlock curBlock, const coorRange& bandRange)
 	{
 		auto bItemItr = curBlock->getItemRangeIterator(bandRange);
 		bit_cnt_type maxValueBits = 0;
 #ifndef NDEBUG
-		Ty_ maxValue;
+		Ty_ maxValue = 0;
 #endif
 
 		while(!bItemItr->isEnd())
@@ -151,10 +122,115 @@ private:
 		}
 
 #ifndef NDEBUG
-		BOOST_LOG_TRIVIAL(trace) << "Max value: " << static_cast<int>(maxValue) << ", maxValueBits: " << static_cast<int>(maxValueBits);
+		//BOOST_LOG_TRIVIAL(trace) << "Max value: " << static_cast<int>(maxValue) << ", maxValueBits: " << static_cast<int>(maxValueBits);
 #endif
 		return maxValueBits;
 	}
+
+	template <class Ty_>
+	void findRequiredBitsForRootLevel(pSeChunk outChunk, pBlock outBlock,
+									  std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex, 
+									  const dimension& bandDims, const size_t numBandsInLevel, 
+									  const bool hasNegative)
+	{
+		auto chunkCoor = outChunk->getChunkCoor();
+		auto blockLevel = mmtIndex->getBlockLevel();
+		auto mNode = mmtIndex->getNode(chunkCoor, blockLevel);
+		bit_cnt_type fromMMT = getRBitFromMMT(mNode, hasNegative);
+
+		for (size_t band = 0; band <= numBandsInLevel; ++band)
+		{
+			bit_cnt_type requiredBits = this->findRequiredBits<Ty_>(outBlock, getBandRange(band, bandDims)) + static_cast<char>(hasNegative);
+			outChunk->rBitFromDelta.push_back(requiredBits);
+			outChunk->rBitFromMMT.push_back(fromMMT);
+
+#ifndef NDEBUG
+			//BOOST_LOG_TRIVIAL(trace) << "chunk: " << static_cast<int64_t>(outChunk->getId()) << ", level: " << static_cast<int>(0) << ", band: " << static_cast<int>(band);
+			//BOOST_LOG_TRIVIAL(trace) << mNode->toString<Ty_>();
+#endif
+
+			//assert(requiredBits <= fromMMT);
+		}
+	}
+
+	template <class Ty_>
+	void findRequiredBitsForChildLevel(pSeChunk outChunk, pBlock outBlock,
+									   std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex, 
+									   const dimension& bandDims, 
+									   const size_t maxLevel,
+									   const size_t numBandsInLevel, 
+									   const bool hasNegative)
+	{
+		auto dSize = bandDims.size();
+		for (size_t level = 1; level <= maxLevel; ++level)
+		{
+			auto innerSize = pow(2, level);
+			dimension innerSpace = dimension(dSize, innerSize);
+			coorItr innerItr(innerSpace);
+			auto blockLevel = mmtIndex->getBlockLevel();
+			while (!innerItr.isEnd())
+			{
+				coor innerCoor(innerItr.coor() + outChunk->getChunkCoor() * innerSpace);
+				auto mNode = mmtIndex->getNode(innerCoor, blockLevel - level);
+				bit_cnt_type rbFromMMT = getRBitFromMMT(mNode, hasNegative);
+				for (size_t band = 1; band <= numBandsInLevel; ++band)
+				{
+					dimension targetSp = getBandRange(band, bandDims * pow(2, level)).getSp() + innerItr.coor() * bandDims;
+					dimension targetEp = targetSp + bandDims;
+
+					bit_cnt_type rbFromDelta = this->findRequiredBits<Ty_>(outBlock, coorRange(targetSp, targetEp)) + static_cast<char>(hasNegative);
+					outChunk->rBitFromDelta.push_back(rbFromDelta);
+					outChunk->rBitFromMMT.push_back(rbFromMMT);
+
+#ifndef NDEBUG
+					//BOOST_LOG_TRIVIAL(trace) << "level: " << static_cast<int>(level) << ", band: " << static_cast<int>(band);
+					//if(band == 1)
+					//{
+					//	// band 1, 2, 3 has same mmtnode
+					//	BOOST_LOG_TRIVIAL(trace) << mNode->toString<Ty_>();
+					//}
+
+					//if(rbFromDelta > rbFromMMT)
+					//{
+					//	BOOST_LOG_TRIVIAL(warning) << "rBitFromMMT: " << static_cast<int>(rbFromMMT) << "/ from Delta: " << static_cast<int>(rbFromDelta);
+					//	BOOST_LOG_TRIVIAL(warning) << mNode->toString<Ty_>();
+					//	BOOST_LOG_TRIVIAL(warning) << "chunk: " << static_cast<int64_t>(outChunk->getId())
+					//		<< ", level: " << static_cast<int>(level) << ", band: " << static_cast<int>(band) 
+					//		<< ", innerCoor: " << innerCoor.toString() << ", innerSpace: " << innerSpace.toString();
+					//	BOOST_LOG_TRIVIAL(warning) << mNode->toString<Ty_>();
+					//	BOOST_LOG_TRIVIAL(warning) << "range: " << targetSp.toString() << "~" << targetEp.toString();
+					//	auto iit = outBlock->getItemRangeIterator(coorRange(targetSp, targetEp));
+					//	std::stringstream ss;
+					//	while(!iit->isEnd())
+					//	{
+					//		ss << static_cast<int64_t>((**iit).get<Ty_>()) << ", ";
+					//		++(*iit);
+					//	}
+					//	BOOST_LOG_TRIVIAL(debug) << ss.str();
+
+					//	//assert(rbFromDelta <= rbFromMMT);
+					//}
+#endif
+				}
+
+				++innerItr;
+			}
+		}
+	}
+
+	//template <class Ty_>
+	//void assertRequiredBits(bit_cnt_type rbFromDelta, bit_cnt_type rbFromMMT, const coor& chunkCoor, pMmtNode mNode, pBlock outBlock)
+	//{
+	//	//if (rbFromDelta > rbFromMMT)
+	//	//{
+	//	//	BOOST_LOG_TRIVIAL(warning) << "CompressChunk()=> requriedBits: " << static_cast<int64_t>(rbFromDelta) << ", "
+	//	//		<< "rBitFromMMT: " << static_cast<int64_t>(rbFromMMT) << "\n"
+	//	//		<< "MMT NODE: " << mNode->toString<Ty_>();
+	//	//	BOOST_LOG_TRIVIAL(warning) << "Chunkcoor: " << chunkCoor.toString();
+	//	//	outBlock->print();
+	//	//}
+	//	//assert(rbFromDelta <= rbFromMMT);
+	//}
 };
 }	// msdb
 #endif		// _MSDB_OP_SE_COMPRESSION_ACTION_H_

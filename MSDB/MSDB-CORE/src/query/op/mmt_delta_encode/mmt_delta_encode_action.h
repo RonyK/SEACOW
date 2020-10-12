@@ -67,7 +67,8 @@ void mmt_delta_encode_action::chunkEncode(pChunk outChunk, pChunk inChunk,
 	{
 		auto iit = (**ibItr)->getItemIterator();
 		auto oit = (**obItr)->getItemIterator();
-		auto node = mmtIndex->getNode(inChunk->getDesc()->chunkCoor_, ibItr->coor());
+		auto node = mmtIndex->getNode(inChunk->getDesc()->chunkCoor_, ibItr->coor(), mmtIndex->getBlockLevel());
+		Ty_ nodeMin = node->getMin<Ty_>();
 
 #ifndef NDEBUG
 		Ty_ min_ = (**iit).get<Ty_>();
@@ -78,14 +79,14 @@ void mmt_delta_encode_action::chunkEncode(pChunk outChunk, pChunk inChunk,
 		while (!iit->isEnd())
 		{
 			auto inValue = (**iit).get<Ty_>();
-			auto outValue = inValue - node->getMin<Ty_>();
+			auto outValue = inValue - nodeMin;
 			(**oit).set<Ty_>(outValue);
 #ifndef NDEBUG
-			assert(outValue >= 0);
-			if (min_ > outValue)
-				min_ = outValue;
-			if (max_ < outValue)
-				max_ = outValue;
+			//assert(outValue >= 0);
+			//if (min_ > outValue)
+			//	min_ = outValue;
+			//if (max_ < outValue)
+			//	max_ = outValue;
 #endif
 
 			++(*iit);
@@ -93,7 +94,7 @@ void mmt_delta_encode_action::chunkEncode(pChunk outChunk, pChunk inChunk,
 		}
 
 #ifndef NDEBUG
-		BOOST_LOG_TRIVIAL(trace) << "Delta encode " << inChunk->getDesc()->chunkCoor_.toString() << "|" << ibItr->coor().toString() << "=> min: " << static_cast<int64_t>(min_) << ", max: " << static_cast<int64_t>(max_) << ", mmt: " << node->toString<Ty_>();
+		//BOOST_LOG_TRIVIAL(trace) << "Delta encode " << inChunk->getDesc()->chunkCoor_.toString() << "|" << ibItr->coor().toString() << "=> min: " << static_cast<int64_t>(min_) << ", max: " << static_cast<int64_t>(max_) << ", mmt: " << node->toString<Ty_>();
 #endif
 
 		++(*ibItr);

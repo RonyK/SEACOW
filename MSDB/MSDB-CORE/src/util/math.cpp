@@ -42,11 +42,15 @@ int64_t intDivCeil(int64_t li, int64_t ri)
 
 unsigned long long calcMaxLimit(bit_cnt_type bits)
 {
-	return  ~((unsigned long long)1 & 0) >> (sizeof(unsigned long long) * CHAR_BIT - bits);
+	if(bits)
+		return  ~((unsigned long long)1 & 0) >> (sizeof(unsigned long long) * CHAR_BIT - bits);
+	return 0;
 }
 
 unsigned long long calcMinLimit(bit_cnt_type bits)
 {
-	return (unsigned long long)1 << (bits - 1);
+	if(bits)
+		return (unsigned long long)1 << (bits - 1);
+	return 0;
 }
 }
