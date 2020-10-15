@@ -62,6 +62,6 @@ public:
 		}
 	}
 };
-}
+}	// msdb
 
 #endif

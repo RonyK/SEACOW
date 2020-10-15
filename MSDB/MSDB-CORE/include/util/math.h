@@ -75,6 +75,19 @@ bit_cnt_type getPrefixPosForPrevLimit(Ty_ prevLimit, bit_cnt_type order)
 
 	Ty_ absPrevLimit = abs_(prevLimit);
 	sig_bit_type bits = msb<Ty_>(absPrevLimit);
+	Ty_ v = 0x1 << (sizeof(Ty_) * 8 - 1);
+	if (absPrevLimit == v)
+	{
+		// For sign values:
+		// Char type(8 bits)
+		// -128 = 1000 0000
+		//        N|------|
+		// msb should be 7 not 8.
+		// 8th bit is a sign bit, not significant bit.
+
+		return sizeof(Ty_) * 8 + 1 - order;
+	}
+
 	Ty_ mask = (unsigned long long)1 << (bits - 1);
 	size_t prefixPos = bits;
 
@@ -217,12 +230,12 @@ Ty_ getMinBoundary(Ty_ prevLimit, bit_cnt_type order, sig_bit_type sigBitPos)
 	}
 
 #ifndef NDEBUG
-	if(SIGN(prevLimit) != SIGN(sigBitPos))
+	if(sigBitPos != 0 && SIGN(prevLimit) != SIGN(sigBitPos))
 	{
 		BOOST_LOG_TRIVIAL(warning) << "prevLimit: " << prevLimit << ", sigBitPos: " << sigBitPos;
 	}
 #endif
-	assert(SIGN(prevLimit) == SIGN(sigBitPos));
+	assert(sigBitPos == 0 || SIGN(prevLimit) == SIGN(sigBitPos));
 	if (prevLimit == 0)
 	{
 		return 0;
