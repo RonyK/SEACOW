@@ -24,7 +24,7 @@ public:
 	sig_bit_type bMin_;			// significant nit of min value
 	bit_cnt_type bMaxDelta_;	// bMax_ delta from a parent node
 	bit_cnt_type bMinDelta_;	// bMin_ delta from a parent node
-	bit_cnt_type order_;		// n th significant nit
+	bit_cnt_type order_;		// n th significant bit
 	bit_cnt_type bits_;			// required bits to represent min/max value
 	bit_cnt_type vBits_;		// required bits to represent value Ty_
 	boost::any max_;

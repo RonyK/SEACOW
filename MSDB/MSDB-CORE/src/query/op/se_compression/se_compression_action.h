@@ -4,6 +4,7 @@
 
 #include <stdafx.h>
 #include <array/arrayMgr.h>
+#include <array/block.h>
 #include <array/memBlock.h>
 #include <system/storageMgr.h>
 #include <compression/wtChunk.h>
