@@ -6,6 +6,7 @@
 #include <array/array.h>
 #include <index/mmtNode.h>
 #include <io/serializable.h>
+#include <index/attributeIndex.h>
 #include <util/coordinate.h>
 #include <util/logger.h>
 #include <utility>
@@ -538,9 +539,17 @@ protected:
 
 			bool isLastBit = (bit_cnt_type)prevNode->order_ + 1 >= TyBits_;
 			bool orderChanged = (prevNode->bMax_ == prevNode->bMin_);	// if bMax_ == bMin_, move on to the next most significant nit
-			bit_cnt_type bits = orderChanged ?
-				msb<sig_bit_type>(abs_(prevNode->bMax_) - 1) :			// decreases a required bits
-				msb<sig_bit_type>(prevNode->bMax_ - prevNode->bMin_);	// calculate a required bits from prev node
+			int bitDelta = 0;
+
+			if(orderChanged)
+			{
+				bitDelta = -1;
+			}
+
+			//int bitDelta = orderChanged ?
+				//-1 :			// decreases a required bits
+				//0;				// same bit
+				//msb<sig_bit_type>(prevNode->bMax_ - prevNode->bMin_);	// calculate a required bits from prev node
 
 			// Iterate childs
 			for (size_type cID = 0; cID < childs; cID++)
@@ -559,12 +568,12 @@ protected:
 				// Update
 				pMmtNode cNode = (*cit);
 				cNode->parent_ = prevNode;
-				backwardUpdateNode(prevNode, cNode, isLastBit, orderChanged, bits);
+				backwardUpdateNode(prevNode, cNode, isLastBit, orderChanged, bitDelta);
 			}
 		}
 	}
 
-	void backwardUpdateNode(pMmtNode prevNode, pMmtNode curNode, bool isLastBit, bool orderChanged, bit_cnt_type bits)
+	void backwardUpdateNode(pMmtNode prevNode, pMmtNode curNode, bool isLastBit, bool orderChanged, int bitDelta)
 	{
 		if (orderChanged)
 		{
@@ -581,7 +590,7 @@ protected:
 			} else
 			{
 				// Move to next significant bit
-				curNode->bits_ = bits;
+				curNode->bits_ = prevNode->bits_ - bitDelta;
 				curNode->order_ = prevNode->order_ + 1;
 				curNode->setMinMaxBits<Ty_>();
 				curNode->bMaxDelta_ = std::max({ abs_(prevNode->bMax_ - curNode->bMax_) - 1, 0 });
@@ -591,7 +600,7 @@ protected:
 		} else
 		{
 			// Order not changed
-			curNode->bits_ = bits;
+			curNode->bits_ = prevNode->bits_ - bitDelta;
 			curNode->order_ = prevNode->order_;
 			curNode->setMinMaxBits<Ty_>();
 			curNode->bMaxDelta_ = static_cast<bit_cnt_type>(prevNode->bMax_ - curNode->bMax_);	// max: prev >= cur

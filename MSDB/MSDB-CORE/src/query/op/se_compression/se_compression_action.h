@@ -142,6 +142,7 @@ private:
 		for (size_t band = 0; band <= numBandsInLevel; ++band)
 		{
 			bit_cnt_type requiredBits = this->findRequiredBits<Ty_>(outBlock, getBandRange(band, bandDims)) + static_cast<char>(hasNegative);
+			
 			outChunk->rBitFromDelta.push_back(requiredBits);
 			outChunk->rBitFromMMT.push_back(fromMMT);
 
@@ -179,7 +180,11 @@ private:
 					dimension targetSp = getBandRange(band, bandDims * pow(2, level)).getSp() + innerItr.coor() * bandDims;
 					dimension targetEp = targetSp + bandDims;
 
-					bit_cnt_type rbFromDelta = this->findRequiredBits<Ty_>(outBlock, coorRange(targetSp, targetEp)) + static_cast<char>(hasNegative);
+					bit_cnt_type rbFromDelta = this->findRequiredBits<Ty_>(outBlock, coorRange(targetSp, targetEp));
+					if(rbFromDelta > 0)
+					{
+						rbFromDelta += static_cast<char>(hasNegative);
+					}
 					outChunk->rBitFromDelta.push_back(rbFromDelta);
 					outChunk->rBitFromMMT.push_back(rbFromMMT);
 
