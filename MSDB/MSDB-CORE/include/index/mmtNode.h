@@ -31,6 +31,8 @@ public:
 	boost::any min_;
 	boost::any realMax_;
 	boost::any realMin_;
+	bool finished_;
+
 	// For Test
 	dimension chunkCoor_;
 	dimension blockCoor_;
@@ -41,7 +43,7 @@ public:
 public:
 	mmtNode() : bMax_(0), bMin_(0), bits_(0x80), order_(1),
 		bMaxDelta_(0), bMinDelta_(0), max_(0), min_(0),
-		realMin_(0), realMax_(0),
+		realMin_(0), realMax_(0), finished_(false),
 		chunkCoor_(1), blockCoor_(1), nodeCoor_(1), seqPos_(0)
 	{
 	}
@@ -58,11 +60,84 @@ public:
 		bs << setw(this->bits_) << this->bMaxDelta_ << this->bMinDelta_;
 	}
 
+	inline void inChildOrderChanged(bstream& bs)
+	{
+		bit_cnt_type orderChangedDelta = 0;
+		bs >> setw(this->bits_) >> orderChangedDelta;
+		this->childOrder_ = this->order_ + orderChangedDelta;
+	}
+
+	inline void outChildOrderChanged(bstream& bs)
+	{
+		if(this->childOrder_ > this->order_)
+		{
+			// next order
+			bs << setw(this->bits_) << this->childOrder_ - this->order_;
+		}else
+		{
+			// cur node is last, end
+			bs << setw(this->bits_) << 0x1;
+		}
+	}
+
+	template <typename Ty_>
+	inline void inJumpedBits(bstream& bs, bit_cnt_type jumpBits, Ty_ jumpValue)
+	{
+		jumpBits = 0;
+		jumpValue = 0;
+		bit_cnt_type orderDelta = this->childOrder_ - this->order_;
+		char inBit = 0;
+
+		// make jumpBits
+		while(orderDelta)
+		{
+			++jumpBits;
+			inBit = 0;
+			bs >> setw(1) >> inBit;
+			jumpValue << 1;
+			jumpValue |= inBit;
+
+			if(inBit)
+			{
+				--orderDelta;
+			}
+		}
+
+		// erase last significant bit
+		jumpValue >>= 1;
+		--jumpBits;;
+
+		// make to original value
+		assert(this->bMax_ - jumpBits - 1 > 0);
+		jumpValue <<= sizeof(Ty_) * CHAR_BIT - this->bMax_ - 1;
+	}
+
+	template <typename Ty_>
+	inline void outJumpedBits(bstream& bs, bit_cnt_type posJumpEnd)
+	{
+		// make mask
+		Ty_ mask = (Ty_)-1;
+		mask >>= sizeof(Ty_) * CHAR_BIT - this->bMax_;
+
+		if(posJumpEnd)
+		{
+			// next order
+			Ty_ jumpValue = (this->getRealMax<Ty_>() >> (posJumpEnd - 1)) & mask;
+			bs << setw(this->bMax_ - posJumpEnd + 1) << jumpValue;
+		}else
+		{
+			// cur node is last, end
+			Ty_ jumpValue = this->getRealMax<Ty_>() & mask;
+			bs << setw(this->bMax_ - posJumpEnd + 1) << jumpValue;
+			bs << setw(1) << 0x1;
+		}
+	}
+
 	template <typename Ty_>
 	inline void inMinMax(bstream& bs)
 	{
 		Ty_ min, max;
-		bs >> setw(sizeof(Ty_) * CHAR_BIT) >> min >> max;
+		bs >> setw(this->bits_) >> min >> max;
 		this->min_ = min;
 		this->max_ = max;
 		this->realMin_ = min;
@@ -89,7 +164,7 @@ public:
 	{
 		this->bMax_ = msb<Ty_>(abs_(boost::any_cast<Ty_>(max_)), this->order_) * SIGN(boost::any_cast<Ty_>(max_));
 		this->bMin_ = msb<Ty_>(abs_(boost::any_cast<Ty_>(min_)), this->order_) * SIGN(boost::any_cast<Ty_>(min_));
-
+		
 #ifndef NDEBUG
 		if(this->bMax_ < 0 || this->bMin_ < 0)
 		{
