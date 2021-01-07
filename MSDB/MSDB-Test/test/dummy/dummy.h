@@ -76,7 +76,17 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 					for (int ix = 0; ix < blockDims[1]; ++ix)
 					{
 						size_t seqPos = (y * chunkDims[0] + blockCoor[0] * blockDims[0] + iy) * dims[1] + (x * chunkDims[1] + blockCoor[1] * blockDims[1] + ix);
-						(**it).setChar(static_cast<Ty_>(data[seqPos]));
+						(**it).setChar(static_cast<Ty_>(
+							data[seqPos]));
+
+#ifndef NDEBUG
+						/*if(data[seqPos] / 2 < 0)
+						{
+							BOOST_LOG_TRIVIAL(warning) << "at: " << seqPos << "(" << x << "," << y << ")|(" << ix << "," << iy << ")=>" << static_cast<int64_t>(data[seqPos]) << ", " << static_cast<int64_t>(data[seqPos]);
+						}
+
+						assert(data[(y * chunkDims[0] + blockCoor[0] * blockDims[0] + iy) * dims[1] + (x * chunkDims[1] + blockCoor[1] * blockDims[1] + ix)] / 2 >= 0);*/
+#endif
 						++(*it);
 					}
 				}

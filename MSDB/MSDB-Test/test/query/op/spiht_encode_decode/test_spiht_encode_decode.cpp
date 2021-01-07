@@ -28,8 +28,8 @@ pArray test_qry_ind_spiht_encode_decode(_pFuncGetSourceArray_, eleDefault wtLeve
 	qry_exe_ind_spiht_encode<value_type>(sourceArr, wtLevel, printFlag);
 	auto outArr = qry_exe_ind_spiht_decode<value_type>(sourceArr, wtLevel, printFlag);
 
-	compArrary<value_type>(sourceArr[0], outArr);
-	BOOST_LOG_TRIVIAL(debug) << "Array: " << sourceArr[0]->getDesc()->name_;
+	//compArrary<value_type>(sourceArr[0], outArr);
+
 	return outArr;
 }
 

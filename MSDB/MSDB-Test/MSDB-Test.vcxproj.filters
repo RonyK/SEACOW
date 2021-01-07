@@ -41,6 +41,7 @@
     <ClCompile Include="test\compression\test_action_compression.cpp" />
     <ClCompile Include="test\index\test_action_mmt.cpp" />
     <ClCompile Include="test\io\test_action_io.cpp" />
+    <ClCompile Include="test\query\op\between\test_between.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">
