@@ -60,4 +60,4 @@ private:
 };
 }
 
-#endif // !_MSDB_TIMER_H_
+#endif // _MSDB_TIMER_H_

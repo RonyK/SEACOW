@@ -218,10 +218,18 @@ public:
 		}
 
 		this->serializeRoot(bs);
+		size_t nodeNums = 0;
+		BOOST_LOG_TRIVIAL(debug) << "root: " << this->nodes_[maxLevel].size();
+		nodeNums += this->nodes_[maxLevel].size();
+
 		for (size_type l = maxLevel - 1; l != (size_type)-1; l--)
 		{
 			this->serializeNonRoot(bs, l);
+			BOOST_LOG_TRIVIAL(debug) << "level" << l << ": " << this->nodes_[l].size();
+			nodeNums += this->nodes_[l].size();
 		}
+		BOOST_LOG_TRIVIAL(debug) << "Total Nodes: " << nodeNums;
+
 		this->serializedSize_ = bs.capacity();	// set serialized size
 	}
 
@@ -615,7 +623,6 @@ protected:
 			//curNode->childOrder_ = prevNode->childOrder_;	// order not changed -> child node order sustained
 		}
 
-
 //#ifndef NDEBUG
 //		Ty_ tMax = curNode->getMax<Ty_>();
 //		Ty_ tMin = curNode->getMin<Ty_>();
@@ -644,9 +651,6 @@ protected:
 
 				min_ = (Ty_)((prefixMask & min_) | (jumpMask & realMin_));
 				max_ = (Ty_)((prefixMask & max_) | (jumpMask & realMax_));
-
-				//Ty_ childOrderMin_ = getMinBoundary<Ty_>(min_, curNode->childOrder_, msb<Ty_>(realMin_, curNode->childOrder_));
-				//Ty_ childOrderMax_ = getMaxBoundary<Ty_>(max_, curNode->childOrder_, msb<Ty_>(realMax_, curNode->childOrder_));
 
 				if(max_ >= 0)
 				{
@@ -856,61 +860,6 @@ protected:
 
 			deserializeUpdateNode(bs, prevNode, curNode, isFinished(prevNode));
 
-
-//			/////////////////////////////////////////////////////////////
-//			curNode->bits_ =
-//				orderChanged ?
-//				msb<sig_bit_type>(abs_(prevNode->bMax_) - 1) :
-//				msb<sig_bit_type>(prevNode->bMax_ - prevNode->bMin_);
-//
-//			curNode->inDelta(bs);		// after set required bits, read delta data from bstream
-//
-//			if (orderChanged)
-//			{
-//				if ((size_type)prevNode->order_ + 1 < TyBits_)
-//				{
-//					// Move to next significant bit
-//					curNode->order_ = prevNode->order_ + 1;
-//					curNode->bMax_ = prevNode->bMax_ - curNode->bMaxDelta_ - 1;
-//					curNode->bMin_ = prevNode->bMin_ + curNode->bMinDelta_ - 1;
-//#ifndef NDEBUG
-//					if(curNode->bMax_ < 0 || curNode->bMin_ < 0)
-//					{
-//						BOOST_LOG_TRIVIAL(warning) << "bMax: " << curNode->bMax_ << ", bMin: " << curNode->bMin_;
-//					}
-//#endif
-//
-//					curNode->max_ = getMaxBoundary<Ty_>(prevNode->getMax<Ty_>(), curNode->order_, curNode->bMax_);
-//					curNode->min_ = getMinBoundary<Ty_>(prevNode->getMin<Ty_>(), curNode->order_, curNode->bMin_);
-//				} else
-//				{
-//					// order == TyBits_
-//					// No more detail
-//					curNode->bits_ = 0;
-//					curNode->order_ = prevNode->order_;
-//					curNode->max_ = prevNode->getMax<Ty_>();
-//					curNode->min_ = prevNode->getMin<Ty_>();
-//				}
-//
-//			} else
-//			{
-//				curNode->order_ = prevNode->order_;
-//				curNode->bMax_ = prevNode->bMax_ - curNode->bMaxDelta_;
-//				curNode->bMin_ = prevNode->bMin_ + curNode->bMinDelta_;
-//
-//#ifndef NDEBUG
-//				if (curNode->bMax_ < 0 || curNode->bMin_ < 0)
-//				{
-//					BOOST_LOG_TRIVIAL(warning) << "bMax: " << curNode->bMax_ << ", bMin: " << curNode->bMin_;
-//				}
-//#endif
-//
-//				curNode->max_ = getMaxBoundary<Ty_>(prevNode->getMax<Ty_>(), curNode->order_, curNode->bMax_);
-//				curNode->min_ = getMinBoundary<Ty_>(prevNode->getMin<Ty_>(), curNode->order_, curNode->bMin_);
-//			}
-//			/////////////////////////////////////////////////////////////
-
-
 			++cit;	// Move to next data
 		}
 	}
@@ -984,32 +933,6 @@ protected:
 				curNode->min_ = min_;
 				curNode->max_ = max_;
 			}
-
-			// no need to seperated childOrder == 0 or not
-			//curNode->min_ = (Ty_)(((~jumpMask) & min_) | (jumpMask & jumpValue));
-			//curNode->max_ = (Ty_)(((~jumpMask) & max_) | (jumpMask & jumpValue));
-
-			////bit_cnt_type prefixSize = this->bMax;
-			//bit_cnt_type postfixSize = sizeof(Ty_) * CHAR_BIT - prevNode->bMax_ - 1;
-
-			//Ty_ prevMin = prevNode->getMin<Ty_>();
-			//Ty_ prevMax = prevNode->getMax<Ty_>();
-
-			//Ty_ prefixMask = ((Ty_)-1 >> postfixSize) << postfixSize;
-
-			//prevMin = ((abs_(prevMin) & prefixMask) | jumpValue) * SIGN(prevMin);
-			//prevMax = ((abs_(prevMax) & prefixMask) | jumpValue) * SIGN(prevMax);
-
-			//// As order changed, prevNode->bMin_ == prevNode->bMax_
-			//// bMin_ and bMax_ are signed value
-			//// reference 'backwardUpdateNode()'
-			//curNode->bMin_ = prevNode->bMin_ + curNode->bMinDelta_ + 1;
-			//curNode->bMax_ = prevNode->bMax_ + curNode->bMaxDelta_ + 1;
-			//	
-			//// More extend min/max value using 'childOrder_'
-			//// Use 'childOrder_' instaed of 'order_'
-			//curNode->min_ = getMinBoundary<Ty_>(prevMin, curNode->childOrder_ - 1, curNode->bMin_ - jumpBits);
-			//curNode->max_ = getMaxBoundary<Ty_>(prevMax, curNode->childOrder_ - 1, curNode->bMax_ - jumpBits);
 		} else
 		{
 			curNode->min_ = getMinBoundary<Ty_>(prevNode->getMin<Ty_>(), curNode->order_, curNode->bMin_);
