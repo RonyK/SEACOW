@@ -42,6 +42,9 @@
 #include <op/index_filter/index_filter_plan.h>
 #include <op/index_filter/index_filter_action.h>
 
+#include <op/between/between_plan.h>
+#include <op/between/between_action.h>
+
 namespace msdb
 {
 namespace caDummy
@@ -71,6 +74,10 @@ std::shared_ptr<mmt_delta_decode_plan> getMMTDeltaDecodePlan(pPlan sourcPlan, pQ
 // Filter Operators
 std::shared_ptr<naive_filter_plan> getNaiveFilterPlan(pPlan sourcPlan, pPredicate inPredicate, pQuery qry);
 std::shared_ptr<index_filter_plan> getIndexFilterPlan(pPlan sourcPlan, pPredicate inPredicate, pQuery qry);
+
+//////////////////////////////
+// Between Operators
+std::shared_ptr<between_plan> getBetweenPlan(pPlan sourcPlan, coor sp, coor ep, pQuery qry);
 
 template <typename plan_, typename pset_>
 std::shared_ptr<plan_>

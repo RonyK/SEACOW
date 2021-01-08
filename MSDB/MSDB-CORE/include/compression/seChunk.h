@@ -45,10 +45,19 @@ public:
 		size_t seqId = 0;
 		// Level 0
 		{
+#ifndef NDEBUG
+			auto before = bs.capacity();
+#endif
+
 			for (size_t band = 0; band <= numBandsInLevel; ++band, ++seqId)
 			{
 				this->serializeBand<Ty_>(bs, myBlock, seqId, band, bandDims);
 			}
+
+#ifndef NDEBUG
+			auto synopsisSize = bs.capacity() - before;
+			BOOST_LOG_TRIVIAL(debug) << "Save Synopsis[" << this->desc_->id_ << "] : " << synopsisSize << " Bytes";
+#endif
 		}
 
 		this->serializeChildLevelBand<Ty_>(bs, myBlock, seqId, bandDims, numBandsInLevel);

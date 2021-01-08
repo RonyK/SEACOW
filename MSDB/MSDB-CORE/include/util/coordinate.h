@@ -664,6 +664,22 @@ public:
 		return !(*this == rhs);
 	}
 
+	self_type& operator+=(const coordinate<Dty_>& rhs)
+	{
+		this->sP_ += rhs;
+		this->eP_ += rhs;
+
+		return *this;
+	}
+
+	self_type& operator-=(const coordinate<Dty_>& rhs)
+	{
+		this->sP_ -= rhs;
+		this->eP_ -= rhs;
+
+		return *this;
+	}
+
 	//bool operator<(const self_type& rhs) const
 	//{
 	//	assert(this->dSize_ == rhs.dSize_);
@@ -702,6 +718,22 @@ protected:
 	coordinate<Dty_> sP_;
 	coordinate<Dty_> eP_;
 };
+
+template <typename Dty_>
+coordinateRange<Dty_> operator+ (const coordinateRange<Dty_>& left, const coordinate<Dty_>& right)
+{
+	coordinateRange<Dty_> output(left);
+	output += right;
+	return output;
+}
+
+template <typename Dty_>
+coordinateRange<Dty_> operator- (const coordinateRange<Dty_>& left, const coordinate<Dty_>& right)
+{
+	coordinateRange<Dty_> output(left);
+	output -= right;
+	return output;
+}
 
 template <typename Dty_>
 class coordinateIterator

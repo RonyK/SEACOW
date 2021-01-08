@@ -13,7 +13,7 @@ pArray test_qry_ind_spiht_encode(_pFuncGetSourceArray_, eleDefault wtLevel, bool
 	auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, printFlag);
 	sourceArr[0]->setId(sourceArr[0]->getId() + 4);
 
-	auto outArr = qry_exe_ind_spiht_encode<value_type>(sourceArr, wtLevel, printFlag);
+	auto outArr = exe_qry_ind_spiht_encode<value_type>(sourceArr, wtLevel, printFlag);
 
 	return outArr;
 }
@@ -25,8 +25,8 @@ pArray test_qry_ind_spiht_encode_decode(_pFuncGetSourceArray_, eleDefault wtLeve
 	auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, printFlag);
 	sourceArr[0]->setId(sourceArr[0]->getId() + 4);
 
-	qry_exe_ind_spiht_encode<value_type>(sourceArr, wtLevel, printFlag);
-	auto outArr = qry_exe_ind_spiht_decode<value_type>(sourceArr, wtLevel, printFlag);
+	exe_qry_ind_spiht_encode<value_type>(sourceArr, wtLevel, printFlag);
+	auto outArr = exe_qry_ind_spiht_decode<value_type>(sourceArr, wtLevel, printFlag);
 
 	//compArrary<value_type>(sourceArr[0], outArr);
 
@@ -40,8 +40,8 @@ pArray test_qry_seq_spiht_encode_decode(_pFuncGetSourceArray_, eleDefault wtLeve
 	auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, printFlag);
 	sourceArr[0]->setId(sourceArr[0]->getId() + 4);
 
-	qry_exe_ind_spiht_encode<value_type>(sourceArr, wtLevel, printFlag);
-	auto outArr = qry_exe_seq_spiht_decode<value_type>(sourceArr, wtLevel, printFlag);
+	exe_qry_ind_spiht_encode<value_type>(sourceArr, wtLevel, printFlag);
+	auto outArr = exe_qry_seq_spiht_decode<value_type>(sourceArr, wtLevel, printFlag);
 
 	compArrary<value_type>(sourceArr[0], outArr);
 	BOOST_LOG_TRIVIAL(debug) << "Array: " << sourceArr[0]->getDesc()->name_;

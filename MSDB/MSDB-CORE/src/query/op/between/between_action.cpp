@@ -35,6 +35,12 @@ pArray between_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 		auto chunkItr = inArr->getChunkIterator();
 		while (!chunkItr->isEnd())
 		{
+			if(!chunkItr->isExist())
+			{
+				++(*chunkItr);
+				continue;
+			}
+
 			auto inChunk = (**chunkItr);
 			auto chunkRange = inChunk->getChunkRange();
 
@@ -44,12 +50,35 @@ pArray between_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 
 				outChunk->bufferRef(inChunk);
 
-				if (chunkRange.isFullyInside(betweenRange))
+				//if (chunkRange.isFullyInside(betweenRange))
+				//{
+				//	this->fullyInsideChunk(outChunk, inChunk);
+				//}else
+				//{
+				//	this->betweenChunk(outChunk, inChunk, betweenRange);
+				//}
+
+				//////////////////////////////
+				auto blockItr = inChunk->getBlockIterator();
+				while (!blockItr->isEnd())
 				{
-					this->fullyInsideChunk(outChunk, inChunk);
-				}else
-				{
-					this->betweenChunk(outChunk, inChunk, betweenRange);
+					if (!blockItr->isExist())
+					{
+						++(*blockItr);
+						continue;
+					}
+
+					auto inBlock = (**blockItr);
+					auto inDesc = inBlock->getDesc();
+
+					auto outBlock = outChunk->makeBlock(inBlock->getId());
+					auto outDesc = outBlock->getDesc();
+
+					outDesc->setIsp(inDesc->getIsp());
+					outDesc->setIep(inDesc->getIep());
+					outBlock->copyBitmap(inBlock->getBitmap());
+
+					++(*blockItr);
 				}
 			}
 			++(*chunkItr);

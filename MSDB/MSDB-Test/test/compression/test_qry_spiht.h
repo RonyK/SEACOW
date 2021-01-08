@@ -10,7 +10,7 @@ namespace msdb
 namespace caDummy
 {
 template <typename value_type>
-pArray qry_exe_ind_spiht_encode(_vectorSourceArray_,
+pArray exe_qry_ind_spiht_encode(_vectorSourceArray_,
 								eleDefault wtLevel,
 								bool printFlag = false)
 {
@@ -34,7 +34,7 @@ pArray qry_exe_ind_spiht_encode(_vectorSourceArray_,
 }
 
 template <typename value_type>
-pArray qry_exe_ind_spiht_decode(_vectorSourceArray_,
+pArray exe_qry_ind_spiht_decode(_vectorSourceArray_,
 								eleDefault wtLevel,
 								bool printFlag = false)
 {
@@ -58,7 +58,7 @@ pArray qry_exe_ind_spiht_decode(_vectorSourceArray_,
 }
 
 template <typename value_type>
-pArray qry_exe_seq_spiht_decode(_vectorSourceArray_,
+pArray exe_qry_seq_spiht_decode(_vectorSourceArray_,
 								eleDefault wtLevel,
 								bool printFlag = false)
 {
