@@ -42,6 +42,7 @@
     <ClCompile Include="test\index\test_action_mmt.cpp" />
     <ClCompile Include="test\io\test_action_io.cpp" />
     <ClCompile Include="test\query\op\between\test_between.cpp" />
+    <ClCompile Include="test\test\op\between\testBetween.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">
@@ -59,6 +60,7 @@
     <ClInclude Include="test\index\test_qry_mmt.h" />
     <ClInclude Include="test\index\test_action_mmt.h" />
     <ClInclude Include="test\io\test_action_io.h" />
+    <ClInclude Include="test\test\op\between\testBetween.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="test">

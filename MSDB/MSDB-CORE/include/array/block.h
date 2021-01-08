@@ -89,8 +89,16 @@ protected:
 		auto iit = this->getItemIterator();
 		std::stringstream ss;
 		ss << "Block [" << static_cast<int64_t>(this->getId()) << "]";
+		int64_t row = -1;
 		while(!iit->isEnd())
 		{
+			int64_t curRow = iit->coor()[1];
+			if (row != curRow)
+			{
+				ss << "\n";
+				ss << curRow << ": ";
+				row = curRow;
+			}
 			if(iit->isExist())
 			{
 				ss << (**iit).get<Ty_>() << ", ";
@@ -105,14 +113,19 @@ protected:
 	template<>
 	void printImp<char>()
 	{
-		auto dim = this->getDesc()->dims_;
-		auto colNum = dim[this->getDSize() - 1];
 		auto iit = this->getItemIterator();
 		std::stringstream ss;
 		ss << "Block [" << static_cast<int64_t>(this->getId()) << "]";
-		int col = 0;
+		int64_t row = -1;
 		while (!iit->isEnd())
 		{
+			int64_t curRow = iit->coor()[1];
+			if(row != curRow)
+			{
+				ss << "\n";
+				ss << curRow << ": ";
+				row = curRow;
+			}
 			if (iit->isExist())
 			{
 				ss << static_cast<int>((**iit).get<char>()) << ", ";
@@ -121,15 +134,10 @@ protected:
 				ss << "*, ";
 			}
 			++(*iit);
-			if(++col == colNum)
-			{
-				ss << "\n";
-				col = 0;
-			}
 		}
 		BOOST_LOG_TRIVIAL(debug) << ss.str() << "";
 	}
 };
-};
+}	// msdb
 
 #endif

@@ -41,6 +41,16 @@ TEST(query_op_mmt_build, mmt_build_sc4x4)
 }	// TEST()
 }	// data2D_sc4x4
 
+namespace data2D_star1024x1024
+{
+TEST(query_op_mmt_build, mmt_build_data2D_star1024x1024)
+{
+	auto output = test_body_mmt_build<value_type>(&getSourceArrayIfEmpty, mmtLevel);
+
+	print_mmt<value_type>(output, 0);
+}	// TEST()
+}	// data2D_star1024x1024
+
 namespace data2D_saturn1024x1024
 {
 TEST(query_op_mmt_build, mmt_build_data2D_saturn1024x1024)

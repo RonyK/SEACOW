@@ -113,7 +113,7 @@ pArray exe_qbundle_spiht_seq_index_filter(_vectorSourceArray_,
 {
 	//////////////////////////////
 	// 01. Save Source Array
-	qry_exe_ind_spiht_encode<value_type>(sourceArr, wtLevel, false);
+	exe_qry_ind_spiht_encode<value_type>(sourceArr, wtLevel, false);
 
 	//////////////////////////////
 	// 02 Naive Filter Arrary

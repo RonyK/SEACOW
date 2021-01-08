@@ -140,6 +140,19 @@ getPredicatePlanParamPlan(pPlan sourcePlan, pPredicate myPredicate, pQuery myQue
 
 	return getOpPlan<plan_, pset_>(params, myQuery);
 }
+
+template <typename plan_, typename pset_>
+std::shared_ptr<plan_>
+getPlan_setPlanRange(pPlan sourcePlan, coor sp, coor ep, pQuery myQuery = nullptr)
+{
+	parameters params = {
+		std::make_shared<opParamPlan>(sourcePlan),
+		std::make_shared<opParamCoor>(std::make_shared<coor>(sp)),
+		std::make_shared<opParamCoor>(std::make_shared<coor>(ep))
+	};
+
+	return getOpPlan<plan_, pset_>(params, myQuery);
+}
 }		// caDummy
 }		// msdb
 #endif	// _MSDB_OPDUMMY_H_

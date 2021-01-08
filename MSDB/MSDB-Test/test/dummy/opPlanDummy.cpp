@@ -68,5 +68,9 @@ std::shared_ptr<index_filter_plan> getIndexFilterPlan(pPlan sourcPlan, pPredicat
 {
 	return getPredicatePlanParamPlan<index_filter_plan, index_filter_plan_pset>(sourcPlan, inPredicate, qry);
 }
+std::shared_ptr<between_plan> getBetweenPlan(pPlan sourcPlan, coor sp, coor ep, pQuery qry)
+{
+	return getPlan_setPlanRange<between_plan, between_plan_pset>(sourcPlan, sp, ep, qry);
+}
 }	// caDummy
 }	// msdb

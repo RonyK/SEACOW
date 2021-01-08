@@ -45,10 +45,19 @@ public:
 		size_t seqId = 0;
 		// Level 0
 		{
+#ifndef NDEBUG
+			auto before = bs.capacity();
+#endif
+
 			for (size_t band = 0; band <= numBandsInLevel; ++band, ++seqId)
 			{
 				this->serializeBand<Ty_>(bs, myBlock, seqId, band, bandDims);
 			}
+
+#ifndef NDEBUG
+			auto synopsisSize = bs.capacity() - before;
+			BOOST_LOG_TRIVIAL(debug) << "Save Synopsis[" << this->desc_->id_ << "] : " << synopsisSize << " Bytes";
+#endif
 		}
 
 		this->serializeChildLevelBand<Ty_>(bs, myBlock, seqId, bandDims, numBandsInLevel);
@@ -116,7 +125,7 @@ public:
 
 #ifndef NDEBUG
 					//BOOST_LOG_TRIVIAL(trace) << "seqId: " << static_cast<int>(seqId) << ", setw: " << static_cast<int>(rbFromDelta);
-					//BOOST_LOG_TRIVIAL(trace) << "rBitFromMMT: " << static_cast<int>(rbFromMMT) << "/ from Delta: " << static_cast<int>(rbFromDelta);
+					//BOOST_LOG_TRIVIAL(trace) << "rBitFromMMT: " << static_cast<int>(rbFromMMT) << "/ from Delta: " << static_cast<int>(rbFromDelta) << "/ gap: " << static_cast<int>(rbFromMMT - rbFromDelta) << " (" << inBlock->getId() << ", " << band << ")";
 					//BOOST_LOG_TRIVIAL(trace) << targetSp.toString() << ", " << targetEp.toString();
 					//if (rbFromMMT < rbFromDelta)
 					//{
@@ -126,20 +135,25 @@ public:
 #endif
 
 					this->serializeGap(bs, rbFromMMT - rbFromDelta);
-					bs << setw(rbFromDelta);
-					Ty_ signMask = 0x1 << rbFromDelta - 1;
 
-					while (!bItemItr->isEnd())
+					if(rbFromDelta != 0)
 					{
-						Ty_ value = (**bItemItr).get<Ty_>();
-						if (value < 0)
+						bs << setw(rbFromDelta);
+						Ty_ signMask = 0x1 << rbFromDelta - 1;
+
+						while (!bItemItr->isEnd())
 						{
-							value = abs_(value);
-							value |= signMask;
+							Ty_ value = (**bItemItr).get<Ty_>();
+							if (value < 0)
+							{
+								value = abs_(value);
+								value |= signMask;
+							}
+							bs << value;
+							++(*bItemItr);
 						}
-						bs << value;
-						++(*bItemItr);
 					}
+
 					++seqId;
 				}
 				++innerItr;
@@ -242,24 +256,35 @@ public:
 					//assert(rbFromMMT >= gap);
 #endif
 
-					bs >> setw(rbFromDelta);
-					Ty_ signMask = 0x1 << rbFromDelta - 1;
-					//Ty_ negativeMask = (Ty_)-1 - (signMask - 1);
-					Ty_ negativeMask = (Ty_)-1 ^ signMask;
-
-					while (!bItemItr->isEnd())
+					if (rbFromDelta == 0)
 					{
-						Ty_ value = 0;
-						bs >> value;
-						if (value & signMask)
+						while (!bItemItr->isEnd())
 						{
-							value &= negativeMask;
-							value *= -1;
+							(**bItemItr).set<Ty_>(0);
+							++(*bItemItr);
 						}
+					} else
+					{
+						bs >> setw(rbFromDelta);
+						Ty_ signMask = 0x1 << rbFromDelta - 1;
+						//Ty_ negativeMask = (Ty_)-1 - (signMask - 1);
+						Ty_ negativeMask = (Ty_)-1 ^ signMask;
 
-						(**bItemItr).set<Ty_>(value);
-						++(*bItemItr);
+						while (!bItemItr->isEnd())
+						{
+							Ty_ value = 0;
+							bs >> value;
+							if (value & signMask)
+							{
+								value &= negativeMask;
+								value *= -1;
+							}
+
+							(**bItemItr).set<Ty_>(value);
+							++(*bItemItr);
+						}
 					}
+
 					++seqId;
 				}
 				++innerItr;
