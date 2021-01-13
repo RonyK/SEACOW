@@ -129,5 +129,23 @@ TEST(util_math, max_boundary_test)
 	// Cannot be large than prevLimit '81'
 	// 81, 3, (4, 3, 2) >= 82
 	EXPECT_EQ(getMaxBoundary<char>(81, 3, 1), 81);
+
+
+	//////////////////////////////
+	EXPECT_EQ(getMaxBoundary<char>(127, 1, -7), -64);
+	EXPECT_EQ(getMaxBoundary<char>(127, 1, -6), -32);
+	EXPECT_EQ(getMaxBoundary<char>(127, 1, -5), -16);
+	EXPECT_EQ(getMaxBoundary<char>(127, 1, -4), -8);
+	EXPECT_EQ(getMaxBoundary<char>(127, 1, -3), -4);
+	EXPECT_EQ(getMaxBoundary<char>(127, 1, -2), -2);
+	EXPECT_EQ(getMaxBoundary<char>(127, 1, -1), -1);
+	EXPECT_EQ(getMaxBoundary<char>(127, 1, 0), 0);
+	EXPECT_EQ(getMaxBoundary<char>(127, 1, 1), 1);
+	EXPECT_EQ(getMaxBoundary<char>(127, 1, 2), 3);
+	EXPECT_EQ(getMaxBoundary<char>(127, 1, 3), 7);
+	EXPECT_EQ(getMaxBoundary<char>(127, 1, 4), 15);
+	EXPECT_EQ(getMaxBoundary<char>(127, 1, 5), 31);
+	EXPECT_EQ(getMaxBoundary<char>(127, 1, 6), 63);
+	EXPECT_EQ(getMaxBoundary<char>(127, 1, 7), 127);
 }
 }

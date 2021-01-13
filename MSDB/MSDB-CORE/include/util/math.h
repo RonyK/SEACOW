@@ -202,7 +202,11 @@ Ty_ getMaxBoundary(Ty_ prevLimit, bit_cnt_type order, sig_bit_type sigBitPos)
 	}
 
 	// After order 1, signs of prevLimit and sigBitPos are same
-	assert(SIGN(prevLimit) == SIGN(sigBitPos));
+	if(SIGN(prevLimit) != SIGN(sigBitPos))
+	{
+		//assert(SIGN(prevLimit) == SIGN(sigBitPos));
+		return 0;
+	}
 
 	if (prevLimit == 0)
 	{

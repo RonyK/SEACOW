@@ -168,7 +168,7 @@ public:
 #ifndef NDEBUG
 		if(this->bMax_ < 0 || this->bMin_ < 0)
 		{
-			BOOST_LOG_TRIVIAL(warning) << "bMax: " << this->bMax_ << ", bMin: " << this->bMin_;
+			BOOST_LOG_TRIVIAL(warning) << "bMax: " << static_cast<int64_t>(this->bMax_) << ", bMin: " << static_cast<int64_t>(this->bMin_);
 		}
 #endif
 	}
@@ -228,6 +228,127 @@ public:
 		return ss.str();
 	}
 };
+
+template <typename Ty_>
+void backwardUpdateChildOrderChangedNode(pMmtNode curNode, bit_cnt_type jumpedBits)
+{
+	// As child order changed, bMax_ == bMin_
+	// Just use one of them (bMax_, bMin_)
+	bit_cnt_type tySize = sizeof(Ty_) * CHAR_BIT;
+	bit_cnt_type prefixSize = sizeof(Ty_) * CHAR_BIT - abs_(curNode->bMax_) + 1;
+	bit_cnt_type postfixSize = abs_(curNode->bMax_) - jumpedBits - 1;
+	Ty_ jumpMask = (~((Ty_)-1 << jumpedBits)) << postfixSize;
+	Ty_ prefixMask = ((~jumpMask) >> postfixSize) << postfixSize;
+
+	Ty_ min_ = curNode->getMin<Ty_>();
+	Ty_ max_ = curNode->getMax<Ty_>();
+
+	Ty_ realMin_ = curNode->getRealMin<Ty_>();
+	Ty_ realMax_ = curNode->getRealMax<Ty_>();
+
+	if (max_ >= 0)
+	{
+		min_ = (Ty_)((prefixMask & abs_((Ty_)min_)) | (jumpMask & abs_((Ty_)realMin_)));
+		max_ = getMaxBoundary<Ty_>(max_, curNode->childOrder_, curNode->bMax_ - jumpedBits);;
+	} else
+	{
+		min_ = getMinBoundary<Ty_>(min_, curNode->childOrder_, curNode->bMin_ + jumpedBits);;
+		max_ = (Ty_)((prefixMask & abs_((Ty_)max_)) | (jumpMask & abs_((Ty_)realMax_)));
+	}
+
+	//////////
+	// SIGN check for negative values
+	//
+	//    - As they were wrapped with abs_() negative values should change to positive value. 
+	//
+	//////////
+	// NOTE:: special case of -128
+	//
+	// In case of min_ = -128 (1000 0000)
+	// masked min could be negative value
+	// after * SING() -> it changed to positive value even it was negative
+	//
+	if (SIGN(min_) != SIGN(realMin_))
+		min_ = (Ty_)min_ * SIGN(realMin_);
+	if (SIGN(max_) != SIGN(realMax_))
+		max_ = (Ty_)max_ * SIGN(realMax_);
+
+	curNode->min_ = min_;
+	curNode->max_ = max_;
+
+	//////////
+	// NOTE:: Simple mask could raise an error
+	//
+	// prevNode: max: 124(0111 1100)
+	// curNode: realmax: 94(0101 1110), order = 1
+	//			estimateMax: 127(0111 1111)
+	//			as estimateMax > parentMax 
+	//			max: 124(0111 1100)
+	// --------------------
+	// If jump = 2
+	// 124(0111 1100)
+	//  94(  01     )
+	// --------------------
+	//  92(0101 1100) <- but its wrong
+	//  95(0101 1111) <- this shold be right
+	//
+}
+
+//////////////////////////////
+// updateChildNodeOrder
+//////////////////////////////
+//
+// Find next 'different' significant bit
+// If next order significant bits are same on min/max, move on to the next order
+// 
+// return number of jumped bits
+//
+template <typename Ty_>
+bit_cnt_type updateChildNodeOrder(pMmtNode curNode)
+{
+	if (curNode->bMax_ != curNode->bMin_)
+	{
+		// order not changed
+		curNode->childOrder_ = curNode->order_;
+		return 0;
+	}
+
+	//////////////////////////////
+	// order changed
+	//
+	// min/max has same sign
+	// if positive: max has same or higher significant bit then min
+	// if negative:	min has same or higher significant bit then min 
+	Ty_ myMax = curNode->getRealMax<Ty_>();
+	Ty_ myMin = curNode->getRealMin<Ty_>();
+	bit_cnt_type bMax = 0;
+	bit_cnt_type bMin = 0;
+	bit_cnt_type childOrder = curNode->order_;
+
+	do
+	{
+		++childOrder;
+		bMax = msb<Ty_>(abs_(myMax), childOrder);
+		bMin = msb<Ty_>(abs_(myMin), childOrder);
+
+		// Positive: check bMax
+		// Negative: check bMin
+		if ((myMax >= 0 && bMax == 0) || (myMin < 0 && bMin == 0))
+		{
+			// If the higher significant bit is 0 
+			// then this is the last bit
+			curNode->childOrder_ = 0;
+			return curNode->bMax_;		// curNode->bMax_ == curNode->bMin_
+		}
+
+		// child order cannot be larger then Ty_ data type size
+		assert(childOrder <= sizeof(Ty_) * CHAR_BIT);
+	} while (bMax == bMin);
+
+	curNode->childOrder_ = childOrder;
+
+	return std::min({ abs_(curNode->bMax_) - bMax - 1, abs_(curNode->bMin_) - bMin - 1 });	// return jumped bits
+}
 
 }		// msdb
 #endif	// _MSDB_MMTNODE_H_
