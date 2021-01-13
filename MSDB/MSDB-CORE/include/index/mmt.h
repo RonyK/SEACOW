@@ -107,6 +107,8 @@ public:
 	using dim_reference = Dty_&;
 	using dim_const_reference = const Dty_;
 
+	using self_type = MinMaxTreeImpl<Dty_, Ty_>;
+
 	//////////////////////////////
 	// MMT NODE					//
 	//////////////////////////////
@@ -563,7 +565,7 @@ protected:
 
 	void backwardUpdateNode(pMmtNode prevNode, pMmtNode curNode, bool finished, bool orderChanged)
 	{
-		bit_cnt_type jumpedBits = 0;
+		bit_cnt_type jumpBits = 0;
 
 		if (finished)
 		{
@@ -604,7 +606,7 @@ protected:
 			curNode->bMinDelta_ = abs_(curNode->bMin_ - prevNode->bMin_) - 1;
 			curNode->bMaxDelta_ = abs_(prevNode->bMax_ - curNode->bMax_) - 1;
 
-			jumpedBits = updateChildNodeOrder<Ty_>(curNode);		// order changed -> child node order changed
+			jumpBits = updateChildNodeOrder<Ty_>(curNode);		// order changed -> child node order changed
 		} else
 		{
 			// Order not changed
@@ -615,7 +617,7 @@ protected:
 			curNode->bMinDelta_ = static_cast<bit_cnt_type>(curNode->bMin_ - prevNode->bMin_);	// min: prev <= cur
 			curNode->bMaxDelta_ = static_cast<bit_cnt_type>(prevNode->bMax_ - curNode->bMax_);	// max: prev >= cur
 
-			jumpedBits = updateChildNodeOrder<Ty_>(curNode);		// order changed -> child node order changed
+			jumpBits = updateChildNodeOrder<Ty_>(curNode);		// order changed -> child node order changed
 			//curNode->childOrder_ = prevNode->childOrder_;	// order not changed -> child node order sustained
 		}
 
@@ -629,24 +631,28 @@ protected:
 
 		if (isChildOrderChanged(curNode))
 		{
-			if (curNode->childOrder_)
-			{
-				backwardUpdateChildOrderChangedNode<Ty_>(curNode, jumpedBits);
-			} else
-			{
-				// Childorder == 0, finished at child
-				curNode->min_ = prevNode->getRealMin<Ty_>();
-				curNode->max_ = prevNode->getRealMax<Ty_>();
-			}
+			// Jumped part would same in realMin_ and realMax_
+			// Just use one of them (realMin, realMax_)
+			nodeUpdateWhenChildOrderChanged<Ty_>(curNode, jumpBits, curNode->getRealMax<Ty_>());
+			//if (curNode->childOrder_)
+			//{
+
+			//} else
+			//{
+			//	// Childorder == 0, finished at child
+			//	curNode->min_ = prevNode->getRealMin<Ty_>();
+			//	curNode->max_ = prevNode->getRealMax<Ty_>();
+			//}
 		}
 		
+#ifndef NDEBUG
 		if (curNode->getMax<Ty_>() < curNode->getRealMax<Ty_>() || curNode->getMin<Ty_>() > curNode->getRealMin<Ty_>())
 		{
 			std::cout << "error";
 		}
 		assert(curNode->getMin<Ty_>() <= curNode->getRealMin<Ty_>());
 		assert(curNode->getMax<Ty_>() >= curNode->getRealMax<Ty_>());
-
+#endif
 	}
 
 	////////////////////////////////////////
@@ -684,13 +690,15 @@ protected:
 			{
 				// non-root node record both 'order changed' and 'jumped bits'
 				curNode->outChildOrderChanged(bs);
-				if (curNode->childOrder_)
-				{
-					curNode->outJumpedBits<Ty_>(bs, (bit_cnt_type)msb<Ty_>(abs_(curNode->getRealMax<Ty_>()), curNode->childOrder_));
-				} else
-				{
-					curNode->outJumpedBits<Ty_>(bs, 1);	// copy to end
-				}
+				curNode->outJumpedBits<Ty_>(bs, curNode->jumpBits_, curNode->getMax<Ty_>());
+				//if (curNode->childOrder_)
+				//{
+				//	// min_, max_ has same jumpValue
+				//	curNode->outJumpedBits<Ty_>(bs, curNode->jumpBits_, curNode->getMax<Ty_>());
+				//} else
+				//{
+				//	curNode->outJumpedBits<Ty_>(bs, curNode->jumpBits_, curNode->getMax<Ty_>());	// copy to end
+				//}
 			}
 			//////////////////////////////
 		}
@@ -707,19 +715,24 @@ protected:
 		//this->nodes_[this->lowerLevel_].resize(chunkCnt);	// TODO::If generating Nodes are complete, remove this line.
 		//pMmtNode* rootNodes = this->nodes_[this->lowerLevel_].data();
 
-		this->nodes_[this->lowerLevel_].resize(1);
-		pMmtNode* rootNodes = this->nodes_[this->lowerLevel_].data();
-		pMmtNode rootNode = rootNodes[0];
+		this->nodes_[this->maxLevel_].resize(1);
+		pMmtNode* rootNodes = this->nodes_[this->maxLevel_].data();
 
-		rootNode = std::make_shared<mmtNode>();
+		pMmtNode rootNode = std::make_shared<mmtNode>();
 		rootNode->bits_ = sizeof(Ty_) * CHAR_BIT;
 		rootNode->order_ = 1;
 		rootNode->inMinMax<Ty_>(bs);
+		rootNode->initBits<Ty_>();
 		
 		if(isChildOrderChanged(rootNode))
 		{
 			rootNode->inChildOrderChanged(bs);
+		}else
+		{
+			rootNode->childOrder_ = rootNode->order_;
 		}
+
+		rootNodes[0] = rootNode;
 	}
 
 	void deserializeNonRoot(bstream& bs, size_type level)
@@ -747,13 +760,13 @@ protected:
 			pMmtNode prevNode = (*pcit);
 			curNode->parent_ = prevNode;
 
-			deserializeUpdateNode(bs, prevNode, curNode, isFinished(prevNode));
+			deserializeUpdateNode(bs, prevNode, curNode, isFinished(prevNode), isChildOrderChanged(prevNode));
 
 			++cit;	// Move to next data
 		}
 	}
 
-	void deserializeUpdateNode(bstream& bs, pMmtNode prevNode, pMmtNode curNode, bool finished)
+	void deserializeUpdateNode(bstream& bs, pMmtNode prevNode, pMmtNode curNode, bool finished, bool orderChanged)
 	{
 		if (finished)
 		{
@@ -766,67 +779,41 @@ protected:
 			curNode->max_ = prevNode->getMax<Ty_>();
 			curNode->bMinDelta_ = 0;
 			curNode->bMaxDelta_ = 0;
+			curNode->childOrder_ = 0;
 
-			return;
+			return;	// No father update for finished node
 		}
 
-		//////////////////////////////
-		// Works for not finished nodes
+
+		if(orderChanged)
+		{
+			curNode->bits_ = msb<sig_bit_type>(abs_(prevNode->bMax_) - 1);	// decrease required bits
+		}else
+		{
+			curNode->bits_ = msb<sig_bit_type>(prevNode->bMax_ - prevNode->bMin_);
+		}
+
 		curNode->inDelta(bs);
 
-		curNode->order_ = prevNode->childOrder_;
 		curNode->bMin_ = prevNode->bMin_ + curNode->bMinDelta_;
 		curNode->bMax_ = prevNode->bMax_ - curNode->bMaxDelta_;
+
+		curNode->order_ = prevNode->childOrder_;
+		curNode->childOrder_ = curNode->order_;
+
+		curNode->min_ = getMinBoundary<Ty_>(prevNode->getMin<Ty_>(), curNode->order_, curNode->bMin_);
+		curNode->max_ = getMaxBoundary<Ty_>(prevNode->getMax<Ty_>(), curNode->order_, curNode->bMax_);
 
 		if (isChildOrderChanged(curNode))
 		{
 			curNode->inChildOrderChanged(bs);
 
 			// Get jump value and bits
-			bit_cnt_type jumpedBits = 0;
+			bit_cnt_type jumpBits = 0;
 			Ty_ jumpValue = 0;
-			curNode->inJumpedBits<Ty_>(bs, jumpedBits, jumpValue);
+			curNode->inJumpedBits<Ty_>(bs, jumpBits, jumpValue);
 
-			// bMax_ == bMin_ as child order changed -> just use bMax_
-			bit_cnt_type tySize = sizeof(Ty_) * CHAR_BIT;
-			bit_cnt_type prefixSize = sizeof(Ty_) * CHAR_BIT - curNode->bMax_ + 1;
-			bit_cnt_type postfixSize = curNode->bMax_ - jumpedBits - 1;
-			Ty_ jumpMask = (~((Ty_)-1 << jumpedBits)) << postfixSize;
-
-			Ty_ prefixMask = ((~jumpMask) >> postfixSize) << postfixSize;
-			Ty_ postfixMask = ~((Ty_)-1 << postfixSize);
-
-			Ty_ min_ = curNode->getMin<Ty_>();
-			Ty_ max_ = curNode->getMax<Ty_>();
-
-			Ty_ realMin_ = curNode->getRealMin<Ty_>();
-			Ty_ realMax_ = curNode->getRealMax<Ty_>();
-
-			min_ = (Ty_)((prefixMask & min_) | (jumpMask & jumpValue));
-			max_ = (Ty_)((prefixMask & max_) | (jumpMask & jumpValue));
-
-			if(curNode->childOrder_)
-			{
-				if(max_ >= 0)
-				{
-					Ty_ childOrderMax_ = getMaxBoundary<Ty_>(max_, curNode->childOrder_, curNode->bMax_ - jumpedBits);
-					curNode->min_ = min_;
-					curNode->max_ = childOrderMax_;
-				}else
-				{
-					Ty_ childOrderMin_ = getMinBoundary<Ty_>(min_, curNode->childOrder_, curNode->bMin_ + jumpedBits);
-					curNode->min_ = childOrderMin_;
-					curNode->max_ = max_;
-				}
-			}else
-			{
-				curNode->min_ = min_;
-				curNode->max_ = max_;
-			}
-		} else
-		{
-			curNode->min_ = getMinBoundary<Ty_>(prevNode->getMin<Ty_>(), curNode->order_, curNode->bMin_);
-			curNode->max_ = getMaxBoundary<Ty_>(prevNode->getMax<Ty_>(), curNode->order_, curNode->bMax_);
+			nodeUpdateWhenChildOrderChanged(curNode, jumpBits, jumpValue);
 		}
 
 		curNode->realMin_ = curNode->getMin<Ty_>();
@@ -1055,6 +1042,40 @@ public:
 			}
 		}
 	}
+
+	bool operator==(const self_type& rhs) const
+	{
+		if(this->dSize != rhs.dSize_ || this->nodes_.size() != rhs.nodes_.size())
+		{
+			return false;
+		}
+
+		size_t levels = this->nodes_.size();
+		for(int l = 0; l < levels; ++l)
+		{
+			if(this->nodes_[l].size() != rhs.nodes_[l].size())
+			{
+				return false;
+			}
+
+			size_t levelNodes = this->nodes_[l].size();
+			for(int i = 0; i < levelNodes; ++i)
+			{
+				auto lNode = this->nodes_[l][i];
+				auto rNode = rhs.nodes_[l][i];
+
+				if(lNode->getMin<Ty_>() != rNode->getMin<Ty_>() || 
+				   lNode->getMax<Ty_>() != rNode->getMax<Ty_>())
+				{
+					return false;
+				}
+			}
+		}
+
+
+		return true;
+	}
+
 private:
 	const size_type TySize_;
 	const size_type TyBits_;

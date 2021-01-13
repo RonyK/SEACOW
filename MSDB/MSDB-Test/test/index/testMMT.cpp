@@ -38,12 +38,15 @@ pMmtNode getMmtNode(Ty_ realMin, Ty_ realMax, Ty_ prevMin, Ty_ prevMax, bit_cnt_
 	return curNode;
 }
 
-TEST(mmt_update_childOrderChanged, backwardUpdateChildOrderChangedNode)
+TEST(mmt_update_childOrderChanged, nodeUpdateWhenChildOrderChanged)
 {
 	pMmtNode curNode = getMmtNode<char>(-124, -77, -127, 127, 0, 14, 1, 2);
 
-	backwardUpdateChildOrderChangedNode<char>(curNode, 0);
+	nodeUpdateWhenChildOrderChanged<char>(curNode, 0, -124);
+	EXPECT_EQ(curNode->getMin<char>(), -127);
+	EXPECT_EQ(curNode->getMax<char>(), -64);
 
+	nodeUpdateWhenChildOrderChanged<char>(curNode, 0, -77);
 	EXPECT_EQ(curNode->getMin<char>(), -127);
 	EXPECT_EQ(curNode->getMax<char>(), -64);
 }

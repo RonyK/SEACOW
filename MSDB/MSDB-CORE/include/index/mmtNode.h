@@ -31,6 +31,7 @@ public:
 	boost::any min_;
 	boost::any realMax_;
 	boost::any realMin_;
+	bit_cnt_type jumpBits_;
 	bool finished_;
 
 	// For Test
@@ -44,7 +45,7 @@ public:
 	mmtNode() : bMax_(0), bMin_(0), bits_(0x80), order_(1),
 		bMaxDelta_(0), bMinDelta_(0), max_(0), min_(0),
 		realMin_(0), realMax_(0), finished_(false),
-		chunkCoor_(1), blockCoor_(1), nodeCoor_(1), seqPos_(0)
+		chunkCoor_(1), blockCoor_(1), nodeCoor_(1), seqPos_(0), jumpBits_(0)
 	{
 	}
 
@@ -52,19 +53,25 @@ public:
 	// use function cause of unknown compile error
 	inline void inDelta(bstream& bs)
 	{
-		bs >> setw(this->bits_) >> this->bMaxDelta_ >> this->bMinDelta_;
+		bs >> setw(this->bits_) >> this->bMinDelta_ >> this->bMaxDelta_;
 	}
 
 	inline void outDelta(bstream& bs)
 	{
-		bs << setw(this->bits_) << this->bMaxDelta_ << this->bMinDelta_;
+		bs << setw(this->bits_) << this->bMinDelta_ << this->bMaxDelta_;
 	}
 
 	inline void inChildOrderChanged(bstream& bs)
 	{
 		bit_cnt_type orderChangedDelta = 0;
 		bs >> setw(this->bits_) >> orderChangedDelta;
-		this->childOrder_ = this->order_ + orderChangedDelta;
+		if(orderChangedDelta)
+		{
+			this->childOrder_ = this->order_ + orderChangedDelta;
+		}else
+		{
+			this->childOrder_ = 0;
+		}
 	}
 
 	inline void outChildOrderChanged(bstream& bs)
@@ -76,61 +83,81 @@ public:
 		}else
 		{
 			// cur node is last, end
-			bs << setw(this->bits_) << 0x1;
+			bs << setw(this->bits_) << 0x0;
 		}
 	}
 
 	template <typename Ty_>
-	inline void inJumpedBits(bstream& bs, bit_cnt_type jumpBits, Ty_ jumpValue)
+	inline void inJumpedBits(bstream& bs, bit_cnt_type& jumpBits, Ty_& jumpValue)
 	{
-		jumpBits = 0;
-		jumpValue = 0;
-		bit_cnt_type orderDelta = this->childOrder_ - this->order_;
-		char inBit = 0;
-
-		// make jumpBits
-		while(orderDelta)
+		if(this->childOrder_)
 		{
-			++jumpBits;
-			inBit = 0;
-			bs >> setw(1) >> inBit;
-			jumpValue << 1;
-			jumpValue |= inBit;
+			jumpBits = 0;
+			jumpValue = 0;
+			bit_cnt_type orderDelta = this->childOrder_ - this->order_;
+			char inBit = 0;
 
-			if(inBit)
+			// make jumpBits
+			bs >> setw(1);
+			while (orderDelta)
 			{
-				--orderDelta;
+				++jumpBits;
+				inBit = 0;
+				bs >> inBit;
+				jumpValue << 1;
+				jumpValue |= inBit;
+
+				if (inBit)
+				{
+					--orderDelta;
+				}
 			}
-		}
 
-		// erase last significant bit
-		jumpValue >>= 1;
-		--jumpBits;;
+			// erase last significant bit
+			jumpValue >>= 1;
+			--jumpBits;;
 
-		// make to original value
-		assert(this->bMax_ - jumpBits - 1 > 0);
-		jumpValue <<= sizeof(Ty_) * CHAR_BIT - this->bMax_ - 1;
-	}
+			// make to original value
+			assert(this->bMax_ - jumpBits - 1 > 0);
+			jumpValue <<= sizeof(Ty_) * CHAR_BIT - this->bMax_ - 1;
 
-	template <typename Ty_>
-	inline void outJumpedBits(bstream& bs, bit_cnt_type posJumpEnd)
-	{
-		// make mask
-		Ty_ mask = (Ty_)-1;
-		mask >>= sizeof(Ty_) * CHAR_BIT - this->bMax_;
-
-		if(posJumpEnd)
-		{
-			// next order
-			Ty_ jumpValue = (this->getRealMax<Ty_>() >> (posJumpEnd - 1)) & mask;
-			bs << setw(this->bMax_ - posJumpEnd + 1) << jumpValue;
+			this->jumpBits_ = jumpBits;
 		}else
 		{
-			// cur node is last, end
-			Ty_ jumpValue = this->getRealMax<Ty_>() & mask;
-			bs << setw(this->bMax_ - posJumpEnd + 1) << jumpValue;
-			bs << setw(1) << 0x1;
+			char endFlag = 0;
+			jumpBits = this->bMax_ - 1;
+			jumpValue = 0;
+			bs >> setw(jumpBits) >> jumpValue;
+			bs >> setw(1) >> endFlag;
+
+			assert(endFlag == 1);
 		}
+	}
+
+	template <typename Ty_>
+	inline void outJumpedBits(bstream& bs, bit_cnt_type jumpBits, Ty_ jumpValue)
+	{
+		Ty_ mask = ~((Ty_)-1 << jumpBits);
+		bit_cnt_type postfixSize = abs_(this->bMax_) - jumpBits - 1;
+		bs << setw(jumpBits) << (Ty_)(abs_(jumpValue) >> (postfixSize));
+		bs << setw(1) << 0x1;
+
+		//// make mask
+		//Ty_ mask = (Ty_)-1;
+		//mask >>= sizeof(Ty_) * CHAR_BIT - this->bMax_;
+
+		//if(posJumpEnd)
+		//{
+		//	// next order
+		//	Ty_ jumpValue = (this->getRealMax<Ty_>() >> (posJumpEnd - 1)) & mask;
+		//	bs << setw(this->bMax_ - posJumpEnd + 1) << jumpValue;
+		//}else
+		//{
+		//	// cur node is last, end
+		//	Ty_ jumpValue = this->getRealMax<Ty_>() & mask;
+		//	bs << setw(this->bMax_ - posJumpEnd + 1) << jumpValue;
+		//	bs << setw(1) << 0x1;
+		//}
 	}
 
 	template <typename Ty_>
@@ -148,7 +175,7 @@ public:
 	inline void outMinMax(bstream& bs)
 	{
 		bs << setw(sizeof(Ty_) * CHAR_BIT);
-		bs << this->getMax<Ty_>() << this->getMin<Ty_>();
+		bs << this->getMin<Ty_>() << this->getMax<Ty_>();
 	}
 
 	template <typename Ty_>
@@ -230,30 +257,32 @@ public:
 };
 
 template <typename Ty_>
-void backwardUpdateChildOrderChangedNode(pMmtNode curNode, bit_cnt_type jumpedBits)
+void nodeUpdateWhenChildOrderChanged(pMmtNode curNode, bit_cnt_type jumpBits, Ty_ jumpValue)
 {
 	// As child order changed, bMax_ == bMin_
 	// Just use one of them (bMax_, bMin_)
 	bit_cnt_type tySize = sizeof(Ty_) * CHAR_BIT;
 	bit_cnt_type prefixSize = sizeof(Ty_) * CHAR_BIT - abs_(curNode->bMax_) + 1;
-	bit_cnt_type postfixSize = abs_(curNode->bMax_) - jumpedBits - 1;
-	Ty_ jumpMask = (~((Ty_)-1 << jumpedBits)) << postfixSize;
+	bit_cnt_type postfixSize = abs_(curNode->bMax_) - jumpBits - 1;
+	Ty_ jumpMask = (~((Ty_)-1 << jumpBits)) << postfixSize;
 	Ty_ prefixMask = ((~jumpMask) >> postfixSize) << postfixSize;
 
 	Ty_ min_ = curNode->getMin<Ty_>();
 	Ty_ max_ = curNode->getMax<Ty_>();
 
-	Ty_ realMin_ = curNode->getRealMin<Ty_>();
-	Ty_ realMax_ = curNode->getRealMax<Ty_>();
-
-	if (max_ >= 0)
+	if(curNode->childOrder_ == 0)
 	{
-		min_ = (Ty_)((prefixMask & abs_((Ty_)min_)) | (jumpMask & abs_((Ty_)realMin_)));
-		max_ = getMaxBoundary<Ty_>(max_, curNode->childOrder_, curNode->bMax_ - jumpedBits);;
+		min_ = (Ty_)((prefixMask & abs_((Ty_)min_)) | (jumpMask & abs_((Ty_)jumpValue)));
+		max_ = (Ty_)((prefixMask & abs_((Ty_)max_)) | (jumpMask & abs_((Ty_)jumpValue)));
+		
+	}else if (max_ >= 0)
+	{
+		min_ = (Ty_)((prefixMask & abs_((Ty_)min_)) | (jumpMask & abs_((Ty_)jumpValue)));
+		max_ = getMaxBoundary<Ty_>(max_, curNode->childOrder_, curNode->bMax_ - jumpBits);;
 	} else
 	{
-		min_ = getMinBoundary<Ty_>(min_, curNode->childOrder_, curNode->bMin_ + jumpedBits);;
-		max_ = (Ty_)((prefixMask & abs_((Ty_)max_)) | (jumpMask & abs_((Ty_)realMax_)));
+		min_ = getMinBoundary<Ty_>(min_, curNode->childOrder_, curNode->bMin_ + jumpBits);;
+		max_ = (Ty_)((prefixMask & abs_((Ty_)max_)) | (jumpMask & abs_((Ty_)jumpValue)));
 	}
 
 	//////////
@@ -268,13 +297,15 @@ void backwardUpdateChildOrderChangedNode(pMmtNode curNode, bit_cnt_type jumpedBi
 	// masked min could be negative value
 	// after * SING() -> it changed to positive value even it was negative
 	//
-	if (SIGN(min_) != SIGN(realMin_))
-		min_ = (Ty_)min_ * SIGN(realMin_);
-	if (SIGN(max_) != SIGN(realMax_))
-		max_ = (Ty_)max_ * SIGN(realMax_);
+	if (SIGN(min_) != SIGN(curNode->bMin_))
+		min_ = (Ty_)min_ * SIGN(curNode->bMin_);
+	if (SIGN(max_) != SIGN(curNode->bMax_))
+		max_ = (Ty_)max_ * SIGN(curNode->bMax_);
 
 	curNode->min_ = min_;
 	curNode->max_ = max_;
+
+	curNode->jumpBits_ = jumpBits;
 
 	//////////
 	// NOTE:: Simple mask could raise an error
