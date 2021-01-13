@@ -6,7 +6,9 @@
 
 namespace msdb
 {
-#define SIGN(val) ((val >= 0) ? 1 : -1)
+#define SIGN(val)	((val >= 0) ? 1 : -1)
+
+#define _TySize_	(sizeof(Ty_) * CHAR_BIT)
 
 // Use abs_ instead of std::abs
 // std::abs make compile error
@@ -49,7 +51,7 @@ template<typename Ty_, typename size_type = std::conditional_t<sizeof(Ty_) < 32,
 		value <<= 1;
 	}
 
-	if(inValue < 0 && i == Bits_)
+	if((Ty_)abs_(inValue) < 0 && i == Bits_)
 	{
 		// For sign values:
 		// Char type(8 bits)
@@ -89,12 +91,12 @@ bit_cnt_type getPrefixPosForPrevLimit(Ty_ prevLimit, bit_cnt_type order)
 	}
 
 	Ty_ mask = (unsigned long long)1 << (bits - 1);
-	size_t prefixPos = bits;
+	size_t prefixPos = bits + 1;
 
 	while (prefixPos > 0 && order > 1)
 	{
-		(absPrevLimit & mask) && --order;
 		--prefixPos;
+		(absPrevLimit & mask) && --order;
 		mask >>= 1;
 	}
 	return prefixPos;
@@ -110,9 +112,11 @@ Ty_ getMaxBoundary(Ty_ prevLimit, sig_bit_type sigBitPos)
 		return 0;
 	} else if (sigBitPos > 0)
 	{
+		Ty_ v = static_cast<Ty_>(calcMaxLimit(sigBitPos));
 		return std::min({ static_cast<Ty_>(calcMaxLimit(sigBitPos)), prevLimit });
 	} else
 	{
+		Ty_ v = static_cast<Ty_>(calcMinLimit(-sigBitPos) * -1);
 		return std::min({ static_cast<Ty_>(calcMinLimit(-sigBitPos) * -1), prevLimit });
 	}
 }
@@ -134,9 +138,58 @@ Ty_ getMinBoundary(Ty_ prevLimit, sig_bit_type sigBitPos)
 		//      =>0111 1111 (127)
 		// -128 = 1000 0000
 		// but, sigBitPos = 7
-		// To cover this, 
-		return std::max({ static_cast<Ty_>(calcMaxLimit(-sigBitPos) * -1 - 1), prevLimit });
+		// To cover this, std::max({ static_cast<Ty_>(calcMaxLimit(-sigBitPos) * -1 - 1), prevLimit });
+		// Minus one from the calcMaxLimit
+		return std::max({ static_cast<Ty_>(calcMaxLimit(-sigBitPos) * -1), prevLimit });
 	}
+}
+
+template <typename Ty_>
+Ty_ getPositiveMaxBoundary(Ty_ prevLimit, bit_cnt_type order, sig_bit_type sigBitPos)
+{
+	/*
+	*  Here is an example:
+	*
+	*  Suppose prevLimit (1001 1111 1010), order (3), significantBit (3)
+	*  ┌──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┐
+	*  │ 1│ 0│ 0│ 1│ 1│ 1│ 1│ 1│ 1│ 0│ 1│ 0│
+	*  └──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┘
+	*             ▲        ▲
+	*        prefixpos     sigbit
+	*  ==================================
+	*  Result:
+	*              ┌─────┬─────────────────┐
+	*              │ 0's │ 1's             │
+	*  ┌──┬──┬──┬──┼──┬──┼──┬──┬──┬──┬──┬──┤
+	*  │ 1│ 0│ 0│ 1│ 0│ 0│ 1│ 1│ 1│ 1│ 1│ 1│
+	*  ├──┴──┴──┴──┼──┴──┼──┴──┴──┴──┴──┴──┤
+	*  │prefix_copy│     │ maxLimit        │
+	*  └───────────┴─────┴─────────────────┘
+	*             ▲        ▲
+	*        prefixpos     sigbit
+	*/
+
+	bit_cnt_type prefixPos = getPrefixPosForPrevLimit(prevLimit, order);
+	assert(prefixPos >= sigBitPos);
+
+	size_t prefixSize = _TySize_ - prefixPos + 1;
+	Ty_ prefixMask = (Ty_)(~((Ty_)-1 << prefixSize) << (_TySize_ - prefixSize));
+	Ty_ sigBitMaxLimit = calcMaxLimit(sigBitPos);
+
+	return (prevLimit & prefixMask) | calcMaxLimit(sigBitPos);
+}
+
+template <typename Ty_>
+Ty_ getPositiveMinBoundary(Ty_ prevLimit, bit_cnt_type order, sig_bit_type sigBitPos)
+{
+	bit_cnt_type prefixPos = getPrefixPosForPrevLimit(prevLimit, order);
+	assert(prefixPos >= sigBitPos);
+
+	size_t prefixSize = _TySize_ - prefixPos + 1;
+	Ty_ prefixMask = (Ty_)(~((Ty_)-1 << prefixSize) << (_TySize_ - prefixSize));
+	Ty_ sigBitMinLimit = calcMinLimit(sigBitPos);
+
+	return (prevLimit & prefixMask) | calcMinLimit(sigBitPos);
 }
 
 // Return Max Limit value where num of bits is provided.
@@ -156,68 +209,10 @@ Ty_ getMaxBoundary(Ty_ prevLimit, bit_cnt_type order, sig_bit_type sigBitPos)
 		return 0;
 	} else if (prevLimit > 0)
 	{
-		/*
-		*  Here is an example:
-		*
-		*  Suppose prevLimit (1001 1111 1010), order (3), significantBit (3)
-		*  ┌──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┐
-		*  │ 1│ 0│ 0│ 1│ 1│ 1│ 1│ 1│ 1│ 0│ 1│ 0│
-		*  └──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┘
-		*             ▲        ▲
-		*        prefixpos     sigbit
-		*  ==================================
-		*  Result:
-		*              ┌─────┬─────────────────┐
-		*              │ 0's │ 1's             │
-		*  ┌──┬──┬──┬──┼──┬──┼──┬──┬──┬──┬──┬──┤
-		*  │ 1│ 0│ 0│ 1│ 0│ 0│ 1│ 1│ 1│ 1│ 1│ 1│
-		*  ├──┴──┴──┴──┼──┴──┼──┴──┴──┴──┴──┴──┤
-		*  │prefix_copy│     │ maxLimit        │
-		*  └───────────┴─────┴─────────────────┘
-		*             ▲        ▲
-		*        prefixpos     sigbit
-		*/
-
-		bit_cnt_type prefixPos = getPrefixPosForPrevLimit(prevLimit, order);
-		assert(prefixPos >= sigBitPos);
-
-		// prefix_copy: (prevLimit | ~static_cast<Ty_>(calcMaxLimit(prefixPos)))
-		// 1's: calcMaxLimit(sigBitPos)
-		//auto a = prevLimit;
-		//auto b = calcMaxLimit(prefixPos);
-		//auto c = ~static_cast<Ty_>(calcMaxLimit(prefixPos));
-		//auto d = calcMaxLimit(sigBitPos);
-		return (prevLimit & ~static_cast<Ty_>(calcMaxLimit(prefixPos))) | calcMaxLimit(sigBitPos);
+		return std::min({ getPositiveMaxBoundary<Ty_>(prevLimit, order, sigBitPos), prevLimit });
 	} else
 	{
-		/*
-		*  If prevLimit is a negative value, make a min value and make it negative.
-		*  Here is an example:
-		*
-		*  Suppose prevLimit (1001 1111 1010), order (3), significantBit (3)
-		*  ┌──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┐
-		*  │ 1│ 0│ 0│ 1│ 1│ 1│ 1│ 1│ 1│ 0│ 1│ 0│
-		*  └──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┘
-		*             ▲        ▲
-		*        prefixpos     sigbit
-		*  ==================================
-		*  Result:
-		*              ┌─────┬──┬──────────────┐
-		*              │ 0's │ 1│ 0's          │
-		*  ┌──┬──┬──┬──┼──┬──┼──┼──┬──┬──┬──┬──┤
-		*  │ 1│ 0│ 0│ 1│ 0│ 0│ 1│ 0│ 0│ 0│ 0│ 0│
-		*  ├──┴──┴──┴──┼──┴──┼──┴──┴──┴──┴──┴──┤
-		*  │prefix_copy│     │ minLimit        │
-		*  └───────────┴─────┴─────────────────┘
-		*             ▲        ▲
-		*        prefixpos     sigbit
-		*/
-		sigBitPos = abs_(sigBitPos);
-		prevLimit = abs_(prevLimit);
-		bit_cnt_type prefixPos = getPrefixPosForPrevLimit(prevLimit, order);
-		assert(prefixPos >= sigBitPos);
-
-		return ((prevLimit & ~static_cast<Ty_>(calcMaxLimit(prefixPos))) | calcMinLimit(sigBitPos)) * -1;
+		return std::min({ (Ty_)(getPositiveMinBoundary<Ty_>(prevLimit, order, sigBitPos) * -1), prevLimit});
 	}
 }
 
@@ -230,28 +225,21 @@ Ty_ getMinBoundary(Ty_ prevLimit, bit_cnt_type order, sig_bit_type sigBitPos)
 	}
 
 #ifndef NDEBUG
-	if(sigBitPos != 0 && SIGN(prevLimit) != SIGN(sigBitPos))
+	if(!(sigBitPos == 0 || SIGN(prevLimit) == SIGN(sigBitPos)))
 	{
 		BOOST_LOG_TRIVIAL(warning) << "prevLimit: " << prevLimit << ", sigBitPos: " << sigBitPos;
+		assert(sigBitPos == 0 || SIGN(prevLimit) == SIGN(sigBitPos));
 	}
 #endif
-	assert(sigBitPos == 0 || SIGN(prevLimit) == SIGN(sigBitPos));
 	if (prevLimit == 0)
 	{
 		return 0;
 	} else if (prevLimit > 0)
 	{
-		bit_cnt_type prefixPos = getPrefixPosForPrevLimit(prevLimit, order);
-		assert(prefixPos >= sigBitPos);
-
-		return (prevLimit & ~static_cast<Ty_>(calcMaxLimit(prefixPos))) | calcMinLimit(sigBitPos);
+		return std::max({ getPositiveMinBoundary<Ty_>(prevLimit, order, sigBitPos), prevLimit });
 	} else
 	{
-		sigBitPos = abs_(sigBitPos);
-		bit_cnt_type prefixPos = getPrefixPosForPrevLimit(prevLimit, order);
-		assert(prefixPos >= sigBitPos);
-
-		return ((abs_(prevLimit) & ~static_cast<Ty_>(calcMaxLimit(prefixPos))) | calcMaxLimit(sigBitPos)) * -1;
+		return std::max({ (Ty_)(getPositiveMaxBoundary<Ty_>(abs_(prevLimit), order, abs_(sigBitPos)) * -1), prevLimit });
 	}
 }
 }	// msdb

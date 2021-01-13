@@ -1,0 +1,133 @@
+#include <pch.h>
+#include <util/math.h>
+
+namespace msdb
+{
+TEST(util_math, msb_char_test)
+{
+	// 0111 1000
+	EXPECT_EQ(msb<char>(120, 1), 7);
+	EXPECT_EQ(msb<char>(120, 2), 6);
+	EXPECT_EQ(msb<char>(120, 3), 5);
+	EXPECT_EQ(msb<char>(120, 4), 4);
+	EXPECT_EQ(msb<char>(120, 5), 0);
+
+	// 0101 0101
+	EXPECT_EQ(msb<char>(85, 1), 7);
+	EXPECT_EQ(msb<char>(85, 2), 5);
+	EXPECT_EQ(msb<char>(85, 3), 3);
+	EXPECT_EQ(msb<char>(85, 4), 1);
+	EXPECT_EQ(msb<char>(85, 5), 0);
+
+	// 0011 0100
+	EXPECT_EQ(msb<char>(52, 1), 6);
+	EXPECT_EQ(msb<char>(52, 2), 5);
+	EXPECT_EQ(msb<char>(52, 3), 3);
+	EXPECT_EQ(msb<char>(52, 4), 0);
+
+	// 1000 1000
+	EXPECT_EQ(msb<char>(-120, 1), 8);
+	EXPECT_EQ(msb<char>(-120, 2), 4);
+	EXPECT_EQ(msb<char>(-120, 3), 0);
+	EXPECT_EQ(msb<char>(-120, 4), 0);
+	EXPECT_EQ(msb<char>(-120, 5), 0);
+
+	// 1010 1011
+	EXPECT_EQ(msb<char>(-85, 1), 8);
+	EXPECT_EQ(msb<char>(-85, 2), 6);
+	EXPECT_EQ(msb<char>(-85, 3), 4);
+	EXPECT_EQ(msb<char>(-85, 4), 2);
+	EXPECT_EQ(msb<char>(-85, 5), 1);
+	EXPECT_EQ(msb<char>(-85, 6), 0);
+
+	// 1100 1100
+	EXPECT_EQ(msb<char>(-52, 1), 8);
+	EXPECT_EQ(msb<char>(-52, 2), 7);
+	EXPECT_EQ(msb<char>(-52, 3), 4);
+	EXPECT_EQ(msb<char>(-52, 4), 3);
+	EXPECT_EQ(msb<char>(-52, 5), 0);
+
+	// 1000 0001
+	EXPECT_EQ(msb<char>(-127, 1), 8);
+	EXPECT_EQ(msb<char>(-127, 2), 1);
+	EXPECT_EQ(msb<char>(-127, 3), 0);
+
+	// Special case: Min Limit
+	// 1000 0000
+	EXPECT_EQ(msb<char>(-128, 1), 7);
+	EXPECT_EQ(msb<char>(-128, 2), 0);
+	EXPECT_EQ(msb<char>(-128, 2), 0);
+}
+
+TEST(util_math, min_boundary_test)
+{
+	// 0001 1100
+	EXPECT_EQ(getMinBoundary<char>(28, 1, 7), 64);
+	EXPECT_EQ(getMinBoundary<char>(28, 1, 6), 32);
+	EXPECT_EQ(getMinBoundary<char>(28, 1, 5), 28);
+	// Cannot be small than prevLimit '28'
+	//getMinBoundary(28, 1, 4), 8;
+	//getMinBoundary(28, 1, 3), 4;
+	//getMinBoundary(28, 1, 2), 2;
+	//getMinBoundary(28, 1, 1), 1;
+
+	EXPECT_EQ(getMinBoundary<char>(28, 2, 4), 28);
+
+	EXPECT_EQ(getMinBoundary<char>(28, 3, 3), 28);
+
+	// Cannot be small than prevLimit '-28'
+	//getMinBoundary(-28, 1, 6), -63;
+	//getMinBoundary(-28, 1, 5), -31;
+	EXPECT_EQ(getMinBoundary<char>(-28, 1, -5), -28);
+	EXPECT_EQ(getMinBoundary<char>(-28, 1, -4), -15);
+	EXPECT_EQ(getMinBoundary<char>(-28, 1, -3), -7);
+	EXPECT_EQ(getMinBoundary<char>(-28, 1, -2), -3);
+	EXPECT_EQ(getMinBoundary<char>(-28, 1, -1), -1);
+
+	char a = getMinBoundary<char>(-28, 2, -4);
+	EXPECT_EQ(a, -28);
+	EXPECT_EQ(getMinBoundary<char>(-28, 2, -3), -23);
+	EXPECT_EQ(getMinBoundary<char>(-28, 2, -2), -19);
+	EXPECT_EQ(getMinBoundary<char>(-28, 2, -1), -17);
+
+	char b = getMinBoundary<char>(-28, 3, -3);
+	EXPECT_EQ(b, -28);
+	EXPECT_EQ(getMinBoundary<char>(-28, 3, -2), -27);
+	EXPECT_EQ(getMinBoundary<char>(-28, 3, -1), -25);
+
+	// 81 (0101 0001)
+	EXPECT_EQ(getMinBoundary<char>(81, 1, 7), 81);
+
+	EXPECT_EQ(getMinBoundary<char>(81, 2, 6), 96);
+	EXPECT_EQ(getMinBoundary<char>(81, 2, 5), 81);
+
+	EXPECT_EQ(getMinBoundary<char>(81, 3, 4), 88);
+	EXPECT_EQ(getMinBoundary<char>(81, 3, 3), 84);
+	EXPECT_EQ(getMinBoundary<char>(81, 3, 2), 82);
+	EXPECT_EQ(getMinBoundary<char>(81, 3, 1), 81);
+}
+
+TEST(util_math, max_boundary_test)
+{
+	// 81 (0101 0001)
+	EXPECT_EQ(getMaxBoundary<char>(81, 1, 7), 81);
+	EXPECT_EQ(getMaxBoundary<char>(81, 1, 6), 63);
+	EXPECT_EQ(getMaxBoundary<char>(81, 1, 5), 31);
+	EXPECT_EQ(getMaxBoundary<char>(81, 1, 4), 15);
+	EXPECT_EQ(getMaxBoundary<char>(81, 1, 3), 7);
+	EXPECT_EQ(getMaxBoundary<char>(81, 1, 2), 3);
+	EXPECT_EQ(getMaxBoundary<char>(81, 1, 1), 1);
+
+	// Cannot be large than prevLimit '81'
+	// 81, 2, (7, 6) >= 96
+	EXPECT_EQ(getMaxBoundary<char>(81, 2, 5), 81);
+	EXPECT_EQ(getMaxBoundary<char>(81, 2, 4), 79);
+	EXPECT_EQ(getMaxBoundary<char>(81, 2, 3), 71);
+	EXPECT_EQ(getMaxBoundary<char>(81, 2, 2), 67);
+	EXPECT_EQ(getMaxBoundary<char>(81, 2, 1), 65);
+
+	// Cannot be large than prevLimit '81'
+	// 81, 3, (4, 3, 2) >= 82
+	EXPECT_EQ(getMaxBoundary<char>(81, 3, 1), 81);
+}
+}
