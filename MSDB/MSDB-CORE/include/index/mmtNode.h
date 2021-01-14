@@ -76,9 +76,13 @@ public:
 
 	inline void outChildOrderChanged(bstream& bs)
 	{
+		//////////
+		// Order has range [0:max({bMax, bMin})]
+		// Required bits for order change is this->bits_
+		//
 		if(this->childOrder_ > this->order_)
 		{
-			// next order
+			// Next order
 			bs << setw(this->bits_) << this->childOrder_ - this->order_;
 		}else
 		{
@@ -87,13 +91,15 @@ public:
 		}
 	}
 
+public:
 	template <typename Ty_>
 	inline void inJumpedBits(bstream& bs, bit_cnt_type& jumpBits, Ty_& jumpValue)
 	{
+		jumpBits = 0;
+		jumpValue = 0;
+
 		if(this->childOrder_)
 		{
-			jumpBits = 0;
-			jumpValue = 0;
 			bit_cnt_type orderDelta = this->childOrder_ - this->order_;
 			char inBit = 0;
 
@@ -117,29 +123,41 @@ public:
 			jumpValue >>= 1;
 			--jumpBits;;
 
-			// make to original value
-			assert(this->bMax_ - jumpBits - 1 > 0);
-			jumpValue <<= sizeof(Ty_) * CHAR_BIT - this->bMax_ - 1;
-
+			// Postfix size should be >= 0
+			assert(this->bMax_ - jumpBits - 1 >= 0);
+			// Make to original value
+			jumpValue <<= this->bMax_ - jumpBits - 1;
 			this->jumpBits_ = jumpBits;
+
 		}else
 		{
-			char endFlag = 0;
-			jumpBits = this->bMax_ - 1;
-			jumpValue = 0;
-			bs >> setw(jumpBits) >> jumpValue;
-			bs >> setw(1) >> endFlag;
+			char inBit = 0;
 
-			assert(endFlag == 1);
+			if(this->bMax_ > 0)
+			{
+				jumpBits = this->bMax_ - 1;
+				bs >> setw(jumpBits) >> jumpValue;
+			}
+
+			bs >> setw(1) >> inBit;
+			this->jumpBits_ = jumpBits;
+
+			assert(inBit == 1);
 		}
 	}
 
+public:
 	template <typename Ty_>
 	inline void outJumpedBits(bstream& bs, bit_cnt_type jumpBits, Ty_ jumpValue)
 	{
-		Ty_ mask = ~((Ty_)-1 << jumpBits);
-		bit_cnt_type postfixSize = abs_(this->bMax_) - jumpBits - 1;
-		bs << setw(jumpBits) << (Ty_)(abs_(jumpValue) >> (postfixSize));
+		if(jumpBits)
+		{
+			Ty_ mask = ~((Ty_)-1 << jumpBits);
+			bit_cnt_type postfixSize = abs_(this->bMax_) - jumpBits - 1;
+			bs << setw(jumpBits) << (Ty_)(abs_(jumpValue) >> (postfixSize));
+
+			assert(this->bMax_ - jumpBits - 1 >= 0);
+		}
 		bs << setw(1) << 0x1;
 
 		//// make mask
@@ -193,10 +211,10 @@ public:
 		this->bMin_ = msb<Ty_>(abs_(boost::any_cast<Ty_>(min_)), this->order_) * SIGN(boost::any_cast<Ty_>(min_));
 		
 #ifndef NDEBUG
-		if(this->bMax_ < 0 || this->bMin_ < 0)
-		{
-			BOOST_LOG_TRIVIAL(warning) << "bMax: " << static_cast<int64_t>(this->bMax_) << ", bMin: " << static_cast<int64_t>(this->bMin_);
-		}
+		//if(this->bMax_ < 0 || this->bMin_ < 0)
+		//{
+		//	BOOST_LOG_TRIVIAL(warning) << "bMax: " << static_cast<int64_t>(this->bMax_) << ", bMin: " << static_cast<int64_t>(this->bMin_);
+		//}
 #endif
 	}
 
@@ -248,7 +266,7 @@ public:
 			<< "(" << static_cast<int64_t>(this->bMax_) << ", " << static_cast<int64_t>(this->bMaxDelta_) << ")"
 			<< " / b: " << static_cast<int64_t>(this->bits_)
 			<< " / bTy: " << static_cast<int64_t>(sizeof(Ty_) * CHAR_BIT)
-			<< " / or: " << static_cast<int64_t>(this->order_)
+			<< " / or: " << static_cast<int64_t>(this->order_) << ", cor: " << static_cast<int64_t>(this->childOrder_)
 			<< " / real: " << static_cast<int64_t>(this->getRealMin<Ty_>()) << "~" << static_cast<int64_t>(this->getRealMax<Ty_>()) << "\n"
 			<< this->chunkCoor_.toString() << " / " << this->blockCoor_.toString() << " / " << this->nodeCoor_.toString();
 
@@ -344,6 +362,12 @@ bit_cnt_type updateChildNodeOrder(pMmtNode curNode)
 		return 0;
 	}
 
+	if(curNode->bMax_ == 0 && curNode->bMin_ == 0)
+	{
+		curNode->childOrder_ = 0;
+		return 0;
+	}
+
 	//////////////////////////////
 	// order changed
 	//
@@ -369,7 +393,7 @@ bit_cnt_type updateChildNodeOrder(pMmtNode curNode)
 			// If the higher significant bit is 0 
 			// then this is the last bit
 			curNode->childOrder_ = 0;
-			return curNode->bMax_;		// curNode->bMax_ == curNode->bMin_
+			return abs_(curNode->bMax_) - 1;		// curNode->bMax_ == curNode->bMin_
 		}
 
 		// child order cannot be larger then Ty_ data type size

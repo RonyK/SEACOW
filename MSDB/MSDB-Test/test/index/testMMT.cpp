@@ -38,16 +38,45 @@ pMmtNode getMmtNode(Ty_ realMin, Ty_ realMax, Ty_ prevMin, Ty_ prevMax, bit_cnt_
 	return curNode;
 }
 
-TEST(mmt_update_childOrderChanged, nodeUpdateWhenChildOrderChanged)
+TEST(mmt_update_childOrderChanged, testNodeUpdateWhenChildOrderChanged)
 {
-	pMmtNode curNode = getMmtNode<char>(-124, -77, -127, 127, 0, 14, 1, 2);
+	pMmtNode node_n124_n77 = getMmtNode<char>(-124, -77, -127, 127, 0, 14, 1, 2);
+	nodeUpdateWhenChildOrderChanged<char>(node_n124_n77, 0, -124);
+	EXPECT_EQ(node_n124_n77->getMin<char>(), -127);
+	EXPECT_EQ(node_n124_n77->getMax<char>(), -64);
 
-	nodeUpdateWhenChildOrderChanged<char>(curNode, 0, -124);
-	EXPECT_EQ(curNode->getMin<char>(), -127);
-	EXPECT_EQ(curNode->getMax<char>(), -64);
+	nodeUpdateWhenChildOrderChanged<char>(node_n124_n77, 0, -77);
+	EXPECT_EQ(node_n124_n77->getMin<char>(), -127);
+	EXPECT_EQ(node_n124_n77->getMax<char>(), -64);
 
-	nodeUpdateWhenChildOrderChanged<char>(curNode, 0, -77);
-	EXPECT_EQ(curNode->getMin<char>(), -127);
-	EXPECT_EQ(curNode->getMax<char>(), -64);
+	pMmtNode node_n35_n35 = getMmtNode<char>(-35, -35, 1, 13, 1, 0, false);
+	nodeUpdateWhenChildOrderChanged<char>(node_n35_n35, 0, -35);
+	EXPECT_EQ(node_n35_n35->getMin<char>(), -35);
+	EXPECT_EQ(node_n35_n35->getMax<char>(), -35);
+}
+
+TEST(mmt_update_childOrderChanged, testUpdateChildNodeOrder)
+{
+	pMmtNode node_64_64 = getMmtNode<char>(64, 64, -127, 127, 14, 0, 1, 2);
+	EXPECT_EQ(updateChildNodeOrder<char>(node_64_64), 6);
+
+	pMmtNode node_0_0 = getMmtNode<char>(0, 0 -127, 127, 7, 7, 1, 0);
+	EXPECT_EQ(updateChildNodeOrder<char>(node_0_0), 0);
+
+	pMmtNode node_n35_n35 = getMmtNode<char>(-35, -35, 1, 13, 1, 0, false);
+	EXPECT_EQ(updateChildNodeOrder<char>(node_n35_n35), 5);
+}
+
+TEST(mmt_serialize, testJumpBits)
+{
+	bstream bs;
+	bit_cnt_type jumpBits = 0;
+	char jumpValue = 0;
+
+	pMmtNode node_0_0 = getMmtNode<char>(0, 0, -127, 127, 7, 7, 1, 0);
+	node_0_0->outJumpedBits<char>(bs, 0, 0);
+	node_0_0->inJumpedBits<char>(bs, jumpBits, jumpValue);
+
+
 }
 }

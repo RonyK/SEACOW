@@ -224,7 +224,7 @@ public:
 		BOOST_LOG_TRIVIAL(debug) << "root: " << this->nodes_[maxLevel].size();
 		nodeNums += this->nodes_[maxLevel].size();
 
-		for (size_type l = maxLevel - 1; l != (size_type)-1; l--)
+		for (size_type l = maxLevel - 1; l != (size_type)this->lowerLevel_ - 1; l--)
 		{
 			this->serializeNonRoot(bs, l);
 			BOOST_LOG_TRIVIAL(debug) << "level" << l << ": " << this->nodes_[l].size();
@@ -257,7 +257,7 @@ public:
 		}
 
 		this->deserializeRoot(bs);
-		for (size_type l = this->maxLevel_ - 1; l != (size_type)-1; l--)
+		for (size_type l = this->maxLevel_ - 1; l != (size_type)this->lowerLevel_ - 1; l--)
 		{
 			this->deserializeNonRoot(bs, l);
 		}
@@ -555,8 +555,6 @@ protected:
 
 				// Update
 				pMmtNode curNode = (*cit);
-				curNode->parent_ = prevNode;
-
 				assert(pcit.coor() == this->getParentCoor(cit.coor()));
 				backwardUpdateNode(prevNode, curNode, isFinished(prevNode), isChildOrderChanged(prevNode));
 			}
@@ -566,6 +564,7 @@ protected:
 	void backwardUpdateNode(pMmtNode prevNode, pMmtNode curNode, bool finished, bool orderChanged)
 	{
 		bit_cnt_type jumpBits = 0;
+		curNode->parent_ = prevNode;
 
 		if (finished)
 		{
@@ -649,6 +648,11 @@ protected:
 		if (curNode->getMax<Ty_>() < curNode->getRealMax<Ty_>() || curNode->getMin<Ty_>() > curNode->getRealMin<Ty_>())
 		{
 			std::cout << "error";
+			curNode->print<Ty_>();
+			if(curNode->parent_)
+			{
+				curNode->parent_->print<Ty_>();
+			}
 		}
 		assert(curNode->getMin<Ty_>() <= curNode->getRealMin<Ty_>());
 		assert(curNode->getMax<Ty_>() >= curNode->getRealMax<Ty_>());
@@ -1028,7 +1032,7 @@ public:
 
 	void print()
 	{
-		for(size_type level = 0; level < this->getMaxLevel(); ++level)
+		for(size_type level = 0; level <= this->getMaxLevel(); ++level)
 		{
 			BOOST_LOG_TRIVIAL(debug) << "==============================\n" << "Level: " << level;
 

@@ -105,6 +105,9 @@ TEST(util_math, min_boundary_test)
 	EXPECT_EQ(getMinBoundary<char>(81, 3, 3), 84);
 	EXPECT_EQ(getMinBoundary<char>(81, 3, 2), 82);
 	EXPECT_EQ(getMinBoundary<char>(81, 3, 1), 81);
+
+	// -126 (0111 1110)
+	EXPECT_EQ(getMinBoundary<char>(-126, 1, -7), -126);
 }
 
 TEST(util_math, max_boundary_test)
