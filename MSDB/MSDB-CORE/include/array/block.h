@@ -14,7 +14,6 @@ namespace msdb
 {
 class chunk;
 class block;
-class blockItemIterator;
 using pBlock = std::shared_ptr<block>;
 
 class block : public std::enable_shared_from_this<block>
