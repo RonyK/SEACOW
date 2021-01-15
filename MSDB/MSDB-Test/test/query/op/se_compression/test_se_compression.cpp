@@ -111,6 +111,19 @@ TEST(query_op_delta_spiht_compression, star1024x1024_ind_spiht_delta_encode_deco
 }	// TEST()
 }   // data2D_star1024x1024
 
+
+namespace data2D_test32x32
+{
+TEST(query_op_se_compression, test32x32_seq_se_compr_decomp)
+{
+	bool printFlag = true;
+	test_body_seq_se_comp_decomp<value_type>(&getSourceArrayIfEmpty,
+											 &getSourceArrayDesc,
+											 wtLevel, mmtLevel,
+											 printFlag);						// 19362
+}	// TEST()
+}	// data2D_test32x32
+
 namespace data2D_saturn1024x1024
 {
 TEST(query_op_se_compression, saturn1014x1024_seq_se_compr_decomp)

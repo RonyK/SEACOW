@@ -5,7 +5,6 @@
 #include <array/dimensionDesc.h>
 #include <compression/test_action_compression.h>
 #include <cmath>
-#include <vector>
 
 namespace msdb
 {
@@ -211,6 +210,15 @@ TEST(query_op_wavelet_encode, star1024x1024_wavelet_encode)
 	test_body_wavelet_encode_decode<value_type>(&getSourceArrayIfEmpty, wtLevel);
 }
 }	// data2D_star1024x1024
+
+
+namespace data2D_solar1024x1024
+{
+TEST(query_op_wavelet_encode, solar1024x1024_wavelet_encode)
+{
+	test_body_wavelet_encode_decode<value_type>(&getSourceArrayIfEmpty, wtLevel);
+}
+}	// data2D_solar1024x1024
 
 namespace data2D_tempTest
 {

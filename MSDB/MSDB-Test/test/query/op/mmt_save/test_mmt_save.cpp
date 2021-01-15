@@ -17,8 +17,15 @@ void test_body_mmt_save(_pFuncGetSourceArray_, eleDefault mmtLevel)
 
     auto arr_mmt_build = exe_act_ind_mmt_build(sourceArr, mmtLevel);
     std::cout << "##############################" << std::endl;
+    if (printFlag)
+    {
+        BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+        BOOST_LOG_TRIVIAL(debug) << "MMT Build Arr" << std::endl;
+        arr_mmt_build->print();
+    }
+
     auto arr_mmt_save = exe_act_ind_mmt_save(std::vector<pArray>({ arr_mmt_build }));
-    std::cout << "##############################" << std::endl;
+    BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
 
     //EXPECT_TRUE(false);
 }

@@ -12,6 +12,8 @@ namespace msdb
 {
 namespace caDummy
 {
+using dim_type = position_t;
+
 template <typename Aty_>
 std::shared_ptr<Aty_> get2DCharArray(arrayId aid, std::string arrayName,
 									 dimension dims, dimension chunkDims, dimension blockDims,
@@ -220,7 +222,6 @@ void compChunkItems(pChunk lChunk, pChunk rChunk)
 	//EXPECT_EQ(lbItr->isEnd(), rbItr->isEnd());
 }
 
-using dim_type = position_t;
 // signed char
 namespace data2D_sc4x4
 {
@@ -313,6 +314,52 @@ std::vector<pArray> getSourceArrayDesc()
 void getSourceArrayDesc(std::vector<pArray>& sourceArr);
 void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
 }
+
+namespace data2D_test32x32
+{
+using dim_type = position_t;
+
+using value_type = char;
+static const eleType ele_type = eleType::CHAR;
+
+static const dim_type dimX = 16;
+static const dim_type dimY = 16;
+static const size_t dataLength = dimX * dimY;
+static const size_t wtLevel = 2;
+static const size_t mmtLevel = 2;
+static const arrayId aid = 3232;
+
+extern std::vector<dim_type> dims;
+extern std::vector<dim_type> chunkDims;
+extern std::vector<dim_type> chunkNums;
+extern std::vector<dim_type> blockDims;
+extern std::vector<dim_type> blockNums;
+
+void getDummy(value_type* output, size_t length);
+
+template<class Aty_ = memBlockArray>
+std::vector<pArray> getSourceArray()
+{
+	// Get Dummy data
+	value_type* data = new value_type[dataLength];
+	getDummy(data, dataLength);
+
+	std::vector<pArray> arrs(
+		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_test32x32", dims, chunkDims, blockDims, ele_type)) });
+	return arrs;
+}
+
+template<class Aty_ = memBlockArray>
+std::vector<pArray> getSourceArrayDesc()
+{
+	std::vector<pArray> arrs(
+		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_>(aid, "data2D_test32x32", dims, chunkDims, blockDims, ele_type)) });
+	return arrs;
+}
+
+void getSourceArrayDesc(std::vector<pArray>& sourceArr);
+void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
+}	// data2D_test32x32
 
 // signed char
 namespace data2D_sc8x8
