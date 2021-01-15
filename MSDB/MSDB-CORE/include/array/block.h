@@ -118,11 +118,11 @@ protected:
 		int64_t row = -1;
 		while (!iit->isEnd())
 		{
-			int64_t curRow = iit->coor()[1];
+			int64_t curRow = iit->coor()[0];
 			if(row != curRow)
 			{
 				ss << "\n";
-				ss << curRow << ": ";
+				ss << curRow << " : ";
 				row = curRow;
 			}
 			if (iit->isExist())

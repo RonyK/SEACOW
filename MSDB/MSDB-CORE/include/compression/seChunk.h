@@ -42,6 +42,11 @@ public:
 		dimension inBlockDims = this->getDesc()->getBlockDims();
 		dimension bandDims = inBlockDims / std::pow(2, this->level_ + 1);
 
+		for(int d = 0; d < dSize; ++d)
+		{
+			assert(bandDims[d] > 0);	// Level is too high for block dim
+		}
+
 		size_t seqId = 0;
 		// Level 0
 		{
@@ -205,6 +210,7 @@ public:
 		Ty_ signMask = 0x1 << rbFromDelta - 1;
 		//Ty_ negativeMask = (Ty_)-1 - (signMask - 1);
 		Ty_ negativeMask = (Ty_)-1 ^ signMask;
+		Ty_ signBit = (Ty_)(0x1 << sizeof(Ty_) * CHAR_BIT - 1);
 
 		auto bItemItr = myBlock->getItemRangeIterator(getBandRange(bandId, bandDims));
 		while (!bItemItr->isEnd())
@@ -215,6 +221,7 @@ public:
 			{
 				value &= negativeMask;
 				value *= -1;
+				value |= signBit;	// for 128 (1000 0000)
 			}
 
 			(**bItemItr).set<Ty_>(value);
@@ -269,6 +276,7 @@ public:
 						Ty_ signMask = 0x1 << rbFromDelta - 1;
 						//Ty_ negativeMask = (Ty_)-1 - (signMask - 1);
 						Ty_ negativeMask = (Ty_)-1 ^ signMask;
+						Ty_ signBit = (Ty_)(0x1 << sizeof(Ty_) * CHAR_BIT - 1);
 
 						while (!bItemItr->isEnd())
 						{
@@ -278,6 +286,7 @@ public:
 							{
 								value &= negativeMask;
 								value *= -1;
+								value |= signBit;	// for 128 (1000 0000)
 							}
 
 							(**bItemItr).set<Ty_>(value);
