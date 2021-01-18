@@ -108,6 +108,9 @@ TEST(util_math, min_boundary_test)
 
 	// -126 (0111 1110)
 	EXPECT_EQ(getMinBoundary<char>(-126, 1, -7), -126);
+
+	// -91 (0101 1011)
+	EXPECT_EQ(getMinBoundary<char>(-91, 2, -5), -91);
 }
 
 TEST(util_math, max_boundary_test)
@@ -135,20 +138,23 @@ TEST(util_math, max_boundary_test)
 
 
 	//////////////////////////////
-	EXPECT_EQ(getMaxBoundary<char>(127, 1, -7), -64);
-	EXPECT_EQ(getMaxBoundary<char>(127, 1, -6), -32);
-	EXPECT_EQ(getMaxBoundary<char>(127, 1, -5), -16);
-	EXPECT_EQ(getMaxBoundary<char>(127, 1, -4), -8);
-	EXPECT_EQ(getMaxBoundary<char>(127, 1, -3), -4);
-	EXPECT_EQ(getMaxBoundary<char>(127, 1, -2), -2);
-	EXPECT_EQ(getMaxBoundary<char>(127, 1, -1), -1);
-	EXPECT_EQ(getMaxBoundary<char>(127, 1, 0), 0);
-	EXPECT_EQ(getMaxBoundary<char>(127, 1, 1), 1);
-	EXPECT_EQ(getMaxBoundary<char>(127, 1, 2), 3);
-	EXPECT_EQ(getMaxBoundary<char>(127, 1, 3), 7);
-	EXPECT_EQ(getMaxBoundary<char>(127, 1, 4), 15);
-	EXPECT_EQ(getMaxBoundary<char>(127, 1, 5), 31);
-	EXPECT_EQ(getMaxBoundary<char>(127, 1, 6), 63);
-	EXPECT_EQ(getMaxBoundary<char>(127, 1, 7), 127);
+	EXPECT_EQ((char)getMaxBoundary<char>(127, 1, -7), -64);
+	EXPECT_EQ((char)getMaxBoundary<char>(127, 1, -6), -32);
+	EXPECT_EQ((char)getMaxBoundary<char>(127, 1, -5), -16);
+	EXPECT_EQ((char)getMaxBoundary<char>(127, 1, -4), -8);
+	EXPECT_EQ((char)getMaxBoundary<char>(127, 1, -3), -4);
+	EXPECT_EQ((char)getMaxBoundary<char>(127, 1, -2), -2);
+	EXPECT_EQ((char)getMaxBoundary<char>(127, 1, -1), -1);
+	EXPECT_EQ((char)getMaxBoundary<char>(127, 1, 0), 0);
+	EXPECT_EQ((char)getMaxBoundary<char>(127, 1, 1), 1);
+	EXPECT_EQ((char)getMaxBoundary<char>(127, 1, 2), 3);
+	EXPECT_EQ((char)getMaxBoundary<char>(127, 1, 3), 7);
+	EXPECT_EQ((char)getMaxBoundary<char>(127, 1, 4), 15);
+	EXPECT_EQ((char)getMaxBoundary<char>(127, 1, 5), 31);
+	EXPECT_EQ((char)getMaxBoundary<char>(127, 1, 6), 63);
+	EXPECT_EQ((char)getMaxBoundary<char>(127, 1, 7), 127);
+
+	/////
+	EXPECT_EQ((char)getMaxBoundary<char>(-78, 2, -4), -78);
 }
 }

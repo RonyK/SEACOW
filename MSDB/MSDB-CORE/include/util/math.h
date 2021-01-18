@@ -200,13 +200,15 @@ Ty_ getMaxBoundary(Ty_ prevLimit, bit_cnt_type order, sig_bit_type sigBitPos)
 	{
 		return getMaxBoundary(prevLimit, sigBitPos);
 	}
-
+	
+#ifndef NDEBUG
 	// After order 1, signs of prevLimit and sigBitPos are same
-	if(SIGN(prevLimit) != SIGN(sigBitPos))
+	if (!(sigBitPos == 0 || SIGN(prevLimit) == SIGN(sigBitPos)))
 	{
-		//assert(SIGN(prevLimit) == SIGN(sigBitPos));
-		return 0;
+		BOOST_LOG_TRIVIAL(warning) << "prevLimit: " << prevLimit << ", sigBitPos: " << sigBitPos;
+		assert(sigBitPos == 0 || SIGN(prevLimit) == SIGN(sigBitPos));
 	}
+#endif
 
 	if (prevLimit == 0)
 	{
@@ -216,7 +218,8 @@ Ty_ getMaxBoundary(Ty_ prevLimit, bit_cnt_type order, sig_bit_type sigBitPos)
 		return std::min({ getPositiveMaxBoundary<Ty_>(prevLimit, order, sigBitPos), prevLimit });
 	} else
 	{
-		return std::min({ (Ty_)(getPositiveMinBoundary<Ty_>(prevLimit, order, sigBitPos) * -1), prevLimit});
+		Ty_ value = (Ty_)(getPositiveMinBoundary<Ty_>(abs_(prevLimit), order, abs_(sigBitPos)));
+		return std::min({ (Ty_)(value * -1), prevLimit });
 	}
 }
 
@@ -229,12 +232,14 @@ Ty_ getMinBoundary(Ty_ prevLimit, bit_cnt_type order, sig_bit_type sigBitPos)
 	}
 
 #ifndef NDEBUG
+	// After order 1, signs of prevLimit and sigBitPos are same
 	if(!(sigBitPos == 0 || SIGN(prevLimit) == SIGN(sigBitPos)))
 	{
 		BOOST_LOG_TRIVIAL(warning) << "prevLimit: " << prevLimit << ", sigBitPos: " << sigBitPos;
 		assert(sigBitPos == 0 || SIGN(prevLimit) == SIGN(sigBitPos));
 	}
 #endif
+
 	if (prevLimit == 0)
 	{
 		return 0;
@@ -243,7 +248,8 @@ Ty_ getMinBoundary(Ty_ prevLimit, bit_cnt_type order, sig_bit_type sigBitPos)
 		return std::max({ getPositiveMinBoundary<Ty_>(prevLimit, order, sigBitPos), prevLimit });
 	} else
 	{
-		return std::max({ (Ty_)(getPositiveMaxBoundary<Ty_>(abs_(prevLimit), order, abs_(sigBitPos)) * -1), prevLimit });
+		Ty_ value = (Ty_)(getPositiveMaxBoundary<Ty_>(abs_(prevLimit), order, abs_(sigBitPos)));
+		return std::max({ (Ty_)(value * -1), prevLimit });
 	}
 }
 }	// msdb

@@ -27,7 +27,7 @@ void getDummy(value_type* output, size_t length)
 	while(in && i < dataLength)
 	{
 		in >> c;
-		output[i++] = c / 2;
+		output[i++] = c;
 	}
 	in.close();
 }
@@ -65,7 +65,7 @@ void getDummy(value_type* output, size_t length)
 	while (in && i < dataLength)
 	{
 		in >> c;
-		output[i++] = c / 2;
+		output[i++] = c;
 	}
 	in.close();
 }
@@ -103,7 +103,7 @@ void getDummy(value_type* output, size_t length)
 	while (in && i < dataLength)
 	{
 		in >> c;
-		output[i++] = c / 2;
+		output[i++] = c;
 	}
 	in.close();
 }
@@ -141,7 +141,7 @@ void getDummy(value_type* output, size_t length)
 	while (in && i < length)
 	{
 		in >> c;
-		output[i++] = c / 2;
+		output[i++] = c;
 	}
 	in.close();
 }

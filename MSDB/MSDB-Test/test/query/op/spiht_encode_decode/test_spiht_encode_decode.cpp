@@ -103,7 +103,7 @@ namespace data2D_mars4096x2048
 {
 TEST(query_op_spiht_encode, mars4096x2048_ind_spiht_encode)
 {
-	bool printFlag = true;
+	bool printFlag = false;
 	test_qry_ind_spiht_encode<value_type>(&getSourceArrayIfEmpty, wtLevel, printFlag);
 }
 
