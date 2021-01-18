@@ -3,8 +3,7 @@
 #define _MSDB_MEMCHUNKITEMITERATOR_H_
 
 #include <stdafx.h>
-#include <array/chunk.h>
-#include <array/chunkBuffer.h>
+#include <array/chunkItemIterator.h>
 #include <util/coordinate.h>
 
 namespace msdb

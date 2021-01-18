@@ -4,10 +4,8 @@
 
 #include <stdafx.h>
 #include <array/array.h>
-#include <array/arrayDesc.h>
 #include <query/opParam.h>
 #include <query/query.h>
-#include <util/timer.h>
 
 namespace msdb
 {

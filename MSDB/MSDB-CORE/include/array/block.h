@@ -6,7 +6,6 @@
 #include <array/blockItemIterator.h>
 #include <array/blockBuffer.h>
 #include <array/blockDesc.h>
-#include <index/bitmap.h>
 #include <io/bitstream.h>
 #include <util/logger.h>
 

@@ -5,14 +5,9 @@
 #include <stdafx.h>
 #include <io/bitstream.h>
 #include <io/serializable.h>
-#include <index/bitmap.h>
 
-#include <array/chunkBuffer.h>
 #include <array/chunkDesc.h>
-#include <array/chunkItemIterator.h>
-#include <array/block.h>
 #include <array/blockIterator.h>
-#include <array/blockContainer.h>
 
 namespace msdb
 {
@@ -187,8 +182,8 @@ protected:
 // Item Iterators
 //////////////////////////////
 public:
-	virtual pChunkItemIterator getItemIterator() = 0;
-	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range) = 0;
+	//virtual pChunkItemIterator getItemIterator() = 0;
+	//virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range) = 0;
 
 //////////////////////////////
 // Print

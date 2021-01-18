@@ -6,10 +6,8 @@
 #include <array/array.h>
 #include <index/mmtNode.h>
 #include <io/serializable.h>
-#include <index/attributeIndex.h>
 #include <util/coordinate.h>
 #include <util/logger.h>
-#include <utility>
 
 namespace msdb
 {
