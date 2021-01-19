@@ -6,9 +6,11 @@
 
 namespace msdb
 {
+using dim_type = position_t;
+
 namespace caDummy
 {
-using dim_type = position_t;
+void getDummyFromBinaryFile(char* output, const char* filePath, size_t length, size_t sizeofValueType);
 
 namespace data2D_star1024x1024
 {

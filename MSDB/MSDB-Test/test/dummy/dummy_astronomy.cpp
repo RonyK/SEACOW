@@ -17,19 +17,10 @@ std::vector<dim_type> blockDims = { chunkDims[0] / blockNums[0], chunkDims[1] / 
 
 void getDummy(value_type* output, size_t length)
 {
-	assert(length >= dims[0] * dims[1]);
-	std::ifstream in("STSCI-H-p1942a-f-1024x1024_Gray.txt");
-	//std::ifstream in("Mars_Viking_MDIM21_ClrMosaic_1km_4096x2048_gray.txt");
-	assert(in.is_open() == true);
-
-	int c;
-	int i = 0;
-	while(in && i < dataLength)
-	{
-		in >> c;
-		output[i++] = c;
-	}
-	in.close();
+	getDummyFromBinaryFile(
+		reinterpret_cast<char*>(output),
+		"BIN_STAR_STSCI-H-p1942a-f-1024x1024_gray.txt",
+		length, sizeof(value_type));
 }
 
 void getSourceArrayDesc(std::vector<pArray>& sourceArr)
@@ -56,18 +47,10 @@ std::vector<dim_type> blockDims = { chunkDims[0] / blockNums[0], chunkDims[1] / 
 
 void getDummy(value_type* output, size_t length)
 {
-	assert(length >= dims[0] * dims[1]);
-	std::ifstream in("STSCI-H-p1936a-f-1024x1024_gray.txt");
-	assert(in.is_open() == true);
-
-	int c;
-	int i = 0;
-	while (in && i < dataLength)
-	{
-		in >> c;
-		output[i++] = c;
-	}
-	in.close();
+	getDummyFromBinaryFile(
+		reinterpret_cast<char*>(output),
+		"BIN_SATURN_STSCI-H-p1936a-f-1024x1024_gray.txt",
+		length, sizeof(value_type));
 }
 
 void getSourceArrayDesc(std::vector<pArray>& sourceArr)
@@ -94,18 +77,10 @@ std::vector<dim_type> blockDims = { chunkDims[0] / blockNums[0], chunkDims[1] / 
 
 void getDummy(value_type* output, size_t length)
 {
-	assert(length >= dims[0] * dims[1]);
-	std::ifstream in("latest10240171copy3_1024x1024_gray.txt");
-	assert(in.is_open() == true);
-
-	int c;
-	int i = 0;
-	while (in && i < dataLength)
-	{
-		in >> c;
-		output[i++] = c;
-	}
-	in.close();
+	getDummyFromBinaryFile(
+		reinterpret_cast<char*>(output),
+		"BIN_SOLAR_latest10240171copy3_1024x1024_gray.txt",
+		length, sizeof(value_type));
 }
 
 void getSourceArrayDesc(std::vector<pArray>& sourceArr)
@@ -132,18 +107,10 @@ std::vector<dim_type> blockDims = { chunkDims[0] / blockNums[0], chunkDims[1] / 
 
 void getDummy(value_type* output, size_t length)
 {
-	assert(length >= dims[0] * dims[1]);
-	std::ifstream in("Mars_Viking_MDIM21_ClrMosaic_1km_4096x2048_gray.txt");
-	assert(in.is_open() == true);
-
-	int64_t c;
-	int64_t i = 0;
-	while (in && i < length)
-	{
-		in >> c;
-		output[i++] = c;
-	}
-	in.close();
+	getDummyFromBinaryFile(
+		reinterpret_cast<char*>(output),
+		"BIN_MARS_Viking_MDIM21_ClrMosaic_1km_4096x2048_gray.txt",
+		length, sizeof(value_type));
 }
 
 void getSourceArrayDesc(std::vector<pArray>& sourceArr)
@@ -159,6 +126,21 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
 	}
 }
 }	// data2D_mars4096x2048
+
+void getDummyFromBinaryFile(char* output, const char* filePath, size_t length, size_t sizeofValueType)
+{
+	std::ifstream in(filePath, std::ios::binary);
+	assert(in.is_open() == true && "Check file is opened");
+
+	// Get file size
+	in.seekg(0, std::ios::end);
+	size_t fileLength = (size_t)in.tellg();
+	in.seekg(0, std::ios::beg);
+	//assert(sizeofValueType * length == fileLength && "Data length and file length check");
+
+	in.read(output, std::min({ length, fileLength }));
+	in.close();
+}
 }	// atDummy
 }	// msdb
 
