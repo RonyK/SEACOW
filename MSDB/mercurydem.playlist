@@ -1,0 +1,41 @@
+<Playlist Version="2.0">
+  <Rule Name="Includes" Match="Any">
+    <Rule Match="All">
+      <Property Name="Solution" />
+      <Rule Match="Any">
+        <Rule Match="All">
+          <Property Name="Project" Value="MSDB-Test" />
+          <Rule Match="Any">
+            <Rule Match="All">
+              <Property Name="Namespace" Value="" />
+              <Rule Match="Any">
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_mmt_save" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_mmt_save.mercurydem20480x10240_mmt_save" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_mmt_save.mercurydem20480x10240_mmt_save" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_se_compression" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_se_compression.mercurydem20480x10240_seq_se_compr_decomp" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_se_compression.mercurydem20480x10240_seq_se_compr_decomp" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+              </Rule>
+            </Rule>
+          </Rule>
+        </Rule>
+      </Rule>
+    </Rule>
+  </Rule>
+</Playlist>

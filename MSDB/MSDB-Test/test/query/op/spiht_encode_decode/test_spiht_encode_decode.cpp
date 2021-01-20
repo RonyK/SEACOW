@@ -117,5 +117,13 @@ TEST(query_op_spiht_encode_decode, mars4096x2048_seq_spiht_encode_decode)
 	test_qry_seq_spiht_encode_decode<value_type>(&getSourceArrayIfEmpty, wtLevel);
 }
 }	// data2D_mars4096x2048
+
+namespace data2D_mercurydem20480x10240
+{
+TEST(query_op_spiht_encode_decode, mercurydem20480x10240_seq_spiht_encode_decode)
+{
+	test_qry_seq_spiht_encode_decode<value_type>(&getSourceArrayIfEmpty, wtLevel);
+}
+}	// data2D_mercurydem20480x10240
 }	// caDummy
 }	// msdb

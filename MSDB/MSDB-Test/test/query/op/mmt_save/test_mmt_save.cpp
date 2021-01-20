@@ -7,10 +7,8 @@ namespace msdb
 namespace caDummy
 {
 template <typename value_type>
-void test_body_mmt_save(_pFuncGetSourceArray_, eleDefault mmtLevel)
+void test_body_mmt_save(_pFuncGetSourceArray_, eleDefault mmtLevel, bool printFlag = false)
 {
-    bool printFlag = false;
-
     std::vector<pArray> sourceArr;
     getSourceArrayIfEmpty(sourceArr);
     sourceArr[0]->setId(sourceArr[0]->getId() + se_array_id);
@@ -119,6 +117,14 @@ namespace data2D_mars4096x2048
 TEST_F(query_op_mmt_save, mars4096x2048_mmt_save)
 {
     test_body_mmt_save<value_type>(&getSourceArrayIfEmpty, mmtLevel);        // 24243
+}   // TEST
+}   // data2D_mars4096x2048
+
+namespace data2D_mercurydem20480x10240
+{
+TEST_F(query_op_mmt_save, mercurydem20480x10240_mmt_save)
+{
+    test_body_mmt_save<value_type>(&getSourceArrayIfEmpty, mmtLevel);        // 20100
 }   // TEST
 }   // data2D_mars4096x2048
 }	// caDummy

@@ -127,6 +127,36 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
 }
 }	// data2D_mars4096x2048
 
+namespace data2D_mercurydem20480x10240
+{
+std::vector<dim_type> dims = { dimY, dimX };
+std::vector<dim_type> chunkNums = { 16, 8 };
+std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
+std::vector<dim_type> blockNums = { 8, 8 };
+std::vector<dim_type> blockDims = { chunkDims[0] / blockNums[0], chunkDims[1] / blockNums[1] };
+
+void getDummy(value_type* output, size_t length)
+{
+	getDummyFromBinaryFile(
+		reinterpret_cast<char*>(output),
+		"BIN_Mercury_Messenger_DEM_Global_665m_v2_max_23040x11520.txt",
+		length, sizeof(value_type));
+}
+
+void getSourceArrayDesc(std::vector<pArray>& sourceArr)
+{
+	sourceArr = getSourceArrayDesc();
+}
+
+void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
+{
+	if (sourceArr.empty())
+	{
+		sourceArr = getSourceArray();
+	}
+}
+}	// data2D_mercurydem20480x10240
+
 void getDummyFromBinaryFile(char* output, const char* filePath, size_t length, size_t sizeofValueType)
 {
 	std::ifstream in(filePath, std::ios::binary);
