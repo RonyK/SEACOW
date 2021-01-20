@@ -57,7 +57,7 @@ void timer::resume(size_t threadId, const std::string& nextJobName, workType nex
 	this->nextJob(threadId, nextJobName, nextJobType);
 }
 
-void timer::printTime()
+void timer::printTime(bool printDetail)
 {
 	std::map<size_t, float> thread;
 	std::map<std::string, float> job;
@@ -67,18 +67,20 @@ void timer::printTime()
 
 	for (int i = 0; i < this->records_.size(); i++)
 	{
-		BOOST_LOG_TRIVIAL(debug) << 
-			this->records_[i].threadId << "\t" << 
-			this->records_[i].jobId << "\t" << 
-			boost::str(boost::format("%f") % this->records_[i].time_.count()) << "\t" << 
-			"[" << jobName_[this->records_[i].jobId] << " / " << 
-			strTimerWorkType[static_cast<int>(this->records_[i].stype_)] << "]";
-
+		if(printDetail)
+		{
+			BOOST_LOG_TRIVIAL(info) <<
+				this->records_[i].threadId << "\t" <<
+				this->records_[i].jobId << "\t" <<
+				boost::str(boost::format("%f") % this->records_[i].time_.count()) << "\t" <<
+				"[" << jobName_[this->records_[i].jobId] << " / " <<
+				strTimerWorkType[static_cast<int>(this->records_[i].stype_)] << "]";
+		}
+		
 		if (thread.find(this->records_[i].threadId) != thread.end())
 		{
 			thread.find(this->records_[i].threadId)->second += this->records_[i].time_.count();
-		}
-		else
+		} else
 		{
 			thread.insert(std::make_pair(this->records_[i].threadId, this->records_[i].time_.count()));
 		}
@@ -86,8 +88,7 @@ void timer::printTime()
 		if (job.find(jobName_[this->records_[i].jobId]) != job.end())
 		{
 			job.find(jobName_[this->records_[i].jobId])->second += this->records_[i].time_.count();
-		}
-		else
+		} else
 		{
 			job.insert(std::make_pair(jobName_[this->records_[i].jobId], this->records_[i].time_.count()));
 		}
@@ -95,8 +96,7 @@ void timer::printTime()
 		if (workType.find(strTimerWorkType[static_cast<int>(this->records_[i].stype_)]) != workType.end())
 		{
 			workType.find(strTimerWorkType[static_cast<int>(this->records_[i].stype_)])->second += this->records_[i].time_.count();
-		}
-		else
+		} else
 		{
 			workType.insert(std::make_pair(strTimerWorkType[static_cast<int>(this->records_[i].stype_)], this->records_[i].time_.count()));
 		}
@@ -104,41 +104,40 @@ void timer::printTime()
 		if (jobWork.find(jobName_[this->records_[i].jobId] + " / " + strTimerWorkType[static_cast<int>(this->records_[i].stype_)]) != jobWork.end())
 		{
 			jobWork.find(jobName_[this->records_[i].jobId] + " / " + strTimerWorkType[static_cast<int>(this->records_[i].stype_)])->second += this->records_[i].time_.count();
-		}
-		else
+		} else
 		{
 			jobWork.insert(std::make_pair(jobName_[this->records_[i].jobId] + " / " + strTimerWorkType[static_cast<int>(this->records_[i].stype_)], this->records_[i].time_.count()));
 		}
 	}
 
-	BOOST_LOG_TRIVIAL(debug) << '\n';
-	BOOST_LOG_TRIVIAL(debug) << "=====threadId=====";
+	BOOST_LOG_TRIVIAL(info) << '\n';
+	BOOST_LOG_TRIVIAL(info) << "=====threadId=====";
 	for (auto it = thread.begin(); it != thread.end(); it++) {
-		BOOST_LOG_TRIVIAL(debug) <<
+		BOOST_LOG_TRIVIAL(info) <<
 			it->second << " [" <<
 			it->first << "]";
 	}
 
-	BOOST_LOG_TRIVIAL(debug) << '\n';
-	BOOST_LOG_TRIVIAL(debug) << "=====jobName=====";
+	BOOST_LOG_TRIVIAL(info) << '\n';
+	BOOST_LOG_TRIVIAL(info) << "=====jobName=====";
 	for (auto it = job.begin(); it != job.end(); it++) {
-		BOOST_LOG_TRIVIAL(debug) <<
+		BOOST_LOG_TRIVIAL(info) <<
 			it->second << " [" <<
 			it->first << "]";
 	}
 
-	BOOST_LOG_TRIVIAL(debug) << '\n';
-	BOOST_LOG_TRIVIAL(debug) << "=====WorkType=====";
+	BOOST_LOG_TRIVIAL(info) << '\n';
+	BOOST_LOG_TRIVIAL(info) << "=====WorkType=====";
 	for (auto it = workType.begin(); it != workType.end(); it++) {
-		BOOST_LOG_TRIVIAL(debug) <<
+		BOOST_LOG_TRIVIAL(info) <<
 			it->second << " [" <<
 			it->first << "]";
 	}
 
-	BOOST_LOG_TRIVIAL(debug) << '\n';
-	BOOST_LOG_TRIVIAL(debug) << "=====jobName, WorkType=====";
+	BOOST_LOG_TRIVIAL(info) << '\n';
+	BOOST_LOG_TRIVIAL(info) << "=====jobName, WorkType=====";
 	for (auto it = jobWork.begin(); it != jobWork.end(); it++) {
-		BOOST_LOG_TRIVIAL(debug) <<
+		BOOST_LOG_TRIVIAL(info) <<
 			it->second << " [" <<
 			it->first << "]";
 	}

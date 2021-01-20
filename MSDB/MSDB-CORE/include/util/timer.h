@@ -35,7 +35,7 @@ public:
 	void pause(size_t threadId);
 	void resume(size_t threadId, const std::string& nextJobName, workType nextWorkType);
 
-	void printTime();
+	void printTime(bool printDetail = false);
 	size_t getNextJobId();
 	// TODO:: Job, Job name, getJobId
 

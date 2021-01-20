@@ -51,7 +51,7 @@ public:
 		// Level 0
 		{
 #ifndef NDEBUG
-			auto before = bs.capacity();
+			//auto before = bs.capacity();
 #endif
 
 			for (size_t band = 0; band <= numBandsInLevel; ++band, ++seqId)
@@ -60,8 +60,8 @@ public:
 			}
 
 #ifndef NDEBUG
-			auto synopsisSize = bs.capacity() - before;
-			BOOST_LOG_TRIVIAL(debug) << "Save Synopsis[" << this->desc_->id_ << "] : " << synopsisSize << " Bytes";
+			//auto synopsisSize = bs.capacity() - before;
+			//BOOST_LOG_TRIVIAL(debug) << "Save Synopsis[" << this->desc_->id_ << "] : " << synopsisSize << " Bytes";
 #endif
 		}
 

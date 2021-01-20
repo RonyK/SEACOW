@@ -35,9 +35,9 @@ public:
 	bool finished_;
 
 	// For Test
-	dimension chunkCoor_;
-	dimension blockCoor_;
-	dimension nodeCoor_;
+	//dimension chunkCoor_;
+	//dimension blockCoor_;
+	//dimension nodeCoor_;
 	size_t seqPos_;
 	pMmtNode parent_;
 
@@ -45,7 +45,8 @@ public:
 	mmtNode() : bMax_(0), bMin_(0), bits_(0x80), order_(1),
 		bMaxDelta_(0), bMinDelta_(0), max_(0), min_(0),
 		realMin_(0), realMax_(0), finished_(false),
-		chunkCoor_(1), blockCoor_(1), nodeCoor_(1), seqPos_(0), jumpBits_(0)
+		seqPos_(0), jumpBits_(0)
+		//chunkCoor_(1), blockCoor_(1), nodeCoor_(1),
 	{
 	}
 
@@ -267,8 +268,8 @@ public:
 			<< " / b: " << static_cast<int64_t>(this->bits_)
 			<< " / bTy: " << static_cast<int64_t>(sizeof(Ty_) * CHAR_BIT)
 			<< " / or: " << static_cast<int64_t>(this->order_) << ", cor: " << static_cast<int64_t>(this->childOrder_)
-			<< " / real: " << static_cast<int64_t>(this->getRealMin<Ty_>()) << "~" << static_cast<int64_t>(this->getRealMax<Ty_>()) << "\n"
-			<< this->chunkCoor_.toString() << " / " << this->blockCoor_.toString() << " / " << this->nodeCoor_.toString();
+			<< " / real: " << static_cast<int64_t>(this->getRealMin<Ty_>()) << "~" << static_cast<int64_t>(this->getRealMax<Ty_>()) << "\n";
+			//<< this->chunkCoor_.toString() << " / " << this->blockCoor_.toString() << " / " << this->nodeCoor_.toString();
 
 		return ss.str();
 	}

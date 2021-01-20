@@ -45,7 +45,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -83,6 +83,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)include;$(ProjectDir)src\query;</IncludePath>
+    <SourcePath>$(VC_SourcePath);$(ProjectDir)src;</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -140,6 +142,11 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>%BOOST_ROOT%</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -371,6 +378,7 @@
     <ClCompile Include="src\compression\haar.cpp" />
     <ClCompile Include="src\compression\wavelet.cpp" />
     <ClCompile Include="src\xml\tinyxml2.cpp" />
+    <ClCompile Include="src\stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\system\errorCategories.inc" />

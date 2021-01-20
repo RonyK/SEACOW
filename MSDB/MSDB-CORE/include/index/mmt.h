@@ -1012,9 +1012,9 @@ public:
 		//	<< ", inner: " << inner.toString() << ", nodeCoor: " << nodeCoor.toString() << ", seq: " << nit.coorToSeq(nodeCoor);
 
 		this->nodes_[level][nit.coorToSeq(nodeCoor)] = node;
-		node->chunkCoor_ = chunkCoor;
-		node->blockCoor_ = blockCoor;
-		node->nodeCoor_ = nodeCoor;
+		//node->chunkCoor_ = chunkCoor;
+		//node->blockCoor_ = blockCoor;
+		//node->nodeCoor_ = nodeCoor;
 		node->seqPos_ = nit.coorToSeq(nodeCoor);
 	}
 
