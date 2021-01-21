@@ -207,10 +207,10 @@ public:
 #endif
 
 		bs >> setw(rbFromDelta);
-		Ty_ signMask = 0x1 << rbFromDelta - 1;
+		Ty_ signMask = (Ty_)(0x1 << (rbFromDelta - 1));
 		//Ty_ negativeMask = (Ty_)-1 - (signMask - 1);
 		Ty_ negativeMask = (Ty_)-1 ^ signMask;
-		Ty_ signBit = (Ty_)(0x1 << sizeof(Ty_) * CHAR_BIT - 1);
+		Ty_ signBit = (Ty_)(0x1 << (sizeof(Ty_) * CHAR_BIT - 1));
 
 		auto bItemItr = myBlock->getItemRangeIterator(getBandRange(bandId, bandDims));
 		while (!bItemItr->isEnd())
@@ -273,10 +273,10 @@ public:
 					} else
 					{
 						bs >> setw(rbFromDelta);
-						Ty_ signMask = 0x1 << rbFromDelta - 1;
+						Ty_ signMask = (Ty_)(0x1 << (rbFromDelta - 1));
 						//Ty_ negativeMask = (Ty_)-1 - (signMask - 1);
 						Ty_ negativeMask = (Ty_)-1 ^ signMask;
-						Ty_ signBit = (Ty_)(0x1 << sizeof(Ty_) * CHAR_BIT - 1);
+						Ty_ signBit = (Ty_)(0x1 << (sizeof(Ty_) * CHAR_BIT - 1));
 
 						while (!bItemItr->isEnd())
 						{

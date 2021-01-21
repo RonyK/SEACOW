@@ -63,7 +63,7 @@ private:
 			++(*cit);
 		}
 
-		BOOST_LOG_TRIVIAL(debug) << "Total Save Chunk: " << mSizeTotal << " Bytes";
+		BOOST_LOG_TRIVIAL(info) << "Total Save Chunk: " << mSizeTotal << " Bytes";
 	}
 
 	template<typename Ty_>
