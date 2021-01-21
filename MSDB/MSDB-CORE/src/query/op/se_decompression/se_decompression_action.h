@@ -12,7 +12,7 @@
 #include <query/opAction.h>
 #include <index/mmt.h>
 #include <op/wavelet_encode/wavelet_encode_array.h>
-#include <util/boostUtil.h>
+#include <util/threadUtil.h>
 
 namespace msdb
 {
@@ -43,7 +43,7 @@ private:
 		auto mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
 		auto cit = outArr->getChunkIterator(iterateMode::ALL);
 
-		this->threadCreate(8);
+		this->threadCreate(_MSDB_ACTION_THREAD_NUM_);
 
 		while (!cit->isEnd())
 		{

@@ -51,42 +51,18 @@ pArray test_qry_seq_spiht_encode_decode(_pFuncGetSourceArray_,
 										eleDefault wtLevel,
 										bool printFlag = false)
 {
-	//auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, printFlag);
-	//sourceArr[0]->setId(sourceArr[0]->getId() + spiht_array_id);
+	auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, printFlag);
+	sourceArr[0]->setId(sourceArr[0]->getId() + spiht_array_id);
 
 	auto sourceArrDesc = getArrayFromFunction<value_type>(getSourceArrayDesc, printFlag);
 	sourceArrDesc[0]->setId(sourceArrDesc[0]->getId() + spiht_array_id);
 
-	//exe_qry_ind_spiht_encode<value_type>(sourceArr, wtLevel, printFlag);
-	//try
-	//{
+	exe_qry_ind_spiht_encode<value_type>(sourceArr, wtLevel, printFlag);
 	 pArray outArr = exe_qry_seq_spiht_decode<value_type>(sourceArrDesc, wtLevel, printFlag);
-	//} catch (const std::exception &e)
-	//{
-	//	std::cout << "error in decode" << std::endl;
-	//	std::cout << e.what() << std::endl;
 
-	//	BOOST_LOG_TRIVIAL(debug) << "error in decode" << std::endl;
-	//	BOOST_LOG_TRIVIAL(debug) << e.what() << std::endl;
-	//} catch(...)
-	//{
-	//	std::cout << "error in decode" << std::endl;
-	//	BOOST_LOG_TRIVIAL(debug) << "error in decode" << std::endl;
-	//}
-	
-	//if(outArr)
-	//{
-	//	try
-	//	{
-	//		compArrary<value_type>(sourceArr[0], outArr);
-	//		BOOST_LOG_TRIVIAL(debug) << "Array: " << sourceArr[0]->getDesc()->name_;
-	//	}catch(...)
-	//	{
-	//		std::cout << "error in comparison" << std::endl;
-	//		BOOST_LOG_TRIVIAL(debug) << "error in comparison" << std::endl;
-	//	}
-	//}
-	
+	compArrary<value_type>(sourceArr[0], outArr);
+	BOOST_LOG_TRIVIAL(debug) << "Array: " << sourceArr[0]->getDesc()->name_;
+
 	return outArr;
 }
 namespace data2D_sc4x4

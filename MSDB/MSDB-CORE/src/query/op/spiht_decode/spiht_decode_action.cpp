@@ -4,7 +4,7 @@
 #include <system/storageMgr.h>
 #include <array/arrayMgr.h>
 #include <array/memChunk.h>
-#include <util/boostUtil.h>
+#include <util/threadUtil.h>
 
 namespace msdb
 {
@@ -60,7 +60,7 @@ void spiht_decode_action::decodeAttribute(std::shared_ptr<wavelet_encode_array> 
 	auto cit = outArr->getChunkIterator(iterateMode::ALL);
 	auto attrId = attrDesc->id_;
 
-	this->threadCreate(8);
+	this->threadCreate(_MSDB_ACTION_THREAD_NUM_);
 	size_t currentThreadId = 0;
 
 	while (!cit->isEnd())
@@ -84,6 +84,7 @@ void spiht_decode_action::decodeAttribute(std::shared_ptr<wavelet_encode_array> 
 
 			auto outChunk = outArr->makeChunk(*inChunk->getDesc());
 			auto wtOutChunk = std::static_pointer_cast<wtChunk>(outChunk);
+			wtOutChunk->setLevel(outArr->getMaxLevel());
 
 			io_service_->post(boost::bind(&spiht_decode_action::decompressChunk, this,
 							  wtOutChunk, inChunk, qry, outArr->getId(), attrId, currentThreadId));

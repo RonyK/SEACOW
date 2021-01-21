@@ -517,7 +517,7 @@ public:
 				if (codeBit)
 				{
 					LIS_value = LIS_value ^ signBit;
-					arr[LIS_value].value_ = LIS_value;
+					arr[LIS_index].value_ = LIS_value;
 				}
 			}
 		}

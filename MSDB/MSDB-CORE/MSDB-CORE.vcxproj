@@ -228,7 +228,7 @@
     <ClInclude Include="include\system\errorCodes.h" />
     <ClInclude Include="include\system\exceptions.h" />
     <ClInclude Include="include\system\storageMgr.h" />
-    <ClInclude Include="include\util\boostUtil.h" />
+    <ClInclude Include="include\util\threadUtil.h" />
     <ClInclude Include="include\util\coordinate.h" />
     <ClInclude Include="include\io\file.h" />
     <ClInclude Include="include\util\element.h" />
@@ -345,7 +345,7 @@
     <ClCompile Include="src\query\op\se_compression\se_compression_action.cpp" />
     <ClCompile Include="src\query\op\se_compression\se_compression_plan.cpp" />
     <ClCompile Include="src\query\query.cpp" />
-    <ClCompile Include="src\util\boostUtil.cpp" />
+    <ClCompile Include="src\util\threadUtil.cpp" />
     <ClCompile Include="src\util\logger.cpp" />
     <ClCompile Include="src\util\timer.cpp" />
     <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_action.cpp" />

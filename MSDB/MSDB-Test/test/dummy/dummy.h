@@ -109,6 +109,7 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 template <typename Ty_>
 void compArrary(pArray lArr, pArray rArr)
 {
+	size_t wrongValue = 0;
 	auto lAttrDesc = lArr->getDesc()->attrDescs_;
 	auto rAttrDesc = rArr->getDesc()->attrDescs_;
 
@@ -154,6 +155,11 @@ void compArrary(pArray lArr, pArray rArr)
 
 						while (!liItr->isEnd() && !riItr->isEnd())
 						{
+							// Limit wrong value output
+							if(wrongValue > 100)
+							{
+								return;
+							}
 							EXPECT_EQ(liItr->isExist(), riItr->isExist());
 
 							if(liItr->isExist())
@@ -165,6 +171,7 @@ void compArrary(pArray lArr, pArray rArr)
 								{
 									BOOST_LOG_TRIVIAL(debug) << "Diff : " << static_cast<int64_t>(li) << ", " << static_cast<int64_t>(ri);
 									BOOST_LOG_TRIVIAL(debug) << "Chunk: " << lcItr->coor().toString() << " / Block: " << lbItr->coor().toString() << " / Item: " << liItr->coor().toString();
+									++wrongValue;
 								}
 								EXPECT_EQ(li, ri);
 							}
