@@ -2,7 +2,6 @@
 #include <util/timer.h>
 #include <util/logger.h>
 
-
 namespace msdb
 {
 extern std::vector<const char*> strTimerWorkType = {
@@ -17,6 +16,42 @@ timer::timer()
 
 void timer::start(size_t threadId, const std::string& nextJobName, workType nextWorkType)
 {
+	//////////////////////////////
+	// LOCK
+	std::lock_guard<std::mutex> guard(this->mutexJobUpdate_);
+
+	this->_start_NoLock_(threadId, nextJobName, nextWorkType);
+	//////////////////////////////
+}
+
+void timer::nextWork(size_t threadId, workType nextWorkType)
+{
+	//////////////////////////////
+	// LOCK
+	std::lock_guard<std::mutex> guard(this->mutexJobUpdate_);
+
+	this->_nextWork_NoLock_(threadId, nextWorkType);
+	//////////////////////////////
+}
+
+void timer::nextWork(size_t threadId, size_t parentThreadId, workType nextWorkType)
+{
+	//////////////////////////////
+	// LOCK
+	std::lock_guard<std::mutex> guard(this->mutexJobUpdate_);
+
+	if(curJobIds_.find(threadId) == curJobIds_.end())
+	{
+		this->curJobIds_[threadId] = this->curJobIds_[parentThreadId];
+		this->curJobType_[threadId] = nextWorkType;
+	}
+
+	this->_nextWork_NoLock_(threadId, nextWorkType);
+	//////////////////////////////
+}
+
+void timer::_start_NoLock_(size_t threadId, const std::string& nextJobName, workType nextWorkType)
+{
 	auto curJobId = this->getNextJobId();
 	this->curJobIds_[threadId] = curJobId;
 	this->curJobType_[threadId] = nextWorkType;
@@ -24,27 +59,32 @@ void timer::start(size_t threadId, const std::string& nextJobName, workType next
 	this->curJobTimes_[threadId] = std::chrono::system_clock::now();
 }
 
-void timer::nextWork(size_t threadId, workType nextWorkType)
+void timer::_nextWork_NoLock_(size_t threadId, workType nextWorkType)
 {
 	std::chrono::duration<double> record = std::chrono::system_clock::now() - this->curJobTimes_[threadId];
-	this->records_.push_back({ threadId, record, this->curJobIds_[threadId], this->curJobType_[threadId]});
+	this->records_.push_back({ threadId, record, this->curJobIds_[threadId], this->curJobType_[threadId] });
 	this->curJobTimes_[threadId] = std::chrono::system_clock::now();
 	this->curJobType_[threadId] = nextWorkType;
 }
 
 void timer::nextJob(size_t threadId, const std::string& nextJobName, workType nextWorkType)
 {
+	//////////////////////////////
+	// LOCK
+	std::lock_guard<std::mutex> guard(this->mutexJobUpdate_);
+
 	if (curJobIds_.find(threadId) == curJobIds_.end())
 	{
-		this->start(threadId, nextJobName, nextWorkType);
+		this->_start_NoLock_(threadId, nextJobName, nextWorkType);
 	}else
 	{
-		this->nextWork(threadId, nextWorkType);
+		this->_nextWork_NoLock_(threadId, nextWorkType);
 	}
 
 	auto curJobId = this->getNextJobId();
 	this->curJobIds_[threadId] = curJobId;
 	this->jobName_[curJobId] = nextJobName;
+	//////////////////////////////
 }
 
 void timer::pause(size_t threadId)
@@ -59,6 +99,10 @@ void timer::resume(size_t threadId, const std::string& nextJobName, workType nex
 
 void timer::printTime(bool printDetail)
 {
+	//////////////////////////////
+	// LOCK
+	std::lock_guard<std::mutex> guard(this->mutexJobUpdate_);
+
 	std::map<size_t, float> thread;
 	std::map<std::string, float> job;
 	std::map<std::string, float> workType;
@@ -141,14 +185,30 @@ void timer::printTime(bool printDetail)
 			it->second << " [" <<
 			it->first << "]";
 	}
+	//////////////////////////////
 }
 
 size_t timer::getNextJobId()
 {
-	this->mutexJobId_.lock();
+	std::lock_guard<std::mutex> guard(this->mutexJobId_);
+
 	size_t outJobId = this->jobId_++;
-	this->mutexJobId_.unlock();
 
 	return outJobId;
 }
+size_t timer::getMyJobId(size_t threadId)
+{
+	std::lock_guard<std::mutex> guard(this->mutexJobUpdate_);
+
+	if(curJobIds_.find(threadId) != curJobIds_.end())
+	{
+		return this->curJobIds_[threadId];
+	}
+
+	return 0;
+}
+
+std::mutex timer::mutexJobId_;
+std::mutex timer::mutexJobUpdate_;
+
 }

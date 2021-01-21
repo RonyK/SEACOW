@@ -97,6 +97,7 @@
     <ClCompile Include="src\query\query.cpp" />
     <ClCompile Include="src\util\logger.cpp" />
     <ClCompile Include="src\stdafx.cpp" />
+    <ClCompile Include="src\util\boostUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\array\array.h" />
@@ -209,6 +210,7 @@
     <ClInclude Include="include\index\mmtNode.h" />
     <ClInclude Include="include\util\logger.h" />
     <ClInclude Include="include\stdafx.h" />
+    <ClInclude Include="include\util\boostUtil.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">

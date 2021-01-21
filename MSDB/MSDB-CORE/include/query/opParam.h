@@ -27,7 +27,7 @@ enum class opParamType
 	ARRAY,
 	ATTRIBUTE,
 	DIMENSION,
-	CONST,
+	CONST_TYPE,
 	INTLIST,
 	PREDICATE,
 	COOR,

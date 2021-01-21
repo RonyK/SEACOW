@@ -31,7 +31,7 @@ wavelet_encode_array_pset::wavelet_encode_array_pset(parameters& pSet)
 {
 	assert(this->params_.size() == 2);
 	assert(this->params_[0]->type() == opParamType::ARRAY);		// Source array
-	assert(this->params_[1]->type() == opParamType::CONST);		// Target wtLevel
+	assert(this->params_[1]->type() == opParamType::CONST_TYPE);		// Target wtLevel
 }
 
 pArrayDesc wavelet_encode_array_pset::inferSchema()
@@ -52,7 +52,7 @@ wavelet_encode_plan_pset::wavelet_encode_plan_pset(parameters& pSet)
 	: opPlanParamSet(pSet)
 {
 	assert(this->params_.size() == 2);
-	assert(this->params_[1]->type() == opParamType::CONST);		// Target wtLevel
+	assert(this->params_[1]->type() == opParamType::CONST_TYPE);		// Target wtLevel
 }
 pArrayDesc wavelet_encode_plan_pset::inferSchema()
 {

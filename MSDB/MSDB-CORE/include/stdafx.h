@@ -16,6 +16,7 @@
 #include <type_traits>
 #include <algorithm>
 #include <utility>
+#include <sstream>
 
 // For bitstream
 #include <bitset>
@@ -47,8 +48,12 @@
 #include <boost/log/utility/setup/file.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
 
-// For xml
-#include <xml/tinyxml2.h>
+// For thread pool
+#include <boost/asio/io_service.hpp>
+#include <boost/asio/thread_pool.hpp>
+#include <boost/bind.hpp>
+#include <boost/thread/thread.hpp>
+#include <boost/lexical_cast.hpp>
 
 // For cassert
 #define assertm(exp, msg) assert(((void)msg, exp))

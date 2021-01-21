@@ -3,6 +3,7 @@
 #define _MSDB_CONFIG_H_
 
 #include <stdafx.h>
+#include <xml/tinyxml2.h>
 
 namespace msdb
 {
