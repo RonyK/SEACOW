@@ -68,6 +68,7 @@
     <ClCompile Include="test\index\testMMT.cpp" />
     <ClCompile Include="test\index\test_action_mmt.cpp" />
     <ClCompile Include="test\io\test_action_io.cpp" />
+    <ClCompile Include="test\main.cpp" />
     <ClCompile Include="test\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
