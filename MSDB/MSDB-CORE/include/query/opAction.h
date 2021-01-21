@@ -34,6 +34,15 @@ protected:
 	pBitmap planBitmap_;	// chunk bitmap or chunk-block bitmap tree
 	//std::vector<action> sources_;
 	parameters params_;
+
+	void threadCreate(size_t threadNums);
+	void threadStop();
+	void threadJoin();
+
+protected:
+	std::shared_ptr<boost::asio::io_service> io_service_;
+	std::shared_ptr<boost::asio::io_service::work> work_;
+	boost::thread_group threadpool_;
 };
 }
 
