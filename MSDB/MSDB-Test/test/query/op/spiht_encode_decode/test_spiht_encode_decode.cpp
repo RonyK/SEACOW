@@ -51,13 +51,13 @@ pArray test_qry_seq_spiht_encode_decode(_pFuncGetSourceArray_,
 										eleDefault wtLevel,
 										bool printFlag = false)
 {
-	auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, printFlag);
-	sourceArr[0]->setId(sourceArr[0]->getId() + spiht_array_id);
+	//auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, printFlag);
+	//sourceArr[0]->setId(sourceArr[0]->getId() + spiht_array_id);
 
 	auto sourceArrDesc = getArrayFromFunction<value_type>(getSourceArrayDesc, printFlag);
 	sourceArrDesc[0]->setId(sourceArrDesc[0]->getId() + spiht_array_id);
 
-	exe_qry_ind_spiht_encode<value_type>(sourceArr, wtLevel, printFlag);
+	//exe_qry_ind_spiht_encode<value_type>(sourceArr, wtLevel, printFlag);
 	//try
 	//{
 	 pArray outArr = exe_qry_seq_spiht_decode<value_type>(sourceArrDesc, wtLevel, printFlag);

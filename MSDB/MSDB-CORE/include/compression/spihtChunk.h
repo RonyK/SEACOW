@@ -59,8 +59,12 @@ public:
 		auto blockItr = this->getBlockIterator();
 		while (!blockItr->isEnd())
 		{
-			std::static_pointer_cast<spihtBlock>(**blockItr)->setMaxLevel(this->maxLevel_);
-			this->blockDeserialize<Ty_>(bs, (**blockItr));
+			if(blockItr->isExist())
+			{
+				std::static_pointer_cast<spihtBlock>(**blockItr)->setMaxLevel(this->maxLevel_);
+				this->blockDeserialize<Ty_>(bs, (**blockItr));
+			}
+			
 			++(*blockItr);
 		}
 	}

@@ -67,8 +67,8 @@ public:
 	//////////////////////////////
 	// Operators
 	//////////////////////////////
-	pChunk operator*() { return this->chunks_->at(this->seqPos_); }
-	pChunk operator->() { return this->chunks_->at(this->seqPos_); }
+	pChunk operator*() { return this->chunks_->at((chunkId)this->seqPos_); }
+	pChunk operator->() { return this->chunks_->at((chunkId)this->seqPos_); }
 
 protected:
 	chunkContainer* chunks_;

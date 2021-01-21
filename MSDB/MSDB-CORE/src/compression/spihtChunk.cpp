@@ -120,6 +120,8 @@ void spihtChunk::deserialize(std::istream& is)
 	bstream bs;
 	bs.resize(this->serializedSize_);
 	is.read(bs.data(), this->serializedSize_);
+
+	//std::cout << "[" << this->getId() << "]: aread" << std::endl;
 	switch (this->desc_->attrDesc_->type_)
 	{
 	case eleType::CHAR:

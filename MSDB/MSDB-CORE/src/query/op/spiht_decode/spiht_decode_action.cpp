@@ -4,8 +4,7 @@
 #include <system/storageMgr.h>
 #include <array/arrayMgr.h>
 #include <array/memChunk.h>
-#include <compression/spihtChunk.h>
-#include <compression/wtChunk.h>
+#include <util/boostUtil.h>
 
 namespace msdb
 {
@@ -59,14 +58,17 @@ void spiht_decode_action::decodeAttribute(std::shared_ptr<wavelet_encode_array> 
 										  pAttributeDesc attrDesc, pQuery qry)
 {
 	auto cit = outArr->getChunkIterator(iterateMode::ALL);
+	auto attrId = attrDesc->id_;
+
+	this->threadCreate(8);
+	size_t currentThreadId = 0;
 
 	while (!cit->isEnd())
 	{
 		if (cit->isExist())
 		{
 			chunkId cid = cit->seqPos();
-						// TODO:: Use to makeChunk function
-						//outArr->makeChunk(attr->id_, cId);
+
 			auto inChunk = this->makeInChunk(outArr, attrDesc, cid);
 			auto blockBitmap = this->getPlanBlockBitmap(cid);
 			if (blockBitmap)
@@ -80,27 +82,58 @@ void spiht_decode_action::decodeAttribute(std::shared_ptr<wavelet_encode_array> 
 			inChunk->makeAllBlocks();
 			inChunk->setMaxLevel(outArr->getMaxLevel());
 
-			//========================================//
-			qry->getTimer()->nextWork(0, workType::IO);
-			//----------------------------------------//
-			pSerializable serialChunk
-				= std::static_pointer_cast<serializable>(inChunk);
-			storageMgr::instance()->loadChunk(outArr->getId(), attrDesc->id_, cid, serialChunk);
-
-			//========================================//
-			qry->getTimer()->nextWork(0, workType::COMPUTING);
-			//----------------------------------------//
-
 			auto outChunk = outArr->makeChunk(*inChunk->getDesc());
 			auto wtOutChunk = std::static_pointer_cast<wtChunk>(outChunk);
-			wtOutChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
-			wtOutChunk->makeAllBlocks();
-			outChunk->bufferCopy(inChunk);	// 여기 왜 copy지? 왜ref 하면 애러나지?
+
+			io_service_->post(boost::bind(&spiht_decode_action::decompressChunk, this,
+							  wtOutChunk, inChunk, qry, outArr->getId(), attrId, currentThreadId));
+			//this->decompressChunk(wtOutChunk, inChunk, qry, outArr->getId(), attrId, currentThreadId);
 		}
 
 		++(*cit);
 	}
+
+	this->threadStop();
+	this->threadJoin();
 }
+
+void spiht_decode_action::decompressChunk(pWtChunk outChunk, pSpihtChunk inChunk, pQuery qry, 
+										  const arrayId arrId, const attributeId attrId, const size_t parentThreadId)
+{
+	auto threadId = getThreadId();
+
+	try
+	{
+		//========================================//
+		qry->getTimer()->nextWork(threadId, parentThreadId, workType::IO);
+		//----------------------------------------//
+		pSerializable serialChunk
+			= std::static_pointer_cast<serializable>(inChunk);
+
+		storageMgr::instance()->loadChunk(arrId, attrId, inChunk->getId(), serialChunk);
+
+		//========================================//
+		qry->getTimer()->nextWork(threadId, workType::COMPUTING);
+		//----------------------------------------//
+
+		outChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
+		outChunk->makeAllBlocks();
+		outChunk->bufferCopy(inChunk);	// If ref bitmap from inChunk, it might be deleted in 'inChunk' when it destroied.
+	}catch(std::exception &e)
+	{
+		BOOST_LOG_TRIVIAL(error) << "Exception occured in a thread(" << threadId << " while it executes decompressChunk()" << std::endl;
+		BOOST_LOG_TRIVIAL(error) << e.what() << std::endl;
+
+		std::cout << "Exception occured in a thread(" << threadId << " while it executes decompressChunk()" << std::endl;
+		std::cout << e.what() << std::endl;
+	}catch(...)
+	{
+		BOOST_LOG_TRIVIAL(error) << "Unknown exception occured in a thread(" << threadId << " while it executes decompressChunk()" << std::endl;
+
+		std::cout << "Unknown exception occured in a thread(" << threadId << " while it executes decompressChunk()" << std::endl;
+	}
+}
+
 pSpihtChunk spiht_decode_action::makeInChunk(std::shared_ptr<wavelet_encode_array> arr, pAttributeDesc attrDesc, chunkId cid)
 {
 	return std::make_shared<spihtChunk>(arr->getChunkDesc(attrDesc->id_, cid));

@@ -7,6 +7,8 @@
 #include <util/math.h>
 #include <op/wavelet_encode/wavelet_encode_array.h>
 #include <compression/spihtChunk.h>
+#include <compression/wtChunk.h>
+#include <array/attributeId.h>
 
 namespace msdb
 {
@@ -23,8 +25,9 @@ public:
 
 	pSpihtChunk makeInChunk(std::shared_ptr<wavelet_encode_array>arr, pAttributeDesc attrDesc, 
 							chunkId cid);
+
+	void decompressChunk(pWtChunk outChunk, pSpihtChunk inChunk, pQuery qry, 
+						 const arrayId outArr, const attributeId attrId, const size_t parentThreadId);
 };
 }
-
-
 #endif // _MSDB_OP_SPIHT_DECODE_ACTION_H
