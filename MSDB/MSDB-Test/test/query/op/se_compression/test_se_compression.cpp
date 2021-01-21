@@ -12,7 +12,6 @@ namespace caDummy
 const int se_array_id = 2;
 const int delta_spiht_array_id = 3;
 
-
 template <typename value_type>
 pArray test_body_ind_spiht_delte_encode(_pFuncGetSourceArray_,
 									   eleDefault wtLevel,

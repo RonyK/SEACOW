@@ -13,6 +13,7 @@ inline char unsignedCharToSigned(char value)
 namespace data2D_sc4x4
 {
 std::vector<dim_type> dims = { dimY, dimX };
+std::vector<dim_type> originalDims = { dimY, dimX };
 std::vector<dim_type> chunkNums = { 2, 2 };
 std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
 
@@ -227,6 +228,7 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
 namespace data2D_tempTest
 {
 std::vector<dim_type> dims = { dimY, dimX };
+std::vector<dim_type> originalDims = { dimY, dimX };
 std::vector<dim_type> chunkNums = { 1, 1 };
 std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
 
@@ -268,6 +270,7 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
 namespace data2D_test32x32
 {
 std::vector<dim_type> dims = { dimY, dimX };
+std::vector<dim_type> originalDims = { dimY, dimX };
 std::vector<dim_type> chunkNums = { 1, 1 };
 std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
 std::vector<dim_type> blockNums = { 1, 1 };
@@ -320,6 +323,7 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
 namespace data2D_sc8x8
 {
 std::vector<dim_type> dims = { 8, 8 };
+std::vector<dim_type> originalDims = { dimY, dimX };
 std::vector<dim_type> chunkDims = { 2, 2 };
 std::vector<dim_type> chunkNums = { 4, 4 };
 std::vector<dim_type> blockDims = { 2, 2 };
