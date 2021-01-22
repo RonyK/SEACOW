@@ -96,6 +96,8 @@
     <ClCompile Include="src\query\op\index_filter\index_filter_plan.cpp" />
     <ClCompile Include="src\query\query.cpp" />
     <ClCompile Include="src\util\logger.cpp" />
+    <ClCompile Include="src\stdafx.cpp" />
+    <ClCompile Include="src\util\threadUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\array\array.h" />
@@ -208,6 +210,7 @@
     <ClInclude Include="include\index\mmtNode.h" />
     <ClInclude Include="include\util\logger.h" />
     <ClInclude Include="include\stdafx.h" />
+    <ClInclude Include="include\util\threadUtil.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">
@@ -240,9 +243,6 @@
     <ClCompile Include="src\array\buffer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="src\compression\compact.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="src\compression\daubechies.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -250,9 +250,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\compression\wavelet.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\19_MSDB_LIB\tinyxml2-8.0.0\tinyxml2.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\xml\tinyxml2.cpp">
@@ -316,9 +313,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\array\memChunkBuffer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\compression\mmt_old.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\array\arrayMgr.cpp">

@@ -4,7 +4,6 @@
 
 #include <stdafx.h>
 #include <array/blockContainer.h>
-#include <index/bitmap.h>
 #include <util/coordinate.h>
 
 namespace msdb

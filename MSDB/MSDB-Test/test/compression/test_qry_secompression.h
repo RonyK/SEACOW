@@ -27,6 +27,7 @@ pArray exe_qry_ind_se_compression(_vectorSourceArray_,
 	}
 
 	outArr = exe_act_ind_wavelet_encode(std::vector<pArray>({ outArr }), wtLevel);
+	//auto outArr = exe_act_ind_wavelet_encode(sourceArr, wtLevel);
 	if (printFlag)
 	{
 		std::cout << "##############################" << std::endl;
@@ -91,8 +92,8 @@ pArray exe_qry_seq_se_decompression(_vectorSourceArray_,
 	auto outArr = seDecompPlan->getAction()->execute(sourceArr, qry);
 	if (printFlag)
 	{
-		std::cout << "##############################" << std::endl;
-		std::cout << "Se Decompression Arr" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "Se Decompression Arr" << std::endl;
 		outArr->print();
 	}
 
@@ -100,16 +101,16 @@ pArray exe_qry_seq_se_decompression(_vectorSourceArray_,
 	outArr = wtDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
 	if (printFlag)
 	{
-		std::cout << "##############################" << std::endl;
-		std::cout << "Wavelet Decode Arr" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "Wavelet Decode Arr" << std::endl;
 		outArr->print();
 	}
 
 	outArr = deltaDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
 	if (printFlag)
 	{
-		std::cout << "##############################" << std::endl;
-		std::cout << "MMT Delta Decode Arr" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "MMT Delta Decode Arr" << std::endl;
 		outArr->print();
 	}
 
@@ -126,32 +127,32 @@ pArray exe_qry_ind_delta_spiht_encode(_vectorSourceArray_,
 	auto outArr = exe_act_ind_mmt_build(sourceArr, mmtLevel);
 	if (false)
 	{
-		std::cout << "##############################" << std::endl;
-		std::cout << "MMT Build Arr" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "MMT Build Arr" << std::endl;
 		outArr->print();
 	}
 
 	outArr = exe_act_ind_mmt_delta_encode(std::vector<pArray>({ outArr }));
 	if (printFlag)
 	{
-		std::cout << "##############################" << std::endl;
-		std::cout << "Delta Arr" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "Delta Arr" << std::endl;
 		outArr->print();
 	}
 
 	outArr = exe_act_ind_wavelet_encode(std::vector<pArray>({ outArr }), wtLevel);
 	if (printFlag)
 	{
-		std::cout << "##############################" << std::endl;
-		std::cout << "Wavelet Encode Arr" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "Wavelet Encode Arr" << std::endl;
 		outArr->print();
 	}
 
 	outArr = exe_act_ind_spiht_encode(std::vector<pArray>({ outArr }));
 	if (printFlag)
 	{
-		std::cout << "##############################" << std::endl;
-		std::cout << "SPIHT Encode Arr" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "SPIHT Encode Arr" << std::endl;
 		outArr->print();
 	}
 
@@ -166,22 +167,22 @@ pArray exe_qry_ind_delta_spiht_decode(_vectorSourceArray_,
 	auto outArr = exe_act_ind_spiht_decode(sourceArr, wtLevel);
 	if (printFlag)
 	{
-		std::cout << "##############################" << std::endl;
-		std::cout << "SPIHT Decode Arr" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "SPIHT Decode Arr" << std::endl;
 		outArr->print();
 	}
 
 	outArr = exe_act_ind_wavelet_decode(std::vector<pArray>({ outArr }), wtLevel);
-	std::cout << "##############################" << std::endl;
-	std::cout << "Wavelet Decode Arr" << std::endl;
+	BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+	BOOST_LOG_TRIVIAL(debug) << "Wavelet Decode Arr" << std::endl;
 	if (printFlag)
 	{
 		outArr->print();
 	}
 
 	outArr = exe_act_ind_mmt_delta_decode(std::vector<pArray>({ outArr }));
-	std::cout << "##############################" << std::endl;
-	std::cout << "Delta Decode Arr" << std::endl;
+	BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+	BOOST_LOG_TRIVIAL(debug) << "Delta Decode Arr" << std::endl;
 	if (printFlag)
 	{
 		outArr->print();

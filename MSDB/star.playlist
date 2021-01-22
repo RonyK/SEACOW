@@ -75,12 +75,6 @@
                         <Property Name="DisplayName" Value="query_op_spiht_encode_decode.star1024x1024_seq_spiht_encode_decode" />
                       </Rule>
                     </Rule>
-                    <Rule Match="All">
-                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_spiht_encode_decode.saturn1024x1024_seq_spiht_encode_decode" />
-                      <Rule Match="Any">
-                        <Property Name="DisplayName" Value="query_op_spiht_encode_decode.saturn1024x1024_seq_spiht_encode_decode" />
-                      </Rule>
-                    </Rule>
                   </Rule>
                 </Rule>
                 <Rule Match="All">

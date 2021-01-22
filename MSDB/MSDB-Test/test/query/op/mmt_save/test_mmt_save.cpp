@@ -7,18 +7,23 @@ namespace msdb
 namespace caDummy
 {
 template <typename value_type>
-void test_body_mmt_save(_pFuncGetSourceArray_, eleDefault mmtLevel)
+void test_body_mmt_save(_pFuncGetSourceArray_, eleDefault mmtLevel, bool printFlag = false)
 {
-    bool printFlag = false;
-
     std::vector<pArray> sourceArr;
     getSourceArrayIfEmpty(sourceArr);
     sourceArr[0]->setId(sourceArr[0]->getId() + se_array_id);
 
     auto arr_mmt_build = exe_act_ind_mmt_build(sourceArr, mmtLevel);
     std::cout << "##############################" << std::endl;
+    if (printFlag)
+    {
+        BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+        BOOST_LOG_TRIVIAL(debug) << "MMT Build Arr" << std::endl;
+        arr_mmt_build->print();
+    }
+
     auto arr_mmt_save = exe_act_ind_mmt_save(std::vector<pArray>({ arr_mmt_build }));
-    std::cout << "##############################" << std::endl;
+    BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
 
     //EXPECT_TRUE(false);
 }
@@ -112,6 +117,14 @@ namespace data2D_mars4096x2048
 TEST_F(query_op_mmt_save, mars4096x2048_mmt_save)
 {
     test_body_mmt_save<value_type>(&getSourceArrayIfEmpty, mmtLevel);        // 24243
+}   // TEST
+}   // data2D_mars4096x2048
+
+namespace data2D_mercurydem20480x10240
+{
+TEST_F(query_op_mmt_save, mercurydem20480x10240_mmt_save)
+{
+    test_body_mmt_save<value_type>(&getSourceArrayIfEmpty, mmtLevel);        // 20100
 }   // TEST
 }   // data2D_mars4096x2048
 }	// caDummy

@@ -12,6 +12,8 @@ namespace msdb
 {
 namespace caDummy
 {
+using dim_type = position_t;
+
 template <typename Aty_>
 std::shared_ptr<Aty_> get2DCharArray(arrayId aid, std::string arrayName,
 									 dimension dims, dimension chunkDims, dimension blockDims,
@@ -36,7 +38,7 @@ std::shared_ptr<Aty_> get2DCharArray(arrayId aid, std::string arrayName,
 inline char unsignedCharToSigned(char value);
 
 template <typename Aty_, typename Ty_>
-std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string arrayName,
+std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string arrayName, dimension originalDims,
 									 dimension dims, dimension chunkDims, dimension blockDims,
 									 eleType eType)
 {
@@ -75,7 +77,11 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 				{
 					for (int ix = 0; ix < blockDims[1]; ++ix)
 					{
-						size_t seqPos = (y * chunkDims[0] + blockCoor[0] * blockDims[0] + iy) * dims[1] + (x * chunkDims[1] + blockCoor[1] * blockDims[1] + ix);
+						int globalX = x * chunkDims[1] + blockCoor[1] * blockDims[1] + ix;
+						int globalY = y * chunkDims[0] + blockCoor[0] * blockDims[0] + iy;
+
+						size_t seqPos = globalY * originalDims[1] + globalX;
+
 						(**it).setChar(static_cast<Ty_>(
 							data[seqPos]));
 
@@ -103,6 +109,7 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 template <typename Ty_>
 void compArrary(pArray lArr, pArray rArr)
 {
+	size_t wrongValue = 0;
 	auto lAttrDesc = lArr->getDesc()->attrDescs_;
 	auto rAttrDesc = rArr->getDesc()->attrDescs_;
 
@@ -148,6 +155,11 @@ void compArrary(pArray lArr, pArray rArr)
 
 						while (!liItr->isEnd() && !riItr->isEnd())
 						{
+							// Limit wrong value output
+							if(wrongValue > 100)
+							{
+								return;
+							}
 							EXPECT_EQ(liItr->isExist(), riItr->isExist());
 
 							if(liItr->isExist())
@@ -159,6 +171,7 @@ void compArrary(pArray lArr, pArray rArr)
 								{
 									BOOST_LOG_TRIVIAL(debug) << "Diff : " << static_cast<int64_t>(li) << ", " << static_cast<int64_t>(ri);
 									BOOST_LOG_TRIVIAL(debug) << "Chunk: " << lcItr->coor().toString() << " / Block: " << lbItr->coor().toString() << " / Item: " << liItr->coor().toString();
+									++wrongValue;
 								}
 								EXPECT_EQ(li, ri);
 							}
@@ -220,13 +233,15 @@ void compChunkItems(pChunk lChunk, pChunk rChunk)
 	//EXPECT_EQ(lbItr->isEnd(), rbItr->isEnd());
 }
 
-using dim_type = position_t;
 // signed char
 namespace data2D_sc4x4
 {
 using value_type = char;
 
 static const size_t dataLength = 16;
+static const size_t originalDataLength = 16;
+static const size_t origianlDimX = 4;
+static const size_t originalDimY = 4;
 static const size_t dimX = 4;
 static const size_t dimY = 4;
 static const size_t wtLevel = 0;
@@ -234,6 +249,7 @@ static const size_t mmtLevel = 0;
 static const arrayId aid = 441;
 
 extern std::vector<dim_type> dims;
+extern std::vector<dim_type> originalDims;
 extern std::vector<dim_type> chunkNums;
 extern std::vector<dim_type> chunkDims;
 extern std::vector<dim_type> blockNums;
@@ -255,7 +271,7 @@ std::vector<pArray> getSourceArray()
 	getDummy(data, dataLength);
 
 	std::vector<pArray> arrs(
-		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_sc4x4", dims, chunkDims, blockDims, eleType::CHAR)) });
+		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_sc4x4", originalDims, dims, chunkDims, blockDims, eleType::CHAR)) });
 	return arrs;
 }
 
@@ -283,6 +299,7 @@ static const size_t mmtLevel = 0;
 static const arrayId aid = 9991;
 
 extern std::vector<dim_type> dims;
+extern std::vector<dim_type> originalDims;
 extern std::vector<dim_type> chunkNums;
 extern std::vector<dim_type> chunkDims;
 extern std::vector<dim_type> blockNums;
@@ -298,7 +315,7 @@ std::vector<pArray> getSourceArray()
 	getDummy(data, dataLength);
 
 	std::vector<pArray> arrs(
-		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_tempTest", dims, chunkDims, blockDims, eleType::CHAR)) });
+		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_tempTest", originalDims, dims, chunkDims, blockDims, eleType::CHAR)) });
 	return arrs;
 }
 
@@ -314,19 +331,74 @@ void getSourceArrayDesc(std::vector<pArray>& sourceArr);
 void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
 }
 
+namespace data2D_test32x32
+{
+using dim_type = position_t;
+
+using value_type = char;
+static const eleType ele_type = eleType::CHAR;
+
+
+static const size_t origianlDimX = 16;
+static const size_t originalDimY = 16;
+static const dim_type dimX = 16;
+static const dim_type dimY = 16;
+static const size_t dataLength = dimX * dimY;
+static const size_t originalDataLength = origianlDimX * originalDimY;
+static const size_t wtLevel = 2;
+static const size_t mmtLevel = 2;
+static const arrayId aid = 3232;
+
+extern std::vector<dim_type> dims;
+extern std::vector<dim_type> originalDims;
+extern std::vector<dim_type> chunkDims;
+extern std::vector<dim_type> chunkNums;
+extern std::vector<dim_type> blockDims;
+extern std::vector<dim_type> blockNums;
+
+void getDummy(value_type* output, size_t length);
+
+template<class Aty_ = memBlockArray>
+std::vector<pArray> getSourceArray()
+{
+	// Get Dummy data
+	value_type* data = new value_type[originalDataLength];
+	getDummy(data, originalDataLength);
+
+	std::vector<pArray> arrs(
+		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_test32x32", originalDims, dims, chunkDims, blockDims, ele_type)) });
+	return arrs;
+}
+
+template<class Aty_ = memBlockArray>
+std::vector<pArray> getSourceArrayDesc()
+{
+	std::vector<pArray> arrs(
+		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_>(aid, "data2D_test32x32", dims, chunkDims, blockDims, ele_type)) });
+	return arrs;
+}
+
+void getSourceArrayDesc(std::vector<pArray>& sourceArr);
+void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
+}	// data2D_test32x32
+
 // signed char
 namespace data2D_sc8x8
 {
 using value_type = char;
 
 static const size_t dataLength = 64;
+static const size_t origianlDimX = 8;
+static const size_t originalDimY = 8;
 static const size_t dimX = 8;
 static const size_t dimY = 8;
+static const size_t originalDataLength = origianlDimX * originalDimY;
 static const size_t wtLevel = 2;
 static const size_t mmtLevel = 2;
 static const arrayId aid = 881;
 
 extern std::vector<dim_type> dims;
+extern std::vector<dim_type> originalDims;
 extern std::vector<dim_type> chunkDims;
 extern std::vector<dim_type> chunkNums;
 extern std::vector<dim_type> blockDims;
@@ -345,7 +417,7 @@ std::vector<pArray> getSourceArray()
 	getDummy(data, dataLength);
 
 	std::vector<pArray> arrs(
-		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_sc8x8", dims, chunkDims, blockDims, eleType::CHAR)) });
+		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_sc8x8", originalDims, dims, chunkDims, blockDims, eleType::CHAR)) });
 	return arrs;
 }
 

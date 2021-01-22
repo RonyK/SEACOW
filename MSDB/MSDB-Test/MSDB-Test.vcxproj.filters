@@ -43,6 +43,9 @@
     <ClCompile Include="test\io\test_action_io.cpp" />
     <ClCompile Include="test\query\op\between\test_between.cpp" />
     <ClCompile Include="test\test\op\between\testBetween.cpp" />
+    <ClCompile Include="test\util\testMath.cpp" />
+    <ClCompile Include="test\index\testMMT.cpp" />
+    <ClCompile Include="test\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">

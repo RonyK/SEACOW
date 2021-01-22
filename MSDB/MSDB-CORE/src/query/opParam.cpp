@@ -59,7 +59,7 @@ opParam::void_pointer opParamConst::getParam()
 }
 opParamType opParamConst::type()
 {
-	return opParamType::CONST;
+	return opParamType::CONST_TYPE;
 }
 
 opParamPredicate::opParamPredicate(std::shared_ptr<predicate> predicate)
@@ -89,7 +89,7 @@ opParamConstPlaceholder::opParamConstPlaceholder()
 }
 opParamType opParamConstPlaceholder::type()
 {
-	return opParamType::CONST;
+	return opParamType::CONST_TYPE;
 }
 opParamDimPlaceholder::opParamDimPlaceholder()
 	: opParamPlaceholder(), opParamDim(nullptr)

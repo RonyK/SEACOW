@@ -12,6 +12,7 @@
 #include <bitset>
 #include <memory>
 #include <tuple>
+#include <string>
 #include "gtest/gtest.h"
 
 #define _pFuncGetSourceArray_		void(*getSourceArrayIfEmpty)(std::vector<pArray>&)

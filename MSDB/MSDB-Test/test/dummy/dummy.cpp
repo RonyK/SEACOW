@@ -13,6 +13,7 @@ inline char unsignedCharToSigned(char value)
 namespace data2D_sc4x4
 {
 std::vector<dim_type> dims = { dimY, dimX };
+std::vector<dim_type> originalDims = { dimY, dimX };
 std::vector<dim_type> chunkNums = { 2, 2 };
 std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
 
@@ -227,6 +228,7 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
 namespace data2D_tempTest
 {
 std::vector<dim_type> dims = { dimY, dimX };
+std::vector<dim_type> originalDims = { dimY, dimX };
 std::vector<dim_type> chunkNums = { 1, 1 };
 std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
 
@@ -265,9 +267,63 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
 }
 }	// data2D_tempTest
 
+namespace data2D_test32x32
+{
+std::vector<dim_type> dims = { dimY, dimX };
+std::vector<dim_type> originalDims = { dimY, dimX };
+std::vector<dim_type> chunkNums = { 1, 1 };
+std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
+std::vector<dim_type> blockNums = { 1, 1 };
+std::vector<dim_type> blockDims = { chunkDims[0] / blockNums[0], chunkDims[1] / blockNums[1] };
+
+void getDummy(value_type* output, size_t length)
+{
+	const static value_type arr[][dimX] = {
+		{2, 0, 0, 0, 0, 0, 0, 0, 32, -40, 65, -14, 34, 2, 0, 0},
+		{2, 0, 0, 0, 0, 0, 0, 0, 112, -30, 65, -14, 34, 2, 0, 0},
+		{2, 0, 0, 0, 0, 0, 0, 0, -48, -31, 65, -14, 34, 2, 0, 0},
+		{2, 0, 0, 0, 0, 0, 0, 0, -64, -35, 65, -14, 34, 2, 0, 0},
+		{2, 0, 0, 0, 0, 0, 0, 0, -128, -31, 65, -14, 34, 2, 0, 0},
+		{-3, -3 , -3 , -3, 0, 0, 0, 0, -3, -10, 34, 79, 0, 19, 0, -128},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0, 0, 0, 0, -111, -10, 54, 79, 0, 20, 0, -128}
+	};
+
+	for (int y = 0; y < dimY; y++)
+	{
+		for (int x = 0; x < dimX; x++)
+		{
+			output[y * dimX + x] = arr[y][x];
+		}
+	}
+}
+
+void getSourceArrayDesc(std::vector<pArray>& sourceArr)
+{
+	sourceArr = getSourceArrayDesc();
+}
+
+void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
+{
+	if (sourceArr.empty())
+	{
+		sourceArr = getSourceArray();
+	}
+}
+}
+
 namespace data2D_sc8x8
 {
 std::vector<dim_type> dims = { 8, 8 };
+std::vector<dim_type> originalDims = { dimY, dimX };
 std::vector<dim_type> chunkDims = { 2, 2 };
 std::vector<dim_type> chunkNums = { 4, 4 };
 std::vector<dim_type> blockDims = { 2, 2 };

@@ -22,7 +22,7 @@ wavelet_decode_array_pset::wavelet_decode_array_pset(parameters& pSet)
 {
 	assert(this->params_.size() == 2);
 	assert(this->params_[0]->type() == opParamType::ARRAY);
-	assert(this->params_[1]->type() == opParamType::CONST);		// Target wtLevel
+	assert(this->params_[1]->type() == opParamType::CONST_TYPE);		// Target wtLevel
 }
 
 pArrayDesc wavelet_decode_array_pset::inferSchema()
@@ -39,7 +39,7 @@ wavelet_decode_plan_pset::wavelet_decode_plan_pset(parameters& pSet)
 	: opPlanParamSet(pSet)
 {
 	assert(this->params_.size() == 2);
-	assert(this->params_[1]->type() == opParamType::CONST);		// Target wtLevel
+	assert(this->params_[1]->type() == opParamType::CONST_TYPE);		// Target wtLevel
 }
 
 pBitmapTree wavelet_decode_plan_pset::inferBottomUpBitmap()

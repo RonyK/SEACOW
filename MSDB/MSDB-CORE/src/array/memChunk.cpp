@@ -49,21 +49,21 @@ void memChunk::referenceBufferToBlock(const blockId bId)
 	}
 }
 
-pChunkItemIterator memChunk::getItemIterator()
-{
-	return std::make_shared<memChunkItemIterator>(this->cached_->getData(),
-												  this->desc_->attrDesc_->type_,
-												  this->desc_->dims_,
-												  this->desc_->sp_);
-}
-pChunkItemRangeIterator memChunk::getItemRangeIterator(const coorRange& range)
-{
-	return std::make_shared<memChunkItemRangeIterator>(this->cached_->getData(),
-													   this->desc_->attrDesc_->type_,
-													   this->desc_->dims_,
-													   range,
-													   this->desc_->sp_);
-}
+//pChunkItemIterator memChunk::getItemIterator()
+//{
+//	return std::make_shared<memChunkItemIterator>(this->cached_->getData(),
+//												  this->desc_->attrDesc_->type_,
+//												  this->desc_->dims_,
+//												  this->desc_->sp_);
+//}
+//pChunkItemRangeIterator memChunk::getItemRangeIterator(const coorRange& range)
+//{
+//	return std::make_shared<memChunkItemRangeIterator>(this->cached_->getData(),
+//													   this->desc_->attrDesc_->type_,
+//													   this->desc_->dims_,
+//													   range,
+//													   this->desc_->sp_);
+//}
 
 void memChunk::serialize(std::ostream& os)
 {

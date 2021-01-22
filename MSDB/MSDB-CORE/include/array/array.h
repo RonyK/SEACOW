@@ -4,10 +4,8 @@
 
 #include <stdafx.h>
 #include <array/arrayDesc.h>
-#include <array/chunk.h>
 #include <array/chunkIterator.h>
 #include <util/coordinate.h>
-#include <index/bitmap.h>
 
 namespace msdb
 {

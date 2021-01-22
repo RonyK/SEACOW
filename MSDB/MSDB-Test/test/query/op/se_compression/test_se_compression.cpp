@@ -12,7 +12,6 @@ namespace caDummy
 const int se_array_id = 2;
 const int delta_spiht_array_id = 3;
 
-
 template <typename value_type>
 pArray test_body_ind_spiht_delte_encode(_pFuncGetSourceArray_,
 									   eleDefault wtLevel,
@@ -111,6 +110,19 @@ TEST(query_op_delta_spiht_compression, star1024x1024_ind_spiht_delta_encode_deco
 }	// TEST()
 }   // data2D_star1024x1024
 
+
+namespace data2D_test32x32
+{
+TEST(query_op_se_compression, test32x32_seq_se_compr_decomp)
+{
+	bool printFlag = true;
+	test_body_seq_se_comp_decomp<value_type>(&getSourceArrayIfEmpty,
+											 &getSourceArrayDesc,
+											 wtLevel, mmtLevel,
+											 printFlag);						// 19362
+}	// TEST()
+}	// data2D_test32x32
+
 namespace data2D_saturn1024x1024
 {
 TEST(query_op_se_compression, saturn1014x1024_seq_se_compr_decomp)
@@ -150,7 +162,7 @@ TEST(query_op_spiht_delta, mars4096x2048_ind_spiht_delta_encode_decode)
 	bool printFlag = false;
 	test_body_ind_spiht_delte_encode_decode<value_type>(&getSourceArrayIfEmpty,
 													   wtLevel, mmtLevel,
-													   printFlag);						// 19362
+													   printFlag);				// 19362
 }	// TEST()
 
 TEST(query_op_spiht_delta, mars4096x2048_ind_spiht_delta_spiht_encode)
@@ -161,5 +173,17 @@ TEST(query_op_spiht_delta, mars4096x2048_ind_spiht_delta_spiht_encode)
 												printFlag);						// 19362
 }	// TEST()
 }	// data2D_mars4096x2048
+
+namespace data2D_mercurydem20480x10240
+{
+TEST(query_op_se_compression, mercurydem20480x10240_seq_se_compr_decomp)
+{
+	bool printFlag = false;
+	test_body_seq_se_comp_decomp<value_type>(&getSourceArrayIfEmpty,
+											 &getSourceArrayDesc,
+											 wtLevel, mmtLevel,
+											 printFlag);						// 20102
+}	// TEST()
+}	// data2D_mercurydem20480x10240
 }	// caDummy
 }	// msdb

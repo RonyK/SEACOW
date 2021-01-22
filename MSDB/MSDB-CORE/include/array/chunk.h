@@ -3,15 +3,11 @@
 #define _MSDB_CHUNK_H_
 
 #include <stdafx.h>
-#include <array/chunkBuffer.h>
-#include <array/chunkDesc.h>
-#include <array/chunkItemIterator.h>
-#include <array/block.h>
-#include <array/blockIterator.h>
-#include <array/blockContainer.h>
-#include <io/serializable.h>
 #include <io/bitstream.h>
-#include <index/bitmap.h>
+#include <io/serializable.h>
+
+#include <array/chunkDesc.h>
+#include <array/blockIterator.h>
 
 namespace msdb
 {
@@ -186,8 +182,8 @@ protected:
 // Item Iterators
 //////////////////////////////
 public:
-	virtual pChunkItemIterator getItemIterator() = 0;
-	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range) = 0;
+	//virtual pChunkItemIterator getItemIterator() = 0;
+	//virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range) = 0;
 
 //////////////////////////////
 // Print

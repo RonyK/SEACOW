@@ -96,6 +96,8 @@ void storageMgr::loadChunk(arrayId arrId, attributeId attrId, chunkId chkId, pSe
 		this->getIfstream(fs, this->getChunkPath(arrId, attrId, chkId),
 						  strChunkFilExtension);
 		serialObj->deserialize(fs);
+		BOOST_LOG_TRIVIAL(debug) << "Load Chunk[" << chkId << "] : " << serialObj->getSerializedSize() << " Bytes" << std::endl;
+		
 		fs.close();
 	}
 	_MSDB_CATCH(msdb_exception msex)
@@ -105,6 +107,8 @@ void storageMgr::loadChunk(arrayId arrId, attributeId attrId, chunkId chkId, pSe
 			if(msex._error_code == MSDB_ER_CANNOT_OPEN_FILE)
 			{
 				// No chunk file, pass chunk
+				BOOST_LOG_TRIVIAL(debug) << "Load Chunk[" << chkId << "] : EMPTY" << std::endl;
+				std::cout << "LC[" << chkId << "] : EMPTY" << std::endl;
 				return;
 			}
 		}
@@ -121,7 +125,7 @@ void storageMgr::saveChunk(arrayId arrId, attributeId attrId, chunkId chkId, pSe
 	this->getOfstream(fs, this->getChunkPath(arrId, attrId, chkId), 
 					  strChunkFilExtension);
 	serialObj->serialize(fs);
-	//BOOST_LOG_TRIVIAL(debug) << "Save Chunk[" << chkId << "] : " << serialObj->getSerializedSize() << " Bytes";
+	BOOST_LOG_TRIVIAL(debug) << "Save Chunk[" << chkId << "] : " << serialObj->getSerializedSize() << " Bytes";
 	fs.close();
 }
 

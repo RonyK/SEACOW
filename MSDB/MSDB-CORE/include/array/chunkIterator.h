@@ -4,7 +4,6 @@
 
 #include <stdafx.h>
 #include <array/chunkContainer.h>
-#include <index/bitmap.h>
 #include <util/coordinate.h>
 
 namespace msdb
@@ -68,8 +67,8 @@ public:
 	//////////////////////////////
 	// Operators
 	//////////////////////////////
-	pChunk operator*() { return this->chunks_->at(this->seqPos_); }
-	pChunk operator->() { return this->chunks_->at(this->seqPos_); }
+	pChunk operator*() { return this->chunks_->at((chunkId)this->seqPos_); }
+	pChunk operator->() { return this->chunks_->at((chunkId)this->seqPos_); }
 
 protected:
 	chunkContainer* chunks_;

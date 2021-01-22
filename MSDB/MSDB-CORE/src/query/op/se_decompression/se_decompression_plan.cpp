@@ -29,7 +29,7 @@ se_decompression_array_pset::se_decompression_array_pset(parameters& pSet)
 {
 	assert(this->params_.size() == 2);
 	assert(this->params_[0]->type() == opParamType::ARRAY);		// source array
-	assert(this->params_[1]->type() == opParamType::CONST);		// Target wtLevel
+	assert(this->params_[1]->type() == opParamType::CONST_TYPE);		// Target wtLevel
 }
 pArrayDesc se_decompression_array_pset::inferSchema()
 {
@@ -47,7 +47,7 @@ pBitmapTree se_decompression_array_pset::inferBottomUpBitmap()
 	dimension blockSpace = desc->getDimDescs()->getBlockSpace();
 	dimension seChunkSpace = chunkSpace * blockSpace;
 
-	BOOST_LOG_TRIVIAL(debug) << "Se Decomp Array Chunk Space: " << seChunkSpace.area();
+	//BOOST_LOG_TRIVIAL(debug) << "Se Decomp Array Chunk Space: " << seChunkSpace.area();
 
 	return std::make_shared<bitmapTree>(seChunkSpace.area(), true);
 }

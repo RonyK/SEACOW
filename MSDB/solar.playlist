@@ -71,6 +71,17 @@
                     </Rule>
                   </Rule>
                 </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_wavelet_encode" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_wavelet_encode.solar1024x1024_wavelet_encode" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_wavelet_encode.solar1024x1024_wavelet_encode" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
               </Rule>
             </Rule>
           </Rule>

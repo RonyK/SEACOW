@@ -46,8 +46,8 @@ protected:
 // Item Iterators
 //////////////////////////////
 public:
-	virtual pChunkItemIterator getItemIterator();
-	virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range);
+	//virtual pChunkItemIterator getItemIterator();
+	//virtual pChunkItemRangeIterator getItemRangeIterator(const coorRange& range);
 
 //////////////////////////////
 // Serializable
@@ -59,28 +59,28 @@ public:
 	template<typename Ty_>
 	void serialize(bstream& bs)
 	{
-		bs << setw(sizeof(Ty_) * CHAR_BIT);
-		auto it = this->getItemIterator();
+		//bs << setw(sizeof(Ty_) * CHAR_BIT);
+		//auto it = this->getItemIterator();
 
-		while (!it->isEnd())
-		{
-			bs << (**it).get<Ty_>();
-			++(*it);
-		}
+		//while (!it->isEnd())
+		//{
+		//	bs << (**it).get<Ty_>();
+		//	++(*it);
+		//}
 	}
 	template<class Ty_>
 	void deserialize(bstream& bs)
 	{
-		bs >> setw(sizeof(Ty_) * CHAR_BIT);
-		auto it = this->getItemIterator();
+		//bs >> setw(sizeof(Ty_) * CHAR_BIT);
+		//auto it = this->getItemIterator();
 
-		while (!it->isEnd())
-		{
-			Ty_ value;
-			bs >> value;
-			(**it).set<Ty_>(value);
-			++(*it);
-		}
+		//while (!it->isEnd())
+		//{
+		//	Ty_ value;
+		//	bs >> value;
+		//	(**it).set<Ty_>(value);
+		//	++(*it);
+		//}
 	}
 };
 }

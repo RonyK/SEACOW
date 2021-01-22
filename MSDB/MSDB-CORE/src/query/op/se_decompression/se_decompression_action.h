@@ -12,6 +12,7 @@
 #include <query/opAction.h>
 #include <index/mmt.h>
 #include <op/wavelet_encode/wavelet_encode_array.h>
+#include <util/threadUtil.h>
 
 namespace msdb
 {
@@ -32,20 +33,17 @@ private:
 	template <typename Ty_>
 	void decompressAttribute(std::shared_ptr<wavelet_encode_array>outArr, pAttributeDesc attrDesc, pQuery qry)
 	{
-		auto arrIndex = arrayMgr::instance()->getAttributeIndex(outArr->getId(), attrDesc->id_);
+		auto outArrId = outArr->getId();
+		auto attrId = attrDesc->id_;
+		auto arrIndex = arrayMgr::instance()->getAttributeIndex(outArrId, attrId);
 		if (arrIndex->getType() != attrIndexType::MMT)
 		{
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_USER_QUERY_ERROR, MSDB_ER_ATTR_INDEX_TYPE_DIFF));
 		}
 		auto mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
 		auto cit = outArr->getChunkIterator(iterateMode::ALL);
-		auto maxLevel = outArr->getMaxLevel();
 
-		bool hasNegative = false;
-		if ((Ty_)-1 < 0)
-		{
-			hasNegative = true;
-		}
+		this->threadCreate(_MSDB_ACTION_THREAD_NUM_);
 
 		while (!cit->isEnd())
 		{
@@ -66,33 +64,61 @@ private:
 					inChunk->replaceBlockBitmap(std::make_shared<bitmap>(inChunk->getBlockCapacity(), true));
 				}
 				inChunk->makeAllBlocks();
-				// TODO::Create se_compression_array, seChunk
-				// Make seChunk in se_compression_array
+				inChunk->setLevel(outArr->getMaxLevel());
 
-				this->decompressChunk(inChunk, mmtIndex, maxLevel, hasNegative);
-				//========================================//
-				qry->getTimer()->nextWork(0, workType::IO);
-				pSerializable serialChunk
-					= std::static_pointer_cast<serializable>(inChunk);
-				storageMgr::instance()->loadChunk(outArr->getId(), attrDesc->id_, inChunk->getId(),
-												  serialChunk);
-
-				//========================================//
-				qry->getTimer()->nextWork(0, workType::COMPUTING);
 				auto outChunk = outArr->makeChunk(*inChunk->getDesc());
-				auto wtOutChunk = std::static_pointer_cast<wtChunk>(outChunk);
-				wtOutChunk->setLevel(inChunk->getLevel());
-				wtOutChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
-				wtOutChunk->makeBlocks(*inChunk->getBlockBitmap());
-				outChunk->bufferRef(inChunk);
+
+				//io_service_->post(boost::bind(&bindTestFunc, 100));
+
+				io_service_->post(boost::bind(&se_decompression_action::decompressChunk<Ty_>, this,
+								  std::static_pointer_cast<wtChunk>(outChunk), inChunk, qry, outArr, attrId, mmtIndex));
+				//boost::asio::post(pool, decompressChunk, );
 			}
 
 			++(*cit);
 		}
+
+		this->threadStop();
+		this->threadJoin();
 	}
 
 	template <typename Ty_>
-	void decompressChunk(pSeChunk inChunk, 
+	void decompressChunk(pWtChunk outChunk, pSeChunk inChunk, pQuery qry, std::shared_ptr<wavelet_encode_array> outArr, attributeId attrId,
+						 std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex)
+	{
+		auto threadId = getThreadId();
+
+		auto maxLevel = outArr->getMaxLevel();
+		arrayId arrId = outArr->getId();
+
+		bool hasNegative = false;
+		if ((Ty_)-1 < 0)
+		{
+			hasNegative = true;
+		}
+
+		// TODO::Create se_compression_array, seChunk
+		// Make seChunk in se_compression_array
+		this->requiredBitsFindingForChunk(inChunk, mmtIndex, maxLevel, hasNegative);
+		//========================================//
+		qry->getTimer()->nextWork(threadId, workType::IO);
+		pSerializable serialChunk
+			= std::static_pointer_cast<serializable>(inChunk);
+		storageMgr::instance()->loadChunk(arrId, attrId, inChunk->getId(),
+										  serialChunk);
+
+		//========================================//
+		qry->getTimer()->nextWork(threadId, workType::COMPUTING);
+
+		
+		outChunk->setLevel(inChunk->getLevel());
+		outChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
+		outChunk->makeBlocks(*inChunk->getBlockBitmap());
+		outChunk->bufferRef(inChunk);
+	}
+
+	template <typename Ty_>
+	void requiredBitsFindingForChunk(pSeChunk inChunk, 
 						 std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex,
 						 size_t maxLevel,
 						 bool hasNegative)

@@ -6,7 +6,6 @@
 #include <array/blockItemIterator.h>
 #include <array/blockBuffer.h>
 #include <array/blockDesc.h>
-#include <index/bitmap.h>
 #include <io/bitstream.h>
 #include <util/logger.h>
 
@@ -14,7 +13,6 @@ namespace msdb
 {
 class chunk;
 class block;
-class blockItemIterator;
 using pBlock = std::shared_ptr<block>;
 
 class block : public std::enable_shared_from_this<block>
@@ -119,11 +117,11 @@ protected:
 		int64_t row = -1;
 		while (!iit->isEnd())
 		{
-			int64_t curRow = iit->coor()[1];
+			int64_t curRow = iit->coor()[0];
 			if(row != curRow)
 			{
 				ss << "\n";
-				ss << curRow << ": ";
+				ss << curRow << " : ";
 				row = curRow;
 			}
 			if (iit->isExist())
