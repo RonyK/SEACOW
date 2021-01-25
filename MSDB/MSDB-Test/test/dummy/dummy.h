@@ -44,6 +44,8 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 {
 	dimension chunkNums = dims / chunkDims;
 	dimension blockNums = chunkDims / blockDims;
+	size_t offsetX = 0;
+	size_t offsetY = 0;
 
 	std::shared_ptr<Aty_> sourceArr = get2DCharArray<Aty_>(aid, arrayName, dims, chunkDims, blockDims, eType);
 
@@ -77,8 +79,8 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 				{
 					for (int ix = 0; ix < blockDims[1]; ++ix)
 					{
-						int globalX = x * chunkDims[1] + blockCoor[1] * blockDims[1] + ix;
-						int globalY = y * chunkDims[0] + blockCoor[0] * blockDims[0] + iy;
+						int globalX = sP[1] + blockCoor[1] * blockDims[1] + ix + offsetX;
+						int globalY = sP[0] + blockCoor[0] * blockDims[0] + iy + offsetY;
 
 						size_t seqPos = globalY * originalDims[1] + globalX;
 
@@ -109,6 +111,7 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 template <typename Ty_>
 void compArrary(pArray lArr, pArray rArr)
 {
+	bool isFirstWrongChunk = true;
 	size_t wrongValue = 0;
 	auto lAttrDesc = lArr->getDesc()->attrDescs_;
 	auto rAttrDesc = rArr->getDesc()->attrDescs_;
@@ -172,6 +175,17 @@ void compArrary(pArray lArr, pArray rArr)
 									BOOST_LOG_TRIVIAL(debug) << "Diff : " << static_cast<int64_t>(li) << ", " << static_cast<int64_t>(ri);
 									BOOST_LOG_TRIVIAL(debug) << "Chunk: " << lcItr->coor().toString() << " / Block: " << lbItr->coor().toString() << " / Item: " << liItr->coor().toString();
 									++wrongValue;
+
+									if(isFirstWrongChunk)
+									{
+										isFirstWrongChunk = false;
+
+										BOOST_LOG_TRIVIAL(debug) << "Left Block" << std::endl;
+										(*lbItr)->print();
+										BOOST_LOG_TRIVIAL(debug) << "Right Block" << std::endl;
+										(*rbItr)->print();
+
+									}
 								}
 								EXPECT_EQ(li, ri);
 							}
