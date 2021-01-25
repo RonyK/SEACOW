@@ -572,6 +572,15 @@ public:
 		return this->dSize_;
 	}
 
+	_NODISCARD std::string toString() const
+	{
+		std::ostringstream ss;
+
+		ss << this->sP_.toString() << "~" << this->eP_.toString();
+
+		return ss.str();
+	}
+
 	coordinate<Dty_> getSp() const
 	{
 		return this->sP_;
