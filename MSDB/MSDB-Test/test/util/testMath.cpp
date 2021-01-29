@@ -157,4 +157,22 @@ TEST(util_math, max_boundary_test)
 	/////
 	EXPECT_EQ((char)getMaxBoundary<char>(-78, 2, -4), -78);
 }
+
+TEST(util_math, get_max_ty_value)
+{
+	EXPECT_EQ(getMaxValue<char>(), 127);
+	EXPECT_EQ(getMaxValue<uint8_t>(), 255);
+
+	EXPECT_EQ(getMaxValue<int16_t>(), 32767);
+	EXPECT_EQ(getMaxValue<uint16_t>(), 65535);
+}
+
+TEST(util_math, get_min_ty_value)
+{
+	EXPECT_EQ(getMinValue<char>(), -128);
+	EXPECT_EQ(getMinValue<uint8_t>(), 0);
+
+	EXPECT_EQ(getMinValue<int16_t>(), -32768);
+	EXPECT_EQ(getMinValue<uint16_t>(), 0);
+}
 }

@@ -40,6 +40,7 @@ public:
 		auto blockItr = this->getBlockIterator();
 		while (!blockItr->isEnd())
 		{
+			// TODO::check isExist()
 			std::static_pointer_cast<spihtBlock>(**blockItr)->setMaxLevel(this->maxLevel_);
 			this->blockSerialize<Ty_>(bs, (**blockItr));
 			++(*blockItr);

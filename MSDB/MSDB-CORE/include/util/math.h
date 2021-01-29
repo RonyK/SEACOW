@@ -9,6 +9,7 @@ namespace msdb
 #define SIGN(val)	((val >= 0) ? 1 : -1)
 
 #define _TySize_	(sizeof(Ty_) * CHAR_BIT)
+#define _DOES_TY_HAVE_NEGATIVE_VALUE_		((Ty_)-1 < 0)
 
 // Use abs_ instead of std::abs
 // std::abs make compile error
@@ -251,6 +252,28 @@ Ty_ getMinBoundary(Ty_ prevLimit, bit_cnt_type order, sig_bit_type sigBitPos)
 		Ty_ value = (Ty_)(getPositiveMaxBoundary<Ty_>(abs_(prevLimit), order, abs_(sigBitPos)));
 		return std::max({ (Ty_)(value * -1), prevLimit });
 	}
+}
+
+template <typename Ty_>
+inline Ty_ getMaxValue()
+{
+	if(_DOES_TY_HAVE_NEGATIVE_VALUE_)
+	{
+		return ((Ty_)~(0x0)) ^ (Ty_)(0x1 << (_TySize_ - 1));
+	}
+
+	return (Ty_)~(0x0);
+}
+
+template <typename Ty_>
+inline Ty_ getMinValue()
+{
+	if(_DOES_TY_HAVE_NEGATIVE_VALUE_)
+	{
+		return (Ty_)(0x1 << (_TySize_ - 1));
+	}
+
+	return 0;
 }
 }	// msdb
 

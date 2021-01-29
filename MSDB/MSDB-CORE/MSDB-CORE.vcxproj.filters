@@ -98,6 +98,8 @@
     <ClCompile Include="src\util\logger.cpp" />
     <ClCompile Include="src\stdafx.cpp" />
     <ClCompile Include="src\util\threadUtil.cpp" />
+    <ClCompile Include="src\compression\compassBlock.cpp" />
+    <ClCompile Include="src\compression\compassChunk.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\array\array.h" />
@@ -211,6 +213,8 @@
     <ClInclude Include="include\util\logger.h" />
     <ClInclude Include="include\stdafx.h" />
     <ClInclude Include="include\util\threadUtil.h" />
+    <ClInclude Include="include\compression\compassChunk.h" />
+    <ClInclude Include="include\compression\compassBlock.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">

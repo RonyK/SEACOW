@@ -198,6 +198,8 @@
     <ClInclude Include="include\array\memChunk.h" />
     <ClInclude Include="include\array\memChunkBuffer.h" />
     <ClInclude Include="include\array\memChunkItemIterator.h" />
+    <ClInclude Include="include\compression\compassBlock.h" />
+    <ClInclude Include="include\compression\compassChunk.h" />
     <ClInclude Include="include\compression\compression.h" />
     <ClInclude Include="include\compression\seChunk.h" />
     <ClInclude Include="include\compression\spihtBlock.h" />
@@ -286,6 +288,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\array\memBlockArray.cpp" />
+    <ClCompile Include="src\compression\compassBlock.cpp" />
+    <ClCompile Include="src\compression\compassChunk.cpp" />
     <ClCompile Include="src\compression\spihtChunk.cpp" />
     <ClCompile Include="src\array\blockItemIterator.cpp" />
     <ClCompile Include="src\array\chunkItemIterator.cpp" />
