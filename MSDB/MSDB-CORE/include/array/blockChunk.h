@@ -88,7 +88,8 @@ public:
 	virtual void next() override;
 	virtual void prev() override;
 
-	virtual element getAt(position_t pos) override;
+	virtual element getAtDimPos(position_t dimPos) override;
+	virtual element getAtSeqPos(position_t seqPos) override;
 	virtual element operator*() override;
 
 protected:
@@ -110,7 +111,8 @@ public:
 	virtual void next() override;
 	virtual void prev() override;
 
-	virtual element getAt(position_t pos) override;
+	virtual element getAtDimPos(position_t dimPos) override;
+	virtual element getAtSeqPos(position_t seqPos) override;
 	virtual element operator*() override;
 
 protected:

@@ -785,8 +785,14 @@ public:
 
 	coordinateIterator(std::initializer_list<dim_type> lst)
 		: coor_(lst.size()), dSize_(lst.size()), end_(false), basisDimOffset_(1), seqPos_(0),
-		dims_(lst.size(), lst.data()), sP_(lst.size()), eP_(lst.size(), lst.data())
+		dims_(lst.size()), sP_(lst.size()), eP_(lst.size())
 	{
+		size_type d = 0;
+		for(auto value : lst)
+		{
+			this->dims_[d] = value;
+			this->eP_[d] = value;
+		}
 		this->basisDim_ = this->dSize() - 1;
 		this->initSeqCapacity();
 	}
@@ -845,9 +851,8 @@ public:
 		// this->coor_.size();
 		return this->dSize_;
 	}
-	_NODISCARD inline dim_pointer data() { return this->coor_; }
 	_NODISCARD inline coordinate_type& coor() { return this->coor_; }
-	_NODISCARD inline coordinate_type dims() const { return coordinate_type(dSize, this->dims_); }
+	_NODISCARD inline coordinate_type dims() const { return this->dims_; }
 	_NODISCARD inline bool isEnd() const { return this->end_; }
 	_NODISCARD inline bool isFront() const { return this->front_; }
 	coordinate<Dty_> getSp() const
@@ -883,7 +888,7 @@ public:
 		//size_type absolutePos = this->coor_[this->basisDim_] + pos;
 		//if(absolutePos < this->sP_[this->basisDim_] || this->eP_[this->basisDim_] <= absolutePos)
 		//{
-		//	_MSDB_THROW(_MSDB_EXCEPTIONS_MSG(MSDB_EC_LOGIC_ERROR, MSDB_ER_OUT_OF_RANGE, "itemIterator getAt out of range"));
+		//	_MSDB_THROW(_MSDB_EXCEPTIONS_MSG(MSDB_EC_LOGIC_ERROR, MSDB_ER_OUT_OF_RANGE, "itemIterator getAtDimPos out of range"));
 		//}
 
 		size_type left = pos * this->basisDimOffset_;
@@ -1008,6 +1013,12 @@ public:
 
 		this->setFrontEnd();
 	}
+
+	virtual void moveTo(const size_type seqPos)
+	{
+		//this->seqPos
+	}
+
 	virtual void moveToStart()
 	{
 		this->moveTo(this->sP_);
@@ -1174,9 +1185,14 @@ public:
 	//////////////////////////////
 	// Getter
 	//////////////////////////////
-	virtual Ty_ getAt(position_t pos)
+	virtual Ty_& getAtDimPos(position_t pos)
 	{
 		return *(ptr_ + this->seqPos_ + this->posToSeq(pos));
+	}
+
+	virtual Ty_& getAtSeqPos(position_t seqPos)
+	{
+		return *(ptr_ + seqPos);
 	}
 	//////////////////////////////
 
@@ -1234,9 +1250,14 @@ public:
 	//////////////////////////////
 	// Getter
 	//////////////////////////////
-	virtual element getAt(position_t pos)
+	virtual element getAtDimPos(position_t dimPos)
 	{
-		return element((void*)(ptr_ + (this->seqPos_ + this->posToSeq(pos)) * this->eSize_), this->eType_);
+		return element((void*)(ptr_ + (this->seqPos_ + this->posToSeq(dimPos)) * this->eSize_), this->eType_);
+	}
+
+	virtual element getAtSeqPos(position_t seqPos)
+	{
+		return element((void*)(ptr_ + seqPos));
 	}
 
 	eleType getEtype()

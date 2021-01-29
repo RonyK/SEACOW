@@ -199,9 +199,14 @@ void blockChunkItemIterator::prev()
 	}
 }
 
-element blockChunkItemIterator::getAt(position_t pos)
+element blockChunkItemIterator::getAtDimPos(position_t dimPos)
 {
-	return this->curBlockItemItr_->getAt(pos);
+	return this->curBlockItemItr_->getAtDimPos(dimPos);
+}
+
+element blockChunkItemIterator::getAtSeqPos(position_t seqPos)
+{
+	return this->curBlockItemItr_->getAtSeqPos(seqPos);
 }
 
 element blockChunkItemIterator::operator*()
@@ -325,9 +330,14 @@ void blockChunkItemRangeIterator::prev()
 	}
 }
 
-element blockChunkItemRangeIterator::getAt(position_t pos)
+element blockChunkItemRangeIterator::getAtDimPos(position_t dimPos)
 {
-	return this->curBlockItemItr_->getAt(pos);
+	return this->curBlockItemItr_->getAtDimPos(dimPos);
+}
+
+element blockChunkItemRangeIterator::getAtSeqPos(position_t seqPos)
+{
+	return this->curBlockItemItr_->getAtSeqPos(seqPos);
 }
 
 element blockChunkItemRangeIterator::operator*()
