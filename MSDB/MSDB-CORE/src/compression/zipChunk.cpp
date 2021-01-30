@@ -30,43 +30,46 @@ pBlock zipChunk::makeBlock(const blockId bId)
 
 void zipChunk::serialize(std::ostream& os)
 {
-	bstream bs;
+	std::stringstream oss;
 	switch (this->desc_->attrDesc_->type_)
 	{
 	case eleType::CHAR:
-		this->serializeTy<char>(bs);
+		this->serializeTy<char>(oss);
 		break;
 	case eleType::INT8:
-		this->serializeTy<int8_t>(bs);
+		this->serializeTy<int8_t>(oss);
 		break;
 	case eleType::INT16:
-		this->serializeTy<int16_t>(bs);
+		this->serializeTy<int16_t>(oss);
 		break;
 	case eleType::INT32:
-		this->serializeTy<int32_t>(bs);
+		this->serializeTy<int32_t>(oss);
 		break;
 	case eleType::INT64:
-		this->serializeTy<int64_t>(bs);
+		this->serializeTy<int64_t>(oss);
 		break;
 	case eleType::UINT8:
-		this->serializeTy<uint8_t>(bs);
+		this->serializeTy<uint8_t>(oss);
 		break;
 	case eleType::UINT16:
-		this->serializeTy<uint16_t>(bs);
+		this->serializeTy<uint16_t>(oss);
 		break;
 	case eleType::UINT32:
-		this->serializeTy<uint32_t>(bs);
+		this->serializeTy<uint32_t>(oss);
 		break;
 	case eleType::UINT64:
-		this->serializeTy<uint64_t>(bs);
+		this->serializeTy<uint64_t>(oss);
 		break;
 	default:
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 	}
 
-	this->serializedSize_ = bs.capacity();
+	oss.seekg(0, std::ios::end);
+	this->serializedSize_ = oss.tellg();
+	oss.seekg(0, std::ios::beg);
 	this->getOutHeader()->serialize(os);
-	os.write(bs.data(), bs.capacity());
+	os << oss.str();
+	//os.write(oss.str(), this->serializedSize_);
 }
 
 void zipChunk::deserialize(std::istream& is)
@@ -74,38 +77,40 @@ void zipChunk::deserialize(std::istream& is)
 	this->getHeader()->deserialize(is);
 	this->updateFromHeader();
 
-	bstream bs;
-	bs.resize(this->serializedSize_);
-	is.read(bs.data(), this->serializedSize_);
+	// TODO :: un-compression with zib
+	std::stringstream iss;
+	
+	//bs.resize(this->serializedSize_);
+	//is.read(bs.data(), this->serializedSize_);
 
 	switch (this->desc_->attrDesc_->type_)
 	{
 	case eleType::CHAR:
-		this->deserializeTy<char>(bs);
+		this->deserializeTy<char>(iss);
 		break;
 	case eleType::INT8:
-		this->deserializeTy<int8_t>(bs);
+		this->deserializeTy<int8_t>(iss);
 		break;
 	case eleType::INT16:
-		this->deserializeTy<int16_t>(bs);
+		this->deserializeTy<int16_t>(iss);
 		break;
 	case eleType::INT32:
-		this->deserializeTy<int32_t>(bs);
+		this->deserializeTy<int32_t>(iss);
 		break;
 	case eleType::INT64:
-		this->deserializeTy<int64_t>(bs);
+		this->deserializeTy<int64_t>(iss);
 		break;
 	case eleType::UINT8:
-		this->deserializeTy<uint8_t>(bs);
+		this->deserializeTy<uint8_t>(iss);
 		break;
 	case eleType::UINT16:
-		this->deserializeTy<uint16_t>(bs);
+		this->deserializeTy<uint16_t>(iss);
 		break;
 	case eleType::UINT32:
-		this->deserializeTy<uint32_t>(bs);
+		this->deserializeTy<uint32_t>(iss);
 		break;
 	case eleType::UINT64:
-		this->deserializeTy<uint64_t>(bs);
+		this->deserializeTy<uint64_t>(iss);
 		break;
 	default:
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));

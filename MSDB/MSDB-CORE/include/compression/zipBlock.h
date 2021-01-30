@@ -19,13 +19,13 @@ public:
 
 public:
 	template<typename Ty_>
-	void serializeTy(bstream& bs)
+	void serializeTy(std::stringstream& bs)
 	{
 
 	}
 
 	template<typename Ty_>
-	void deserializeTy(bstream& bs)
+	void deserializeTy(std::stringstream& bs)
 	{
 
 	}

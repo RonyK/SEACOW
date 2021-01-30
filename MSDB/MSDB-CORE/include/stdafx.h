@@ -55,6 +55,11 @@
 #include <boost/thread/thread.hpp>
 #include <boost/lexical_cast.hpp>
 
+// For zip compression
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/copy.hpp>
+#include <boost/iostreams/filter/zlib.hpp>
+
 // For cassert
 #define assertm(exp, msg) assert(((void)msg, exp))
 

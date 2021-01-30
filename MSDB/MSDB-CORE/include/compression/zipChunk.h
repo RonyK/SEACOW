@@ -26,35 +26,51 @@ public:
 	virtual void deserialize(std::istream& is) override;
 
 	template<typename Ty_>
-	void serializeTy(bstream& bs)
+	void serializeTy(std::stringstream& ss)
 	{
-		auto blockItr = this->getBlockIterator();
-		while (!blockItr->isEnd())
-		{
-			if (blockItr->isExist())
-			{
-				pCompassBlock cpBlock = std::static_pointer_cast<compassBlock>(**blockItr);
-				cpBlock->serializeTy<Ty_>(bs);
-			}
+		boost::iostreams::filtering_streambuf<boost::iostreams::input> out;
+		std::stringstream original;
+		original.write((const char*)this->cached_->getReadData(), this->cached_->size());
+		out.push(boost::iostreams::zlib_compressor());
+		out.push(original);
+		boost::iostreams::copy(out, ss);
 
-			++(*blockItr);
-		}
+		//////////////////////////////
+		// TODO::Serialize block by block
+		//auto blockItr = this->getBlockIterator();
+		//while (!blockItr->isEnd())
+		//{
+		//	if (blockItr->isExist())
+		//	{
+		//		//pCompassBlock cpBlock = std::static_pointer_cast<compassBlock>(**blockItr);
+		//		//cpBlock->serializeTy<Ty_>(ss);
+
+		//		//blockId bId = (**blockItr)->getId();
+
+		//		
+		//		//original << (char*)this->cached_->getData() + (bId * mSizeBlock),
+		//	}
+
+		//	++(*blockItr);
+		//}
 	}
 
 	template<class Ty_>
-	void deserializeTy(bstream& bs)
+	void deserializeTy(std::stringstream& bs)
 	{
-		auto blockItr = this->getBlockIterator();
-		while (!blockItr->isEnd())
-		{
-			if (blockItr->isExist())
-			{
-				pCompassBlock cpBlock = std::static_pointer_cast<compassBlock>(**blockItr);
-				cpBlock->deserializeTy<Ty_>(bs);
-			}
+		//////////////////////////////
+		// TODO::deserialize zipChunk
+		//auto blockItr = this->getBlockIterator();
+		//while (!blockItr->isEnd())
+		//{
+		//	if (blockItr->isExist())
+		//	{
+		//		pCompassBlock cpBlock = std::static_pointer_cast<compassBlock>(**blockItr);
+		//		cpBlock->deserializeTy<Ty_>(bs);
+		//	}
 
-			++(*blockItr);
-		}
+		//	++(*blockItr);
+		//}
 	}
 };
 }		// msdb
