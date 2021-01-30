@@ -42,7 +42,6 @@ void chunkBuffer::bufferAlloc(bufferSize size)
 	this->isAllocated_ = true;
 	this->data_ = new char[size]();
 	this->bodySize_ = size;
-	this->isAllocated_ = true;
 }
 
 void chunkBuffer::realloc(bufferSize size)

@@ -46,6 +46,8 @@
     <ClCompile Include="test\util\testMath.cpp" />
     <ClCompile Include="test\index\testMMT.cpp" />
     <ClCompile Include="test\main.cpp" />
+    <ClCompile Include="test\query\op\compass_encode_decode\test_compass_encode_decode.cpp" />
+    <ClCompile Include="test\compression\test_qry_compass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">

@@ -111,6 +111,30 @@ void getSeDecompression(pArrayDesc sourceArrDesc, eleDefault level,
 	action = std::get<1>(planAction);
 	qry = std::get<2>(planAction);
 }
+
+void getCompassEncode(pArrayDesc sourceArrDesc, eleDefault numBins,
+					  std::shared_ptr<compass_encode_plan>& plan,
+					  std::shared_ptr<compass_encode_action>& action,
+					  pQuery& qry)
+{
+	auto planAction = getLevelArrayParamOperator<compass_encode_plan, compass_encode_action, compass_encode_array_pset>(
+		sourceArrDesc, numBins, qry);
+	plan = std::get<0>(planAction);
+	action = std::get<1>(planAction);
+	qry = std::get<2>(planAction);
+}
+
+void getCompassDecode(pArrayDesc sourceArrDesc, eleDefault numBins,
+					  std::shared_ptr<compass_decode_plan>& plan,
+					  std::shared_ptr<compass_decode_action>& action,
+					  pQuery& qry)
+{
+	auto planAction = getLevelArrayParamOperator<compass_decode_plan, compass_decode_action, compass_decode_array_pset>(
+		sourceArrDesc, numBins, qry);
+	plan = std::get<0>(planAction);
+	action = std::get<1>(planAction);
+	qry = std::get<2>(planAction);
+}
 //std::shared_ptr<se_decompression_plan> getSeDecompression(pArrayDesc sourceArrDesc, eleDefault level,
 //						pQuery& qry)
 //{
@@ -119,7 +143,7 @@ void getSeDecompression(pArrayDesc sourceArrDesc, eleDefault level,
 //}
 void getSave(pArrayDesc sourceArrDesc,
 			 std::shared_ptr<save_plan>& plan,
-			 std::shared_ptr<save_action>& action, 
+			 std::shared_ptr<save_action>& action,
 			 pQuery& qry)
 {
 	auto planAction = getSingleArrayParamOperator<save_plan, save_action, save_array_pset>(
@@ -129,7 +153,7 @@ void getSave(pArrayDesc sourceArrDesc,
 	qry = std::get<2>(planAction);
 }
 void getLoad(pArrayDesc sourceArrDesc,
-			 std::shared_ptr<load_plan>& plan, 
+			 std::shared_ptr<load_plan>& plan,
 			 std::shared_ptr<load_action>& action,
 			 pQuery& qry)
 {
@@ -143,7 +167,7 @@ void getLoad(pArrayDesc sourceArrDesc,
 void getNaiveFilter(pArrayDesc sourceArrDesc,
 					pPredicate myPredicate,
 					std::shared_ptr<naive_filter_plan>& plan,
-					std::shared_ptr<naive_filter_action>& action, 
+					std::shared_ptr<naive_filter_action>& action,
 					pQuery& qry)
 {
 	auto planAction = getPredicateArrayParamOperator<naive_filter_plan, naive_filter_action, naive_filter_array_pset>(
@@ -164,7 +188,7 @@ void getIndexFilter(pArrayDesc sourceArrDesc,
 	action = std::get<1>(planAction);
 	qry = std::get<2>(planAction);
 }
-void getSPIHTEncode(pArrayDesc sourceArrDesc, 
+void getSPIHTEncode(pArrayDesc sourceArrDesc,
 					std::shared_ptr<spiht_encode_plan>& plan,
 					std::shared_ptr<spiht_encode_action>& action,
 					pQuery& qry)
@@ -176,10 +200,10 @@ void getSPIHTEncode(pArrayDesc sourceArrDesc,
 	qry = std::get<2>(planAction);
 }
 
-void getSPIHTDecode(pArrayDesc sourceArrDesc, 
+void getSPIHTDecode(pArrayDesc sourceArrDesc,
 					eleDefault wtLevel,
-					std::shared_ptr<spiht_decode_plan>& plan, 
-					std::shared_ptr<spiht_decode_action>& action, 
+					std::shared_ptr<spiht_decode_plan>& plan,
+					std::shared_ptr<spiht_decode_action>& action,
 					pQuery& qry)
 {
 	auto planAction = getLevelArrayParamOperator<spiht_decode_plan, spiht_decode_action, spiht_decode_array_pset>(

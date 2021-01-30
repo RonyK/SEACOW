@@ -16,6 +16,11 @@
 #include <op/se_decompression/se_decompression_plan.h>
 #include <op/se_decompression/se_decompression_action.h>
 
+#include <op/compass_encode/compass_encode_plan.h>
+#include <op/compass_encode/compass_encode_action.h>
+#include <op/compass_decode/compass_decode_plan.h>
+#include <op/compass_decode/compass_decode_action.h>
+
 namespace msdb
 {
 namespace caDummy
@@ -80,6 +85,28 @@ pArray exe_act_ind_se_decompression(std::vector<pArray> sourceArr, eleDefault le
 	getSeDecompression(sourceArr[0]->getDesc(), level, sePlan, seAction, seQuery);
 
 	auto afterArray = seAction->execute(sourceArr, seQuery);
+
+	return afterArray;
+}
+pArray exe_act_ind_compass_encode(std::vector<pArray> sourceArr, eleDefault numBins)
+{
+	std::shared_ptr<compass_encode_plan> myPlan;
+	std::shared_ptr<compass_encode_action> myAction;
+	pQuery myQuery;
+	getCompassEncode(sourceArr[0]->getDesc(), numBins, myPlan, myAction, myQuery);
+
+	auto afterArray = myAction->execute(sourceArr, myQuery);
+
+	return afterArray;
+}
+pArray exe_act_ind_compass_decode(std::vector<pArray> sourceArr, eleDefault numBins)
+{
+	std::shared_ptr<compass_decode_plan> myPlan;
+	std::shared_ptr<compass_decode_action> myAction;
+	pQuery myQuery;
+	getCompassDecode(sourceArr[0]->getDesc(), numBins, myPlan, myAction, myQuery);
+
+	auto afterArray = myAction->execute(sourceArr, myQuery);
 
 	return afterArray;
 }

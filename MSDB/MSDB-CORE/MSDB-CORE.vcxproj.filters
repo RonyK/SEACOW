@@ -49,7 +49,6 @@
     <ClCompile Include="src\array\buffer.cpp" />
     <ClCompile Include="src\io\file.cpp" />
     <ClCompile Include="src\array\array.cpp" />
-    <ClCompile Include="src\array\compChunk.cpp" />
     <ClCompile Include="src\array\chunkDesc.cpp" />
     <ClCompile Include="src\io\bitstream.cpp" />
     <ClCompile Include="src\system\errorCodes.cpp" />
@@ -100,6 +99,10 @@
     <ClCompile Include="src\util\threadUtil.cpp" />
     <ClCompile Include="src\compression\compassBlock.cpp" />
     <ClCompile Include="src\compression\compassChunk.cpp" />
+    <ClCompile Include="src\query\op\compass_encode\compass_encode_action.cpp" />
+    <ClCompile Include="src\query\op\compass_encode\compass_encode_plan.cpp" />
+    <ClCompile Include="src\query\op\compass_decode\compass_decode_action.cpp" />
+    <ClCompile Include="src\query\op\compass_decode\compass_decode_plan.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\array\array.h" />
@@ -124,8 +127,6 @@
     <ClInclude Include="include\array\chunkItemIterator.h" />
     <ClInclude Include="include\array\chunkIterator.h" />
     <ClInclude Include="include\array\chunkMgr.h" />
-    <ClInclude Include="include\array\compBlock.h" />
-    <ClInclude Include="include\array\compChunk.h" />
     <ClInclude Include="include\array\configArrays.h" />
     <ClInclude Include="include\array\dimension.h" />
     <ClInclude Include="include\array\dimensionDesc.h" />
@@ -215,6 +216,10 @@
     <ClInclude Include="include\util\threadUtil.h" />
     <ClInclude Include="include\compression\compassChunk.h" />
     <ClInclude Include="include\compression\compassBlock.h" />
+    <ClInclude Include="src\query\op\compass_encode\compass_encode_action.h" />
+    <ClInclude Include="src\query\op\compass_encode\compass_encode_plan.h" />
+    <ClInclude Include="src\query\op\compass_decode\compass_decode_action.h" />
+    <ClInclude Include="src\query\op\compass_decode\compass_decode_plan.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">

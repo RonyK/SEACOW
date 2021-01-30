@@ -3,7 +3,7 @@
 #define _MSDB_COMPASSCHUNK_H_
 
 #include <stdafx.h>
-#include <array/memChunk.h>
+#include <array/blockChunk.h>
 #include <compression/compassBlock.h>
 #include <io/bitstream.h>
 
@@ -12,7 +12,7 @@ namespace msdb
 class compassChunk;
 using pCompassChunk = std::shared_ptr<compassChunk>;
 
-class compassChunk : public memChunk
+class compassChunk : public memBlockChunk
 {
 public:
 	compassChunk(pChunkDesc desc);
@@ -34,7 +34,14 @@ public:
 			if (blockItr->isExist())
 			{
 				pCompassBlock cpBlock = std::static_pointer_cast<compassBlock>(**blockItr);
-				cpBlock->serializeTy<Ty_>(bs);
+				cpBlock->setNumBins(this->numBins_);
+				try
+				{
+					cpBlock->serializeTy<Ty_>(bs);
+				}catch(...)
+				{
+					std::cout << "Exception" << std::endl;
+				}
 			}
 
 			++(*blockItr);
@@ -50,12 +57,19 @@ public:
 			if (blockItr->isExist())
 			{
 				pCompassBlock cpBlock = std::static_pointer_cast<compassBlock>(**blockItr);
+				cpBlock->setNumBins(this->numBins_);
 				cpBlock->deserializeTy<Ty_>(bs);
 			}
 
 			++(*blockItr);
 		}
 	}
+
+public:
+	void setNumBins(size_t numBins);
+
+private:
+	size_t numBins_;
 };
 }	// msdb
 #endif	// _MSDB_COMPASSCHUNK_H_

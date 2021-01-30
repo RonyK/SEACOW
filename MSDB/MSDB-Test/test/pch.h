@@ -27,3 +27,5 @@
 
 static const int se_array_id = 2;
 static const int delta_spiht_array_id = 3;
+static const int spiht_array_id = 4;
+static const int compass_array_id = 5;

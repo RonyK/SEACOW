@@ -114,7 +114,7 @@ private:
 		outChunk->setLevel(inChunk->getLevel());
 		outChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
 		outChunk->makeBlocks(*inChunk->getBlockBitmap());
-		outChunk->bufferRef(inChunk);
+		outChunk->bufferCopy(inChunk);
 	}
 
 	template <typename Ty_>

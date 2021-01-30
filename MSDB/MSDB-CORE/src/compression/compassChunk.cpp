@@ -4,21 +4,25 @@
 namespace msdb
 {
 compassChunk::compassChunk(pChunkDesc desc)
-	: memChunk(desc)
+	: memBlockChunk(desc)
 {
 }
+
 compassChunk::~compassChunk()
 {
 }
+
 pBlock compassChunk::makeBlock(const blockId bId)
 {
-	auto desc = this->getBlockDesc(bId);
-	desc->mSize_ = desc->mSize_;
-	desc->mOffset_ = 0;
-	auto blockObj = std::make_shared<compassBlock>(desc);
-	this->insertBlock(blockObj);
-
-	return blockObj;
+	assert(this->blockCapacity_ > bId);
+	if (this->blocks_[bId] == nullptr)
+	{
+		auto desc = this->getBlockDesc(bId);
+		auto blockObj = std::make_shared<compassBlock>(desc);
+		this->insertBlock(blockObj);
+		return blockObj;
+	}
+	return this->blocks_[bId];
 }
 void compassChunk::serialize(std::ostream& os)
 {
@@ -101,5 +105,9 @@ void compassChunk::deserialize(std::istream& is)
 	default:
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 	}
+}
+void compassChunk::setNumBins(size_t numBins)
+{
+	this->numBins_ = numBins;
 }
 }	// msdb

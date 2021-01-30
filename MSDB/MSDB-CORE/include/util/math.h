@@ -9,7 +9,7 @@ namespace msdb
 #define SIGN(val)	((val >= 0) ? 1 : -1)
 
 #define _TySize_	(sizeof(Ty_) * CHAR_BIT)
-#define _DOES_TY_HAVE_NEGATIVE_VALUE_		((Ty_)-1 < 0)
+#define _TY_HAS_NEGATIVE_VALUE_		((Ty_)-1 < 0)
 
 // Use abs_ instead of std::abs
 // std::abs make compile error
@@ -44,7 +44,7 @@ template<typename Ty_, typename size_type = std::conditional_t<sizeof(Ty_) < 32,
 
 	Ty_ value = inValue;
 	size_type order = inOrder;
-	Ty_ mask = 1 << (Bits_ - 1);
+	Ty_ mask = (Ty_)0x1 << (Bits_ - 1);
 	size_type i = Bits_ + 1;
 	while (order != 0 && i-- != 0)
 	{
@@ -257,7 +257,7 @@ Ty_ getMinBoundary(Ty_ prevLimit, bit_cnt_type order, sig_bit_type sigBitPos)
 template <typename Ty_>
 inline Ty_ getMaxValue()
 {
-	if(_DOES_TY_HAVE_NEGATIVE_VALUE_)
+	if(_TY_HAS_NEGATIVE_VALUE_)
 	{
 		return ((Ty_)~(0x0)) ^ (Ty_)(0x1 << (_TySize_ - 1));
 	}
@@ -268,7 +268,7 @@ inline Ty_ getMaxValue()
 template <typename Ty_>
 inline Ty_ getMinValue()
 {
-	if(_DOES_TY_HAVE_NEGATIVE_VALUE_)
+	if(_TY_HAS_NEGATIVE_VALUE_)
 	{
 		return (Ty_)(0x1 << (_TySize_ - 1));
 	}

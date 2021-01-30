@@ -1257,7 +1257,7 @@ public:
 
 	virtual element getAtSeqPos(position_t seqPos)
 	{
-		return element((void*)(ptr_ + seqPos));
+		return element((void*)(ptr_ + seqPos * this->eSize_));
 	}
 
 	eleType getEtype()

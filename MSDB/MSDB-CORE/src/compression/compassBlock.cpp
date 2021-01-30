@@ -21,17 +21,26 @@ void compassBlock::serializePositional(bstream& bs, std::vector<position_t>& pos
 		{
 			maxGap = p - prevP;
 		}
+		prevP = p;
 	}
 
-	bs << setw(CHAR_BIT) << msb<position_t>(positional[0]) << msb<position_t>(maxGap);
-	bs << setw(msb<position_t>(positional[0])) << positional[0];	// set first position
-	bs << setw(msb<position_t>(maxGap));
+	auto bFirstPosition = std::max({ msb<position_t>(positional[0]), (unsigned char)1 });
+	auto bMaxGap = std::max({ msb<position_t>(maxGap), (unsigned char)1 });
+
+	bs << setw(CHAR_BIT) << bFirstPosition << bMaxGap;
+	bs << setw(bFirstPosition) << positional[0];	// set first position
+	bs << setw(bMaxGap);
+
+	BOOST_LOG_TRIVIAL(debug) << "bFP: " << static_cast<int64_t>(bFirstPosition) << ", bMG: "  << static_cast<int64_t>(bMaxGap);
 
 	prevP = 0;
-	for (auto p : positional)
+	size_t numPositions = positional.size();
+	for (size_t i = 1; i < numPositions; ++i)
 	{
-		assert(p == 0 || p > prevP && "check positional vector is ordered");
-		bs << p - prevP;
+		position_t p = positional[i];
+		assert((p == 0 || (p > prevP && p - prevP > 0)) && "check positional vector is ordered");
+		bs << (p - prevP);
+		prevP = p;
 	}
 	bs << 0;
 }
@@ -47,17 +56,24 @@ void compassBlock::deserializePositional(bstream& bs, std::vector<position_t>& p
 	bs >> setw(CHAR_BIT) >> bFirstPosition >> bMaxGap;
 	bs >> setw(bFirstPosition) >> p;		// get first position
 	bs >> setw(bMaxGap);
+	positional.push_back(p);
+	p = prevP;
+	BOOST_LOG_TRIVIAL(debug) << "bFP: " << static_cast<int64_t>(bFirstPosition) << ", bMG: " << static_cast<int64_t>(bMaxGap);
 
 	do
 	{
-		positional.push_back(p + prevP);
 		bs >> p;
-		prevP = p;
+		if(!p)
+		{
+			break;
+		}
+		positional.push_back(p + prevP);
+		prevP += p;
 
-	} while (p != 0);
+	} while (true);
 }
 
-void compassBlock::setNumBins_(size_t numBins)
+void compassBlock::setNumBins(size_t numBins)
 {
 	this->numBins_ = numBins;
 }

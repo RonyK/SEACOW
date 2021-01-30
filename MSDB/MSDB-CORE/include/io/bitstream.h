@@ -313,7 +313,12 @@ namespace msdb
 			while (remain >= CHAR_BIT)
 			{
 				unsigned char temp = 0x00;
-				remain -= this->get(temp, CHAR_BIT);
+				size_type move = this->get(temp, CHAR_BIT);
+				if(!move)
+				{
+					return out;
+				}
+				remain -= move;
 				out |= (temp << remain);
 			}
 
@@ -321,11 +326,16 @@ namespace msdb
 			while (remain > 0)
 			{
 				unsigned char temp = 0x00;
-				remain -= this->get(temp, remain);
+				size_type move = this->get(temp, remain);
+				if(!move)
+				{
+					return out;
+				}
+				remain -= move;
 				out |= (temp << remain);
 			}
 
-			return length - remain;
+			return out;
 		}
 
 		bool eof()

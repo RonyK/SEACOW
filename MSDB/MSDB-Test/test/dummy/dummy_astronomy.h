@@ -25,6 +25,7 @@ static const dim_type dimY = 1024;
 static const size_t dataLength = dimX * dimY;
 static const size_t wtLevel = 3;
 static const size_t mmtLevel = 3;
+static const size_t numBins = 32;
 static const arrayId aid = 19420;
 
 extern std::vector<dim_type> dims;
@@ -40,7 +41,7 @@ template<class Aty_ = memBlockArray>
 std::vector<pArray> getSourceArray()
 {
 	// Get Dummy data
-	value_type* data = new value_type[originalDataLength];
+	value_type* data = new value_type[originalDataLength]();
 	getDummy(data, originalDataLength);
 
 	std::vector<pArray> arrs(
@@ -73,6 +74,7 @@ static const dim_type dimY = 1024;
 static const size_t dataLength = dimX * dimY;
 static const size_t wtLevel = 3;
 static const size_t mmtLevel = 3;
+static const size_t numBins = 32;
 static const arrayId aid = 19360;
 
 extern std::vector<dim_type> dims;
@@ -121,6 +123,7 @@ static const dim_type dimY = 1024;
 static const size_t dataLength = dimX * dimY;
 static const size_t wtLevel = 3;
 static const size_t mmtLevel = 3;
+static const size_t numBins = 32;
 static const arrayId aid = 10240;
 
 extern std::vector<dim_type> dims;
@@ -169,6 +172,7 @@ static const dim_type dimY = 2048;
 static const size_t dataLength = dimX * dimY;
 static const size_t wtLevel = 3;
 static const size_t mmtLevel = 3;
+static const size_t numBins = 32;
 static const arrayId aid = 40960;
 
 extern std::vector<dim_type> dims;
@@ -217,6 +221,7 @@ static const dim_type dimY = 8192;
 static const size_t dataLength = dimX * dimY;
 static const size_t wtLevel = 3;
 static const size_t mmtLevel = 3;
+static const size_t numBins = 32;
 static const arrayId aid = 20100;
 
 extern std::vector<dim_type> dims;

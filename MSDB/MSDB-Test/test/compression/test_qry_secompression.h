@@ -12,7 +12,6 @@ namespace msdb
 {
 namespace caDummy
 {
-
 template <typename value_type>
 pArray exe_qry_ind_se_compression(_vectorSourceArray_,
 								  eleDefault wtLevel, eleDefault mmtLevel,
