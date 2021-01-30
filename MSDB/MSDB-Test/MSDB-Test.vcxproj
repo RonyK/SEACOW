@@ -40,9 +40,11 @@
     <IncludePath>$(SolutionDir)MSDB-CORE\include;$(ProjectDir)test;$(SolutionDir)MSDB-CORE\src\query;%BOOST_ROOT%;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <ItemGroup>
+    <ClInclude Include="test\compression\getOpCompression.h" />
     <ClInclude Include="test\compression\test_action_compression.h" />
     <ClInclude Include="test\compression\test_qry_secompression.h" />
     <ClInclude Include="test\compression\test_qry_spiht.h" />
+    <ClInclude Include="test\compression\test_qry_zip.h" />
     <ClInclude Include="test\dummy\dummy.h" />
     <ClInclude Include="test\dummy\dummy_astronomy.h" />
     <ClInclude Include="test\dummy\opArrayDummy.h" />
@@ -59,6 +61,7 @@
     <ClCompile Include="test\array\testArray.cpp" />
     <ClCompile Include="test\array\testBlock.cpp" />
     <ClCompile Include="test\array\testMemChunk.cpp" />
+    <ClCompile Include="test\compression\getOpCompression.cpp" />
     <ClCompile Include="test\compression\test_action_compression.cpp" />
     <ClCompile Include="test\compression\test_qry_compass.h" />
     <ClCompile Include="test\dummy\dummy.cpp" />
@@ -87,6 +90,7 @@
     <ClCompile Include="test\query\op\delta_decode\test_mmt_delta_decode.cpp" />
     <ClCompile Include="test\query\op\delta_encode\test_delta_encode.cpp" />
     <ClCompile Include="test\query\op\index_filter\test_index_filter.cpp" />
+    <ClCompile Include="test\query\op\zip_save_load\test_zip_save_load.cpp" />
     <ClCompile Include="test\test\op\between\testBetween.cpp" />
     <ClCompile Include="test\test\op\filter\testFilter.cpp" />
     <ClCompile Include="test\query\op\naive_filter\test_naive_filter.cpp" />

@@ -116,6 +116,45 @@
                     </Rule>
                   </Rule>
                 </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_zip_save" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_zip_save.star1024x1024_ind_compass_encode_decode" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_zip_save.star1024x1024_ind_compass_encode_decode" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_compass_encode_decode" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_compass_encode_decode.star1024x1024_ind_compass_encode_decode" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_compass_encode_decode.star1024x1024_ind_compass_encode_decode" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_compass" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_compass.star1024x1024_ind_compass_encode" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_compass.star1024x1024_ind_compass_encode" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_compass.star1024x1024_ind_compass_encode_decode" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_compass.star1024x1024_ind_compass_encode_decode" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
               </Rule>
             </Rule>
           </Rule>

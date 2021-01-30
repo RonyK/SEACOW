@@ -48,6 +48,8 @@
     <ClCompile Include="test\main.cpp" />
     <ClCompile Include="test\query\op\compass_encode_decode\test_compass_encode_decode.cpp" />
     <ClCompile Include="test\compression\test_qry_compass.h" />
+    <ClCompile Include="test\compression\getOpCompression.cpp" />
+    <ClCompile Include="test\query\op\zip_save_load\test_zip_save_load.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">
@@ -66,6 +68,8 @@
     <ClInclude Include="test\index\test_action_mmt.h" />
     <ClInclude Include="test\io\test_action_io.h" />
     <ClInclude Include="test\test\op\between\testBetween.h" />
+    <ClInclude Include="test\compression\getOpCompression.h" />
+    <ClInclude Include="test\compression\test_qry_zip.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="test">

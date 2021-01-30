@@ -1,5 +1,6 @@
 #include <pch.h>
 #include <compression/test_action_compression.h>
+#include <compression/getOpCompression.h>
 
 #include <op/wavelet_encode/wavelet_encode_plan.h>
 #include <op/wavelet_encode/wavelet_encode_action.h>
@@ -105,6 +106,28 @@ pArray exe_act_ind_compass_decode(std::vector<pArray> sourceArr, eleDefault numB
 	std::shared_ptr<compass_decode_action> myAction;
 	pQuery myQuery;
 	getCompassDecode(sourceArr[0]->getDesc(), numBins, myPlan, myAction, myQuery);
+
+	auto afterArray = myAction->execute(sourceArr, myQuery);
+
+	return afterArray;
+}
+pArray exe_act_ind_zip_save(std::vector<pArray> sourceArr)
+{
+	std::shared_ptr<zip_save_plan> myPlan;
+	std::shared_ptr<zip_save_action> myAction;
+	pQuery myQuery;
+	getOpZipSave(sourceArr[0]->getDesc(), myPlan, myAction, myQuery);
+
+	auto afterArray = myAction->execute(sourceArr, myQuery);
+
+	return afterArray;
+}
+pArray exe_act_ind_zip_load(std::vector<pArray> sourceArr)
+{
+	std::shared_ptr<zip_load_plan> myPlan;
+	std::shared_ptr<zip_load_action> myAction;
+	pQuery myQuery;
+	getOpZipLoad(sourceArr[0]->getDesc(), myPlan, myAction, myQuery);
 
 	auto afterArray = myAction->execute(sourceArr, myQuery);
 
