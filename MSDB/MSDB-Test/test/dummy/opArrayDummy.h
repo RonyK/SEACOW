@@ -37,6 +37,11 @@
 #include <op/se_decompression/se_decompression_plan.h>
 #include <op/se_decompression/se_decompression_action.h>
 
+#include <op/compass_encode/compass_encode_plan.h>
+#include <op/compass_encode/compass_encode_action.h>
+#include <op/compass_decode/compass_decode_plan.h>
+#include <op/compass_decode/compass_decode_action.h>
+
 #include <op/naive_filter/naive_filter_plan.h>
 #include <op/naive_filter/naive_filter_action.h>
 #include <op/index_filter/index_filter_plan.h>
@@ -102,6 +107,17 @@ void getSeDecompression(pArrayDesc sourceArrDesc, eleDefault level,
 						std::shared_ptr<se_decompression_action>& action,
 						pQuery& qry);
 
+void getCompassEncode(pArrayDesc sourceArrDesc,
+					  eleDefault numBins,
+					  std::shared_ptr<compass_encode_plan>& plan,
+					  std::shared_ptr<compass_encode_action>& action,
+					  pQuery& qry);
+
+void getCompassDecode(pArrayDesc sourceArrDesc, eleDefault numBins,
+					  std::shared_ptr<compass_decode_plan>& plan,
+					  std::shared_ptr<compass_decode_action>& action,
+					  pQuery& qry);
+
 void getSave(pArrayDesc sourceArrDesc,
 			 std::shared_ptr<save_plan>& plan,
 			 std::shared_ptr<save_action>& action,
@@ -128,7 +144,7 @@ template <typename plan_, typename action_, typename pset_>
 std::tuple<std::shared_ptr<plan_>, std::shared_ptr<action_>, pQuery>
 getOperator(parameters& params, pQuery myQuery = nullptr)
 {
-	if(!myQuery)
+	if (!myQuery)
 	{
 		myQuery = std::make_shared<query>();
 	}

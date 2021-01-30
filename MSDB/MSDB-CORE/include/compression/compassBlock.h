@@ -62,19 +62,16 @@ public:
 		assert(bins_.size() == this->numBins_ && "number of bins comparison at deserializeTy");
 		for(size_t bi = 0; bi < this->numBins_; ++bi)
 		{
-			auto curBin = bins_[bi];
+			auto curBin = &(bins_[bi]);
 
 			char isExist = false;
 			bs >> setw(1);
 			bs >> isExist;
 
-			if(!isExist)
+			if(isExist)
 			{
-				// No values
-			}else
-			{
-				this->deserializePositional(bs, curBin.positional_);
-				this->deserializeResidual<Ty_>(bs, curBin.residual_, curBin.positional_.size());
+				this->deserializePositional(bs, curBin->positional_);
+				this->deserializeResidual<Ty_>(bs, curBin->residual_, curBin->positional_.size());
 			}
 		}
 
@@ -85,10 +82,11 @@ private:
 	template <typename Ty_>
 	inline Ty_ getBinValueRange()
 	{
-		auto minValue = 0x0;			// 0000 0000
-		auto maxValue = (Ty_)~(0);		// 1111 1111 - This will fill all bits with '1'
-
-		return ((uint64_t)maxValue - minValue) / this->numBins_;
+		// To prevent overflow at uint64_t
+		// Pow with '_TySize - 1'
+		// Make double at returning
+		uint64_t maxValue = pow(2, _TySize_ - 1);
+		return (maxValue / this->numBins_) * 2;
 	}
 
 	template <typename Ty_>
@@ -97,14 +95,27 @@ private:
 		bins_.resize(this->numBins_, bin<Ty_>());
 
 		Ty_ binValueRange = this->getBinValueRange<Ty_>();
+		assert(binValueRange != 0 && binValueRange > 0);
 		auto iit = this->getItemIterator();
+		uint64_t negativeToPositive = pow(2, _TySize_ - 1);
 
 		while (!iit->isEnd())
 		{
 			Ty_ value = (**iit).get<Ty_>();
-			auto curBin = bins_[(int64_t)(value / binValueRange)];
-			curBin.positional_.push_back(iit->seqPos());
-			curBin.residual_.push_back(value % binValueRange);
+			compassBlock::bin<Ty_>* curBin;
+			if(!_TY_HAS_NEGATIVE_VALUE_)
+			{
+				assert((uint64_t)(value / binValueRange) < this->numBins_);
+				curBin = &(bins_.at((uint64_t)(value / binValueRange)));
+			}else
+			{
+				assert((uint64_t)((value + negativeToPositive) / binValueRange) < this->numBins_);
+				curBin = &(bins_.at((uint64_t)((value + negativeToPositive)/binValueRange)));
+			}
+			
+			curBin->positional_.push_back(iit->seqPos());
+			curBin->residual_.push_back((value + negativeToPositive) % binValueRange);
+			assert((value + negativeToPositive) % binValueRange >= 0);
 
 			++(*iit);
 		}
@@ -116,11 +127,22 @@ private:
 		Ty_ binValueRange = this->getBinValueRange<Ty_>();
 		auto iit = this->getItemIterator();
 
+		Ty_ minValue = (Ty_)0x1 << (_TySize_ - 1);	// 1000 0000
+		position_t seqCapacity = iit->getCapacity();
+
 		assert(bins_.size() == this->numBins_);
 		for(size_t bi = 0; bi < this->numBins_; ++bi)
 		{
 			auto curBin = bins_[bi];
-			Ty_ curBinBase = binValueRange * bi;
+			Ty_ curBinBase;
+			if(!_TY_HAS_NEGATIVE_VALUE_)
+			{
+				curBinBase = binValueRange * bi;
+			}else
+			{
+				curBinBase = binValueRange * bi + minValue;
+			}
+			 
 			assert(curBin.positional_.size() == curBin.residual_.size());
 
 			for(size_t i = 0; i < curBin.positional_.size(); ++i)
@@ -128,6 +150,12 @@ private:
 				auto pos = curBin.positional_[i];
 				auto residual = curBin.residual_[i];
 
+				//assert(pos < seqCapacity);
+				if(pos > seqCapacity)
+				{
+					BOOST_LOG_TRIVIAL(error) << "Capacity: " << seqCapacity << ", pos: " << pos;
+					return;
+				}
 				auto arrValue = iit->getAtSeqPos(pos);
 				arrValue.set<Ty_>(curBinBase + residual);
 			}
@@ -144,14 +172,19 @@ private:
 		position_t maxResidual = 0;
 		for(auto r: residual)
 		{
+			assert(r >= 0);
 			if(maxResidual < r)
 			{
 				maxResidual = r;
 			}
 		}
 
-		bs << setw(CHAR_BIT) << msb<position_t>(maxResidual);
-		
+		position_t bMaxResidual = std::max({ msb<position_t>(maxResidual), (unsigned char)1 });
+		bs << setw(CHAR_BIT) << bMaxResidual;
+		//BOOST_LOG_TRIVIAL(debug) << static_cast<int64_t>(bMaxResidual);
+		//BOOST_LOG_TRIVIAL(debug) << static_cast<int64_t>(residual[0]) << "~" << static_cast<int64_t>(residual[residual.size() - 1]);
+		bs << setw(bMaxResidual);
+
 		for(auto r: residual)
 		{
 			bs << r;
@@ -166,16 +199,18 @@ private:
 		bs >> setw(CHAR_BIT) >> bMaxResidual;
 
 		bs >> setw(bMaxResidual);
+		//BOOST_LOG_TRIVIAL(debug) << static_cast<int64_t>(bMaxResidual);
 
 		while(numResiduals--)
 		{
 			bs >> value;
 			residual.push_back(value);
 		}
+		//BOOST_LOG_TRIVIAL(debug) << static_cast<int64_t>(residual[0]) << "~" << static_cast<int64_t>(residual[residual.size() - 1]);
 	}
 
 public:
-	void setNumBins_(size_t numBins);
+	void setNumBins(size_t numBins);
 
 private:
 	size_t numBins_;

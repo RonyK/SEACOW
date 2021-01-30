@@ -57,6 +57,7 @@ pArray spiht_decode_action::execute(std::vector<pArray>& inputArrays, pQuery qry
 void spiht_decode_action::decodeAttribute(std::shared_ptr<wavelet_encode_array> outArr, 
 										  pAttributeDesc attrDesc, pQuery qry)
 {
+	// TODO::Change to ALL->EXIST
 	auto cit = outArr->getChunkIterator(iterateMode::ALL);
 	auto attrId = attrDesc->id_;
 

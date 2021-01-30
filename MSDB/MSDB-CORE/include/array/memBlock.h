@@ -4,7 +4,6 @@
 
 #include <stdafx.h>
 #include <array/block.h>
-#include <array/compBlock.h>
 #include <array/chunkIterator.h>
 #include <array/chunkItemIterator.h>
 #include <io/bitstream.h>

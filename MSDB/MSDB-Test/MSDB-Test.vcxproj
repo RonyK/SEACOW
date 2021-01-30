@@ -60,6 +60,7 @@
     <ClCompile Include="test\array\testBlock.cpp" />
     <ClCompile Include="test\array\testMemChunk.cpp" />
     <ClCompile Include="test\compression\test_action_compression.cpp" />
+    <ClCompile Include="test\compression\test_qry_compass.h" />
     <ClCompile Include="test\dummy\dummy.cpp" />
     <ClCompile Include="test\dummy\dummy_astronomy.cpp" />
     <ClCompile Include="test\dummy\opArrayDummy.cpp" />
@@ -82,6 +83,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="test\query\op\between\test_between.cpp" />
+    <ClCompile Include="test\query\op\compass_encode_decode\test_compass_encode_decode.cpp" />
     <ClCompile Include="test\query\op\delta_decode\test_mmt_delta_decode.cpp" />
     <ClCompile Include="test\query\op\delta_encode\test_delta_encode.cpp" />
     <ClCompile Include="test\query\op\index_filter\test_index_filter.cpp" />

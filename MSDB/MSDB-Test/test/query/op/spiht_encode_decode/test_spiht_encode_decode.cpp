@@ -7,8 +7,6 @@ namespace msdb
 {
 namespace caDummy
 {
-const int spiht_array_id = 4;
-
 template <typename value_type>
 pArray test_qry_ind_spiht_encode(_pFuncGetSourceArray_,
 								 _pFuncGetSourceArrayDesc_,
@@ -20,7 +18,7 @@ pArray test_qry_ind_spiht_encode(_pFuncGetSourceArray_,
 	auto sourceArrDesc = getArrayFromFunction<value_type>(getSourceArrayDesc, printFlag);
 	sourceArrDesc[0]->setId(sourceArrDesc[0]->getId() + spiht_array_id);
 
-	auto outArr = exe_qry_ind_spiht_encode<value_type>(sourceArrDesc, wtLevel, printFlag);
+	auto outArr = exe_qry_ind_spiht_encode<value_type>(sourceArr, wtLevel, printFlag);
 
 	return outArr;
 }
