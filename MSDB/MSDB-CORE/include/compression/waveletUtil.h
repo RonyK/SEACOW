@@ -17,9 +17,9 @@ struct blockInfo
 	size_t curBand;
 };
 
-using pVecBlockInfo = std::shared_ptr<std::vector<blockInfo>>;
+//using pVecBlockInfo = std::shared_ptr<std::vector<blockInfo>>;
 
-pVecBlockInfo getWaveletBlockInfo(size_t maxLevel, size_t dSize, size_t blockId);
+//pVecBlockInfo getWaveletBlockInfo(size_t maxLevel, size_t dSize, size_t blockId);
 
 }		// msdb
 #endif	// _MSDB_WAVELETUTIL_H_
