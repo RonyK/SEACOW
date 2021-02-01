@@ -1,0 +1,235 @@
+<Playlist Version="2.0">
+  <Rule Name="Includes" Match="Any">
+    <Rule Match="All">
+      <Property Name="Solution" />
+      <Rule Match="Any">
+        <Rule Match="All">
+          <Property Name="Project" Value="MSDB-Test" />
+          <Rule Match="Any">
+            <Rule Match="All">
+              <Property Name="Namespace" Value="&lt;빈 네임스페이스&gt;" />
+              <Rule Match="Any">
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_mmt_delta_decode" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_mmt_delta_decode.mmt_delta_decode_sc4x4" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_mmt_delta_decode.mmt_delta_decode_sc4x4" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_wavelet_encode" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_wavelet_encode.waveletHaarSimple_sc4x4" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_wavelet_encode.waveletHaarSimple_sc4x4" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_test_mmt_delta_encode" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_test_mmt_delta_encode.mmt_delta_encode_sc4x4" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_test_mmt_delta_encode.mmt_delta_encode_sc4x4" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_se_compression" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_se_compression.se_compression_sc4x4" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_se_compression.se_compression_sc4x4" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_mmt_build" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_mmt_build.mmt_build_sc4x4" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_mmt_build.mmt_build_sc4x4" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_mmt_load" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_mmt_load.mmt_load_sc4x4" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_mmt_load.mmt_load_sc4x4" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_mmt_save" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_mmt_save.mmt_save_sc4x4" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_mmt_save.mmt_save_sc4x4" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+              </Rule>
+            </Rule>
+            <Rule Match="All">
+              <Property Name="Namespace" Value="" />
+              <Rule Match="Any">
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_index_filter" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_index_filter.index_filter_sc4x4" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_index_filter.index_filter_sc4x4" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_index_filter.load_index_filter_sc4x4" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_index_filter.load_index_filter_sc4x4" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_index_filter.index_filter_seq_sc4x4" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_index_filter.index_filter_seq_sc4x4" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_mmt_save" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_mmt_save.mmt_save_sc4x4" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_mmt_save.mmt_save_sc4x4" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_mmt_load" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_mmt_load.mmt_load_sc4x4" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_mmt_load.mmt_load_sc4x4" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_mmt_delta_decode" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_mmt_delta_decode.mmt_delta_decode_sc4x4" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_mmt_delta_decode.mmt_delta_decode_sc4x4" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_mmt_build" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_mmt_build.mmt_build_sc4x4" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_mmt_build.mmt_build_sc4x4" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_wavelet_encode" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_wavelet_encode.waveletHaarSimple_sc4x4" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_wavelet_encode.waveletHaarSimple_sc4x4" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_test_mmt_delta_encode" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_test_mmt_delta_encode.mmt_delta_encode_sc4x4" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_test_mmt_delta_encode.mmt_delta_encode_sc4x4" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_se_compression" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_se_compression.se_compression_sc4x4" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_se_compression.se_compression_sc4x4" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_se_compression.se_comrpession_seq_sc4x4" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_se_compression.se_comrpession_seq_sc4x4" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_naive_filter" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_naive_filter.naive_filter_sc4x4" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_naive_filter.naive_filter_sc4x4" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_spiht_encode_decode" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_spiht_encode_decode.spiht_encode_decode_ind_sc4x4" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_spiht_encode_decode.spiht_encode_decode_ind_sc4x4" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_spiht_encode_decode.spiht_encode_decode_seq_sc4x4" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_spiht_encode_decode.spiht_encode_decode_seq_sc4x4" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+              </Rule>
+            </Rule>
+          </Rule>
+        </Rule>
+      </Rule>
+    </Rule>
+  </Rule>
+</Playlist>

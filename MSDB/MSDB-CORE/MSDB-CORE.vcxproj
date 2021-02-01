@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{CE2B6277-72C2-4DF3-A834-B491DE3B0257}</ProjectGuid>
+    <RootNamespace>MSDBCORE</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)include;$(ProjectDir)src\query;$(IncludePath)</IncludePath>
+    <SourcePath>$(ProjectDir)src;$(SourcePath)</SourcePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)include;$(ProjectDir)src\query;</IncludePath>
+    <SourcePath>$(VC_SourcePath);$(ProjectDir)src;</SourcePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>Default</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <ShowIncludes>false</ShowIncludes>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>%BOOST_ROOT%</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE; _CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>%BOOST_ROOT%</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="include\array\array.h" />
+    <ClInclude Include="include\array\arrayDesc.h" />
+    <ClInclude Include="include\array\arrayId.h" />
+    <ClInclude Include="include\array\attributeDesc.h" />
+    <ClInclude Include="include\array\attributeId.h" />
+    <ClInclude Include="include\array\block.h" />
+    <ClInclude Include="include\array\blockBuffer.h" />
+    <ClInclude Include="include\array\blockChunkBuffer.h" />
+    <ClInclude Include="include\array\blockContainer.h" />
+    <ClInclude Include="include\array\blockDesc.h" />
+    <ClInclude Include="include\array\blockChunk.h" />
+    <ClInclude Include="include\array\blockId.h" />
+    <ClInclude Include="include\array\blockItemIterator.h" />
+    <ClInclude Include="include\array\blockIterator.h" />
+    <ClInclude Include="include\array\buffer.h" />
+    <ClInclude Include="include\array\chunk.h" />
+    <ClInclude Include="include\array\chunkBuffer.h" />
+    <ClInclude Include="include\array\chunkContainer.h" />
+    <ClInclude Include="include\array\chunkDesc.h" />
+    <ClInclude Include="include\array\chunkId.h" />
+    <ClInclude Include="include\array\chunkItemIterator.h" />
+    <ClInclude Include="include\array\chunkIterator.h" />
+    <ClInclude Include="include\array\chunkMgr.h" />
+    <ClInclude Include="include\array\configArrays.h" />
+    <ClInclude Include="include\array\dimension.h" />
+    <ClInclude Include="include\array\dimensionDesc.h" />
+    <ClInclude Include="include\array\dimensionId.h" />
+    <ClInclude Include="include\array\memArray.h" />
+    <ClInclude Include="include\array\memBlock.h" />
+    <ClInclude Include="include\array\memBlockArray.h" />
+    <ClInclude Include="include\array\memBlockItemIterator.h" />
+    <ClInclude Include="include\array\memChunk.h" />
+    <ClInclude Include="include\array\memChunkBuffer.h" />
+    <ClInclude Include="include\array\memChunkItemIterator.h" />
+    <ClInclude Include="include\compression\compassBlock.h" />
+    <ClInclude Include="include\compression\compassChunk.h" />
+    <ClInclude Include="include\compression\compression.h" />
+    <ClInclude Include="include\compression\seChunk.h" />
+    <ClInclude Include="include\compression\spihtBlock.h" />
+    <ClInclude Include="include\compression\spihtChunk.h" />
+    <ClInclude Include="include\compression\waveletUtil.h" />
+    <ClInclude Include="include\compression\wtChunk.h" />
+    <ClInclude Include="include\index\bitmap.h" />
+    <ClInclude Include="include\index\mmt.h" />
+    <ClInclude Include="include\index\attributeIndex.h" />
+    <ClInclude Include="include\index\dimensionIndex.h" />
+    <ClInclude Include="include\index\mmtNode.h" />
+    <ClInclude Include="include\io\bitstream.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="include\io\io.h" />
+    <ClInclude Include="include\io\serializable.h" />
+    <ClInclude Include="include\parse\expression.h" />
+    <ClInclude Include="include\parse\predicate.h" />
+    <ClInclude Include="include\parse\term.h" />
+    <ClInclude Include="include\query\opParam.h" />
+    <ClInclude Include="include\query\opParamSet.h" />
+    <ClInclude Include="include\query\query.h" />
+    <ClInclude Include="include\array\arrayMgr.h" />
+    <ClInclude Include="include\query\opAction.h" />
+    <ClInclude Include="include\query\opPlan.h" />
+    <ClInclude Include="include\stdafx.h" />
+    <ClInclude Include="include\system\config.h" />
+    <ClInclude Include="include\system\errorCodes.h" />
+    <ClInclude Include="include\system\exceptions.h" />
+    <ClInclude Include="include\system\storageMgr.h" />
+    <ClInclude Include="include\util\threadUtil.h" />
+    <ClInclude Include="include\util\coordinate.h" />
+    <ClInclude Include="include\io\file.h" />
+    <ClInclude Include="include\util\element.h" />
+    <ClInclude Include="include\util\logger.h" />
+    <ClInclude Include="include\util\math.h" />
+    <ClInclude Include="include\util\singleton.h" />
+    <ClInclude Include="include\util\waveletIterator.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="include\compression\compact.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="include\compression\haar.h" />
+    <ClInclude Include="include\compression\wavelet.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="include\xml\tinyxml2.h" />
+    <ClInclude Include="src\query\op\between\between_action.h" />
+    <ClInclude Include="src\query\op\between\between_plan.h" />
+    <ClInclude Include="src\query\op\compass_decode\compass_decode_action.h" />
+    <ClInclude Include="src\query\op\compass_decode\compass_decode_plan.h" />
+    <ClInclude Include="src\query\op\compass_encode\compass_encode_action.h" />
+    <ClInclude Include="src\query\op\compass_encode\compass_encode_plan.h" />
+    <ClInclude Include="src\query\op\index_filter\index_filter_action.h" />
+    <ClInclude Include="src\query\op\index_filter\index_filter_plan.h" />
+    <ClInclude Include="src\query\op\load\load_action.h" />
+    <ClInclude Include="src\query\op\load\load_plan.h" />
+    <ClInclude Include="src\query\op\mmt_build\mmt_build_action.h" />
+    <ClInclude Include="src\query\op\mmt_build\mmt_build_plan.h" />
+    <ClInclude Include="src\query\op\mmt_delta_decode\mmt_delta_decode_action.h" />
+    <ClInclude Include="src\query\op\mmt_delta_decode\mmt_delta_decode_array.h" />
+    <ClInclude Include="src\query\op\mmt_delta_decode\mmt_delta_decode_plan.h" />
+    <ClInclude Include="src\query\op\mmt_delta_encode\mmt_delta_encode_action.h" />
+    <ClInclude Include="src\query\op\mmt_delta_encode\mmt_delta_encode_array.h" />
+    <ClInclude Include="src\query\op\mmt_delta_encode\mmt_delta_encode_plan.h" />
+    <ClInclude Include="src\query\op\mmt_load\mmt_load_action.h" />
+    <ClInclude Include="src\query\op\mmt_load\mmt_load_plan.h" />
+    <ClInclude Include="src\query\op\mmt_save\mmt_save_action.h" />
+    <ClInclude Include="src\query\op\mmt_save\mmt_save_plan.h" />
+    <ClInclude Include="src\query\op\se_decompression\se_decompression_action.h" />
+    <ClInclude Include="src\query\op\se_decompression\se_decompression_plan.h" />
+    <ClInclude Include="src\query\op\naive_filter\naive_filter_action.h" />
+    <ClInclude Include="src\query\op\naive_filter\naive_filter_plan.h" />
+    <ClInclude Include="src\query\op\spiht_decode\spiht_decode_action.h" />
+    <ClInclude Include="src\query\op\spiht_decode\spiht_decode_plan.h" />
+    <ClInclude Include="src\query\op\spiht_encode\spiht_encode_action.h" />
+    <ClInclude Include="src\query\op\spiht_encode\spiht_encode_plan.h" />
+    <ClInclude Include="src\query\op\save\save_action.h" />
+    <ClInclude Include="src\query\op\save\save_plan.h" />
+    <ClInclude Include="src\query\op\se_compression\se_compression_action.h" />
+    <ClInclude Include="src\query\op\se_compression\se_compression_plan.h" />
+    <ClInclude Include="include\util\timer.h" />
+    <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_action.h" />
+    <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_array.h" />
+    <ClInclude Include="src\query\op\wavelet_decode\wavelet_decode_plan.h" />
+    <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_action.h" />
+    <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_array.h" />
+    <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_plan.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\array\memBlockArray.cpp" />
+    <ClCompile Include="src\compression\compassBlock.cpp" />
+    <ClCompile Include="src\compression\compassChunk.cpp" />
+    <ClCompile Include="src\compression\spihtChunk.cpp" />
+    <ClCompile Include="src\array\blockItemIterator.cpp" />
+    <ClCompile Include="src\array\chunkItemIterator.cpp" />
+    <ClCompile Include="src\array\memBlock.cpp" />
+    <ClCompile Include="src\array\block.cpp" />
+    <ClCompile Include="src\array\blockBuffer.cpp" />
+    <ClCompile Include="src\array\blockChunkBuffer.cpp" />
+    <ClCompile Include="src\array\blockDesc.cpp" />
+    <ClCompile Include="src\array\blockChunk.cpp" />
+    <ClCompile Include="src\array\blockIterator.cpp" />
+    <ClCompile Include="src\array\chunkIterator.cpp" />
+    <ClCompile Include="src\array\memArray.cpp" />
+    <ClCompile Include="src\array\memBlockItemIterator.cpp" />
+    <ClCompile Include="src\array\memChunk.cpp" />
+    <ClCompile Include="src\array\memChunkItemIterator.cpp" />
+    <ClCompile Include="src\compression\seChunk.cpp" />
+    <ClCompile Include="src\compression\spihtBlock.cpp" />
+    <ClCompile Include="src\compression\waveletUtil.cpp" />
+    <ClCompile Include="src\compression\wtChunk.cpp" />
+    <ClCompile Include="src\index\attributeIndex.cpp" />
+    <ClCompile Include="src\array\arrayMgr.cpp" />
+    <ClCompile Include="src\array\attributeDesc.cpp" />
+    <ClCompile Include="src\index\bitmap.cpp" />
+    <ClCompile Include="src\index\mmt.cpp" />
+    <ClCompile Include="src\io\serializable.cpp" />
+    <ClCompile Include="src\parse\expression.cpp" />
+    <ClCompile Include="src\parse\predicate.cpp" />
+    <ClCompile Include="src\parse\term.cpp" />
+    <ClCompile Include="src\query\op\between\between_action.cpp" />
+    <ClCompile Include="src\query\op\between\between_plan.cpp" />
+    <ClCompile Include="src\query\op\compass_decode\compass_decode_action.cpp" />
+    <ClCompile Include="src\query\op\compass_decode\compass_decode_plan.cpp" />
+    <ClCompile Include="src\query\op\compass_encode\compass_encode_action.cpp" />
+    <ClCompile Include="src\query\op\compass_encode\compass_encode_plan.cpp" />
+    <ClCompile Include="src\query\op\index_filter\index_filter_action.cpp" />
+    <ClCompile Include="src\query\op\index_filter\index_filter_plan.cpp" />
+    <ClCompile Include="src\query\op\load\load_action.cpp" />
+    <ClCompile Include="src\query\op\load\load_plan.cpp" />
+    <ClCompile Include="src\query\op\mmt_build\mmt_build_action.cpp" />
+    <ClCompile Include="src\query\op\mmt_build\mmt_build_plan.cpp" />
+    <ClCompile Include="src\query\op\mmt_delta_decode\mmt_delta_decode_action.cpp" />
+    <ClCompile Include="src\query\op\mmt_delta_decode\mmt_delta_decode_array.cpp" />
+    <ClCompile Include="src\query\op\mmt_delta_decode\mmt_delta_decode_plan.cpp" />
+    <ClCompile Include="src\query\op\mmt_delta_encode\mmt_delta_encode_action.cpp" />
+    <ClCompile Include="src\query\op\mmt_delta_encode\mmt_delta_encode_array.cpp" />
+    <ClCompile Include="src\query\op\mmt_delta_encode\mmt_delta_encode_plan.cpp" />
+    <ClCompile Include="src\query\op\mmt_load\mmt_load_action.cpp" />
+    <ClCompile Include="src\query\op\mmt_load\mmt_load_plan.cpp" />
+    <ClCompile Include="src\query\op\mmt_save\mmt_save_action.cpp" />
+    <ClCompile Include="src\query\op\mmt_save\mmt_save_plan.cpp" />
+    <ClCompile Include="src\query\op\se_decompression\se_decompression_action.cpp" />
+    <ClCompile Include="src\query\op\se_decompression\se_decompression_plan.cpp" />
+    <ClCompile Include="src\query\op\naive_filter\naive_filter_action.cpp" />
+    <ClCompile Include="src\query\op\naive_filter\naive_filter_plan.cpp" />
+    <ClCompile Include="src\query\op\spiht_decode\spiht_decode_action.cpp" />
+    <ClCompile Include="src\query\op\spiht_decode\spiht_decode_plan.cpp" />
+    <ClCompile Include="src\query\op\spiht_encode\spiht_encode_action.cpp" />
+    <ClCompile Include="src\query\op\spiht_encode\spiht_encode_plan.cpp" />
+    <ClCompile Include="src\query\op\save\save_action.cpp" />
+    <ClCompile Include="src\query\op\save\save_plan.cpp" />
+    <ClCompile Include="src\query\op\se_compression\se_compression_action.cpp" />
+    <ClCompile Include="src\query\op\se_compression\se_compression_plan.cpp" />
+    <ClCompile Include="src\query\query.cpp" />
+    <ClCompile Include="src\util\threadUtil.cpp" />
+    <ClCompile Include="src\util\logger.cpp" />
+    <ClCompile Include="src\util\timer.cpp" />
+    <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_action.cpp" />
+    <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_array.cpp" />
+    <ClCompile Include="src\query\op\wavelet_decode\wavelet_decode_plan.cpp" />
+    <ClCompile Include="src\util\math.cpp" />
+    <ClCompile Include="src\array\dimensionDesc.cpp" />
+    <ClCompile Include="src\query\opAction.cpp" />
+    <ClCompile Include="src\query\opParamSet.cpp" />
+    <ClCompile Include="src\query\opPlan.cpp" />
+    <ClCompile Include="src\query\opParam.cpp" />
+    <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_action.cpp" />
+    <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_array.cpp" />
+    <ClCompile Include="src\query\op\wavelet_encode\wavelet_encode_plan.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\util\element.cpp" />
+    <ClCompile Include="src\array\chunk.cpp" />
+    <ClCompile Include="src\array\chunkBuffer.cpp" />
+    <ClCompile Include="src\array\memChunkBuffer.cpp" />
+    <ClCompile Include="src\array\arrayDesc.cpp" />
+    <ClCompile Include="src\array\configArrays.cpp" />
+    <ClCompile Include="src\system\config.cpp" />
+    <ClCompile Include="src\array\buffer.cpp" />
+    <ClCompile Include="src\io\file.cpp" />
+    <ClCompile Include="src\array\array.cpp" />
+    <ClCompile Include="src\array\chunkDesc.cpp" />
+    <ClCompile Include="src\io\bitstream.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\system\errorCodes.cpp" />
+    <ClCompile Include="src\system\exceptions.cpp" />
+    <ClCompile Include="src\system\storageMgr.cpp" />
+    <ClCompile Include="src\util\singleton.cpp" />
+    <ClCompile Include="src\compression\daubechies.cpp" />
+    <ClCompile Include="src\compression\haar.cpp" />
+    <ClCompile Include="src\compression\wavelet.cpp" />
+    <ClCompile Include="src\xml\tinyxml2.cpp" />
+    <ClCompile Include="src\stdafx.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="include\system\errorCategories.inc" />
+    <None Include="include\system\errors.inc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

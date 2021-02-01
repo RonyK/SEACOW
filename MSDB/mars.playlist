@@ -1,0 +1,120 @@
+<Playlist Version="2.0">
+  <Rule Name="Includes" Match="Any">
+    <Rule Match="All">
+      <Property Name="Solution" />
+      <Rule Match="Any">
+        <Rule Match="All">
+          <Property Name="Project" Value="MSDB-Test" />
+          <Rule Match="Any">
+            <Rule Match="All">
+              <Property Name="Namespace" Value="" />
+              <Rule Match="Any">
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_index_filter" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_index_filter.mars4096x2048_seq_load_index_filter" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_index_filter.mars4096x2048_seq_load_index_filter" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_index_filter.mars4096x2048_seq_spiht_index_filter" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_index_filter.mars4096x2048_seq_spiht_index_filter" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_index_filter.mars4096x2048_seq_se_index_filter" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_index_filter.mars4096x2048_seq_se_index_filter" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_mmt_save" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_mmt_save.mars4096x2048_mmt_save" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_mmt_save.mars4096x2048_mmt_save" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_spiht_encode_decode" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_spiht_encode_decode.mars4096x2048_ind_spiht_encode_decode" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_spiht_encode_decode.mars4096x2048_ind_spiht_encode_decode" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_spiht_encode_decode.mars4096x2048_seq_spiht_encode_decode" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_spiht_encode_decode.mars4096x2048_seq_spiht_encode_decode" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_se_compression" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_se_compression.mars4096x2048_seq_se_compr_decomp" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_se_compression.mars4096x2048_seq_se_compr_decomp" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_mmt_build" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_mmt_build.mmt_build_data2D_mars4096x2048" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_mmt_build.mmt_build_data2D_mars4096x2048" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_spiht_encode" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_spiht_encode.mars4096x2048_ind_spiht_encode" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_spiht_encode.mars4096x2048_ind_spiht_encode" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_spiht_delta" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_spiht_delta.mars4096x2048_ind_spiht_delta_encode_decode" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_spiht_delta.mars4096x2048_ind_spiht_delta_encode_decode" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_spiht_delta.mars4096x2048_ind_spiht_delta_spiht_encode" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_spiht_delta.mars4096x2048_ind_spiht_delta_spiht_encode" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+              </Rule>
+            </Rule>
+          </Rule>
+        </Rule>
+      </Rule>
+    </Rule>
+  </Rule>
+</Playlist>
