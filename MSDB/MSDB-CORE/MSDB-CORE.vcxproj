@@ -185,6 +185,9 @@
     <ClInclude Include="include\array\chunkItemIterator.h" />
     <ClInclude Include="include\array\chunkIterator.h" />
     <ClInclude Include="include\array\chunkMgr.h" />
+    <ClInclude Include="include\array\compBlock.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="include\array\configArrays.h" />
     <ClInclude Include="include\array\dimension.h" />
     <ClInclude Include="include\array\dimensionDesc.h" />
@@ -204,6 +207,8 @@
     <ClInclude Include="include\compression\spihtChunk.h" />
     <ClInclude Include="include\compression\waveletUtil.h" />
     <ClInclude Include="include\compression\wtChunk.h" />
+    <ClInclude Include="include\compression\zipBlock.h" />
+    <ClInclude Include="include\compression\zipChunk.h" />
     <ClInclude Include="include\index\bitmap.h" />
     <ClInclude Include="include\index\mmt.h" />
     <ClInclude Include="include\index\attributeIndex.h" />
@@ -287,6 +292,10 @@
     <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_action.h" />
     <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_array.h" />
     <ClInclude Include="src\query\op\wavelet_encode\wavelet_encode_plan.h" />
+    <ClInclude Include="src\query\op\zip_load\zip_load_action.h" />
+    <ClInclude Include="src\query\op\zip_load\zip_load_plan.h" />
+    <ClInclude Include="src\query\op\zip_save\zip_save_action.h" />
+    <ClInclude Include="src\query\op\zip_save\zip_save_plan.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\array\memBlockArray.cpp" />
@@ -311,6 +320,8 @@
     <ClCompile Include="src\compression\spihtBlock.cpp" />
     <ClCompile Include="src\compression\waveletUtil.cpp" />
     <ClCompile Include="src\compression\wtChunk.cpp" />
+    <ClCompile Include="src\compression\zipBlock.cpp" />
+    <ClCompile Include="src\compression\zipChunk.cpp" />
     <ClCompile Include="src\index\attributeIndex.cpp" />
     <ClCompile Include="src\array\arrayMgr.cpp" />
     <ClCompile Include="src\array\attributeDesc.cpp" />
@@ -354,6 +365,10 @@
     <ClCompile Include="src\query\op\save\save_plan.cpp" />
     <ClCompile Include="src\query\op\se_compression\se_compression_action.cpp" />
     <ClCompile Include="src\query\op\se_compression\se_compression_plan.cpp" />
+    <ClCompile Include="src\query\op\zip_load\zip_load_action.cpp" />
+    <ClCompile Include="src\query\op\zip_load\zip_load_plan.cpp" />
+    <ClCompile Include="src\query\op\zip_save\zip_save_action.cpp" />
+    <ClCompile Include="src\query\op\zip_save\zip_save_plan.cpp" />
     <ClCompile Include="src\query\query.cpp" />
     <ClCompile Include="src\util\threadUtil.cpp" />
     <ClCompile Include="src\util\logger.cpp" />

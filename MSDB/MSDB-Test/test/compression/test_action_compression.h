@@ -17,5 +17,8 @@ pArray exe_act_ind_se_decompression(std::vector<pArray> sourceArr, eleDefault le
 
 pArray exe_act_ind_compass_encode(std::vector<pArray> sourceArr, eleDefault numBins);
 pArray exe_act_ind_compass_decode(std::vector<pArray> sourceArr, eleDefault numBins);
+
+pArray exe_act_ind_zip_save(std::vector<pArray> sourceArr);
+pArray exe_act_ind_zip_load(std::vector<pArray> sourceArr);
 }	// caDummy
 }	// msdb

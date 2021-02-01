@@ -103,6 +103,12 @@
     <ClCompile Include="src\query\op\compass_encode\compass_encode_plan.cpp" />
     <ClCompile Include="src\query\op\compass_decode\compass_decode_action.cpp" />
     <ClCompile Include="src\query\op\compass_decode\compass_decode_plan.cpp" />
+    <ClCompile Include="src\query\op\zip_save\zip_save_plan.cpp" />
+    <ClCompile Include="src\query\op\zip_save\zip_save_action.cpp" />
+    <ClCompile Include="src\query\op\zip_load\zip_load_plan.cpp" />
+    <ClCompile Include="src\query\op\zip_load\zip_load_action.cpp" />
+    <ClCompile Include="src\compression\zipBlock.cpp" />
+    <ClCompile Include="src\compression\zipChunk.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\array\array.h" />
@@ -220,6 +226,13 @@
     <ClInclude Include="src\query\op\compass_encode\compass_encode_plan.h" />
     <ClInclude Include="src\query\op\compass_decode\compass_decode_action.h" />
     <ClInclude Include="src\query\op\compass_decode\compass_decode_plan.h" />
+    <ClInclude Include="src\query\op\zip_save\zip_save_plan.h" />
+    <ClInclude Include="src\query\op\zip_save\zip_save_action.h" />
+    <ClInclude Include="src\query\op\zip_load\zip_load_plan.h" />
+    <ClInclude Include="src\query\op\zip_load\zip_load_action.h" />
+    <ClInclude Include="include\compression\zipBlock.h" />
+    <ClInclude Include="include\compression\zipChunk.h" />
+    <ClInclude Include="include\array\compBlock.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">
@@ -238,9 +251,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\array\chunkDesc.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\array\compChunk.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\io\file.cpp">
