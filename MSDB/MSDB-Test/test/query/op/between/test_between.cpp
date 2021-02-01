@@ -148,6 +148,7 @@ namespace data2D_mars4096x2048
 TEST(query_op_between, mars4096x2048_seq_se_between)
 {
 	bool printFlag = false;
+
 	coor sp = { 0, 125 };
 	coor ep = { 6, 129 };
 
@@ -170,8 +171,41 @@ TEST(query_op_between, mars4096x2048_seq_spiht_between)
 TEST(query_op_between, mars4096x2048_seq_load_between)
 {
 	bool printFlag = false;
-	coor sp = { 0, 125 };
-	coor ep = { 6, 129 };
+
+	float selectivity = 0.1;
+	int area = dimX * dimY;
+	float selectedArea = area * selectivity;
+
+	int spX;
+	int spY;
+	int width;
+	int height;
+
+	while (1) {
+		spX = rand() % dimX;
+		spY = rand() % dimY;
+
+		for (int i = 0; i < 3; i++) {
+			width = rand() % (dimX - spX);
+			if (width > selectedArea)
+				continue;
+
+			height = selectedArea / width;
+
+			if (spX + width < dimX && spY + height < dimY)
+				break;
+		}
+
+		if (spX + width < dimX && spY + height < dimY)
+			break;
+	}
+
+	int epX = spX + width;
+	int epY = spY + height;
+	int cal = (epX - spX) * (epY - spY);
+
+	coor sp = { spX, spY };
+	coor ep = { spX + width, spY + height };
 
 	test_body_seq_load_between<value_type>(&getSourceArrayIfEmpty,
 										   &getSourceArrayDesc, wtLevel, mmtLevel,
