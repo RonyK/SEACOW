@@ -55,47 +55,47 @@ pArray test_qry_seq_spiht_encode_decode(_pFuncGetSourceArray_,
 	auto sourceArrDesc = getArrayFromFunction<value_type>(getSourceArrayDesc, printFlag);
 	sourceArrDesc[0]->setId(sourceArrDesc[0]->getId() + spiht_array_id);
 
-	//exe_qry_ind_spiht_encode<value_type>(sourceArr, wtLevel, printFlag);
-	//pArray outArr = exe_qry_seq_spiht_decode<value_type>(sourceArrDesc, wtLevel, printFlag);
+	exe_qry_ind_spiht_encode<value_type>(sourceArr, wtLevel, printFlag);
+	pArray outArr = exe_qry_seq_spiht_decode<value_type>(sourceArrDesc, wtLevel, printFlag);
 
-	////////////////////
-	auto wtOutArr = exe_act_ind_wavelet_encode(sourceArr, wtLevel);
-	if (printFlag)
-	{
-		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
-		BOOST_LOG_TRIVIAL(debug) << "Wavelet Encode Arr" << std::endl;
-		wtOutArr->print();
-	}
+	//////////////////////
+	//auto wtOutArr = exe_act_ind_wavelet_encode(sourceArr, wtLevel);
+	//if (printFlag)
+	//{
+	//	BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+	//	BOOST_LOG_TRIVIAL(debug) << "Wavelet Encode Arr" << std::endl;
+	//	wtOutArr->print();
+	//}
 
-	auto outArr = exe_act_ind_spiht_encode(std::vector<pArray>({ wtOutArr }));
-	if (printFlag)
-	{
-		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
-		BOOST_LOG_TRIVIAL(debug) << "SPIHT Encode Arr" << std::endl;
-		outArr->print();
-	}
+	//auto outArr = exe_act_ind_spiht_encode(std::vector<pArray>({ wtOutArr }));
+	//if (printFlag)
+	//{
+	//	BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+	//	BOOST_LOG_TRIVIAL(debug) << "SPIHT Encode Arr" << std::endl;
+	//	outArr->print();
+	//}
 
-	pQuery qry = std::make_shared<query>();
+	//pQuery qry = std::make_shared<query>();
 
-	auto spDecodePlan = getSPIHTDecodePlan(sourceArr[0]->getDesc(), wtLevel, qry);
-	auto wtDecodePlan = getWaveletDecodePlan(spDecodePlan, wtLevel, qry);
-	auto spOutArr = spDecodePlan->getAction()->execute(sourceArr, qry);
-	if (printFlag)
-	{
-		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
-		BOOST_LOG_TRIVIAL(debug) << "SPIHT Decode Arr" << std::endl;
-		spOutArr->print();
-	}
+	//auto spDecodePlan = getSPIHTDecodePlan(sourceArr[0]->getDesc(), wtLevel, qry);
+	//auto wtDecodePlan = getWaveletDecodePlan(spDecodePlan, wtLevel, qry);
+	//auto spOutArr = spDecodePlan->getAction()->execute(sourceArr, qry);
+	//if (printFlag)
+	//{
+	//	BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+	//	BOOST_LOG_TRIVIAL(debug) << "SPIHT Decode Arr" << std::endl;
+	//	spOutArr->print();
+	//}
 
-	outArr = wtDecodePlan->getAction()->execute(std::vector<pArray>({ spOutArr }), qry);
-	if (printFlag)
-	{
-		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
-		BOOST_LOG_TRIVIAL(debug) << "Wavelet Decode Arr" << std::endl;
-		outArr->print();
-	}
-	////////////////////
-	compArrary<value_type>(wtOutArr, spOutArr);
+	//outArr = wtDecodePlan->getAction()->execute(std::vector<pArray>({ spOutArr }), qry);
+	//if (printFlag)
+	//{
+	//	BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+	//	BOOST_LOG_TRIVIAL(debug) << "Wavelet Decode Arr" << std::endl;
+	//	outArr->print();
+	//}
+	//////////////////////
+	//compArrary<value_type>(wtOutArr, spOutArr);
 
    //compArrary<value_type>(sourceArr[0], outArr);
    //BOOST_LOG_TRIVIAL(debug) << "Array: " << sourceArr[0]->getDesc()->name_;

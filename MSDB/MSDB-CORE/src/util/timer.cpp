@@ -5,7 +5,7 @@
 namespace msdb
 {
 extern std::vector<const char*> strTimerWorkType = {
-	"IDLE", "IO", "COMPUTING", "LOGGING", "ARRAY_CONSTRUCTING", "OTHERS", "TIMER_STOP"
+	"IDLE", "IO", "COMPUTING", "PARALLEL", "LOGGING", "ARRAY_CONSTRUCTING", "OTHERS", "TIMER_STOP"
 };
 
 timer::timer()
@@ -42,11 +42,17 @@ void timer::nextWork(size_t threadId, size_t parentThreadId, workType nextWorkTy
 
 	if(curJobIds_.find(threadId) == curJobIds_.end())
 	{
-		this->curJobIds_[threadId] = this->curJobIds_[parentThreadId];
+		// Start new thread work
+		auto curJobId = this->getNextJobId();
+		this->curJobIds_[threadId] = curJobId;
 		this->curJobType_[threadId] = nextWorkType;
+		this->jobName_[curJobId] = this->jobName_[parentThreadId];
+		this->curJobTimes_[threadId] = std::chrono::system_clock::now();
+	}else
+	{
+		this->_nextWork_NoLock_(threadId, nextWorkType);
 	}
 
-	this->_nextWork_NoLock_(threadId, nextWorkType);
 	//////////////////////////////
 }
 
@@ -105,6 +111,7 @@ void timer::printTime(bool printDetail)
 
 	std::map<size_t, float> thread;
 	std::map<std::string, float> job;
+	std::map<std::string, float> mainThreadJob;
 	std::map<std::string, float> workType;
 
 	std::map<std::string, float> jobWork;
@@ -137,6 +144,17 @@ void timer::printTime(bool printDetail)
 			job.insert(std::make_pair(jobName_[this->records_[i].jobId], this->records_[i].time_.count()));
 		}
 
+		if(this->records_[i].threadId == 0)
+		{
+			if (mainThreadJob.find(jobName_[this->records_[i].jobId]) != mainThreadJob.end())
+			{
+				mainThreadJob.find(jobName_[this->records_[i].jobId])->second += this->records_[i].time_.count();
+			} else
+			{
+				mainThreadJob.insert(std::make_pair(jobName_[this->records_[i].jobId], this->records_[i].time_.count()));
+			}
+		}
+
 		if (workType.find(strTimerWorkType[static_cast<int>(this->records_[i].stype_)]) != workType.end())
 		{
 			workType.find(strTimerWorkType[static_cast<int>(this->records_[i].stype_)])->second += this->records_[i].time_.count();
@@ -158,7 +176,7 @@ void timer::printTime(bool printDetail)
 	BOOST_LOG_TRIVIAL(info) << "=====threadId=====";
 	for (auto it = thread.begin(); it != thread.end(); it++) {
 		BOOST_LOG_TRIVIAL(info) <<
-			it->second << " [" <<
+			boost::format("%1$.5f") % it->second << " [" <<
 			it->first << "]";
 	}
 
@@ -166,7 +184,16 @@ void timer::printTime(bool printDetail)
 	BOOST_LOG_TRIVIAL(info) << "=====jobName=====";
 	for (auto it = job.begin(); it != job.end(); it++) {
 		BOOST_LOG_TRIVIAL(info) <<
-			it->second << " [" <<
+			boost::format("%1$.5f") % it->second << " [" <<
+			it->first << "]";
+	}
+
+	BOOST_LOG_TRIVIAL(info) << '\n';
+	BOOST_LOG_TRIVIAL(info) << "=====MainThreadJobName=====";
+	for (auto it = mainThreadJob.begin(); it != mainThreadJob.end(); it++)
+	{
+		BOOST_LOG_TRIVIAL(info) <<
+			boost::format("%1$.5f") % it->second << " [" <<
 			it->first << "]";
 	}
 
@@ -174,7 +201,7 @@ void timer::printTime(bool printDetail)
 	BOOST_LOG_TRIVIAL(info) << "=====WorkType=====";
 	for (auto it = workType.begin(); it != workType.end(); it++) {
 		BOOST_LOG_TRIVIAL(info) <<
-			it->second << " [" <<
+			boost::format("%1$.5f") % it->second << " [" <<
 			it->first << "]";
 	}
 
@@ -182,7 +209,7 @@ void timer::printTime(bool printDetail)
 	BOOST_LOG_TRIVIAL(info) << "=====jobName, WorkType=====";
 	for (auto it = jobWork.begin(); it != jobWork.end(); it++) {
 		BOOST_LOG_TRIVIAL(info) <<
-			it->second << " [" <<
+			boost::format("%1$.5f") % it->second << " [" <<
 			it->first << "]";
 	}
 	//////////////////////////////

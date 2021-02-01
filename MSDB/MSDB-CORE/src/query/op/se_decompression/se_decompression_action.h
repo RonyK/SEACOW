@@ -33,6 +33,7 @@ private:
 	template <typename Ty_>
 	void decompressAttribute(std::shared_ptr<wavelet_encode_array>outArr, pAttributeDesc attrDesc, pQuery qry)
 	{
+		size_t currentThreadId = 0;
 		auto outArrId = outArr->getId();
 		auto attrId = attrDesc->id_;
 		auto arrIndex = arrayMgr::instance()->getAttributeIndex(outArrId, attrId);
@@ -43,6 +44,7 @@ private:
 		auto mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
 		auto cit = outArr->getChunkIterator(iterateMode::ALL);
 
+		qry->getTimer()->nextWork(0, workType::PARALLEL);
 		this->threadCreate(_MSDB_ACTION_THREAD_NUM_);
 
 		while (!cit->isEnd())
@@ -71,7 +73,7 @@ private:
 				//io_service_->post(boost::bind(&bindTestFunc, 100));
 
 				io_service_->post(boost::bind(&se_decompression_action::decompressChunk<Ty_>, this,
-								  std::static_pointer_cast<wtChunk>(outChunk), inChunk, qry, outArr, attrId, mmtIndex));
+								  std::static_pointer_cast<wtChunk>(outChunk), inChunk, qry, outArr, attrId, mmtIndex, currentThreadId));
 				//boost::asio::post(pool, decompressChunk, );
 			}
 
@@ -80,13 +82,16 @@ private:
 
 		this->threadStop();
 		this->threadJoin();
+
+		qry->getTimer()->nextWork(0, workType::COMPUTING);
 	}
 
 	template <typename Ty_>
 	void decompressChunk(pWtChunk outChunk, pSeChunk inChunk, pQuery qry, std::shared_ptr<wavelet_encode_array> outArr, attributeId attrId,
-						 std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex)
+						 std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex, const size_t parentThreadId)
 	{
 		auto threadId = getThreadId();
+		qry->getTimer()->nextJob(threadId, this->name(), workType::COMPUTING);
 
 		auto maxLevel = outArr->getMaxLevel();
 		arrayId arrId = outArr->getId();
@@ -114,7 +119,9 @@ private:
 		outChunk->setLevel(inChunk->getLevel());
 		outChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
 		outChunk->makeBlocks(*inChunk->getBlockBitmap());
-		outChunk->bufferCopy(inChunk);
+		outChunk->bufferRef(inChunk);
+
+		qry->getTimer()->pause(threadId);
 	}
 
 	template <typename Ty_>

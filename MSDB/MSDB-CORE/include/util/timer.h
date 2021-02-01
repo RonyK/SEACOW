@@ -14,6 +14,7 @@ enum class workType
 	IDLE = 0,
 	IO,
 	COMPUTING,
+	PARALLEL,
 	LOGGING,
 	ARRAY_CONSTRUCTING,
 	OTHERS,

@@ -61,6 +61,7 @@ void spiht_decode_action::decodeAttribute(std::shared_ptr<wavelet_encode_array> 
 	auto cit = outArr->getChunkIterator(iterateMode::ALL);
 	auto attrId = attrDesc->id_;
 
+	qry->getTimer()->nextWork(0, workType::PARALLEL);
 	this->threadCreate(_MSDB_ACTION_THREAD_NUM_);
 	size_t currentThreadId = 0;
 
@@ -104,11 +105,12 @@ void spiht_decode_action::decompressChunk(pWtChunk outChunk, pSpihtChunk inChunk
 {
 	auto threadId = getThreadId();
 
+	//========================================//
+	qry->getTimer()->nextJob(threadId, this->name(), workType::IO);
+	//----------------------------------------//
+
 	try
 	{
-		//========================================//
-		qry->getTimer()->nextWork(threadId, parentThreadId, workType::IO);
-		//----------------------------------------//
 		pSerializable serialChunk
 			= std::static_pointer_cast<serializable>(inChunk);
 
@@ -134,6 +136,7 @@ void spiht_decode_action::decompressChunk(pWtChunk outChunk, pSpihtChunk inChunk
 
 		std::cout << "Unknown exception occured in a thread(" << threadId << " while it executes decompressChunk()" << std::endl;
 	}
+	qry->getTimer()->pause(threadId);
 }
 
 pSpihtChunk spiht_decode_action::makeInChunk(std::shared_ptr<wavelet_encode_array> arr, pAttributeDesc attrDesc, chunkId cid)
