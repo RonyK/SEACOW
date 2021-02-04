@@ -31,8 +31,6 @@ void compassBlock::serializePositional(bstream& bs, std::vector<position_t>& pos
 	bs << setw(bFirstPosition) << positional[0];	// set first position
 	bs << setw(bMaxGap);
 
-	BOOST_LOG_TRIVIAL(debug) << "bFP: " << static_cast<int64_t>(bFirstPosition) << ", bMG: "  << static_cast<int64_t>(bMaxGap);
-
 	prevP = 0;
 	size_t numPositions = positional.size();
 	for (size_t i = 1; i < numPositions; ++i)
@@ -58,8 +56,7 @@ void compassBlock::deserializePositional(bstream& bs, std::vector<position_t>& p
 	bs >> setw(bMaxGap);
 	positional.push_back(p);
 	p = prevP;
-	BOOST_LOG_TRIVIAL(debug) << "bFP: " << static_cast<int64_t>(bFirstPosition) << ", bMG: " << static_cast<int64_t>(bMaxGap);
-
+	
 	do
 	{
 		bs >> p;

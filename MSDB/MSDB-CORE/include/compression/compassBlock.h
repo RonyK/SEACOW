@@ -62,7 +62,7 @@ public:
 		assert(bins_.size() == this->numBins_ && "number of bins comparison at deserializeTy");
 		for(size_t bi = 0; bi < this->numBins_; ++bi)
 		{
-			auto curBin = &(bins_[bi]);
+			auto curBin = bins_[bi];
 
 			char isExist = false;
 			bs >> setw(1);
@@ -70,8 +70,8 @@ public:
 
 			if(isExist)
 			{
-				this->deserializePositional(bs, curBin->positional_);
-				this->deserializeResidual<Ty_>(bs, curBin->residual_, curBin->positional_.size());
+				this->deserializePositional(bs, curBin.positional_);
+				this->deserializeResidual<Ty_>(bs, curBin.residual_, curBin.positional_.size());
 			}
 		}
 
