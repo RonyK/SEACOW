@@ -174,6 +174,27 @@ void chunk::makeBlocks(const bitmap& blockBitmap)
 		if(blockBitmap[bid])
 		{
 			this->makeBlock(bid);
+		}else
+		{
+			this->freeBlock(bid);
+		}
+	}
+}
+
+void chunk::makeBlocks()
+{
+	assert(this->blockBitmap_ != nullptr);
+
+
+	blockId capacity = this->getBlockCapacity();
+	for (blockId bid = 0; bid < capacity; ++bid)
+	{
+		if (this->blockBitmap_->isExist(bid))
+		{
+			this->makeBlock(bid);
+		} else
+		{
+			this->freeBlock(bid);
 		}
 	}
 }
