@@ -233,6 +233,7 @@
     <ClInclude Include="include\system\errorCodes.h" />
     <ClInclude Include="include\system\exceptions.h" />
     <ClInclude Include="include\system\storageMgr.h" />
+    <ClInclude Include="include\util\ioutil.h" />
     <ClInclude Include="include\util\threadUtil.h" />
     <ClInclude Include="include\util\coordinate.h" />
     <ClInclude Include="include\io\file.h" />
@@ -370,6 +371,7 @@
     <ClCompile Include="src\query\op\zip_save\zip_save_action.cpp" />
     <ClCompile Include="src\query\op\zip_save\zip_save_plan.cpp" />
     <ClCompile Include="src\query\query.cpp" />
+    <ClCompile Include="src\util\ioutil.cpp" />
     <ClCompile Include="src\util\threadUtil.cpp" />
     <ClCompile Include="src\util\logger.cpp" />
     <ClCompile Include="src\util\timer.cpp" />
