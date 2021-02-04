@@ -181,8 +181,6 @@ private:
 
 		position_t bMaxResidual = std::max({ msb<position_t>(maxResidual), (unsigned char)1 });
 		bs << setw(CHAR_BIT) << bMaxResidual;
-		//BOOST_LOG_TRIVIAL(debug) << static_cast<int64_t>(bMaxResidual);
-		//BOOST_LOG_TRIVIAL(debug) << static_cast<int64_t>(residual[0]) << "~" << static_cast<int64_t>(residual[residual.size() - 1]);
 		bs << setw(bMaxResidual);
 
 		for(auto r: residual)
@@ -197,16 +195,13 @@ private:
 		bit_cnt_type bMaxResidual = 0;
 		Ty_ value;
 		bs >> setw(CHAR_BIT) >> bMaxResidual;
-
 		bs >> setw(bMaxResidual);
-		//BOOST_LOG_TRIVIAL(debug) << static_cast<int64_t>(bMaxResidual);
 
 		while(numResiduals--)
 		{
 			bs >> value;
 			residual.push_back(value);
 		}
-		//BOOST_LOG_TRIVIAL(debug) << static_cast<int64_t>(residual[0]) << "~" << static_cast<int64_t>(residual[residual.size() - 1]);
 	}
 
 public:
@@ -215,6 +210,5 @@ public:
 private:
 	size_t numBins_;
 };
-}
-
+}		// msdb
 #endif	// _MSDB_COMPASSBLOCK_H_

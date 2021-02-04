@@ -4,9 +4,10 @@
 namespace msdb
 {
 compassBlock::compassBlock(pBlockDesc desc)
-	: memBlock(desc)
+	: memBlock(desc), numBins_(0)
 {
 }
+
 compassBlock::~compassBlock()
 {
 }
