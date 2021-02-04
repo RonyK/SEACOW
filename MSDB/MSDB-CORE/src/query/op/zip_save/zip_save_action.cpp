@@ -32,11 +32,7 @@ pArray zip_save_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 		auto cit = sourceArr->getChunkIterator(iterateMode::EXIST);
 		while (!cit->isEnd())
 		{
-			pChunk inChunk = (**cit);
-			auto outChunkDesc = std::make_shared<chunkDesc>(*inChunk->getDesc());
-			pZipChunk outChunk = std::make_shared<zipChunk>(outChunkDesc);
-			outChunk->makeAllBlocks();
-			outChunk->bufferRef(inChunk);
+			auto outChunk = this->makeOutChunk((**cit));
 
 			//========================================//
 			qry->getTimer()->nextWork(0, workType::IO);
@@ -59,5 +55,14 @@ pArray zip_save_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 	//========================================//
 
 	return sourceArr;
+}
+pZipChunk zip_save_action::makeOutChunk(pChunk inChunk)
+{
+	auto outChunkDesc = std::make_shared<chunkDesc>(*inChunk->getDesc());
+	pZipChunk outChunk = std::make_shared<zipChunk>(outChunkDesc);
+	outChunk->makeAllBlocks();
+	outChunk->bufferRef(inChunk);
+
+	return outChunk;
 }
 }	// msdb

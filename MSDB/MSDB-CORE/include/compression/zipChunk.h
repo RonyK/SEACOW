@@ -4,7 +4,7 @@
 
 #include <stdafx.h>
 #include <array/blockChunk.h>
-#include <compression/compassBlock.h>
+#include <compression/zipBlock.h>
 #include <io/bitstream.h>
 
 namespace msdb
@@ -26,51 +26,37 @@ public:
 	virtual void deserialize(std::istream& is) override;
 
 	template<typename Ty_>
-	void serializeTy(std::stringstream& ss)
+	void serializeTy(std::stringstream& compressed)
 	{
-		boost::iostreams::filtering_streambuf<boost::iostreams::input> out;
-		std::stringstream original;
-		original.write((const char*)this->cached_->getReadData(), this->cached_->size());
-		out.push(boost::iostreams::zlib_compressor());
-		out.push(original);
-		boost::iostreams::copy(out, ss);
+		auto blockItr = this->getBlockIterator();
+		while (!blockItr->isEnd())
+		{
+			if (blockItr->isExist())
+			{
+				pZipBlock zBlock = std::static_pointer_cast<zipBlock>(**blockItr);
+				zBlock->serializeTy<Ty_>(compressed);
+			}
 
-		//////////////////////////////
-		// TODO::Serialize block by block
-		//auto blockItr = this->getBlockIterator();
-		//while (!blockItr->isEnd())
-		//{
-		//	if (blockItr->isExist())
-		//	{
-		//		//pCompassBlock cpBlock = std::static_pointer_cast<compassBlock>(**blockItr);
-		//		//cpBlock->serializeTy<Ty_>(ss);
-
-		//		//blockId bId = (**blockItr)->getId();
-
-		//		
-		//		//original << (char*)this->cached_->getData() + (bId * mSizeBlock),
-		//	}
-
-		//	++(*blockItr);
-		//}
+			++(*blockItr);
+		}
 	}
 
 	template<class Ty_>
-	void deserializeTy(std::stringstream& bs)
+	void deserializeTy(std::stringstream& compressed)
 	{
-		//////////////////////////////
-		// TODO::deserialize zipChunk
-		//auto blockItr = this->getBlockIterator();
-		//while (!blockItr->isEnd())
-		//{
-		//	if (blockItr->isExist())
-		//	{
-		//		pCompassBlock cpBlock = std::static_pointer_cast<compassBlock>(**blockItr);
-		//		cpBlock->deserializeTy<Ty_>(bs);
-		//	}
+		this->bufferAlloc();
 
-		//	++(*blockItr);
-		//}
+		auto blockItr = this->getBlockIterator();
+		while (!blockItr->isEnd())
+		{
+			if (blockItr->isExist())
+			{
+				pZipBlock zBlock = std::static_pointer_cast<zipBlock>(**blockItr);
+				zBlock->deserializeTy<Ty_>(compressed);
+			}
+
+			++(*blockItr);
+		}
 	}
 };
 }		// msdb

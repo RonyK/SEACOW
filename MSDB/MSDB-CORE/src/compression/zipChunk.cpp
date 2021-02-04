@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include <compression/zipChunk.h>
+#include <util/ioutil.h>
 
 namespace msdb
 {
@@ -64,9 +65,7 @@ void zipChunk::serialize(std::ostream& os)
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 	}
 
-	oss.seekg(0, std::ios::end);
-	this->serializedSize_ = oss.tellg();
-	oss.seekg(0, std::ios::beg);
+	this->serializedSize_ = getSize(oss);
 	this->getOutHeader()->serialize(os);
 	os << oss.str();
 	//os.write(oss.str(), this->serializedSize_);
@@ -79,6 +78,7 @@ void zipChunk::deserialize(std::istream& is)
 
 	// TODO :: un-compression with zib
 	std::stringstream iss;
+	iss << is.rdbuf();
 	
 	//bs.resize(this->serializedSize_);
 	//is.read(bs.data(), this->serializedSize_);

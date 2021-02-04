@@ -5,6 +5,7 @@
 #include <stdafx.h>
 #include <query/opAction.h>
 #include <util/math.h>
+#include <compression/zipChunk.h>
 
 namespace msdb
 {
@@ -17,6 +18,9 @@ public:
 
 public:
 	pArray execute(std::vector<pArray>& inputArrays, pQuery qry);
+
+private:
+	pZipChunk makeOutChunk(pChunk inChunk);
 };
 }	// msdb
 #endif	// _MSDB_OP_ZIP_ENCODE_ACTION_H_
