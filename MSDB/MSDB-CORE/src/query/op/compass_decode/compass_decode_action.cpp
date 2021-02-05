@@ -25,6 +25,7 @@ pArray compass_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 
 	//========================================//
 	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
+	//----------------------------------------//
 
 	pArray sourceArr = inputArrays[0];
 	arrayId arrId = sourceArr->getId();
@@ -41,6 +42,7 @@ pArray compass_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 		this->decodeAttribute(outArr, attr, numBins, qry);
 	}
 
+	//----------------------------------------//
 	qry->getTimer()->pause(0);
 	//========================================//
 
@@ -53,6 +55,8 @@ void compass_decode_action::decodeAttribute(pArray outArr, pAttributeDesc attrDe
 
 	//========================================//
 	qry->getTimer()->nextWork(0, workType::PARALLEL);
+	//----------------------------------------//
+
 	this->threadCreate(_MSDB_ACTION_THREAD_NUM_);
 
 	auto cit = outArr->getChunkIterator(iterateMode::EXIST);
@@ -74,6 +78,7 @@ void compass_decode_action::decodeAttribute(pArray outArr, pAttributeDesc attrDe
 	this->threadStop();
 	this->threadJoin();
 
+	//----------------------------------------//
 	qry->getTimer()->nextWork(0, workType::COMPUTING);
 	//========================================//
 }
@@ -84,6 +89,7 @@ void compass_decode_action::decodeChunk(pChunk outChunk, pCompassChunk inChunk, 
 
 	//========================================//
 	qry->getTimer()->nextJob(threadId, this->name(), workType::IO);
+	//----------------------------------------//
 
 	pSerializable serialChunk
 		= std::static_pointer_cast<serializable>(inChunk);
@@ -94,10 +100,11 @@ void compass_decode_action::decodeChunk(pChunk outChunk, pCompassChunk inChunk, 
 	qry->getTimer()->nextWork(0, workType::COMPUTING);
 	//----------------------------------------//
 
-	outChunk->bufferCopy(inChunk);
 	outChunk->copyBlockBitmap(inChunk->getBlockBitmap());
-	outChunk->makeAllBlocks();
+	outChunk->makeBlocks();
+	outChunk->bufferCopy(inChunk);
 
+	//----------------------------------------//
 	qry->getTimer()->pause(threadId);
 	//========================================//
 }
@@ -115,8 +122,8 @@ pCompassChunk compass_decode_action::makeInChunk(pArray inArr, pAttributeDesc at
 		// If there were no bitmap, set all blocks as true.
 		inChunk->replaceBlockBitmap(std::make_shared<bitmap>(inChunk->getBlockCapacity(), true));
 	}
-	inChunk->makeBlocks(*inChunk->getBlockBitmap());
 	inChunk->setNumBins(numBins);
+	inChunk->makeBlocks();
 
 	return inChunk;
 }
