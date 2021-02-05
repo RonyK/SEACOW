@@ -15,6 +15,17 @@ std::shared_ptr<load_plan> getLoadPlan(pArrayDesc sourceArrDesc, pQuery qry)
 	return getSingleArrayParamPlan<load_plan, load_array_pset>(sourceArrDesc, qry);
 }
 
+
+std::shared_ptr<zip_load_plan> getZipLoadPlan(pArrayDesc sourceArrDesc, pQuery qry)
+{
+	return getSingleArrayParamPlan<zip_load_plan, zip_load_array_pset>(sourceArrDesc, qry);
+}
+
+std::shared_ptr<compass_decode_plan> getCompassDecodePlan(pArrayDesc sourceArrDesc, eleDefault numBins, pQuery qry)
+{
+	return getLevelArrayParamPlan<compass_decode_plan, compass_decode_array_pset>(sourceArrDesc, numBins, qry);
+}
+
 //////////////////////////////
 // Wavelet Operators
 //std::shared_ptr<wavelet_encode_plan> getWaveletEncodePlan(pPlan sourcPlan, eleDefault wtLevel, pQuery qry)

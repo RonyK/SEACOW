@@ -37,6 +37,16 @@
 #include <op/se_decompression/se_decompression_plan.h>
 #include <op/se_decompression/se_decompression_action.h>
 
+#include <op/zip_save/zip_save_plan.h>
+#include <op/zip_save/zip_save_action.h>
+#include <op/zip_load/zip_load_plan.h>
+#include <op/zip_load/zip_load_action.h>
+
+#include <op/compass_encode/compass_encode_plan.h>
+#include <op/compass_encode/compass_encode_action.h>
+#include <op/compass_decode/compass_decode_plan.h>
+#include <op/compass_decode/compass_decode_action.h>
+
 #include <op/naive_filter/naive_filter_plan.h>
 #include <op/naive_filter/naive_filter_action.h>
 #include <op/index_filter/index_filter_plan.h>
@@ -53,6 +63,9 @@ namespace caDummy
 // IO Operators
 std::shared_ptr<save_plan> getSavePlan(pPlan sourcPlan, pQuery qry);
 std::shared_ptr<load_plan> getLoadPlan(pArrayDesc sourceArrDesc, pQuery qry);
+
+std::shared_ptr<zip_load_plan> getZipLoadPlan(pArrayDesc sourceArrDesc, pQuery qry);
+std::shared_ptr<compass_decode_plan> getCompassDecodePlan(pArrayDesc sourceArrDesc, eleDefault numBins, pQuery qry);
 
 //////////////////////////////
 // Wavelet Operators

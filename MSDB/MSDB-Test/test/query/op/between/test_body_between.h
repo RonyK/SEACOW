@@ -8,6 +8,8 @@
 #include <io/test_action_io.h>
 #include <compression/test_qry_spiht.h>
 #include <compression/test_qry_secompression.h>
+#include <compression/test_qry_zip.h>
+#include <compression/test_qry_compass.h>
 
 #include <op/between/between_plan.h>
 #include <op/between/between_action.h>
@@ -88,6 +90,74 @@ pArray test_body_seq_random_spiht_between(_pFuncGetSourceArray_,
 }
 
 template <typename value_type>
+pArray test_body_seq_random_compass_between(_pFuncGetSourceArray_,
+											_pFuncGetSourceArrayDesc_,
+											eleDefault numBins,
+											size_t numTests, std::vector<float> selectivities,
+											const position_t dimX, const position_t dimY,
+											bool saveArray = true, bool validation = true, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Set Seed For Random Value 
+	srand(rangeSeed);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Execute Testcases
+	for (auto selectivity : selectivities)
+	{
+		for (size_t i = 0; i < numTests; ++i)
+		{
+			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
+			BOOST_LOG_TRIVIAL(info) << "##################################################";
+			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
+			BOOST_LOG_TRIVIAL(info) << "# Range : " << qRange.toString();
+			test_body_seq_compass_between<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
+													  numBins,
+													  qRange.getSp(), qRange.getEp(),
+													  saveArray, validation, printFlag);
+			BOOST_LOG_TRIVIAL(info) << "##################################################";
+		}
+	}
+	//////////////////////////////
+
+	return nullptr;
+}
+
+template <typename value_type>
+pArray test_body_seq_random_zip_between(_pFuncGetSourceArray_,
+										_pFuncGetSourceArrayDesc_,
+										size_t numTests, std::vector<float> selectivities,
+										const position_t dimX, const position_t dimY,
+										bool saveArray = true, bool validation = true, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Set Seed For Random Value 
+	srand(rangeSeed);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Execute Testcases
+	for (auto selectivity : selectivities)
+	{
+		for (size_t i = 0; i < numTests; ++i)
+		{
+			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
+			BOOST_LOG_TRIVIAL(info) << "##################################################";
+			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
+			BOOST_LOG_TRIVIAL(info) << "# Range : " << qRange.toString();
+			test_body_seq_zip_between<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
+												  qRange.getSp(), qRange.getEp(),
+												  saveArray, validation, printFlag);
+			BOOST_LOG_TRIVIAL(info) << "##################################################";
+		}
+	}
+	//////////////////////////////
+
+	return nullptr;
+}
+
+template <typename value_type>
 pArray test_body_seq_random_se_between(_pFuncGetSourceArray_,
 									   _pFuncGetSourceArrayDesc_,
 									   eleDefault wtLevel, eleDefault mmtLevel,
@@ -121,7 +191,6 @@ pArray test_body_seq_random_se_between(_pFuncGetSourceArray_,
 
 	return nullptr;
 }
-
 // ##################################################
 
 // ##################################################
@@ -216,6 +285,66 @@ pArray test_body_seq_load_between(_pFuncGetSourceArray_,
 
 	return outArr;
 }
+
+template <typename value_type>
+pArray test_body_seq_compass_between(_pFuncGetSourceArray_,
+									 _pFuncGetSourceArrayDesc_,
+									 eleDefault numBins,
+									 coor sp, coor ep,
+									 bool saveArray = true, bool validation = true, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Get Source Array
+	std::vector<pArray> sourceArr;
+	if (saveArray)
+	{
+		getSourceArrayIfEmpty(sourceArr);
+	} else
+	{
+		getSourceArrayDesc(sourceArr);
+	}
+	sourceArr[0]->setId(sourceArr[0]->getId() + compass_array_id);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Between
+	auto outArr = exe_qbundle_seq_compass_between<value_type>(sourceArr,
+															  numBins,
+															  sp, ep,
+															  saveArray, printFlag);
+	   //////////////////////////////
+
+	return outArr;
+}
+
+template <typename value_type>
+pArray test_body_seq_zip_between(_pFuncGetSourceArray_,
+								 _pFuncGetSourceArrayDesc_,
+								 coor sp, coor ep,
+								 bool saveArray = true, bool validation = true, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Get Source Array
+	std::vector<pArray> sourceArr;
+	if (saveArray)
+	{
+		getSourceArrayIfEmpty(sourceArr);
+	} else
+	{
+		getSourceArrayDesc(sourceArr);
+	}
+	sourceArr[0]->setId(sourceArr[0]->getId() + zip_array_id);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Between
+	auto outArr = exe_qbundle_seq_zip_between<value_type>(sourceArr,
+														  sp, ep,
+														  saveArray, printFlag);
+   //////////////////////////////
+
+	return outArr;
+}
 // ##################################################
 
 //////////////////////////////
@@ -285,6 +414,48 @@ pArray exe_qbundle_seq_load_between(_vectorSourceArray_,
 												sp, ep,
 												printFlag);
 	//////////////////////////////
+}
+
+template <typename value_type>
+pArray exe_qbundle_seq_compass_between(_vectorSourceArray_,
+									   eleDefault numBins,
+									   coor sp, coor ep,
+									   bool saveArray = true, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Save Source Array
+	if (saveArray)
+	{
+		exe_qry_ind_compass_encode<value_type>(sourceArr, numBins, printFlag);
+	}
+
+	//////////////////////////////
+	// 02. Between
+	return exe_qry_seq_compass_between<value_type>(sourceArr,
+												   numBins,
+												   sp, ep,
+												   printFlag);
+	  //////////////////////////////
+}
+
+template <typename value_type>
+pArray exe_qbundle_seq_zip_between(_vectorSourceArray_,
+								   coor sp, coor ep,
+								   bool saveArray = true, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Save Source Array
+	if (saveArray)
+	{
+		exe_qry_ind_zip_save<value_type>(sourceArr, false);
+	}
+
+	//////////////////////////////
+	// 02. Between
+	return exe_qry_seq_zip_between<value_type>(sourceArr,
+											   sp, ep,
+											   printFlag);
+   //////////////////////////////
 }
 
 //////////////////////////////
@@ -404,6 +575,73 @@ pArray exe_qry_seq_load_between(_vectorSourceArray_,
 	{
 		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
 		BOOST_LOG_TRIVIAL(info) << "Load Arr" << std::endl;
+		outArr->print();
+		//outArr->getChunkBitmap()->print();
+	}
+
+	outArr = betweenPlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	if (printFlag)
+	{
+		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "Between Arr" << std::endl;
+		outArr->print();
+		//outArr->getChunkBitmap()->print();
+	}
+
+	tearDownQuery(qry);
+
+	return outArr;
+}
+
+template <typename value_type>
+pArray exe_qry_seq_compass_between(_vectorSourceArray_,
+								   eleDefault numBins,
+								   coor sp, coor ep,
+								   bool printFlag = false)
+{
+	pQuery qry = std::make_shared<query>();
+
+	auto decodePlan = getCompassDecodePlan(sourceArr[0]->getDesc(), numBins, qry);
+	auto betweenPlan = getBetweenPlan(decodePlan, sp, ep, qry);
+
+	auto outArr = decodePlan->getAction()->execute(sourceArr, qry);
+	if (printFlag)
+	{
+		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "Compass Decode Arr" << std::endl;
+		outArr->print();
+		//outArr->getChunkBitmap()->print();
+	}
+
+	outArr = betweenPlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	if (printFlag)
+	{
+		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "Between Arr" << std::endl;
+		outArr->print();
+		//outArr->getChunkBitmap()->print();
+	}
+
+	tearDownQuery(qry);
+
+	return outArr;
+}
+
+template <typename value_type>
+pArray exe_qry_seq_zip_between(_vectorSourceArray_,
+							   coor sp, coor ep,
+							   bool printFlag = false)
+{
+	pQuery qry = std::make_shared<query>();
+
+	auto loadPlan = getZipLoadPlan(sourceArr[0]->getDesc(), qry);
+	auto betweenPlan = getBetweenPlan(loadPlan, sp, ep, qry);
+
+	auto outArr = loadPlan->getAction()->execute(sourceArr, qry);
+	if (printFlag)
+	{
+		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "Zip Load Arr" << std::endl;
 		outArr->print();
 		//outArr->getChunkBitmap()->print();
 	}

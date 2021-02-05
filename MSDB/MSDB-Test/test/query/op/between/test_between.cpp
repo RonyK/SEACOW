@@ -13,9 +13,9 @@ coor sp = { 0, 125 };
 coor ep = { 6, 129 };
 
 size_t numTests = 3;
-std::vector<float> selectivities = { 0.1, 1, 10 };
+std::vector<float> selectivities = { 0.001, 0.01, 0.1 };
 
-bool saveArray = false;
+bool saveArray = true;
 bool printFlag = false;
 bool validation = true;
 
@@ -95,6 +95,24 @@ TEST(experiment_query_op_between, start1024x1024_seq_random_se_between)
 												dimX, dimY,
 												saveArray, validation, printFlag);
 }	// TEST()
+
+TEST(experiment_query_op_between, start1024x1024_seq_random_compass_between)
+{
+	test_body_seq_random_compass_between<value_type>(&getSourceArrayIfEmpty,
+													 &getSourceArrayDesc, numBins,
+													 numTests, selectivities,
+													 dimX, dimY,
+													 saveArray, validation, printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, start1024x1024_seq_random_zip_between)
+{
+	test_body_seq_random_zip_between<value_type>(&getSourceArrayIfEmpty,
+												 &getSourceArrayDesc,
+												 numTests, selectivities,
+												 dimX, dimY,
+												 saveArray, validation, printFlag);
+}	// TEST()
 }	// data2D_star1024x1024
 // ##################################################
 
@@ -151,6 +169,24 @@ TEST(experiment_query_op_between, saturn1024x1024_seq_random_se_between)
 												numTests, selectivities,
 												dimX, dimY,
 												saveArray, validation, printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, saturn1024x1024_seq_random_compass_between)
+{
+	test_body_seq_random_compass_between<value_type>(&getSourceArrayIfEmpty,
+													 &getSourceArrayDesc, numBins,
+													 numTests, selectivities,
+													 dimX, dimY,
+													 saveArray, validation, printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, saturn1024x1024_seq_random_zip_between)
+{
+	test_body_seq_random_zip_between<value_type>(&getSourceArrayIfEmpty,
+												 &getSourceArrayDesc,
+												 numTests, selectivities,
+												 dimX, dimY,
+												 saveArray, validation, printFlag);
 }	// TEST()
 }	// data2D_saturn1024x1024
 // ##################################################
@@ -209,6 +245,24 @@ TEST(experiment_query_op_between, solar1024x1024_seq_random_se_between)
 												dimX, dimY,
 												saveArray, validation, printFlag);
 }	// TEST()
+
+TEST(experiment_query_op_between, solar1024x1024_seq_random_compass_between)
+{
+	test_body_seq_random_compass_between<value_type>(&getSourceArrayIfEmpty,
+													 &getSourceArrayDesc, numBins,
+													 numTests, selectivities,
+													 dimX, dimY,
+													 saveArray, validation, printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, solar1024x1024_seq_random_zip_between)
+{
+	test_body_seq_random_zip_between<value_type>(&getSourceArrayIfEmpty,
+												 &getSourceArrayDesc,
+												 numTests, selectivities,
+												 dimX, dimY,
+												 saveArray, validation, printFlag);
+}	// TEST()
 }	// data2D_solar1024x1024
 // ##################################################
 
@@ -264,6 +318,24 @@ TEST(experiment_query_op_between, mars4096x2048_seq_random_se_between)
 												numTests, selectivities,
 												dimX, dimY,
 												saveArray, validation, printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, mars4096x2048_seq_random_compass_between)
+{
+	test_body_seq_random_compass_between<value_type>(&getSourceArrayIfEmpty,
+													 &getSourceArrayDesc, numBins,
+													 numTests, selectivities,
+													 dimX, dimY,
+													 saveArray, validation, printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, mars4096x2048_seq_random_zip_between)
+{
+	test_body_seq_random_zip_between<value_type>(&getSourceArrayIfEmpty,
+												 &getSourceArrayDesc,
+												 numTests, selectivities,
+												 dimX, dimY,
+												 saveArray, validation, printFlag);
 }	// TEST()
 }	// data2D_mars4096x2048
 // ##################################################
