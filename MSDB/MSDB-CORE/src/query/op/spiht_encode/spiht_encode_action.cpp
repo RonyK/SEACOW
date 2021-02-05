@@ -41,7 +41,7 @@ pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery qry
 			pChunk inChunk = (**cit);
 			auto outChunkDesc = std::make_shared<chunkDesc>(*inChunk->getDesc());
 			pSpihtChunk outChunk = std::make_shared<spihtChunk>(outChunkDesc);
-			outChunk->setMaxLevel(wArray->getMaxLevel());
+			outChunk->setLevel(wArray->getMaxLevel());
 			outChunk->makeAllBlocks();
 			outChunk->bufferRef(inChunk);
 

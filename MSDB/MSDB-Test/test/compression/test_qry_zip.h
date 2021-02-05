@@ -40,6 +40,7 @@ pArray test_qry_ind_zip_save_load(_pFuncGetSourceArray_,
 	auto outArr = exe_qry_ind_zip_load<value_type>(sourceArrDesc, printFlag);
 
 	compArrary<value_type>(sourceArr[0], outArr);
+
 	return outArr;
 }
 

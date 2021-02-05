@@ -41,7 +41,7 @@ public:
 		while (!blockItr->isEnd())
 		{
 			// TODO::check isExist()
-			std::static_pointer_cast<spihtBlock>(**blockItr)->setMaxLevel(this->maxLevel_);
+			std::static_pointer_cast<spihtBlock>(**blockItr)->setLevel(this->maxLevel_);
 			this->blockSerialize<Ty_>(bs, (**blockItr));
 			++(*blockItr);
 		}
@@ -62,7 +62,7 @@ public:
 		{
 			if(blockItr->isExist())
 			{
-				std::static_pointer_cast<spihtBlock>(**blockItr)->setMaxLevel(this->maxLevel_);
+				std::static_pointer_cast<spihtBlock>(**blockItr)->setLevel(this->maxLevel_);
 				this->blockDeserialize<Ty_>(bs, (**blockItr));
 			}
 			
@@ -78,7 +78,14 @@ public:
 	}
 
 public:
-	void setMaxLevel(size_t maxLevel);
+	inline void setLevel(size_t maxLevel)
+	{
+		this->maxLevel_ = maxLevel;
+	}
+	inline size_t getLevel()
+	{
+		return this->maxLevel_;
+	}
 
 protected:
 	size_t maxLevel_;

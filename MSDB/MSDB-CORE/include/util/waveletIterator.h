@@ -43,7 +43,7 @@ namespace msdb
 			 */
 			this->curBand_ = 0;
 
-			// NOTE::BandDims and Band Size will be reassigned in setMaxLevel function
+			// NOTE::BandDims and Band Size will be reassigned in setLevel function
 			this->bandDims_ = new dim_type[1];
 			this->bandSize_ = new size_type[1];
 
@@ -52,7 +52,7 @@ namespace msdb
 			memset(this->bsP_, 0, sizeof(dim_type) * this->dSize_);
 			memcpy(this->beP_, this->bandDims_, sizeof(dim_type) * this->dSize_);
 
-			this->setMaxLevel(maxLevel);
+			this->setLevel(maxLevel);
 		}
 
 		waveletIterator(const self_type& mit) : coorIterator<Dty_, Ty_>(mit)
@@ -150,7 +150,7 @@ namespace msdb
 			this->setCurCoor(coor);
 		}
 
-		void setMaxLevel(size_type maxLevel)
+		void setLevel(size_type maxLevel)
 		{
 			this->maxLevel_ = maxLevel;
 

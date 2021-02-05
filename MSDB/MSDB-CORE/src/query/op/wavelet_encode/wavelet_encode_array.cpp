@@ -40,7 +40,7 @@ dimension wavelet_encode_array::getOrigianlChunkDims()
 	return this->originalChunkDims_;
 }
 
-void wavelet_encode_array::setMaxLevel(const size_t maxLevel)
+void wavelet_encode_array::setLevel(const size_t maxLevel)
 {
 	this->maxLevel_ = maxLevel;
 }

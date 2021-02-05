@@ -17,8 +17,9 @@ public:
 
 public:
 	pArray execute(std::vector<pArray>& inputArrays, pQuery qry);
-	void loadAttribute(pArray outArr, pAttributeDesc attrDesc, eleDefault numBins, pQuery qry);
-	pZipChunk makeInChunk(pArray inArr, pAttributeDesc attrDesc, chunkId cid, eleDefault numBins);
+	void loadAttribute(pArray outArr, pAttributeDesc attrDesc, pQuery qry);
+	void loadChunk(pArray outArr, pChunk outChunk, pZipChunk inChunk, attributeId attrId, pQuery qry, const size_t parentThreadId);
+	pZipChunk makeInChunk(pArray inArr, pAttributeDesc attrDesc, chunkId cid);
 };
 }		// msdb
 #endif	// _MSDB_OP_ZIP_ACTION_H_

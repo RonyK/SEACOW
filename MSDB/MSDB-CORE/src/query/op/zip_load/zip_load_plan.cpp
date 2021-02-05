@@ -22,6 +22,5 @@ zip_load_array_pset::zip_load_array_pset(parameters& pSet)
 	: opArrayParamSet(pSet)
 {
 	assert(this->params_.size() == 1);
-	assert(this->params_[1]->type() == opParamType::CONST_TYPE);		// Target numBins
 }
 }	// msdb

@@ -44,7 +44,7 @@ void spihtBlock::init(dimension& bandDims)
 	}
 }
 
-void spihtBlock::setMaxLevel(size_t maxLevel)
+void spihtBlock::setLevel(size_t maxLevel)
 {
 	this->maxLevel_ = maxLevel;
 }

@@ -185,7 +185,6 @@ void chunk::makeBlocks()
 {
 	assert(this->blockBitmap_ != nullptr);
 
-
 	blockId capacity = this->getBlockCapacity();
 	for (blockId bid = 0; bid < capacity; ++bid)
 	{

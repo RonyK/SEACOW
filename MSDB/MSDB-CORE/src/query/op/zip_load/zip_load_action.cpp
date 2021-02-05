@@ -29,13 +29,9 @@ pArray zip_load_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 	auto outArr = std::make_shared<memBlockArray>(this->getArrayDesc());
 	outArr->copyChunkBitmap(this->getPlanChunkBitmap());
 
-	// Get Parameter - NumBin
-	eleDefault numBins;
-	std::static_pointer_cast<stableElement>(this->params_[1]->getParam())->getData(&numBins);
-
 	for (auto attr : *sourceArr->getDesc()->attrDescs_)
 	{
-		this->loadAttribute(outArr, attr, numBins, qry);
+		this->loadAttribute(outArr, attr, qry);
 	}
 
 	qry->getTimer()->pause(0);
@@ -43,7 +39,7 @@ pArray zip_load_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 
 	return outArr;
 }
-void zip_load_action::loadAttribute(pArray outArr, pAttributeDesc attrDesc, eleDefault numBins, pQuery qry)
+void zip_load_action::loadAttribute(pArray outArr, pAttributeDesc attrDesc, pQuery qry)
 {
 	auto cit = outArr->getChunkIterator(iterateMode::EXIST);
 	while (!cit->isEnd())
@@ -51,31 +47,36 @@ void zip_load_action::loadAttribute(pArray outArr, pAttributeDesc attrDesc, eleD
 		if (cit->isExist())
 		{
 			chunkId cid = cit->seqPos();
-
-			auto inChunk = this->makeInChunk(outArr, attrDesc, cid, numBins);
-
-
-			//========================================//
-			qry->getTimer()->nextWork(0, workType::IO);
-			//----------------------------------------//
-			pSerializable serialChunk
-				= std::static_pointer_cast<serializable>(inChunk);
-			storageMgr::instance()->loadChunk(outArr->getId(), attrDesc->id_, (inChunk)->getId(),
-											  serialChunk);
-
-			//========================================//
-			qry->getTimer()->nextWork(0, workType::COMPUTING);
-			//----------------------------------------//
+			auto inChunk = this->makeInChunk(outArr, attrDesc, cid);
 			auto outChunk = outArr->makeChunk(*inChunk->getDesc());
-			outChunk->bufferCopy(inChunk);
-			outChunk->copyBlockBitmap(inChunk->getBlockBitmap());
-			outChunk->makeAllBlocks();
+
+			this->loadChunk(outArr, outChunk, inChunk, attrDesc->id_, qry, 0);
 		}
 
 		++(*cit);
 	}
 }
-pZipChunk zip_load_action::makeInChunk(pArray inArr, pAttributeDesc attrDesc, chunkId cid, eleDefault numBins)
+
+void zip_load_action::loadChunk(pArray outArr, pChunk outChunk, pZipChunk inChunk, attributeId attrId, pQuery qry, const size_t parentThreadId)
+{
+	//========================================//
+	qry->getTimer()->nextWork(0, workType::IO);
+	//----------------------------------------//
+	pSerializable serialChunk
+		= std::static_pointer_cast<serializable>(inChunk);
+	storageMgr::instance()->loadChunk(outArr->getId(), attrId, (inChunk)->getId(),
+									  serialChunk);
+
+	//========================================//
+	qry->getTimer()->nextWork(0, workType::COMPUTING);
+	//----------------------------------------//
+
+	outChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
+	outChunk->makeBlocks();
+	outChunk->bufferCopy(inChunk);
+}
+
+pZipChunk zip_load_action::makeInChunk(pArray inArr, pAttributeDesc attrDesc, chunkId cid)
 {
 	auto inChunkDesc = std::make_shared<chunkDesc>(*inArr->getChunkDesc(attrDesc->id_, cid));
 	auto inChunk = std::make_shared<zipChunk>(inChunkDesc);
@@ -88,7 +89,7 @@ pZipChunk zip_load_action::makeInChunk(pArray inArr, pAttributeDesc attrDesc, ch
 		// If there were no bitmap, set all blocks as true.
 		inChunk->replaceBlockBitmap(std::make_shared<bitmap>(inChunk->getBlockCapacity(), true));
 	}
-	inChunk->makeBlocks(*inChunk->getBlockBitmap());
+	inChunk->makeBlocks();
 
 	return inChunk;
 }
