@@ -18,6 +18,8 @@ public:
 public:
 	pArray execute(std::vector<pArray>& inputArrays, pQuery qry);
 	void decodeAttribute(pArray outArr, pAttributeDesc attrDesc, eleDefault numBins, pQuery qry);
+	void decodeChunk(pChunk outChunk, pCompassChunk inChunk, pQuery qry, pArray outArr,
+					 const attributeId attrId, const size_t parentThreadId);
 	pCompassChunk makeInChunk(pArray inArr, pAttributeDesc attrDesc, chunkId cid, eleDefault numBins);
 };
 }		// msdb
