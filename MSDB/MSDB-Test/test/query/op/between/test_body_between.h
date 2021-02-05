@@ -16,24 +16,142 @@ namespace msdb
 {
 namespace caDummy
 {
+coorRange getRandomRange(const position_t dimX, const position_t dimY, const float selectivity);
+
+// ##################################################
+// # Test Body for Sequencial Random Between
+template <typename value_type>
+pArray test_body_seq_random_load_between(_pFuncGetSourceArray_,
+										 _pFuncGetSourceArrayDesc_,
+										 size_t numTests, std::vector<float> selectivities,
+										 const position_t dimX, const position_t dimY,
+										 bool saveArray = true, bool validation = true, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Set Seed For Random Value 
+	srand(rangeSeed);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Execute Testcases
+	for (auto selectivity : selectivities)
+	{
+		for (size_t i = 0; i < numTests; ++i)
+		{
+			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
+			BOOST_LOG_TRIVIAL(info) << "##################################################";
+			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
+			BOOST_LOG_TRIVIAL(info) << "# Range : " << qRange.toString();
+			test_body_seq_load_between<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
+												   qRange.getSp(), qRange.getEp(),
+												   saveArray, validation, printFlag);
+			BOOST_LOG_TRIVIAL(info) << "##################################################";
+		}
+	}
+	//////////////////////////////
+
+	return nullptr;
+}
+
+template <typename value_type>
+pArray test_body_seq_random_spiht_between(_pFuncGetSourceArray_,
+										  _pFuncGetSourceArrayDesc_,
+										  eleDefault wtLevel,
+										  size_t numTests, std::vector<float> selectivities,
+										  const position_t dimX, const position_t dimY,
+										  bool saveArray = true, bool validation = true, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Set Seed For Random Value 
+	srand(rangeSeed);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Execute Testcases
+	for (auto selectivity : selectivities)
+	{
+		for (size_t i = 0; i < numTests; ++i)
+		{
+			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
+			BOOST_LOG_TRIVIAL(info) << "##################################################";
+			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
+			BOOST_LOG_TRIVIAL(info) << "# Range : " << qRange.toString();
+			test_body_seq_spiht_between<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
+													wtLevel, qRange.getSp(), qRange.getEp(),
+													saveArray, validation, printFlag);
+			BOOST_LOG_TRIVIAL(info) << "##################################################";
+		}
+	}
+	//////////////////////////////
+
+	return nullptr;
+}
+
+template <typename value_type>
+pArray test_body_seq_random_se_between(_pFuncGetSourceArray_,
+									   _pFuncGetSourceArrayDesc_,
+									   eleDefault wtLevel, eleDefault mmtLevel,
+									   size_t numTests, std::vector<float> selectivities,
+									   const position_t dimX, const position_t dimY,
+									   bool saveArray = true, bool validation = true, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Set Seed For Random Value 
+	srand(rangeSeed);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Execute Testcases
+	for (auto selectivity : selectivities)
+	{
+		for (size_t i = 0; i < numTests; ++i)
+		{
+			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
+			BOOST_LOG_TRIVIAL(info) << "##################################################";
+			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
+			BOOST_LOG_TRIVIAL(info) << "# Range : " << qRange.toString();
+			test_body_seq_se_between<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
+												 wtLevel, mmtLevel,
+												 qRange.getSp(), qRange.getEp(),
+												 saveArray, validation, printFlag);
+			BOOST_LOG_TRIVIAL(info) << "##################################################";
+		}
+	}
+	//////////////////////////////
+
+	return nullptr;
+}
+
+// ##################################################
+
+// ##################################################
+// # Test Body for Sequencial Between
 template <typename value_type>
 pArray test_body_seq_se_between(_pFuncGetSourceArray_,
 								_pFuncGetSourceArrayDesc_,
 								eleDefault wtLevel, eleDefault mmtLevel,
-								coor sp, coor ep, bool printFlag)
+								coor sp, coor ep,
+								bool saveArray = true, bool validation = true, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Get Source Array
 	std::vector<pArray> sourceArr;
-	getSourceArrayIfEmpty(sourceArr);
-	sourceArr[0]->setId(sourceArr[0]->getId() + 3);
+	if (saveArray)
+	{
+		getSourceArrayIfEmpty(sourceArr);
+	} else
+	{
+		getSourceArrayDesc(sourceArr);
+	}
+	sourceArr[0]->setId(sourceArr[0]->getId() + se_array_id);
 	//////////////////////////////
 
 	//////////////////////////////
 	// 02. Between
 	auto outArr = exe_qbundle_seq_se_between<value_type>(sourceArr,
 														 sp, ep,
-														 wtLevel, mmtLevel, printFlag);
+														 wtLevel, mmtLevel,
+														 saveArray, printFlag);
 	//////////////////////////////
 
 	return outArr;
@@ -42,21 +160,29 @@ pArray test_body_seq_se_between(_pFuncGetSourceArray_,
 template <typename value_type>
 pArray test_body_seq_spiht_between(_pFuncGetSourceArray_,
 								   _pFuncGetSourceArrayDesc_,
-								   eleDefault wtLevel, eleDefault mmtLevel,
-								   coor sp, coor ep, bool printFlag)
+								   eleDefault wtLevel,
+								   coor sp, coor ep,
+								   bool saveArray = true, bool validation = true, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Get Source Array
 	std::vector<pArray> sourceArr;
-	getSourceArrayIfEmpty(sourceArr);
-	sourceArr[0]->setId(sourceArr[0]->getId() + 3);
+	if (saveArray)
+	{
+		getSourceArrayIfEmpty(sourceArr);
+	} else
+	{
+		getSourceArrayDesc(sourceArr);
+	}
+	sourceArr[0]->setId(sourceArr[0]->getId() + spiht_array_id);
 	//////////////////////////////
 
 	//////////////////////////////
 	// 02. Between
 	auto outArr = exe_qbundle_seq_spiht_between<value_type>(sourceArr,
 															sp, ep,
-															wtLevel, mmtLevel, printFlag);
+															wtLevel,
+															saveArray, printFlag);
 	//////////////////////////////
 
 	return outArr;
@@ -65,25 +191,32 @@ pArray test_body_seq_spiht_between(_pFuncGetSourceArray_,
 template <typename value_type>
 pArray test_body_seq_load_between(_pFuncGetSourceArray_,
 								  _pFuncGetSourceArrayDesc_,
-								  eleDefault wtLevel, eleDefault mmtLevel,
-								  coor sp, coor ep, bool printFlag)
+								  coor sp, coor ep,
+								  bool saveArray = true, bool validation = true, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Get Source Array
 	std::vector<pArray> sourceArr;
-	getSourceArrayIfEmpty(sourceArr);
-	sourceArr[0]->setId(sourceArr[0]->getId() + 3);
+	if (saveArray)
+	{
+		getSourceArrayIfEmpty(sourceArr);
+	} else
+	{
+		getSourceArrayDesc(sourceArr);
+	}
+	sourceArr[0]->setId(sourceArr[0]->getId());
 	//////////////////////////////
 
 	//////////////////////////////
 	// 02. Between
 	auto outArr = exe_qbundle_seq_load_between<value_type>(sourceArr,
-															sp, ep,
-															wtLevel, mmtLevel, printFlag);
+														   sp, ep,
+														   saveArray, printFlag);
 	//////////////////////////////
 
 	return outArr;
 }
+// ##################################################
 
 //////////////////////////////
 // qBundles
@@ -93,15 +226,18 @@ pArray exe_qbundle_seq_se_between(_vectorSourceArray_,
 								  coor sp, coor ep,
 								  eleDefault wtLevel,
 								  eleDefault mmtLevel,
-								  bool printFlag = false)
+								  bool saveArray = true, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Save Source Array
-	exe_qry_ind_mmt_build<value_type>(sourceArr, mmtLevel, false);
-	exe_qry_ind_se_compression<value_type>(sourceArr, wtLevel, mmtLevel, false);
+	if (saveArray)
+	{
+		exe_qry_ind_mmt_build<value_type>(sourceArr, mmtLevel, printFlag);
+		exe_qry_ind_se_compression<value_type>(sourceArr, wtLevel, mmtLevel, printFlag);
+	}
 
 	//////////////////////////////
-	// 02. Index Filter Array
+	// 02. Between
 	return exe_qry_seq_se_between<value_type>(sourceArr,
 											  sp, ep,
 											  wtLevel, mmtLevel,
@@ -113,18 +249,20 @@ template <typename value_type>
 pArray exe_qbundle_seq_spiht_between(_vectorSourceArray_,
 									 coor sp, coor ep,
 									 eleDefault wtLevel,
-									 eleDefault mmtLevel,
-									 bool printFlag = false)
+									 bool saveArray = true, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Save Source Array
-	exe_qry_ind_spiht_encode<value_type>(sourceArr, wtLevel, false);
+	if (saveArray)
+	{
+		exe_qry_ind_spiht_encode<value_type>(sourceArr, wtLevel, printFlag);
+	}
 
 	//////////////////////////////
-	// 02. Index Filter Array
+	// 02. Between
 	return exe_qry_seq_spiht_between<value_type>(sourceArr,
 												 sp, ep,
-												 wtLevel, mmtLevel,
+												 wtLevel,
 												 printFlag);
 	//////////////////////////////
 }
@@ -132,19 +270,19 @@ pArray exe_qbundle_seq_spiht_between(_vectorSourceArray_,
 template <typename value_type>
 pArray exe_qbundle_seq_load_between(_vectorSourceArray_,
 									coor sp, coor ep,
-									eleDefault wtLevel,
-									eleDefault mmtLevel,
-									bool printFlag = false)
+									bool saveArray = true, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Save Source Array
-	exe_qry_ind_save<value_type>(sourceArr, false);
+	if (saveArray)
+	{
+		exe_qry_ind_save<value_type>(sourceArr, false);
+	}
 
 	//////////////////////////////
-	// 02. Index Filter Array
+	// 02. Between
 	return exe_qry_seq_load_between<value_type>(sourceArr,
 												sp, ep,
-												wtLevel, mmtLevel,
 												printFlag);
 	//////////////////////////////
 }
@@ -167,39 +305,39 @@ pArray exe_qry_seq_se_between(_vectorSourceArray_,
 	auto betweenPlan = getBetweenPlan(deltaDecodePlan, sp, ep, qry);
 
 	auto outArr = seDecompPlan->getAction()->execute(sourceArr, qry);
-	//outArr->getChunkBitmap()->print();
 	if (printFlag)
 	{
-		std::cout << "##############################" << std::endl;
-		std::cout << "Se Decomp Arr" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "Se Decomp Arr" << std::endl;
 		outArr->print();
+		//outArr->getChunkBitmap()->print();
 	}
 
 	outArr = wtDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
-	//outArr->getChunkBitmap()->print();
 	if (printFlag)
 	{
-		std::cout << "##############################" << std::endl;
-		std::cout << "Wt Decode Arr" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "Wt Decode Arr" << std::endl;
 		outArr->print();
+		//outArr->getChunkBitmap()->print();
 	}
 
 	outArr = deltaDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
-	//outArr->getChunkBitmap()->print();
 	if (printFlag)
 	{
-		std::cout << "##############################" << std::endl;
-		std::cout << "Delta Decode Arr" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "Delta Decode Arr" << std::endl;
 		outArr->print();
+		//outArr->getChunkBitmap()->print();
 	}
 
 	outArr = betweenPlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
-	//outArr->getChunkBitmap()->print();
 	if (printFlag)
 	{
-		std::cout << "##############################" << std::endl;
-		std::cout << "Between Arr" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "Between Arr" << std::endl;
 		outArr->print();
+		//outArr->getChunkBitmap()->print();
 	}
 
 	tearDownQuery(qry);
@@ -211,7 +349,6 @@ template <typename value_type>
 pArray exe_qry_seq_spiht_between(_vectorSourceArray_,
 								 coor sp, coor ep,
 								 eleDefault wtLevel,
-								 eleDefault mmtLevel,
 								 bool printFlag = false)
 {
 	pQuery qry = std::make_shared<query>();
@@ -221,30 +358,30 @@ pArray exe_qry_seq_spiht_between(_vectorSourceArray_,
 	auto betweenPlan = getBetweenPlan(wtDecodePlan, sp, ep, qry);
 
 	auto outArr = spihtPlan->getAction()->execute(sourceArr, qry);
-	outArr->getChunkBitmap()->print();
 	if (printFlag)
 	{
-		std::cout << "##############################" << std::endl;
-		std::cout << "Se Decomp Arr" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "Se Decomp Arr" << std::endl;
 		outArr->print();
+		//outArr->getChunkBitmap()->print();
 	}
 
 	outArr = wtDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
-	outArr->getChunkBitmap()->print();
 	if (printFlag)
 	{
-		std::cout << "##############################" << std::endl;
-		std::cout << "Wt Decode Arr" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "Wt Decode Arr" << std::endl;
 		outArr->print();
+		//outArr->getChunkBitmap()->print();
 	}
 
 	outArr = betweenPlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
-	//outArr->getChunkBitmap()->print();
 	if (printFlag)
 	{
-		std::cout << "##############################" << std::endl;
-		std::cout << "Between Arr" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "Between Arr" << std::endl;
 		outArr->print();
+		//outArr->getChunkBitmap()->print();
 	}
 
 	tearDownQuery(qry);
@@ -255,8 +392,6 @@ pArray exe_qry_seq_spiht_between(_vectorSourceArray_,
 template <typename value_type>
 pArray exe_qry_seq_load_between(_vectorSourceArray_,
 								coor sp, coor ep,
-								eleDefault wtLevel,
-								eleDefault mmtLevel,
 								bool printFlag = false)
 {
 	pQuery qry = std::make_shared<query>();
@@ -267,18 +402,19 @@ pArray exe_qry_seq_load_between(_vectorSourceArray_,
 	auto outArr = loadPlan->getAction()->execute(sourceArr, qry);
 	if (printFlag)
 	{
-		std::cout << "##############################" << std::endl;
-		std::cout << "Load Arr" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "Load Arr" << std::endl;
 		outArr->print();
+		//outArr->getChunkBitmap()->print();
 	}
 
 	outArr = betweenPlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
-	//outArr->getChunkBitmap()->print();
 	if (printFlag)
 	{
-		std::cout << "##############################" << std::endl;
-		std::cout << "Between Arr" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "Between Arr" << std::endl;
 		outArr->print();
+		//outArr->getChunkBitmap()->print();
 	}
 
 	tearDownQuery(qry);

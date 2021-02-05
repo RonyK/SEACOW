@@ -96,7 +96,7 @@ TEST(query_op_index_filter, star1024x1024_seq_se_index_filter)
 											  value, saveArray, validation, printFlag);
 }	// TEST()
 
-TEST(query_op_index_filter, star1024x1024_seq_random_load_naive_filter)
+TEST(experiment_query_op_index_filter, star1024x1024_seq_random_load_naive_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
@@ -107,7 +107,7 @@ TEST(query_op_index_filter, star1024x1024_seq_random_load_naive_filter)
 													   numTests, saveArray, validation, printFlag);
 }	// TEST()
 
-TEST(query_op_index_filter, star1024x1024_seq_random_spiht_naive_filter)
+TEST(experiment_query_op_index_filter, star1024x1024_seq_random_spiht_naive_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
@@ -118,7 +118,7 @@ TEST(query_op_index_filter, star1024x1024_seq_random_spiht_naive_filter)
 														numTests, saveArray, validation, printFlag);
 }	// TEST()
 
-TEST(query_op_index_filter, star1024x1024_seq_random_se_index_filter)
+TEST(experiment_query_op_index_filter, star1024x1024_seq_random_se_index_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
@@ -168,7 +168,7 @@ TEST(query_op_index_filter, saturn1024x1024_seq_se_index_filter)
 											  value, saveArray, validation, printFlag);
 }	// TEST()
 
-TEST(query_op_index_filter, saturn1024x1024_seq_random_load_naive_filter)
+TEST(experiment_query_op_index_filter, saturn1024x1024_seq_random_load_naive_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
@@ -179,7 +179,7 @@ TEST(query_op_index_filter, saturn1024x1024_seq_random_load_naive_filter)
 													   numTests, saveArray, validation, printFlag);
 }	// TEST()
 
-TEST(query_op_index_filter, saturn1024x1024_seq_random_spiht_naive_filter)
+TEST(experiment_query_op_index_filter, saturn1024x1024_seq_random_spiht_naive_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
@@ -190,7 +190,7 @@ TEST(query_op_index_filter, saturn1024x1024_seq_random_spiht_naive_filter)
 														numTests, saveArray, validation, printFlag);
 }	// TEST()
 
-TEST(query_op_index_filter, saturn1024x1024_seq_random_se_index_filter)
+TEST(experiment_query_op_index_filter, saturn1024x1024_seq_random_se_index_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
@@ -240,7 +240,7 @@ TEST(query_op_index_filter, solar1024x1024_seq_se_index_filter)
 											  value, saveArray, validation, printFlag);
 }	// TEST()
 
-TEST(query_op_index_filter, solar1024x1024_seq_random_load_naive_filter)
+TEST(experiment_query_op_index_filter, solar1024x1024_seq_random_load_naive_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
@@ -251,7 +251,7 @@ TEST(query_op_index_filter, solar1024x1024_seq_random_load_naive_filter)
 													   numTests, saveArray, validation, printFlag);
 }	// TEST()
 
-TEST(query_op_index_filter, solar1024x1024_seq_random_spiht_naive_filter)
+TEST(experiment_query_op_index_filter, solar1024x1024_seq_random_spiht_naive_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
@@ -262,7 +262,7 @@ TEST(query_op_index_filter, solar1024x1024_seq_random_spiht_naive_filter)
 														numTests, saveArray, validation, printFlag);
 }	// TEST()
 
-TEST(query_op_index_filter, solar1024x1024_seq_random_se_index_filter)
+TEST(experiment_query_op_index_filter, solar1024x1024_seq_random_se_index_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
@@ -312,7 +312,7 @@ TEST(query_op_index_filter, mars4096x2048_seq_se_index_filter)
 											  value, saveArray, validation, printFlag);
 }	// TEST()
 
-TEST(query_op_index_filter, mars4096x2048_seq_random_load_naive_filter)
+TEST(experiment_query_op_index_filter, mars4096x2048_seq_random_load_naive_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
@@ -323,7 +323,7 @@ TEST(query_op_index_filter, mars4096x2048_seq_random_load_naive_filter)
 													   numTests, saveArray, validation, printFlag);
 }	// TEST()
 
-TEST(query_op_index_filter, mars4096x2048_seq_random_spiht_naive_filter)
+TEST(experiment_query_op_index_filter, mars4096x2048_seq_random_spiht_naive_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
@@ -334,7 +334,7 @@ TEST(query_op_index_filter, mars4096x2048_seq_random_spiht_naive_filter)
 														numTests, saveArray, validation, printFlag);
 }	// TEST()
 
-TEST(query_op_index_filter, mars4096x2048_seq_random_se_index_filter)
+TEST(experiment_query_op_index_filter, mars4096x2048_seq_random_se_index_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;

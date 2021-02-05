@@ -172,7 +172,13 @@ pArray test_body_seq_load_naive_filter(_pFuncGetSourceArray_,
 	//////////////////////////////
 	// 01. Get Source Array
 	std::vector<pArray> sourceArr;
-	getSourceArrayIfEmpty(sourceArr);
+	if (saveArray)
+	{
+		getSourceArrayIfEmpty(sourceArr);
+	} else
+	{
+		getSourceArrayDesc(sourceArr);
+	}
 	//////////////////////////////
 
 	//////////////////////////////
@@ -204,7 +210,13 @@ pArray test_body_seq_load_index_filter(_pFuncGetSourceArray_,
 	//////////////////////////////
 	// 01. Get Source Array
 	std::vector<pArray> sourceArr;
-	getSourceArrayIfEmpty(sourceArr);
+	if (saveArray)
+	{
+		getSourceArrayIfEmpty(sourceArr);
+	} else
+	{
+		getSourceArrayDesc(sourceArr);
+	}
 	//////////////////////////////
 
 	//////////////////////////////
@@ -250,7 +262,13 @@ pArray test_body_seq_spiht_index_filter(_pFuncGetSourceArray_,
 	//////////////////////////////
 	// 01. Get Source Array
 	std::vector<pArray> sourceArr;
-	getSourceArrayIfEmpty(sourceArr);
+	if (saveArray)
+	{
+		getSourceArrayIfEmpty(sourceArr);
+	} else
+	{
+		getSourceArrayDesc(sourceArr);
+	}
 	sourceArr[0]->setId(sourceArr[0]->getId() + spiht_array_id);
 	//////////////////////////////
 
