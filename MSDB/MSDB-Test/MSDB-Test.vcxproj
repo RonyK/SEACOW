@@ -54,8 +54,8 @@
     <ClInclude Include="test\index\test_qry_mmt.h" />
     <ClInclude Include="test\io\test_action_io.h" />
     <ClInclude Include="test\pch.h" />
-    <ClInclude Include="test\test\op\between\testBetween.h" />
-    <ClInclude Include="test\test\op\filter\testFilter.h" />
+    <ClInclude Include="test\query\op\between\test_body_between.h" />
+    <ClInclude Include="test\query\op\filter\test_body_filter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test\array\testArray.cpp" />
@@ -91,8 +91,8 @@
     <ClCompile Include="test\query\op\delta_encode\test_delta_encode.cpp" />
     <ClCompile Include="test\query\op\index_filter\test_index_filter.cpp" />
     <ClCompile Include="test\query\op\zip_save_load\test_zip_save_load.cpp" />
-    <ClCompile Include="test\test\op\between\testBetween.cpp" />
-    <ClCompile Include="test\test\op\filter\testFilter.cpp" />
+    <ClCompile Include="test\query\op\between\test_body_between.cpp" />
+    <ClCompile Include="test\query\op\filter\test_body_filter.cpp" />
     <ClCompile Include="test\query\op\naive_filter\test_naive_filter.cpp" />
     <ClCompile Include="test\query\op\save\test_save_load.cpp" />
     <ClCompile Include="test\query\op\mmt_build\test_mmt_build.cpp" />

@@ -1,5 +1,5 @@
 #include <pch.h>
-#include <test/op/filter/testFilter.h>
+#include <query/op/filter/test_body_filter.h>
 
 namespace msdb
 {

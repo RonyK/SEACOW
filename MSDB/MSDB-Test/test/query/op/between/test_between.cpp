@@ -3,7 +3,7 @@
 #include <op/between/between_plan.h>
 #include <op/between/between_action.h>
 
-#include <test/op/between/testBetween.h>
+#include <query/op/between/test_body_between.h>
 
 namespace msdb
 {

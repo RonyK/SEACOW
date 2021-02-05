@@ -32,7 +32,6 @@
     <ClCompile Include="test\dummy\dummy_astronomy.cpp" />
     <ClCompile Include="test\query\op\spiht_encode_decode\test_spiht_encode_decode.cpp" />
     <ClCompile Include="test\query\op\save\test_save_load.cpp" />
-    <ClCompile Include="test\test\op\filter\testFilter.cpp" />
     <ClCompile Include="test\query\op\index_filter\test_index_filter.cpp" />
     <ClCompile Include="test\query\op\naive_filter\test_naive_filter.cpp" />
     <ClCompile Include="test\dummy\opArrayDummy.cpp" />
@@ -42,7 +41,6 @@
     <ClCompile Include="test\index\test_action_mmt.cpp" />
     <ClCompile Include="test\io\test_action_io.cpp" />
     <ClCompile Include="test\query\op\between\test_between.cpp" />
-    <ClCompile Include="test\test\op\between\testBetween.cpp" />
     <ClCompile Include="test\util\testMath.cpp" />
     <ClCompile Include="test\index\testMMT.cpp" />
     <ClCompile Include="test\main.cpp" />
@@ -50,6 +48,8 @@
     <ClCompile Include="test\compression\test_qry_compass.h" />
     <ClCompile Include="test\compression\getOpCompression.cpp" />
     <ClCompile Include="test\query\op\zip_save_load\test_zip_save_load.cpp" />
+    <ClCompile Include="test\query\op\between\test_body_between.cpp" />
+    <ClCompile Include="test\query\op\filter\test_body_filter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">
@@ -57,7 +57,6 @@
     </ClInclude>
     <ClInclude Include="test\pch.h" />
     <ClInclude Include="test\dummy\dummy_astronomy.h" />
-    <ClInclude Include="test\test\op\filter\testFilter.h" />
     <ClInclude Include="test\dummy\opArrayDummy.h" />
     <ClInclude Include="test\dummy\opPlanDummy.h" />
     <ClInclude Include="test\dummy\opDummy.h" />
@@ -67,9 +66,10 @@
     <ClInclude Include="test\index\test_qry_mmt.h" />
     <ClInclude Include="test\index\test_action_mmt.h" />
     <ClInclude Include="test\io\test_action_io.h" />
-    <ClInclude Include="test\test\op\between\testBetween.h" />
     <ClInclude Include="test\compression\getOpCompression.h" />
     <ClInclude Include="test\compression\test_qry_zip.h" />
+    <ClInclude Include="test\query\op\between\test_body_between.h" />
+    <ClInclude Include="test\query\op\filter\test_body_filter.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="test">
