@@ -17,7 +17,7 @@ namespace msdb
 
 		// Create WTIterator
 		msdb::waveletIterator<int, double> it(data, sizeof(d) / sizeof(int), d);
-		it.setMaxLevel(1);
+		it.setLevel(1);
 
 		auto bsP = it.getBandStartPoint();
 		auto beP = it.getBandEndPoint();
@@ -142,7 +142,7 @@ namespace msdb
 
 		// Create WTIterator
 		waveletIterator<int, double> it(data, sizeof(d) / sizeof(int), d);
-		it.setMaxLevel(maxLevel);
+		it.setLevel(maxLevel);
 		it.setCurLevel(1, false);
 		it.setCurBand(0, false);
 

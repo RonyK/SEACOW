@@ -33,7 +33,10 @@ private:
 	template <typename Ty_>
 	void decompressAttribute(std::shared_ptr<wavelet_encode_array>outArr, pAttributeDesc attrDesc, pQuery qry)
 	{
-		size_t currentThreadId = 0;
+		//========================================//
+		qry->getTimer()->nextWork(0, workType::COMPUTING);
+		//----------------------------------------//
+
 		auto outArrId = outArr->getId();
 		auto attrId = attrDesc->id_;
 		auto arrIndex = arrayMgr::instance()->getAttributeIndex(outArrId, attrId);
@@ -44,7 +47,11 @@ private:
 		auto mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
 		auto cit = outArr->getChunkIterator(iterateMode::ALL);
 
+		//----------------------------------------//
 		qry->getTimer()->nextWork(0, workType::PARALLEL);
+		//----------------------------------------//
+
+		size_t currentThreadId = 0;
 		this->threadCreate(_MSDB_ACTION_THREAD_NUM_);
 
 		while (!cit->isEnd())
@@ -55,26 +62,10 @@ private:
 				chunkId cid = cit->seqPos();
 				coor chunkCoor = cit->coor();
 				auto inChunk = this->makeInChunk(outArr, attrDesc, cid, chunkCoor);
-
-				auto blockBitmap = this->getPlanBlockBitmap(cid);
-				if (blockBitmap)
-				{
-					inChunk->copyBlockBitmap(blockBitmap);
-				} else
-				{
-					// If there were no bitmap, set all blocks as true.
-					inChunk->replaceBlockBitmap(std::make_shared<bitmap>(inChunk->getBlockCapacity(), true));
-				}
-				inChunk->makeAllBlocks();
-				inChunk->setLevel(outArr->getMaxLevel());
-
 				auto outChunk = outArr->makeChunk(*inChunk->getDesc());
-
-				//io_service_->post(boost::bind(&bindTestFunc, 100));
 
 				io_service_->post(boost::bind(&se_decompression_action::decompressChunk<Ty_>, this,
 								  std::static_pointer_cast<wtChunk>(outChunk), inChunk, qry, outArr, attrId, mmtIndex, currentThreadId));
-				//boost::asio::post(pool, decompressChunk, );
 			}
 
 			++(*cit);
@@ -83,7 +74,9 @@ private:
 		this->threadStop();
 		this->threadJoin();
 
+		//----------------------------------------//
 		qry->getTimer()->nextWork(0, workType::COMPUTING);
+		//========================================//
 	}
 
 	template <typename Ty_>
@@ -91,37 +84,54 @@ private:
 						 std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex, const size_t parentThreadId)
 	{
 		auto threadId = getThreadId();
-		qry->getTimer()->nextJob(threadId, this->name(), workType::COMPUTING);
 
-		auto maxLevel = outArr->getMaxLevel();
-		arrayId arrId = outArr->getId();
-
-		bool hasNegative = false;
-		if ((Ty_)-1 < 0)
+		try
 		{
-			hasNegative = true;
+			//========================================//
+			qry->getTimer()->nextJob(threadId, this->name(), workType::COMPUTING);
+			//----------------------------------------//
+			auto maxLevel = outArr->getMaxLevel();
+			arrayId arrId = outArr->getId();
+
+			bool hasNegative = false;
+			if ((Ty_)-1 < 0)
+			{
+				hasNegative = true;
+			}
+
+			// TODO::Create se_compression_array, seChunk
+			// Make seChunk in se_compression_array
+			this->requiredBitsFindingForChunk(inChunk, mmtIndex, maxLevel, hasNegative);
+
+			//----------------------------------------//
+			qry->getTimer()->nextWork(threadId, workType::IO);
+			//----------------------------------------//
+
+			pSerializable serialChunk
+				= std::static_pointer_cast<serializable>(inChunk);
+			storageMgr::instance()->loadChunk(arrId, attrId, inChunk->getId(),
+											  serialChunk);
+
+			//----------------------------------------//
+			qry->getTimer()->nextWork(threadId, workType::COMPUTING);
+			//----------------------------------------//
+
+			outChunk->setLevel(inChunk->getLevel());
+			outChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
+			outChunk->makeBlocks();
+			outChunk->bufferCopy(inChunk);
+		} catch (std::exception& e)
+		{
+			BOOST_LOG_TRIVIAL(error) << "Exception occured in a thread(" << threadId << " while it executes decompressChunk()";
+			BOOST_LOG_TRIVIAL(error) << e.what();
+		} catch (...)
+		{
+			BOOST_LOG_TRIVIAL(error) << "Unknown exception occured in a thread(" << threadId << " while it executes decompressChunk()";
 		}
 
-		// TODO::Create se_compression_array, seChunk
-		// Make seChunk in se_compression_array
-		this->requiredBitsFindingForChunk(inChunk, mmtIndex, maxLevel, hasNegative);
-		//========================================//
-		qry->getTimer()->nextWork(threadId, workType::IO);
-		pSerializable serialChunk
-			= std::static_pointer_cast<serializable>(inChunk);
-		storageMgr::instance()->loadChunk(arrId, attrId, inChunk->getId(),
-										  serialChunk);
-
-		//========================================//
-		qry->getTimer()->nextWork(threadId, workType::COMPUTING);
-
-		
-		outChunk->setLevel(inChunk->getLevel());
-		outChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
-		outChunk->makeBlocks(*inChunk->getBlockBitmap());
-		outChunk->bufferRef(inChunk);
-
+		//----------------------------------------//
 		qry->getTimer()->pause(threadId);
+		//========================================//
 	}
 
 	template <typename Ty_>

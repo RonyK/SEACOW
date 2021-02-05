@@ -791,7 +791,7 @@ public:
 	}
 
 public:
-	void setMaxLevel(size_t maxLevel);
+	void setLevel(size_t maxLevel);
 
 private:
 	std::list<size_t> LIP_;

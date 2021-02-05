@@ -34,7 +34,7 @@ void spihtChunk::initBufferZero()
 //			this->desc_->mSize_		// mSize
 //			));
 //		pSpihtBlock spBlock = std::static_pointer_cast<spihtBlock>(this->block_);
-//		spBlock->setMaxLevel(this->maxLevel_);
+//		spBlock->setLevel(this->maxLevel_);
 //	}
 //}
 
@@ -51,7 +51,7 @@ pBlock spihtChunk::makeBlock(const blockId bId)
 		desc->mSize_ = desc->mSize_;
 		desc->mOffset_ = 0;
 		auto blockObj = std::make_shared<spihtBlock>(desc);
-		blockObj->setMaxLevel(this->maxLevel_);
+		blockObj->setLevel(this->maxLevel_);
 		this->insertBlock(blockObj);
 		return blockObj;
 	//}
@@ -153,9 +153,5 @@ void spihtChunk::deserialize(std::istream& is)
 	default:
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 	}
-}
-void spihtChunk::setMaxLevel(size_t maxLevel)
-{
-	this->maxLevel_ = maxLevel;
 }
 }	// msdb

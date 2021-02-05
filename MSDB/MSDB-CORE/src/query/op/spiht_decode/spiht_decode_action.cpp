@@ -40,7 +40,7 @@ pArray spiht_decode_action::execute(std::vector<pArray>& inputArrays, pQuery qry
 	}
 
 	auto outArr = std::make_shared<wavelet_encode_array>(this->getArrayDesc());
-	outArr->setMaxLevel(maxLevel);
+	outArr->setLevel(maxLevel);
 	outArr->setOrigianlChunkDims(originalChunkDims);
 	outArr->copyChunkBitmap(planBitmap);
 
@@ -57,13 +57,15 @@ pArray spiht_decode_action::execute(std::vector<pArray>& inputArrays, pQuery qry
 void spiht_decode_action::decodeAttribute(std::shared_ptr<wavelet_encode_array> outArr, 
 										  pAttributeDesc attrDesc, pQuery qry)
 {
-	// TODO::Change to ALL->EXIST
 	auto cit = outArr->getChunkIterator(iterateMode::ALL);
 	auto attrId = attrDesc->id_;
 
+	//========================================//
 	qry->getTimer()->nextWork(0, workType::PARALLEL);
-	this->threadCreate(_MSDB_ACTION_THREAD_NUM_);
+	//----------------------------------------//
+
 	size_t currentThreadId = 0;
+	this->threadCreate(_MSDB_ACTION_THREAD_NUM_);
 
 	while (!cit->isEnd())
 	{
@@ -72,25 +74,12 @@ void spiht_decode_action::decodeAttribute(std::shared_ptr<wavelet_encode_array> 
 			chunkId cid = cit->seqPos();
 
 			auto inChunk = this->makeInChunk(outArr, attrDesc, cid);
-			auto blockBitmap = this->getPlanBlockBitmap(cid);
-			if (blockBitmap)
-			{
-				inChunk->copyBlockBitmap(blockBitmap);
-			} else
-			{
-				// If there were no bitmap, set all blocks as true.
-				inChunk->replaceBlockBitmap(std::make_shared<bitmap>(inChunk->getBlockCapacity(), true));
-			}
-			inChunk->makeAllBlocks();
-			inChunk->setMaxLevel(outArr->getMaxLevel());
-
 			auto outChunk = outArr->makeChunk(*inChunk->getDesc());
 			auto wtOutChunk = std::static_pointer_cast<wtChunk>(outChunk);
 			wtOutChunk->setLevel(outArr->getMaxLevel());
 
 			io_service_->post(boost::bind(&spiht_decode_action::decompressChunk, this,
 							  wtOutChunk, inChunk, qry, outArr->getId(), attrId, currentThreadId));
-			//this->decompressChunk(wtOutChunk, inChunk, qry, outArr->getId(), attrId, currentThreadId);
 		}
 
 		++(*cit);
@@ -98,6 +87,10 @@ void spiht_decode_action::decodeAttribute(std::shared_ptr<wavelet_encode_array> 
 
 	this->threadStop();
 	this->threadJoin();
+
+	//----------------------------------------//
+	qry->getTimer()->nextWork(0, workType::COMPUTING);
+	//========================================//
 }
 
 void spiht_decode_action::decompressChunk(pWtChunk outChunk, pSpihtChunk inChunk, pQuery qry, 
@@ -105,42 +98,55 @@ void spiht_decode_action::decompressChunk(pWtChunk outChunk, pSpihtChunk inChunk
 {
 	auto threadId = getThreadId();
 
-	//========================================//
-	qry->getTimer()->nextJob(threadId, this->name(), workType::IO);
-	//----------------------------------------//
-
 	try
 	{
+		//========================================//
+		qry->getTimer()->nextJob(threadId, this->name(), workType::IO);
+		//----------------------------------------//
+		
 		pSerializable serialChunk
 			= std::static_pointer_cast<serializable>(inChunk);
 
 		storageMgr::instance()->loadChunk(arrId, attrId, inChunk->getId(), serialChunk);
 
-		//========================================//
+		//----------------------------------------//
 		qry->getTimer()->nextWork(threadId, workType::COMPUTING);
 		//----------------------------------------//
 
+		outChunk->setLevel(inChunk->getLevel());
 		outChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
-		outChunk->makeAllBlocks();
+		outChunk->makeBlocks();
 		outChunk->bufferCopy(inChunk);	// If ref bitmap from inChunk, it might be deleted in 'inChunk' when it destroied.
 	}catch(std::exception &e)
 	{
-		BOOST_LOG_TRIVIAL(error) << "Exception occured in a thread(" << threadId << " while it executes decompressChunk()" << std::endl;
-		BOOST_LOG_TRIVIAL(error) << e.what() << std::endl;
-
-		std::cout << "Exception occured in a thread(" << threadId << " while it executes decompressChunk()" << std::endl;
-		std::cout << e.what() << std::endl;
+		BOOST_LOG_TRIVIAL(error) << "Exception occured in a thread(" << threadId << " while it executes decompressChunk()";
+		BOOST_LOG_TRIVIAL(error) << e.what();
 	}catch(...)
 	{
-		BOOST_LOG_TRIVIAL(error) << "Unknown exception occured in a thread(" << threadId << " while it executes decompressChunk()" << std::endl;
-
-		std::cout << "Unknown exception occured in a thread(" << threadId << " while it executes decompressChunk()" << std::endl;
+		BOOST_LOG_TRIVIAL(error) << "Unknown exception occured in a thread(" << threadId << " while it executes decompressChunk()";
 	}
+
+	//----------------------------------------//
 	qry->getTimer()->pause(threadId);
+	//========================================//
 }
 
 pSpihtChunk spiht_decode_action::makeInChunk(std::shared_ptr<wavelet_encode_array> arr, pAttributeDesc attrDesc, chunkId cid)
 {
-	return std::make_shared<spihtChunk>(arr->getChunkDesc(attrDesc->id_, cid));
+	auto inChunk = std::make_shared<spihtChunk>(arr->getChunkDesc(attrDesc->id_, cid));
+	auto blockBitmap = this->getPlanBlockBitmap(cid);
+	if (blockBitmap)
+	{
+		inChunk->copyBlockBitmap(blockBitmap);
+	} else
+	{
+		// If there were no bitmap, set all blocks as true.
+		inChunk->replaceBlockBitmap(std::make_shared<bitmap>(inChunk->getBlockCapacity(), true));
+	}
+
+	inChunk->setLevel(arr->getMaxLevel());
+	inChunk->makeBlocks();
+
+	return inChunk;
 }
 }

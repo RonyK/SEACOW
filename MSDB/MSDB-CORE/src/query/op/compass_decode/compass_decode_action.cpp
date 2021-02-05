@@ -53,7 +53,6 @@ void compass_decode_action::decodeAttribute(pArray outArr, pAttributeDesc attrDe
 			chunkId cid = cit->seqPos();
 
 			auto inChunk = this->makeInChunk(outArr, attrDesc, cid, numBins);
-			
 
 			//========================================//
 			qry->getTimer()->nextWork(0, workType::IO);

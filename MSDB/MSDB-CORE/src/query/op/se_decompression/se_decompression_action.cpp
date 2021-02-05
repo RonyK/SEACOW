@@ -21,6 +21,7 @@ pArray se_decompression_action::execute(std::vector<pArray>& inputArrays, pQuery
 
 	//========================================//
 	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
+	//----------------------------------------//
 
 	pStableElement ele = std::static_pointer_cast<stableElement>(this->params_[1]->getParam());
 	eleDefault maxLevel;
@@ -35,7 +36,7 @@ pArray se_decompression_action::execute(std::vector<pArray>& inputArrays, pQuery
 	}
 
 	auto outArr = std::make_shared<wavelet_encode_array>(arrDesc);
-	outArr->setMaxLevel(maxLevel);
+	outArr->setLevel(maxLevel);
 	outArr->setOrigianlChunkDims(originalChunkDims);
 	outArr->copyChunkBitmap(planBitmap);
 
@@ -75,6 +76,7 @@ pArray se_decompression_action::execute(std::vector<pArray>& inputArrays, pQuery
 		}
 	}
 
+	//----------------------------------------//
 	qry->getTimer()->pause(0);
 	//========================================//
 
@@ -98,12 +100,20 @@ pSeChunk se_decompression_action::makeInChunk(std::shared_ptr<wavelet_encode_arr
 	auto outDesc = std::make_shared<chunkDesc>(cid, std::make_shared<attributeDesc>(*attrDesc),
 											   chunkDims, blockDims,
 											   sp, ep, mSize);
-	pSeChunk outChunk = std::make_shared<seChunk>(outDesc);
-	outChunk->setLevel(arr->getMaxLevel());
-	//inChunk->setSourceChunkId(sourceChunkId);
-	outChunk->bufferAlloc();
-	outChunk->makeAllBlocks();
+	pSeChunk inChunk = std::make_shared<seChunk>(outDesc);
+	auto blockBitmap = this->getPlanBlockBitmap(cid);
+	if (blockBitmap)
+	{
+		inChunk->copyBlockBitmap(blockBitmap);
+	} else
+	{
+		// If there were no bitmap, set all blocks as true.
+		inChunk->replaceBlockBitmap(std::make_shared<bitmap>(inChunk->getBlockCapacity(), true));
+	}
 
-	return outChunk;
+	inChunk->setLevel(arr->getMaxLevel());
+	inChunk->makeBlocks();
+
+	return inChunk;
 }
 }	// msdb

@@ -71,9 +71,9 @@ void zip_load_action::loadChunk(pArray outArr, pChunk outChunk, pZipChunk inChun
 	qry->getTimer()->nextWork(0, workType::COMPUTING);
 	//----------------------------------------//
 
+	outChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
+	outChunk->makeBlocks();
 	outChunk->bufferCopy(inChunk);
-	outChunk->copyBlockBitmap(inChunk->getBlockBitmap());
-	outChunk->makeAllBlocks();
 }
 
 pZipChunk zip_load_action::makeInChunk(pArray inArr, pAttributeDesc attrDesc, chunkId cid)
@@ -89,7 +89,7 @@ pZipChunk zip_load_action::makeInChunk(pArray inArr, pAttributeDesc attrDesc, ch
 		// If there were no bitmap, set all blocks as true.
 		inChunk->replaceBlockBitmap(std::make_shared<bitmap>(inChunk->getBlockCapacity(), true));
 	}
-	inChunk->makeBlocks(*inChunk->getBlockBitmap());
+	inChunk->makeBlocks();
 
 	return inChunk;
 }

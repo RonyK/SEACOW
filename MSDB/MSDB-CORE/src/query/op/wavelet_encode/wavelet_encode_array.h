@@ -59,7 +59,7 @@ public:
 public:
 	size_t getMaxLevel();
 	dimension getOrigianlChunkDims();
-	void setMaxLevel(const size_t maxLevel);
+	void setLevel(const size_t maxLevel);
 	void setOrigianlChunkDims(const dimension originalChunkDims);
 
 private:
