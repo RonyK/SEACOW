@@ -57,90 +57,6 @@ public:
 	virtual void bufferRef(pChunk source);
 	bool isMaterialized() const;
 
-public:
-	bool operator == (const chunk& mit)
-	{
-		if(this->getId() != mit.getId())
-		{
-			BOOST_LOG_TRIVIAL(debug) << "Chunk IDs are different";
-			return false;
-		}
-
-		// TODO::Compare desc
-		if(this->desc_->mSize_ != mit.getDesc()->mSize_)
-		{
-			BOOST_LOG_TRIVIAL(debug) << "Chunk mSizes are different";
-			return false;
-		}
-		
-		auto n = memcmp(this->cached_->getReadData(), mit.cached_->getReadData(), this->desc_->mSize_);
-		if(n)
-		{
-			//BOOST_LOG_TRIVIAL(debug) << "Chunk data are different";
-			//{
-			//	auto lReadData = this->cached_->getReadData();
-
-			//	std::stringstream ss;
-			//	ss << std::hex;
-
-			//	for (int i = 0; i < this->desc_->mSize_; ++i)
-			//	{
-			//		ss << (int)(*((char*)lReadData + i)) << " ";
-			//	}
-
-			//	BOOST_LOG_TRIVIAL(debug) << ss.str();
-			//}
-			//
-			//BOOST_LOG_TRIVIAL(debug) << "==============================";
-			//
-			//{
-			//	auto rReadData = mit.cached_->getReadData();
-
-			//	std::stringstream ss;
-			//	ss << std::hex;
-
-			//	for (int i = 0; i < this->desc_->mSize_; ++i)
-			//	{
-			//		ss << (int)(*((char*)rReadData + i)) << " ";
-			//	}
-
-			//	BOOST_LOG_TRIVIAL(debug) << ss.str();
-			//}
-
-			auto lbItr = this->getBlockIterator();
-			//auto rbItr = mit.getBlockIterator();
-
-			//while (!lbItr->isEnd() && !rbItr->isEnd())
-			//{
-			//	auto liItr = (*lbItr)->getItemIterator();
-			//	auto riItr = (*rbItr)->getItemIterator();
-
-			//	while (!liItr->isEnd() && !riItr->isEnd())
-			//	{
-			//		Ty_ li = (**liItr).get<Ty_>();
-			//		Ty_ ri = (**riItr).get<Ty_>();
-
-			//		EXPECT_EQ(li, ri);
-
-			//		++(*liItr);
-			//		++(*riItr);
-			//	}
-
-			//	EXPECT_EQ(liItr->isEnd(), riItr->isEnd());
-
-			//	++(*lbItr);
-			//	++(*rbItr);
-			//}
-
-			//EXPECT_EQ(lbItr->isEnd(), rbItr->isEnd());
-			return false;
-		}
-
-		BOOST_LOG_TRIVIAL(debug) << "Chunks are same";
-
-		return true;
-	}
-
 protected:
 	pChunkBuffer getBuffer();
 
@@ -153,6 +69,7 @@ protected:
 public:
 	virtual pBlock makeBlock(const blockId bId) = 0;
 	virtual void makeBlocks(const bitmap& blockBitmap);
+	virtual void makeBlocks();
 	virtual void makeAllBlocks();
 	virtual void insertBlock(pBlock inBlock) = 0;
 	virtual void freeBlock(const blockId bid) = 0;

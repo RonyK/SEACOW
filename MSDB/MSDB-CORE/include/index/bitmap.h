@@ -23,11 +23,29 @@ public:
 	bitmap(const bitmap& mit);
 
 public:
-	bool isExist(const size_t seqPos) const;
-	void setExist(const size_t seqPos);
-	void setNull(const size_t seqPos);
+	inline bool isExist(const size_t seqPos) const
+	{
+		assert(seqPos < this->data_.size());
+		return this->data_[seqPos];
+	}
 
-	size_t getCapacity() const;
+	inline void setExist(const size_t seqPos)
+	{
+		assert(seqPos < this->data_.size());
+		this->data_[seqPos] = true;
+	}
+
+	inline void setNull(const size_t seqPos)
+	{
+		assert(seqPos < this->data_.size());
+		this->data_[seqPos] = false;
+	}
+
+	inline size_t getCapacity() const
+	{
+		return this->data_.size();
+	}
+
 	virtual bool isTree() const;
 
 	void andMerge(bitmap& mit);
@@ -39,18 +57,13 @@ public:
 	const bool& operator[](size_t seqPos) const;
 
 protected:
-	//inline size_t getSeqPos(const coor& pos) const;
-
-protected:
 	std::vector<bool> data_;
-	//coorItr it_;
 };
 
 class bitmapTree : public bitmap
 {
 public:
 	bitmapTree(const size_t capacity, const bool value = false);
-	//bitmapTree(const coor& space, const bool value = false);
 	bitmapTree(const bitmapTree& mit);
 
 public:
