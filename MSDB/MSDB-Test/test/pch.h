@@ -13,6 +13,7 @@
 #include <memory>
 #include <tuple>
 #include <string>
+#include <cstdlib>
 #include "gtest/gtest.h"
 
 #define _pFuncGetSourceArray_		void(*getSourceArrayIfEmpty)(std::vector<pArray>&)
@@ -29,3 +30,5 @@ static const int se_array_id = 2;
 static const int delta_spiht_array_id = 3;
 static const int spiht_array_id = 4;
 static const int compass_array_id = 5;
+
+static const int filterValueSeed = 210205;

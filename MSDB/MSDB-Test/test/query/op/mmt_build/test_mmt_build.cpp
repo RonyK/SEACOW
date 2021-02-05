@@ -2,6 +2,7 @@
 #include <index/test_action_mmt.h>
 
 #include <array/arrayMgr.h>
+#include <index/test_qry_mmt.h>
 #include <op/mmt_build/mmt_build_plan.h>
 #include <op/mmt_build/mmt_build_action.h>
 
@@ -9,29 +10,6 @@ namespace msdb
 {
 namespace caDummy
 {
-template <typename value_type>
-pArray test_body_mmt_build(_pFuncGetSourceArray_, eleDefault mmtLevel)
-{
-	bool printFlag = false;
-
-	std::vector<pArray> sourceArr;
-	getSourceArrayIfEmpty(sourceArr);
-	sourceArr[0]->setId(sourceArr[0]->getId() + 2);
-
-	auto arr_mmt_build = exe_act_ind_mmt_build(sourceArr, mmtLevel);
-
-	//EXPECT_TRUE(false);
-	return arr_mmt_build;
-}
-
-template <typename value_type>
-void print_mmt(pArray arr, attributeId attrId)
-{
-	auto attrIndex = arrayMgr::instance()->getAttributeIndex(arr->getId(), attrId);
-	auto myMMT = std::static_pointer_cast<MinMaxTreeImpl<position_t, value_type>>(attrIndex);
-	myMMT->print();
-}
-
 namespace data2D_sc4x4
 {
 TEST(query_op_mmt_build, mmt_build_sc4x4)
