@@ -51,6 +51,11 @@ public:
 	}
 
 public:
+	inline attrIndexType getType()
+	{
+		return attrIndexType::MMT;
+	}
+
 	// use function cause of unknown compile error
 	inline void inDelta(bstream& bs)
 	{

@@ -60,6 +60,12 @@ protected:
 		}
 
 	public:
+		inline attrIndexType getType()
+		{
+			return attrIndexType::MMT;
+		}
+
+	public:
 		//eleType dType_;	// dimension eType, not used, fixed now.
 		eleType eType_;		// element eType
 		size_type lowerLevel_;
@@ -1078,6 +1084,12 @@ public:
 		return true;
 	}
 
+public:
+	virtual attrIndexType getType() override
+	{
+		return attrIndexType::MMT;
+	}
+
 private:
 	const size_type TySize_;
 	const size_type TyBits_;
@@ -1093,6 +1105,7 @@ private:
 	std::vector<std::vector<pMmtNode>> nodes_;	// mmt
 	size_type blockLevel_;
 	size_type chunkLevel_;
+
 	/*
 	* Here is an example of a 'nodes_' with size 4 (has 0~3 levels).
 	*

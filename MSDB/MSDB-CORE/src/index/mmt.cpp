@@ -4,7 +4,7 @@
 namespace msdb
 {
 MinMaxTree::MinMaxTree(const eleType eType, size_const maxLevel)
-	: attributeIndex(attrIndexType::MMT), serializable(std::make_shared<mmtHeader>()),
+	: attributeIndex(), serializable(std::make_shared<mmtHeader>()),
 	eType_(eType), lowerLevel_(maxLevel)
 {
 
