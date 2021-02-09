@@ -135,6 +135,19 @@ void getCompassDecode(pArrayDesc sourceArrDesc, eleDefault numBins,
 	action = std::get<1>(planAction);
 	qry = std::get<2>(planAction);
 }
+
+void getCompassIndexBuild(pArrayDesc sourceArrDesc, eleDefault numBins,
+						  std::shared_ptr<compass_index_build_plan>& plan,
+						  std::shared_ptr<compass_index_build_action>& action,
+						  pQuery& qry)
+{
+	auto planAction = getLevelArrayParamOperator<compass_index_build_plan, compass_index_build_action, compass_index_build_array_pset>(
+		sourceArrDesc, numBins, qry);
+	plan = std::get<0>(planAction);
+	action = std::get<1>(planAction);
+	qry = std::get<2>(planAction);
+}
+
 //std::shared_ptr<se_decompression_plan> getSeDecompression(pArrayDesc sourceArrDesc, eleDefault level,
 //						pQuery& qry)
 //{

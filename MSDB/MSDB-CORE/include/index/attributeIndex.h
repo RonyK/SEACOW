@@ -8,7 +8,8 @@ namespace msdb
 {
 enum class attrIndexType
 {
-	MMT
+	MMT,
+	BIN
 };
 
 class attributeIndex

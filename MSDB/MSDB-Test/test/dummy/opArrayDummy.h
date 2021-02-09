@@ -41,6 +41,8 @@
 #include <op/compass_encode/compass_encode_action.h>
 #include <op/compass_decode/compass_decode_plan.h>
 #include <op/compass_decode/compass_decode_action.h>
+#include <op/compass_index_build/compass_index_build_plan.h>
+#include <op/compass_index_build/compass_index_build_action.h>
 
 #include <op/naive_filter/naive_filter_plan.h>
 #include <op/naive_filter/naive_filter_action.h>
@@ -117,6 +119,12 @@ void getCompassDecode(pArrayDesc sourceArrDesc, eleDefault numBins,
 					  std::shared_ptr<compass_decode_plan>& plan,
 					  std::shared_ptr<compass_decode_action>& action,
 					  pQuery& qry);
+
+void getCompassIndexBuild(pArrayDesc sourceArrDesc,
+						  eleDefault numBins,
+						  std::shared_ptr<compass_index_build_plan>& plan,
+						  std::shared_ptr<compass_index_build_action>& action,
+						  pQuery& qry);
 
 void getSave(pArrayDesc sourceArrDesc,
 			 std::shared_ptr<save_plan>& plan,

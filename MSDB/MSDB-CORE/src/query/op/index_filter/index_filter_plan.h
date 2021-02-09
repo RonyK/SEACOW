@@ -44,47 +44,53 @@ protected:
 		size_t dSize = arrDesc->getDSize();
 
 		auto arrIndex = arrayMgr::instance()->getAttributeIndex(arrDesc->id_, attrDesc->id_);
-		if (arrIndex->getType() != attrIndexType::MMT)
+		if (arrIndex->getType() == attrIndexType::MMT)
+		{
+			auto pMmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
+			auto mmtLevel = pMmtIndex->getMaxLevel();
+
+			if (inPredicate->evaluateNode(pMmtIndex->getNode(0, mmtLevel)))		// Check root node
+			{
+				// Target chunk exists
+				// Start searching nodes
+				std::vector<std::vector<bool>> nodes(mmtLevel + 1);
+				size_t childs = (size_t)pow(2, dSize);
+
+				//////////////////////////////
+				// Level (mmtLevel)
+				nodes[mmtLevel] = std::vector<bool>({ true });
+
+				//////////////////////////////
+				// Level (mmtLevel - 1)
+				int64_t curLevel = mmtLevel - 1;
+				if (curLevel >= 0)
+				{
+					this->inferBoUpBitmapFirstLevel(inPredicate, pMmtIndex, nodes, curLevel, dSize);
+				}
+
+				//////////////////////////////
+				// Level (mmtLevel - 2) ~ 0
+				curLevel -= 1;
+				while (curLevel >= 0)
+				{
+					this->inferBoUpBitmapChildLevel(inPredicate, pMmtIndex, nodes, curLevel, dSize);
+					curLevel -= 1;
+				}
+
+				return this->inferBoUpBitmapChildLevel(nodes, pMmtIndex,
+													   chunkSpace, blockSpace);
+			} else
+			{
+				// No target chunk
+				return std::make_shared<bitmapTree>(chunkSpace.area(), false);
+			}
+		}else if(arrIndex->getType() == attrIndexType::BIN)
+		{
+		
+		}
+		else
 		{
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_USER_QUERY_ERROR, MSDB_ER_ATTR_INDEX_TYPE_DIFF));
-		}
-		auto pMmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
-		auto mmtLevel = pMmtIndex->getMaxLevel();
-
-		if (inPredicate->evaluateNode(pMmtIndex->getNode(0, mmtLevel)))		// Check root node
-		{
-			// Target chunk exists
-			// Start searching nodes
-			std::vector<std::vector<bool>> nodes(mmtLevel + 1);
-			size_t childs = (size_t)pow(2, dSize);
-
-			//////////////////////////////
-			// Level (mmtLevel)
-			nodes[mmtLevel] = std::vector<bool>({ true });
-
-			//////////////////////////////
-			// Level (mmtLevel - 1)
-			int64_t curLevel = mmtLevel - 1;
-			if (curLevel >= 0)
-			{
-				this->inferBoUpBitmapFirstLevel(inPredicate, pMmtIndex, nodes, curLevel, dSize);
-			}
-
-			//////////////////////////////
-			// Level (mmtLevel - 2) ~ 0
-			curLevel -= 1;
-			while (curLevel >= 0)
-			{
-				this->inferBoUpBitmapChildLevel(inPredicate, pMmtIndex, nodes, curLevel, dSize);
-				curLevel -= 1;
-			}
-
-			return this->inferBoUpBitmapChildLevel(nodes, pMmtIndex,
-												   chunkSpace, blockSpace);
-		} else
-		{
-			// No target chunk
-			return std::make_shared<bitmapTree>(chunkSpace.area(), false);
 		}
 	}
 

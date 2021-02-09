@@ -21,6 +21,8 @@
 #include <op/compass_encode/compass_encode_action.h>
 #include <op/compass_decode/compass_decode_plan.h>
 #include <op/compass_decode/compass_decode_action.h>
+#include <op/compass_index_build/compass_index_build_plan.h>
+#include <op/compass_index_build/compass_index_build_action.h>
 
 namespace msdb
 {
@@ -106,6 +108,17 @@ pArray exe_act_ind_compass_decode(std::vector<pArray> sourceArr, eleDefault numB
 	std::shared_ptr<compass_decode_action> myAction;
 	pQuery myQuery;
 	getCompassDecode(sourceArr[0]->getDesc(), numBins, myPlan, myAction, myQuery);
+
+	auto afterArray = myAction->execute(sourceArr, myQuery);
+
+	return afterArray;
+}
+pArray exe_act_ind_compass_index_build(std::vector<pArray> sourceArr, eleDefault numBins)
+{
+	std::shared_ptr<compass_index_build_plan> myPlan;
+	std::shared_ptr<compass_index_build_action> myAction;
+	pQuery myQuery;
+	getCompassIndexBuild(sourceArr[0]->getDesc(), numBins, myPlan, myAction, myQuery);
 
 	auto afterArray = myAction->execute(sourceArr, myQuery);
 

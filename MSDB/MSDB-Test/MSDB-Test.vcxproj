@@ -87,6 +87,7 @@
     </ClCompile>
     <ClCompile Include="test\query\op\between\test_between.cpp" />
     <ClCompile Include="test\query\op\compass_encode_decode\test_compass_encode_decode.cpp" />
+    <ClCompile Include="test\query\op\compass_index_build\test_compass_index_build.cpp" />
     <ClCompile Include="test\query\op\delta_decode\test_mmt_delta_decode.cpp" />
     <ClCompile Include="test\query\op\delta_encode\test_delta_encode.cpp" />
     <ClCompile Include="test\query\op\index_filter\test_index_filter.cpp" />

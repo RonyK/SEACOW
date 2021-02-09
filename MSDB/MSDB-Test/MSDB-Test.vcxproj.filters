@@ -50,6 +50,7 @@
     <ClCompile Include="test\query\op\zip_save_load\test_zip_save_load.cpp" />
     <ClCompile Include="test\query\op\between\test_body_between.cpp" />
     <ClCompile Include="test\query\op\filter\test_body_filter.cpp" />
+    <ClCompile Include="test\query\op\compass_index_build\test_compass_index_build.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">
