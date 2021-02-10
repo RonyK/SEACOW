@@ -31,7 +31,7 @@ class index_filter_pset
 {
 protected:
 	template<typename Ty_>
-	pBitmapTree inferBottomUpAttrBitmap(pArrayDesc arrDesc, pAttributeDesc attrDesc, pPredicate inPredicate)
+	pBitmapTree inferBottomUpAttrBitmap(pArrayDesc arrDesc, pAttributeDesc attrDesc, pBitmapTree myBitmap, pPredicate inPredicate)
 	{
 		inPredicate->setEvaluateFunc(attrDesc->type_);
 
@@ -65,7 +65,7 @@ protected:
 				int64_t curLevel = mmtLevel - 1;
 				if (curLevel >= 0)
 				{
-					this->inferBoUpBitmapFirstLevel(inPredicate, pMmtIndex, nodes, curLevel, dSize);
+					this->evaluateFirstLevel(inPredicate, pMmtIndex, nodes, curLevel, dSize);
 				}
 
 				//////////////////////////////
@@ -73,32 +73,70 @@ protected:
 				curLevel -= 1;
 				while (curLevel >= 0)
 				{
-					this->inferBoUpBitmapChildLevel(inPredicate, pMmtIndex, nodes, curLevel, dSize);
+					this->evaluateChildLevel(inPredicate, pMmtIndex, nodes, curLevel, dSize);
 					curLevel -= 1;
 				}
 
-				return this->inferBoUpBitmapChildLevel(nodes, pMmtIndex,
+				return this->inferBoUpBitmapChildLevel(myBitmap, nodes, pMmtIndex,
 													   chunkSpace, blockSpace);
 			} else
 			{
 				// No target chunk
 				return std::make_shared<bitmapTree>(chunkSpace.area(), false);
 			}
-		}else if(arrIndex->getType() == attrIndexType::BIN)
+		} else if (arrIndex->getType() == attrIndexType::COMPASS)
 		{
-		
-		}
-		else
+			auto cpIndex = std::static_pointer_cast<compassIndexImpl<Ty_>>(arrIndex);
+			auto numBins = cpIndex->getNumBins();
+
+			while (!cit.isEnd())
+			{
+				if (myBitmap->isExist(cit.seqPos()))
+				{
+					bit.moveToStart();
+					bool chunkExist = false;
+
+					if (!myBitmap->hasChild(cit.seqPos()))
+					{
+						// No child bitmap means that all blocks are exist
+						myBitmap->makeChild(cit.seqPos(), blockSpace.area(), true);
+					}
+
+					auto myBlockBitmap = myBitmap->getChild(cit.seqPos());
+					while (!bit.isEnd())
+					{
+						if (myBlockBitmap->isExist(bit.seqPos()) && inPredicate->evaluateCompassBin(cpIndex->at(cit.seqPos(), bit.seqPos())))
+						{
+							chunkExist = true;
+						}else
+						{
+							myBlockBitmap->setNull(bit.seqPos());
+						}
+						++bit;
+					}
+
+					if (!chunkExist)
+					{
+						myBitmap->setNull(cit.seqPos());
+						myBitmap->makeChild(cit.seqPos(), blockSpace.area(), false);
+					}
+				}
+
+				++cit;
+			}
+
+			return myBitmap;
+		} else
 		{
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_USER_QUERY_ERROR, MSDB_ER_ATTR_INDEX_TYPE_DIFF));
 		}
 	}
 
 	template <typename Ty_>
-	void inferBoUpBitmapFirstLevel(std::shared_ptr<predicate> inPredicate,
-								   std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>>pMmtIndex,
-								   std::vector<std::vector<bool>>& nodes,
-								   size_t curLevel, size_t dSize)
+	void evaluateFirstLevel(std::shared_ptr<predicate> inPredicate,
+							std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>>pMmtIndex,
+							std::vector<std::vector<bool>>& nodes,
+							size_t curLevel, size_t dSize)
 	{
 		auto nit = pMmtIndex->getNodeIterator(curLevel);
 		nodes[curLevel] = std::vector<bool>(nit.getCapacity(), false);
@@ -117,10 +155,10 @@ protected:
 	}
 
 	template <typename Ty_>
-	void inferBoUpBitmapChildLevel(std::shared_ptr<predicate> inPredicate,
-								   std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>>pMmtIndex,
-								   std::vector<std::vector<bool>>& nodes,
-								   size_t curLevel, size_t dSize)
+	void evaluateChildLevel(std::shared_ptr<predicate> inPredicate,
+							std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>>pMmtIndex,
+							std::vector<std::vector<bool>>& nodes,
+							size_t curLevel, size_t dSize)
 	{
 		size_t prevLevel = curLevel + 1;
 		size_t childs = (size_t)pow(2, dSize);
@@ -167,7 +205,8 @@ protected:
 	}
 
 	template <typename Ty_>
-	pBitmapTree inferBoUpBitmapChildLevel(std::vector<std::vector<bool>>& nodes,
+	pBitmapTree inferBoUpBitmapChildLevel(pBitmapTree myBitmap, 
+										  std::vector<std::vector<bool>>& nodes,
 										  std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>>pMmtIndex,
 										  dimension& chunkSpace, dimension& blockSpace)
 	{
@@ -176,7 +215,7 @@ protected:
 		size_t chunkLevel = pMmtIndex->getChunkLevel();
 		size_t blockLevel = pMmtIndex->getBlockLevel();
 
-		auto chunkBitmap = std::make_shared<bitmapTree>(chunkNums, false);
+		//auto chunkBitmap = std::make_shared<bitmapTree>(chunkNums, false);
 		auto chunkItr = coorItr(chunkSpace);
 		auto blockItr = coorItr(blockSpace);
 		auto nodeItr = coorItr(chunkSpace * blockSpace);
@@ -184,24 +223,32 @@ protected:
 		for (chunkId cid = 0; cid < chunkNums; ++cid)
 		{
 			auto chunkCoor = chunkItr.seqToCoor(cid);
-			if (nodes[chunkLevel][cid])
+			if (myBitmap->isExist(cid) && nodes[chunkLevel][cid])
 			{
-				chunkBitmap->setExist(cid);
-				auto blockBitmap = chunkBitmap->makeChild(cid, blockNums, false);
+				if(!myBitmap->hasChild(cid))
+				{
+					// No child bitmap means that all blocks are exist
+					myBitmap->makeChild(cid, blockNums, true);
+				}
 
+				auto blockBitmap = myBitmap->getChild(cid);
 				for (blockId bid = 0; bid < blockNums; ++bid)
 				{
 					auto blockCoor = blockItr.seqToCoor(bid);
 					auto nodeCoor = chunkCoor * blockSpace + blockCoor;
-					if (nodes[blockLevel][nodeItr.coorToSeq(nodeCoor)])
+					if (!blockBitmap->isExist(bid) || !nodes[blockLevel][nodeItr.coorToSeq(nodeCoor)])
 					{
-						blockBitmap->setExist(bid);
+						blockBitmap->setNull(bid);
 					}
 				}
+			}else
+			{
+				myBitmap->setNull(cid);
+				// TODO:: make child null
 			}
 		}
 
-		return chunkBitmap;
+		return myBitmap;
 	}
 };
 

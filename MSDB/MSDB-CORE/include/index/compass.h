@@ -32,6 +32,27 @@ public:
 		return this->blockBins_[index];
 	}
 
+public:
+	inline size_t getNumBins()
+	{
+		return this->numBins_;
+	}
+
+	inline size_t getBinIndexForValue(uint64_t value)
+	{
+		if (this->hasNegative_)
+		{
+			//assert((uint64_t)(value / this->binValueRange_ + this->negativeToPositive_) < this->numBins_);
+			//return (uint64_t)(value / this->binValueRange_ + this->negativeToPositive_);
+
+			assert(floor((int64_t)value / (double)this->binValueRange_) + this->negativeToPositive_ < this->numBins_);
+			return (size_t)floor((int64_t)value / (double)this->binValueRange_) + this->negativeToPositive_;
+		}
+
+		assert((uint64_t)(value / this->binValueRange_) < this->numBins_);
+		return (uint64_t)(value / this->binValueRange_);
+	}
+
 protected:
 	size_t numBins_;
 	size_t binValueRange_;
@@ -125,6 +146,11 @@ protected:
 	}
 
 public:
+	pCompassBlockIndex at(chunkId cid, blockId bid)
+	{
+		return arrayBins_[cid][bid];
+	}
+
 	void build(pChunkIterator& cit) override
 	{
 		this->arrayBins_.clear();
@@ -135,12 +161,16 @@ public:
 			if(cit->isExist())
 			{
 				auto bit = (*cit)->getBlockIterator();
+				auto cid = cit->seqPos();
+
+				this->arrayBins_[cid].clear();
+				this->arrayBins_[cid].resize(bit->getCapacity());
 
 				while(!bit->isEnd())
 				{
 					if(bit->isExist())
 					{
-						this->buildBlockIndex(cit->seqPos(), **bit);
+						this->buildBlockIndex(cid, **bit);
 					}
 
 					++(*bit);

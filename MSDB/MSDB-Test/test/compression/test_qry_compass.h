@@ -31,7 +31,7 @@ pArray test_qry_ind_compass_encode(_pFuncGetSourceArray_,
 template <typename value_type>
 pArray test_qry_ind_compass_encode_decode(_pFuncGetSourceArray_,
 										  _pFuncGetSourceArrayDesc_,
-										  eleDefault numBin, bool printFlag = false)
+										  eleDefault numBin, bool printFlag = false, bool validation = true)
 {
 	auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, printFlag);
 	sourceArr[0]->setId(sourceArr[0]->getId() + compass_array_id);
@@ -49,13 +49,17 @@ pArray test_qry_ind_compass_encode_decode(_pFuncGetSourceArray_,
 	try
 	{
 		auto outArr = exe_qry_ind_compass_decode<value_type>(sourceArrDesc, numBin, printFlag);
+
+		if (validation)
+		{
+			compArrary<value_type>(sourceArr[0], outArr);
+		}
+
 		return outArr;
 	} catch (...)
 	{
 		std::cout << "Exception" << std::endl;
 	}
-
-	//compArrary<value_type>(sourceArr[0], outArr);
 
 	return nullptr;
 }

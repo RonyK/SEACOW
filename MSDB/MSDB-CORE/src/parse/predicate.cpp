@@ -13,7 +13,8 @@ predicate::~predicate()
 
 
 singlePredicate::singlePredicate(pTerm mit)
-	: predicate(mit, nullptr), evaluateFunc(nullptr), evaluateNodeFunc(nullptr)
+	: predicate(mit, nullptr), 
+	evaluateFunc(nullptr), evaluateNodeFunc(nullptr), evaluateBinFunc(nullptr)
 {
 }
 
@@ -21,6 +22,7 @@ void singlePredicate::setEvaluateFunc(eleType eType)
 {
 	this->evaluateFunc = this->findEvaluateFunc(eType);
 	this->evaluateNodeFunc = this->findEvaluateNodeFunc(eType);
+	this->evaluateBinFunc = this->findEvaluateBinFunc(eType);
 	this->lTerm->setEvaluateFunc(eType);
 }
 
@@ -32,6 +34,11 @@ bool singlePredicate::evaluate(pItemItr iit)
 bool singlePredicate::evaluateNode(pMmtNode node)
 {
 	return (this->*evaluateNodeFunc)(node);
+}
+
+bool singlePredicate::evaluateCompassBin(pCompassBlockIndex bin)
+{
+	return (this->*evaluateBinFunc)(bin);
 }
 
 singlePredicate::eFunc singlePredicate::findEvaluateFunc(eleType type)
@@ -74,8 +81,29 @@ singlePredicate::enFunc singlePredicate::findEvaluateNodeFunc(eleType type)
 	return func_ptr[static_cast<int>(type)];
 }
 
+singlePredicate::ebFunc singlePredicate::findEvaluateBinFunc(eleType type)
+{
+	static bool (singlePredicate:: * func_ptr[12])(pCompassBlockIndex) =
+	{
+		nullptr,
+		&singlePredicate::evaluateBinImpl<bool>,
+		&singlePredicate::evaluateBinImpl<char>,
+		&singlePredicate::evaluateBinImpl<int8_t>,
+		&singlePredicate::evaluateBinImpl<int16_t>,
+		&singlePredicate::evaluateBinImpl<int32_t>,
+		&singlePredicate::evaluateBinImpl<int64_t>,
+		&singlePredicate::evaluateBinImpl<uint8_t>,
+		&singlePredicate::evaluateBinImpl<uint16_t>,
+		&singlePredicate::evaluateBinImpl<uint32_t>,
+		&singlePredicate::evaluateBinImpl<uint64_t>
+	};
+
+	return func_ptr[static_cast<int>(type)];
+}
+
 andPredicate::andPredicate(pTerm lhs, pTerm rhs)
-	: predicate(lhs, rhs), evaluateFunc(nullptr), evaluateNodeFunc(nullptr)
+	: predicate(lhs, rhs), 
+	evaluateFunc(nullptr), evaluateNodeFunc(nullptr), evaluateBinFunc(nullptr)
 {
 }
 
@@ -83,6 +111,7 @@ void andPredicate::setEvaluateFunc(eleType eType)
 {
 	this->evaluateFunc = this->findEvaluateFunc(eType);
 	this->evaluateNodeFunc = this->findEvaluateNodeFunc(eType);
+	this->evaluateBinFunc = this->findEvaluateBinFunc(eType);
 	this->lTerm->setEvaluateFunc(eType);
 	this->rTerm->setEvaluateFunc(eType);
 }
@@ -95,6 +124,11 @@ bool andPredicate::evaluate(pItemItr iit)
 bool andPredicate::evaluateNode(pMmtNode node)
 {
 	return (this->*evaluateNodeFunc)(node);
+}
+
+bool andPredicate::evaluateCompassBin(pCompassBlockIndex bin)
+{
+	return (this->*evaluateBinFunc)(bin);
 }
 
 andPredicate::eFunc andPredicate::findEvaluateFunc(eleType type)
@@ -137,8 +171,29 @@ andPredicate::enFunc andPredicate::findEvaluateNodeFunc(eleType type)
 	return func_ptr[static_cast<int>(type)];
 }
 
+andPredicate::ebFunc andPredicate::findEvaluateBinFunc(eleType type)
+{
+	static bool (andPredicate:: * func_ptr[12])(pCompassBlockIndex) =
+	{
+		nullptr,
+		&andPredicate::evaluateBinImpl<bool>,
+		&andPredicate::evaluateBinImpl<char>,
+		&andPredicate::evaluateBinImpl<int8_t>,
+		&andPredicate::evaluateBinImpl<int16_t>,
+		&andPredicate::evaluateBinImpl<int32_t>,
+		&andPredicate::evaluateBinImpl<int64_t>,
+		&andPredicate::evaluateBinImpl<uint8_t>,
+		&andPredicate::evaluateBinImpl<uint16_t>,
+		&andPredicate::evaluateBinImpl<uint32_t>,
+		&andPredicate::evaluateBinImpl<uint64_t>
+	};
+
+	return func_ptr[static_cast<int>(type)];
+}
+
 orPredicate::orPredicate(pTerm lhs, pTerm rhs)
-	: predicate(lhs, rhs), evaluateFunc(nullptr), evaluateNodeFunc(nullptr)
+	: predicate(lhs, rhs),
+	evaluateFunc(nullptr), evaluateNodeFunc(nullptr), evaluateBinFunc(nullptr)
 {
 }
 
@@ -146,6 +201,7 @@ void orPredicate::setEvaluateFunc(eleType eType)
 {
 	this->evaluateFunc = this->findEvaluateFunc(eType);
 	this->evaluateNodeFunc = this->findEvaluateNodeFunc(eType);
+	this->evaluateBinFunc = this->findEvaluateBinFunc(eType);
 	this->lTerm->setEvaluateFunc(eType);
 	this->rTerm->setEvaluateFunc(eType);
 }
@@ -158,6 +214,11 @@ bool orPredicate::evaluate(pItemItr iit)
 bool orPredicate::evaluateNode(pMmtNode node)
 {
 	return (this->*evaluateNodeFunc)(node);
+}
+
+bool orPredicate::evaluateCompassBin(pCompassBlockIndex bin)
+{
+	return (this->*evaluateBinFunc)(bin);
 }
 
 orPredicate::eFunc orPredicate::findEvaluateFunc(eleType type)
@@ -200,4 +261,23 @@ orPredicate::enFunc orPredicate::findEvaluateNodeFunc(eleType type)
 	return func_ptr[static_cast<int>(type)];
 }
 
+orPredicate::ebFunc orPredicate::findEvaluateBinFunc(eleType type)
+{
+	static bool (orPredicate:: * func_ptr[12])(pCompassBlockIndex) =
+	{
+		nullptr,
+		&orPredicate::evaluateBinImpl<bool>,
+		&orPredicate::evaluateBinImpl<char>,
+		&orPredicate::evaluateBinImpl<int8_t>,
+		&orPredicate::evaluateBinImpl<int16_t>,
+		&orPredicate::evaluateBinImpl<int32_t>,
+		&orPredicate::evaluateBinImpl<int64_t>,
+		&orPredicate::evaluateBinImpl<uint8_t>,
+		&orPredicate::evaluateBinImpl<uint16_t>,
+		&orPredicate::evaluateBinImpl<uint32_t>,
+		&orPredicate::evaluateBinImpl<uint64_t>
+	};
+
+	return func_ptr[static_cast<int>(type)];
+}
 }	// msdb

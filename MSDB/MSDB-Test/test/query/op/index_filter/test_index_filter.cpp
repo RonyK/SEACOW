@@ -96,6 +96,28 @@ TEST(query_op_index_filter, star1024x1024_seq_se_index_filter)
 											  value, saveArray, validation, printFlag);
 }	// TEST()
 
+TEST(query_op_index_filter, star1024x1024_seq_compass_index_filter)
+{
+	bool saveArray = true;
+	bool printFlag = false;
+	bool validation = true;
+
+	test_body_seq_compass_index_filter<value_type>(&getSourceArrayIfEmpty,
+												   &getSourceArrayDesc, numBins,
+												   value, saveArray, validation, printFlag);
+}	// TEST()
+
+TEST(query_op_index_filter, star1024x1024_seq_zip_index_filter)
+{
+	bool saveArray = false;
+	bool printFlag = false;
+	bool validation = true;
+
+	test_body_seq_zip_index_filter<value_type>(&getSourceArrayIfEmpty,
+											   &getSourceArrayDesc,
+											   value, saveArray, validation, printFlag);
+}	// TEST()
+
 TEST(experiment_query_op_index_filter, star1024x1024_seq_random_load_naive_filter)
 {
 	bool saveArray = false;

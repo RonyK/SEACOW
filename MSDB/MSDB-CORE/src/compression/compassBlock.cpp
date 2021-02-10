@@ -32,7 +32,7 @@ void compassBlock::serializePositional(bstream& bs, std::vector<position_t>& pos
 	bs << setw(bFirstPosition) << positional[0];	// set first position
 	bs << setw(bMaxGap);
 
-	prevP = 0;
+	prevP = positional[0];
 	size_t numPositions = positional.size();
 	for (size_t i = 1; i < numPositions; ++i)
 	{
@@ -56,7 +56,7 @@ void compassBlock::deserializePositional(bstream& bs, std::vector<position_t>& p
 	bs >> setw(bFirstPosition) >> p;		// get first position
 	bs >> setw(bMaxGap);
 	positional.push_back(p);
-	p = prevP;
+	prevP = p;
 	
 	do
 	{

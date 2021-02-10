@@ -52,7 +52,7 @@ pArray exe_qry_ind_zip_save(_vectorSourceArray_,
 	if (printFlag)
 	{
 		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
-		BOOST_LOG_TRIVIAL(debug) << "Zip Encode Arr" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "Zip Save Arr" << std::endl;
 		outArr->print();
 	}
 
@@ -67,7 +67,7 @@ pArray exe_qry_ind_zip_load(_vectorSourceArray_,
 	if (printFlag)
 	{
 		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
-		BOOST_LOG_TRIVIAL(debug) << "Zip Decode Arr" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "Zip Load Arr" << std::endl;
 		outArr->print();
 	}
 

@@ -10,6 +10,8 @@
 #include <index/test_qry_mmt.h>
 
 #include <compression/test_qry_secompression.h>
+#include <compression/test_qry_compass.h>
+#include <compression/test_qry_zip.h>
 
 #include <op/naive_filter/naive_filter_plan.h>
 #include <op/naive_filter/naive_filter_action.h>
@@ -275,7 +277,7 @@ pArray test_body_seq_spiht_index_filter(_pFuncGetSourceArray_,
 	//////////////////////////////
 	// 02-1. Index filter array
 	pPredicate myPredicate = std::make_shared<singlePredicate>(getEqualTerm(value));
-	auto outArr = exe_qbundle_spiht_seq_naive_filter<value_type>(sourceArr,
+	auto outArr = exe_qbundle_seq_spiht_naive_filter<value_type>(sourceArr,
 																 myPredicate, wtLevel,
 																 saveArray, printFlag);
 	//////////////////////////////
@@ -357,6 +359,108 @@ pArray test_body_seq_se_index_filter(_pFuncGetSourceArray_,
 
 	return outArr;
 }
+
+template <typename value_type>
+pArray test_body_seq_compass_index_filter(_pFuncGetSourceArray_,
+										  _pFuncGetSourceArrayDesc_,
+										  eleDefault numBins, int64_t value,
+										  bool saveArray = true, bool validation = true, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Get Source Array
+	std::vector<pArray> sourceArr;
+	if (saveArray)
+	{
+		getSourceArrayIfEmpty(sourceArr);
+	} else
+	{
+		getSourceArrayDesc(sourceArr);
+	}
+	sourceArr[0]->setId(sourceArr[0]->getId() + compass_array_id);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02-1. Index filter array
+	pPredicate myPredicate = std::make_shared<singlePredicate>(getEqualTerm(value));
+	auto outArr = exe_qbundle_seq_compass_index_filter<value_type>(sourceArr,
+																   myPredicate, numBins,
+																   saveArray, printFlag);
+	  //////////////////////////////
+	  // 03. Validation
+	if (validation)
+	{
+		//////////////////////////////
+		// 03-1. Naive Filter Array
+		pPredicate myNaivePredicate = std::make_shared<singlePredicate>(getEqualTerm(value));
+		auto filterOutArr = exe_qry_ind_naive_filter<value_type>(sourceArr,
+																 myNaivePredicate, false);
+		//////////////////////////////
+
+		//////////////////////////////
+		// 03-2. Filtered Value Test
+		equalTest<value_type>(outArr, value);
+		//////////////////////////////
+
+		//////////////////////////////
+		// 03-3. Filtered Array Test
+		compArrary<value_type>(filterOutArr, outArr);
+		//////////////////////////////
+	}
+	//////////////////////////////
+
+	return outArr;
+}
+
+template <typename value_type>
+pArray test_body_seq_zip_index_filter(_pFuncGetSourceArray_,
+									  _pFuncGetSourceArrayDesc_,
+									  int64_t value,
+									  bool saveArray = true, bool validation = true, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Get Source Array
+	std::vector<pArray> sourceArr;
+	if (saveArray)
+	{
+		getSourceArrayIfEmpty(sourceArr);
+	} else
+	{
+		getSourceArrayDesc(sourceArr);
+	}
+	sourceArr[0]->setId(sourceArr[0]->getId() + zip_array_id);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02-1. Index filter array
+	pPredicate myPredicate = std::make_shared<singlePredicate>(getEqualTerm(value));
+	auto outArr = exe_qbundle_seq_zip_naive_filter<value_type>(sourceArr,
+															   myPredicate, 
+															   saveArray, printFlag);
+	//////////////////////////////
+	// 03. Validation
+	if (validation)
+	{
+		//////////////////////////////
+		// 03-1. Naive Filter Array
+		pPredicate myNaivePredicate = std::make_shared<singlePredicate>(getEqualTerm(value));
+		auto filterOutArr = exe_qry_ind_naive_filter<value_type>(sourceArr,
+																 myNaivePredicate, false);
+		//////////////////////////////
+
+		//////////////////////////////
+		// 03-2. Filtered Value Test
+		equalTest<value_type>(outArr, value);
+		//////////////////////////////
+
+		//////////////////////////////
+		// 03-3. Filtered Array Test
+		compArrary<value_type>(filterOutArr, outArr);
+		//////////////////////////////
+	}
+	//////////////////////////////
+
+	return outArr;
+}
 // ##################################################
 
 pArray exe_act_ind_naive_filter(_vectorSourceArray_, pPredicate myPredicate, pQuery qry = nullptr);
@@ -385,7 +489,7 @@ pArray exe_qbundle_seq_load_naive_filter(_vectorSourceArray_,
 }
 
 template <typename value_type>
-pArray exe_qbundle_spiht_seq_naive_filter(_vectorSourceArray_,
+pArray exe_qbundle_seq_spiht_naive_filter(_vectorSourceArray_,
 										  pPredicate inPredicate,
 										  eleDefault wtLevel,
 										  bool saveArray = true, bool printFlag = false)
@@ -426,6 +530,47 @@ pArray exe_qbundle_seq_se_index_filter(_vectorSourceArray_,
 												   inPredicate,
 												   wtLevel, mmtLevel,
 												   printFlag);
+}
+
+template <typename value_type>
+pArray exe_qbundle_seq_compass_index_filter(_vectorSourceArray_,
+											pPredicate inPredicate,
+											eleDefault numBins,
+											bool saveArray = true, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Save Source Array
+	if (saveArray)
+	{
+		exe_qry_ind_compass_index_build<value_type>(sourceArr, numBins, false);
+		exe_qry_ind_compass_encode<value_type>(sourceArr, numBins, false);
+	}
+
+	//////////////////////////////
+	// 02. Index Filter Array
+	return exe_qry_seq_compass_index_filter<value_type>(sourceArr,
+														inPredicate,
+														numBins,
+														printFlag);
+}
+
+template <typename value_type>
+pArray exe_qbundle_seq_zip_naive_filter(_vectorSourceArray_,
+										pPredicate inPredicate,
+										bool saveArray = true, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Save Source Array
+	if (saveArray)
+	{
+		exe_qry_ind_zip_save<value_type>(sourceArr, false);
+	}
+
+	//////////////////////////////
+	// 02 Naive Filter Arrary
+	return exe_qry_seq_zip_naive_filter<value_type>(sourceArr,
+													inPredicate,
+													printFlag);
 }
 
 template <typename value_type>
@@ -591,6 +736,73 @@ pArray exe_qry_seq_se_index_filter(_vectorSourceArray_,
 	{
 		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
 		BOOST_LOG_TRIVIAL(debug) << "Delta Decode Arr" << std::endl;
+		outArr->print();
+		//outArr->getChunkBitmap()->print();
+	}
+
+	outArr = filterPlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	if (printFlag)
+	{
+		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "Filtered Arr" << std::endl;
+		outArr->print();
+		//outArr->getChunkBitmap()->print();
+	}
+
+	tearDownQuery(qry);
+
+	return outArr;
+}
+
+template <typename value_type>
+pArray exe_qry_seq_compass_index_filter(_vectorSourceArray_,
+										pPredicate inPredicate,
+										eleDefault numBins,
+										bool printFlag = false)
+{
+	pQuery qry = std::make_shared<query>();
+
+	auto cpDecodePlan = getCompassDecodePlan(sourceArr[0]->getDesc(), numBins, qry);
+	auto filterPlan = getIndexFilterPlan(cpDecodePlan, inPredicate, qry);
+
+	auto outArr = cpDecodePlan->getAction()->execute(sourceArr, qry);
+	if (printFlag)
+	{
+		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "Compass Decode Arr" << std::endl;
+		outArr->print();
+		//outArr->getChunkBitmap()->print();
+	}
+
+	outArr = filterPlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	if (printFlag)
+	{
+		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "Filtered Arr" << std::endl;
+		outArr->print();
+		//outArr->getChunkBitmap()->print();
+	}
+
+	tearDownQuery(qry);
+
+	return outArr;
+}
+
+template <typename value_type>
+pArray exe_qry_seq_zip_naive_filter(_vectorSourceArray_,
+									pPredicate inPredicate,
+									bool printFlag = false)
+{
+	pQuery qry = std::make_shared<query>();
+
+	auto zipLoadPlan = getZipLoadPlan(sourceArr[0]->getDesc(), qry);
+	auto filterPlan = getNaiveFilterPlan(zipLoadPlan, inPredicate, qry);
+
+	auto outArr = zipLoadPlan->getAction()->execute(sourceArr, qry);
+	if (printFlag)
+	{
+		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "Zip Load Arr" << std::endl;
 		outArr->print();
 		//outArr->getChunkBitmap()->print();
 	}
