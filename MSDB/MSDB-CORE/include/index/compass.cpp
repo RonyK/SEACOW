@@ -29,4 +29,10 @@ pCompassIndex compassIndex::createIndex(const eleType eType, const size_type num
 
 	_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_UNKNOWN_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 }
+
+compassBlockIndex::compassBlockIndex(size_t numBins, size_t binValueRange, bool hasNegative, uint64_t negativeToPositive)
+	: numBins_(numBins), binValueRange_(binValueRange), hasNegative_(hasNegative), negativeToPositive_(negativeToPositive)
+{
+	this->blockBins_.resize(this->numBins_, compassBin());
+}
 }	// msdb

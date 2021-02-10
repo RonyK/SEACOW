@@ -73,6 +73,7 @@ void compassBlock::deserializePositional(bstream& bs, std::vector<position_t>& p
 
 void compassBlock::setNumBins(size_t numBins)
 {
+	assert(numBins % 2 == 0);
 	this->numBins_ = numBins;
 }
 }	// msdb

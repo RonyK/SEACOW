@@ -12,12 +12,34 @@ namespace msdb
 class compassIndex;
 using pCompassIndex = std::shared_ptr<compassIndex>;
 
-template <typename Ty_>
-struct compassBin
+class compassBlockIndex;
+using pCompassBlockIndex = std::shared_ptr<compassBlockIndex>;
+
+class compassBin
 {
 public:
-	std::vector<position_t> positional_;
-	std::vector<Ty_> residual_;
+	size_t numElements = 0;
+};
+
+class compassBlockIndex
+{
+public:
+	compassBlockIndex(size_t numBins, size_t binValueRange, bool hasNegative, uint64_t negativeToPositive = 0);
+
+public:
+	compassBin& at(size_t index)
+	{
+		return this->blockBins_[index];
+	}
+
+protected:
+	size_t numBins_;
+	size_t binValueRange_;
+	bool hasNegative_;
+	uint64_t negativeToPositive_;
+
+protected:
+	std::vector<compassBin> blockBins_;
 };
 
 class compassIndex : public attributeIndex
@@ -34,6 +56,11 @@ public:
 	static pCompassIndex createIndex(const eleType eType, const size_type numBins);
 
 public:
+	inline attrIndexType getType()
+	{
+		return attrIndexType::COMPASS;
+	}
+
 	inline eleType getEleType()
 	{
 		return this->eType_;
@@ -66,7 +93,28 @@ public:
 		: compassIndex(eType, numBins)
 	{}
 
-private:
+public:
+	inline size_t getNumBins()
+	{
+		return this->numBins_;
+	}
+
+protected:
+	inline size_t getBinIndexForValue(Ty_ value, Ty_ binValueRange, bool hasNegative, size_t negativeToPositive = 0)
+	{
+		if (hasNegative)
+		{
+			//assert((uint64_t)(value / this->binValueRange_ + this->negativeToPositive_) < this->numBins_);
+			//return (uint64_t)(value / this->binValueRange_ + this->negativeToPositive_);
+
+			assert(floor(value / (double)binValueRange) + negativeToPositive < this->numBins_);
+			return (size_t)floor(value / (double)binValueRange) + negativeToPositive;
+		}
+
+		assert((uint64_t)(value / binValueRange) < this->numBins_);
+		return (uint64_t)(value / binValueRange);
+	}
+
 	inline Ty_ getBinValueRange()
 	{
 		// To prevent overflow at uint64_t
@@ -105,39 +153,33 @@ public:
 
 	void buildBlockIndex(const chunkId cid, pBlock myBlock)
 	{
-		std::vector<compassBin<Ty_>>* blockBins = &(arrayBins_[cid][myBlock->getId()]);
-		blockBins->resize(this->numBins_, compassBin<Ty_>());
-
 		Ty_ binValueRange = this->getBinValueRange();
+		uint64_t negativeToPositive = ceil(this->numBins_ / 2.0);
+		bool hasNegative = _TY_HAS_NEGATIVE_VALUE_;
+		Ty_ minValue = (Ty_)0x1 << (sizeof(Ty_) * CHAR_BIT - 1);
+
 		assert(binValueRange != 0 && binValueRange > 0);
 
-		auto iit = myBlock->getItemIterator();
-		uint64_t negativeToPositive = pow(2, _TySize_ - 1);
+		auto blockIndex = std::make_shared<compassBlockIndex>(this->numBins_, binValueRange, _TY_HAS_NEGATIVE_VALUE_, negativeToPositive);
 
+		this->arrayBins_[cid][myBlock->getId()] = blockIndex;
+		//std::vector<compassBin<Ty_>>* blockBins = (arrayBins_[cid][myBlock->getId()]);
+
+		auto iit = myBlock->getItemIterator();
 		while (!iit->isEnd())
 		{
 			Ty_ value = (**iit).get<Ty_>();
-			compassBin<Ty_>* curBin;
-			if (!_TY_HAS_NEGATIVE_VALUE_)
-			{
-				assert((uint64_t)(value / binValueRange) < this->numBins_);
-				curBin = &(blockBins->at((uint64_t)(value / binValueRange)));
-			} else
-			{
-				assert((uint64_t)((value + negativeToPositive) / binValueRange) < this->numBins_);
-				curBin = &(blockBins->at((uint64_t)((value + negativeToPositive) / binValueRange)));
-			}
+			auto binIndex = this->getBinIndexForValue(value, binValueRange, hasNegative, negativeToPositive);
 
-			curBin->positional_.push_back(iit->seqPos());
-			curBin->residual_.push_back((value + negativeToPositive) % binValueRange);
-			assert((value + negativeToPositive) % binValueRange >= 0);
+			compassBin* curBin = &(blockIndex->at(binIndex));
+			curBin->numElements++;
 
 			++(*iit);
 		}
 	}
 
 private:
-	std::vector<std::vector<std::vector<compassBin<Ty_>>>> arrayBins_;
+	std::vector<std::vector<std::shared_ptr<compassBlockIndex>>> arrayBins_;
 };
 }		// msdb
 #endif	// _MSDB_COMPASS_H_

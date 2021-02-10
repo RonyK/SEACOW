@@ -94,31 +94,45 @@ private:
 	{
 		bins_.resize(this->numBins_, bin<Ty_>());
 
+		Ty_ minValue = (Ty_)0x1 << (sizeof(Ty_) * CHAR_BIT - 1);
 		Ty_ binValueRange = this->getBinValueRange<Ty_>();
 		assert(binValueRange != 0 && binValueRange > 0);
-		auto iit = this->getItemIterator();
-		uint64_t negativeToPositive = pow(2, _TySize_ - 1);
 
+		bool hasNegative = _TY_HAS_NEGATIVE_VALUE_;
+		uint64_t negativeToPositive = ceil(this->numBins_ / 2.0);
+
+		auto iit = this->getItemIterator();
 		while (!iit->isEnd())
 		{
 			Ty_ value = (**iit).get<Ty_>();
-			compassBlock::bin<Ty_>* curBin;
-			if(!_TY_HAS_NEGATIVE_VALUE_)
-			{
-				assert((uint64_t)(value / binValueRange) < this->numBins_);
-				curBin = &(bins_.at((uint64_t)(value / binValueRange)));
-			}else
-			{
-				assert((uint64_t)((value + negativeToPositive) / binValueRange) < this->numBins_);
-				curBin = &(bins_.at((uint64_t)((value + negativeToPositive)/binValueRange)));
-			}
+			size_t binIndex = this->getBinIndexForValue(value, binValueRange, hasNegative, negativeToPositive);
+			assert(binIndex >= 0);
+			compassBlock::bin<Ty_>* curBin = &(bins_.at(binIndex));
 			
 			curBin->positional_.push_back(iit->seqPos());
-			curBin->residual_.push_back((value + negativeToPositive) % binValueRange);
-			assert((value + negativeToPositive) % binValueRange >= 0);
+			if(!hasNegative)
+			{
+				curBin->residual_.push_back(value % binValueRange);
+			}else
+			{
+				Ty_ residual = value - (binIndex * binValueRange - minValue);
+				curBin->residual_.push_back(residual);
+				assert(residual >= 0);
+			}
 
 			++(*iit);
 		}
+	}
+
+	template <typename Ty_>
+	inline size_t getBinIndexForValue(Ty_ value, Ty_ binValueRange, bool hasNegative, size_t negativeToPositive = 0)
+	{
+		if (hasNegative)
+		{
+			return (size_t)floor(value / (double)binValueRange) + negativeToPositive;
+		}
+
+		return (uint64_t)(value / binValueRange);
 	}
 
 	template <typename Ty_>
