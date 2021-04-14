@@ -9,7 +9,7 @@ namespace caDummy
 coorRange getRandomRange(const position_t dimX, const position_t dimY, const float selectivity)
 {
 	int area = dimX * dimY;
-	float selectedArea = area * selectivity;
+	float selectedArea = area * selectivity / 100.0;
 
 	int spX;
 	int spY;
@@ -18,8 +18,8 @@ coorRange getRandomRange(const position_t dimX, const position_t dimY, const flo
 
 	while (1)
 	{
-		spX = rand() % (size_t)(dimX - dimX * selectivity);
-		spY = rand() % (size_t)(dimY - dimY * selectivity);
+		spX = rand() % (size_t)(dimX - dimX * selectivity / 100.0);
+		spY = rand() % (size_t)(dimY - dimY * selectivity / 100.0);
 
 		for (int i = 0; i < 3; i++)
 		{

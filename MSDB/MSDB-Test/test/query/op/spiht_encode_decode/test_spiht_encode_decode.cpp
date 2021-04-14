@@ -204,5 +204,15 @@ TEST(query_op_spiht_encode_decode, mercurydem20480x10240_seq_spiht_encode_decode
 												 wtLevel);
 }
 }	// data2D_mercurydem20480x10240
+
+namespace data2D_lunar102400x40960
+{
+TEST(query_op_spiht_encode_decode, lunar102400x40960_seq_spiht_encode_decode)
+{
+	test_qry_seq_spiht_encode_decode<value_type>(&getSourceArrayIfEmpty,
+												 &getSourceArrayDesc,
+												 wtLevel);
+}
+}	// data2D_lunar102400x40960
 }	// caDummy
 }	// msdb

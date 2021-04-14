@@ -135,7 +135,7 @@ namespace data2D_mercurydem20480x10240
 {
 std::vector<dim_type> dims = { dimY, dimX };
 std::vector<dim_type> originalDims = { dimY, dimX };
-std::vector<dim_type> chunkNums = { 8, 16 };
+std::vector<dim_type> chunkNums = { 8, 16};
 std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
 std::vector<dim_type> blockNums = { 8, 8 };
 std::vector<dim_type> blockDims = { chunkDims[0] / blockNums[0], chunkDims[1] / blockNums[1] };
@@ -161,6 +161,37 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
 	}
 }
 }	// data2D_mercurydem20480x10240
+
+namespace data2D_lunar102400x40960
+{
+std::vector<dim_type> dims = { dimY, dimX };
+std::vector<dim_type> originalDims = { dimY, dimX };
+std::vector<dim_type> chunkNums = { 16, 48 };
+std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
+std::vector<dim_type> blockNums = { 8, 8 };
+std::vector<dim_type> blockDims = { chunkDims[0] / blockNums[0], chunkDims[1] / blockNums[1] };
+
+void getDummy(value_type* output, size_t length)
+{
+	getDummyFromBinaryFile(
+		reinterpret_cast<char*>(output),
+		"BIN_Lunar_LRO_WAC_GLD100_DTM_79S79N_100m_v1_109165x47912.txt",
+		length, sizeof(value_type));
+}
+
+void getSourceArrayDesc(std::vector<pArray>& sourceArr)
+{
+	sourceArr = getSourceArrayDesc();
+}
+
+void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
+{
+	if (sourceArr.empty())
+	{
+		sourceArr = getSourceArray();
+	}
+}
+}	// data2D_lunar102400x40960
 
 void getDummyFromBinaryFile(char* output, const char* filePath, size_t length, size_t sizeofValueType)
 {

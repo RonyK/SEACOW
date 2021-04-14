@@ -27,11 +27,12 @@ pArray test_body_seq_random_load_between(_pFuncGetSourceArray_,
 										 _pFuncGetSourceArrayDesc_,
 										 size_t numTests, std::vector<float> selectivities,
 										 const position_t dimX, const position_t dimY,
-										 bool saveArray = true, bool validation = true, bool printFlag = false)
+										 bool saveArray = false, bool validation = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Set Seed For Random Value 
 	srand(rangeSeed);
+	auto tempQ = std::make_shared<query>();	// Not used, just for log
 	//////////////////////////////
 
 	//////////////////////////////
@@ -43,7 +44,7 @@ pArray test_body_seq_random_load_between(_pFuncGetSourceArray_,
 			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
-			BOOST_LOG_TRIVIAL(info) << "# Range : " << qRange.toString();
+			BOOST_LOG_TRIVIAL(info) << "# Range : " << qRange.toString() << "(" << selectivity << ")";
 			test_body_seq_load_between<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
 												   qRange.getSp(), qRange.getEp(),
 												   saveArray, validation, printFlag);
@@ -61,11 +62,12 @@ pArray test_body_seq_random_spiht_between(_pFuncGetSourceArray_,
 										  eleDefault wtLevel,
 										  size_t numTests, std::vector<float> selectivities,
 										  const position_t dimX, const position_t dimY,
-										  bool saveArray = true, bool validation = true, bool printFlag = false)
+										  bool saveArray = false, bool validation = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Set Seed For Random Value 
 	srand(rangeSeed);
+	auto tempQ = std::make_shared<query>();	// Not used, just for log
 	//////////////////////////////
 
 	//////////////////////////////
@@ -95,11 +97,12 @@ pArray test_body_seq_random_compass_between(_pFuncGetSourceArray_,
 											eleDefault numBins,
 											size_t numTests, std::vector<float> selectivities,
 											const position_t dimX, const position_t dimY,
-											bool saveArray = true, bool validation = true, bool printFlag = false)
+											bool saveArray = false, bool validation = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Set Seed For Random Value 
 	srand(rangeSeed);
+	auto tempQ = std::make_shared<query>();	// Not used, just for log
 	//////////////////////////////
 
 	//////////////////////////////
@@ -129,11 +132,12 @@ pArray test_body_seq_random_zip_between(_pFuncGetSourceArray_,
 										_pFuncGetSourceArrayDesc_,
 										size_t numTests, std::vector<float> selectivities,
 										const position_t dimX, const position_t dimY,
-										bool saveArray = true, bool validation = true, bool printFlag = false)
+										bool saveArray = false, bool validation = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Set Seed For Random Value 
 	srand(rangeSeed);
+	auto tempQ = std::make_shared<query>();	// Not used, just for log
 	//////////////////////////////
 
 	//////////////////////////////
@@ -163,15 +167,21 @@ pArray test_body_seq_random_se_between(_pFuncGetSourceArray_,
 									   eleDefault wtLevel, eleDefault mmtLevel,
 									   size_t numTests, std::vector<float> selectivities,
 									   const position_t dimX, const position_t dimY,
-									   bool saveArray = true, bool validation = true, bool printFlag = false)
+									   bool saveArray = false, bool validation = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Set Seed For Random Value 
 	srand(rangeSeed);
+	auto tempQ = std::make_shared<query>();	// Not used, just for log
 	//////////////////////////////
 
 	//////////////////////////////
-	// 02. Execute Testcases
+	// 02. Build MMT
+	test_body_mmt_build<value_type>(getSourceArrayIfEmpty, mmtLevel, false);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 03. Execute Testcases
 	for (auto selectivity : selectivities)
 	{
 		for (size_t i = 0; i < numTests; ++i)
@@ -200,7 +210,7 @@ pArray test_body_seq_se_between(_pFuncGetSourceArray_,
 								_pFuncGetSourceArrayDesc_,
 								eleDefault wtLevel, eleDefault mmtLevel,
 								coor sp, coor ep,
-								bool saveArray = true, bool validation = true, bool printFlag = false)
+								bool saveArray = false, bool validation = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Get Source Array
@@ -231,7 +241,7 @@ pArray test_body_seq_spiht_between(_pFuncGetSourceArray_,
 								   _pFuncGetSourceArrayDesc_,
 								   eleDefault wtLevel,
 								   coor sp, coor ep,
-								   bool saveArray = true, bool validation = true, bool printFlag = false)
+								   bool saveArray = false, bool validation = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Get Source Array
@@ -261,7 +271,7 @@ template <typename value_type>
 pArray test_body_seq_load_between(_pFuncGetSourceArray_,
 								  _pFuncGetSourceArrayDesc_,
 								  coor sp, coor ep,
-								  bool saveArray = true, bool validation = true, bool printFlag = false)
+								  bool saveArray = false, bool validation = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Get Source Array
@@ -291,7 +301,7 @@ pArray test_body_seq_compass_between(_pFuncGetSourceArray_,
 									 _pFuncGetSourceArrayDesc_,
 									 eleDefault numBins,
 									 coor sp, coor ep,
-									 bool saveArray = true, bool validation = true, bool printFlag = false)
+									 bool saveArray = false, bool validation = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Get Source Array
@@ -321,7 +331,7 @@ template <typename value_type>
 pArray test_body_seq_zip_between(_pFuncGetSourceArray_,
 								 _pFuncGetSourceArrayDesc_,
 								 coor sp, coor ep,
-								 bool saveArray = true, bool validation = true, bool printFlag = false)
+								 bool saveArray = false, bool validation = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Get Source Array
@@ -355,7 +365,7 @@ pArray exe_qbundle_seq_se_between(_vectorSourceArray_,
 								  coor sp, coor ep,
 								  eleDefault wtLevel,
 								  eleDefault mmtLevel,
-								  bool saveArray = true, bool printFlag = false)
+								  bool saveArray = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Save Source Array
@@ -378,7 +388,7 @@ template <typename value_type>
 pArray exe_qbundle_seq_spiht_between(_vectorSourceArray_,
 									 coor sp, coor ep,
 									 eleDefault wtLevel,
-									 bool saveArray = true, bool printFlag = false)
+									 bool saveArray = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Save Source Array
@@ -399,7 +409,7 @@ pArray exe_qbundle_seq_spiht_between(_vectorSourceArray_,
 template <typename value_type>
 pArray exe_qbundle_seq_load_between(_vectorSourceArray_,
 									coor sp, coor ep,
-									bool saveArray = true, bool printFlag = false)
+									bool saveArray = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Save Source Array
@@ -420,7 +430,7 @@ template <typename value_type>
 pArray exe_qbundle_seq_compass_between(_vectorSourceArray_,
 									   eleDefault numBins,
 									   coor sp, coor ep,
-									   bool saveArray = true, bool printFlag = false)
+									   bool saveArray = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Save Source Array
@@ -441,7 +451,7 @@ pArray exe_qbundle_seq_compass_between(_vectorSourceArray_,
 template <typename value_type>
 pArray exe_qbundle_seq_zip_between(_vectorSourceArray_,
 								   coor sp, coor ep,
-								   bool saveArray = true, bool printFlag = false)
+								   bool saveArray = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Save Source Array

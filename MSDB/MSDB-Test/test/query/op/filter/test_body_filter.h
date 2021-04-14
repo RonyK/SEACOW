@@ -68,11 +68,18 @@ bool equalTest(pArray arr, int64_t value)
 
 // ##################################################
 // # Test Body for Sequencial Random Naive/Index Filter
+//
+// Load: naive
+// Zip: naive
+// Spiht: naive
+// SE: index
+// COMPASS: index
+
 template <typename value_type>
 pArray test_body_seq_load_random_naive_filter(_pFuncGetSourceArray_,
 											  _pFuncGetSourceArrayDesc_,
 											  size_t numTests,
-											  bool saveArray = true, bool validation = true, bool printFlag = false)
+											  bool saveArray = false, bool validation = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Set Seed For Random Value 
@@ -88,7 +95,7 @@ pArray test_body_seq_load_random_naive_filter(_pFuncGetSourceArray_,
 		BOOST_LOG_TRIVIAL(info) << "##################################################";
 		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
 		BOOST_LOG_TRIVIAL(info) << "# Find value: " << static_cast<int64_t>(v);
-		test_body_seq_load_index_filter<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
+		test_body_seq_load_naive_filter<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
 													v, saveArray, validation, printFlag);
 		BOOST_LOG_TRIVIAL(info) << "##################################################";
 	}
@@ -98,11 +105,10 @@ pArray test_body_seq_load_random_naive_filter(_pFuncGetSourceArray_,
 }
 
 template <typename value_type>
-pArray test_body_seq_spiht_random_naive_filter(_pFuncGetSourceArray_,
-											   _pFuncGetSourceArrayDesc_,
-											   eleDefault wtLevel,
-											   size_t numTests,
-											   bool saveArray = true, bool validation = true, bool printFlag = false)
+pArray test_body_seq_zip_random_naive_filter(_pFuncGetSourceArray_,
+											 _pFuncGetSourceArrayDesc_,
+											 size_t numTests,
+											 bool saveArray = false, bool validation = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Set Seed For Random Value 
@@ -118,8 +124,133 @@ pArray test_body_seq_spiht_random_naive_filter(_pFuncGetSourceArray_,
 		BOOST_LOG_TRIVIAL(info) << "##################################################";
 		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
 		BOOST_LOG_TRIVIAL(info) << "# Find value: " << static_cast<int64_t>(v);
-		test_body_seq_spiht_index_filter<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
+		test_body_seq_zip_naive_filter<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
+												   v, saveArray, validation, printFlag);
+		BOOST_LOG_TRIVIAL(info) << "##################################################";
+	}
+	//////////////////////////////
+
+	return nullptr;
+}
+ 
+template <typename value_type>
+pArray test_body_seq_spiht_random_naive_filter(_pFuncGetSourceArray_,
+											   _pFuncGetSourceArrayDesc_,
+											   eleDefault wtLevel,
+											   size_t numTests,
+											   bool saveArray = false, bool validation = false, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Set Seed For Random Value 
+	srand(filterValueSeed);
+	value_type v = 0;
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Execute Testcases
+	for (size_t i = 0; i < numTests; ++i)
+	{
+		v = (value_type)rand();
+		BOOST_LOG_TRIVIAL(info) << "##################################################";
+		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
+		BOOST_LOG_TRIVIAL(info) << "# Find value: " << static_cast<int64_t>(v);
+		test_body_seq_spiht_naive_filter<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
 													 wtLevel, v, saveArray, validation, printFlag);
+		BOOST_LOG_TRIVIAL(info) << "##################################################";
+	}
+	//////////////////////////////
+
+	return nullptr;
+}
+
+template <typename value_type>
+pArray test_body_seq_compass_random_naive_filter(_pFuncGetSourceArray_,
+												 _pFuncGetSourceArrayDesc_,
+												 eleDefault numBins,
+												 size_t numTests,
+												 bool saveArray = false, bool validation = false, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Set Seed For Random Value 
+	srand(filterValueSeed);
+	value_type v = 0;
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Execute Testcases
+	for (size_t i = 0; i < numTests; ++i)
+	{
+		v = (value_type)rand();
+		BOOST_LOG_TRIVIAL(info) << "##################################################";
+		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
+		BOOST_LOG_TRIVIAL(info) << "# Find value: " << static_cast<int64_t>(v);
+		test_body_seq_compass_naive_filter<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
+													   numBins, v, saveArray, validation, printFlag);
+		BOOST_LOG_TRIVIAL(info) << "##################################################";
+	}
+	//////////////////////////////
+
+	return nullptr;
+}
+
+template <typename value_type>
+pArray test_body_seq_compass_random_index_filter(_pFuncGetSourceArray_,
+												 _pFuncGetSourceArrayDesc_,
+												 eleDefault numBins,
+												 size_t numTests,
+												 bool saveArray = false, bool validation = false, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Set Seed For Random Value 
+	srand(filterValueSeed);
+	value_type v = 0;
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Execute Testcases
+	for (size_t i = 0; i < numTests; ++i)
+	{
+		v = (value_type)rand();
+		BOOST_LOG_TRIVIAL(info) << "##################################################";
+		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
+		BOOST_LOG_TRIVIAL(info) << "# Find value: " << static_cast<int64_t>(v);
+		test_body_seq_compass_index_filter<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
+													   numBins, v, saveArray, validation, printFlag);
+		BOOST_LOG_TRIVIAL(info) << "##################################################";
+	}
+	//////////////////////////////
+
+	return nullptr;
+}
+
+template <typename value_type>
+pArray test_body_seq_se_random_naive_filter(_pFuncGetSourceArray_,
+											_pFuncGetSourceArrayDesc_,
+											eleDefault wtLevel, eleDefault mmtLevel,
+											size_t numTests,
+											bool saveArray = false, bool validation = false, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Set Seed For Random Value 
+	srand(filterValueSeed);
+	value_type v = 0;
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Build MMT
+	test_body_mmt_build<value_type>(getSourceArrayIfEmpty, mmtLevel, false);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 03. Execute Testcases
+	for (size_t i = 0; i < numTests; ++i)
+	{
+		v = (value_type)rand();
+		BOOST_LOG_TRIVIAL(info) << "##################################################";
+		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
+		BOOST_LOG_TRIVIAL(info) << "# Find value: " << static_cast<int64_t>(v);
+		test_body_seq_se_naive_filter<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
+												  wtLevel, mmtLevel, v, saveArray, validation, printFlag);
 		BOOST_LOG_TRIVIAL(info) << "##################################################";
 	}
 	//////////////////////////////
@@ -132,7 +263,7 @@ pArray test_body_seq_se_random_index_filter(_pFuncGetSourceArray_,
 											_pFuncGetSourceArrayDesc_,
 											eleDefault wtLevel, eleDefault mmtLevel,
 											size_t numTests,
-											bool saveArray = true, bool validation = true, bool printFlag = false)
+											bool saveArray = false, bool validation = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Set Seed For Random Value 
@@ -161,6 +292,7 @@ pArray test_body_seq_se_random_index_filter(_pFuncGetSourceArray_,
 
 	return nullptr;
 }
+
 // ##################################################
 
 // ##################################################
@@ -169,7 +301,7 @@ template <typename value_type>
 pArray test_body_seq_load_naive_filter(_pFuncGetSourceArray_,
 									   _pFuncGetSourceArrayDesc_,
 									   int64_t value,
-									   bool saveArray = true, bool validation = true, bool printFlag = false)
+									   bool saveArray = false, bool validation = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Get Source Array
@@ -204,62 +336,10 @@ pArray test_body_seq_load_naive_filter(_pFuncGetSourceArray_,
 }
 
 template <typename value_type>
-pArray test_body_seq_load_index_filter(_pFuncGetSourceArray_,
-									   _pFuncGetSourceArrayDesc_,
-									   int64_t value,
-									   bool saveArray = true, bool validation = true, bool printFlag = false)
-{
-	//////////////////////////////
-	// 01. Get Source Array
-	std::vector<pArray> sourceArr;
-	if (saveArray)
-	{
-		getSourceArrayIfEmpty(sourceArr);
-	} else
-	{
-		getSourceArrayDesc(sourceArr);
-	}
-	//////////////////////////////
-
-	//////////////////////////////
-	// 02. Index Filter Array
-	pPredicate myPredicate = std::make_shared<singlePredicate>(getEqualTerm(value));
-	auto outArr = exe_qbundle_seq_load_naive_filter<value_type>(sourceArr,
-																myPredicate,
-																saveArray, printFlag);
-	//////////////////////////////
-
-	//////////////////////////////
-	// 03. Validation
-	if (validation)
-	{
-		//////////////////////////////
-		// 03-1. Naive Filter Array
-		pPredicate myNaivePredicate = std::make_shared<singlePredicate>(getEqualTerm(value));
-		auto filterOutArr = exe_qry_ind_naive_filter<value_type>(sourceArr,
-																 myNaivePredicate, false);
-		//////////////////////////////
-
-		//////////////////////////////
-		// 03-2. Filtered Value Test
-		equalTest<value_type>(outArr, value);
-		//////////////////////////////
-
-		//////////////////////////////
-		// 03-3. Filtered Array Test
-		compArrary<value_type>(filterOutArr, outArr);
-		//////////////////////////////
-	}
-	//////////////////////////////
-
-	return outArr;
-}
-
-template <typename value_type>
-pArray test_body_seq_spiht_index_filter(_pFuncGetSourceArray_,
+pArray test_body_seq_spiht_naive_filter(_pFuncGetSourceArray_,
 										_pFuncGetSourceArrayDesc_,
 										eleDefault wtLevel, int64_t value,
-										bool saveArray = true, bool validation = true, bool printFlag = false)
+										bool saveArray = false, bool validation = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Get Source Array
@@ -307,11 +387,65 @@ pArray test_body_seq_spiht_index_filter(_pFuncGetSourceArray_,
 }
 
 template <typename value_type>
+pArray test_body_seq_se_naive_filter(_pFuncGetSourceArray_,
+									 _pFuncGetSourceArrayDesc_,
+									 eleDefault wtLevel, eleDefault mmtLevel,
+									 int64_t value,
+									 bool saveArray = false, bool validation = false, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Get Source Array
+	std::vector<pArray> sourceArr;
+	if (saveArray)
+	{
+		getSourceArrayIfEmpty(sourceArr);
+	} else
+	{
+		getSourceArrayDesc(sourceArr);
+	}
+	sourceArr[0]->setId(sourceArr[0]->getId() + se_array_id);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Se Index filter array
+	pPredicate myPredicate = std::make_shared<singlePredicate>(getEqualTerm(value));
+	auto outArr = exe_qbundle_seq_se_naive_filter<value_type>(sourceArr,
+															  myPredicate, wtLevel, mmtLevel,
+															  saveArray, printFlag);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 03. Validation
+	if (validation)
+	{
+		//////////////////////////////
+		// 03-1. Naive Filter Array
+		pPredicate myNaivePredicate = std::make_shared<singlePredicate>(getEqualTerm(value));
+		auto filterOutArr = exe_qry_ind_naive_filter<value_type>(sourceArr,
+																 myNaivePredicate, false);
+		//////////////////////////////
+
+		//////////////////////////////
+		// 03-2. Filtered Value Test
+		equalTest<value_type>(outArr, value);
+		//////////////////////////////
+
+		//////////////////////////////
+		// 03-3. Filtered Array Test
+		compArrary<value_type>(filterOutArr, outArr);
+		//////////////////////////////
+	}
+	//////////////////////////////
+
+	return outArr;
+}
+
+template <typename value_type>
 pArray test_body_seq_se_index_filter(_pFuncGetSourceArray_,
 									 _pFuncGetSourceArrayDesc_,
 									 eleDefault wtLevel, eleDefault mmtLevel,
 									 int64_t value,
-									 bool saveArray = true, bool validation = true, bool printFlag = false)
+									 bool saveArray = false, bool validation = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Get Source Array
@@ -361,10 +495,61 @@ pArray test_body_seq_se_index_filter(_pFuncGetSourceArray_,
 }
 
 template <typename value_type>
+pArray test_body_seq_compass_naive_filter(_pFuncGetSourceArray_,
+										  _pFuncGetSourceArrayDesc_,
+										  eleDefault numBins, int64_t value,
+										  bool saveArray = false, bool validation = false, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Get Source Array
+	std::vector<pArray> sourceArr;
+	if (saveArray)
+	{
+		getSourceArrayIfEmpty(sourceArr);
+	} else
+	{
+		getSourceArrayDesc(sourceArr);
+	}
+	sourceArr[0]->setId(sourceArr[0]->getId() + compass_array_id);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02-1. Index filter array
+	pPredicate myPredicate = std::make_shared<singlePredicate>(getEqualTerm(value));
+	auto outArr = exe_qbundle_seq_compass_naive_filter<value_type>(sourceArr,
+																   myPredicate, numBins,
+																   saveArray, printFlag);
+	  //////////////////////////////
+	  // 03. Validation
+	if (validation)
+	{
+		//////////////////////////////
+		// 03-1. Naive Filter Array
+		pPredicate myNaivePredicate = std::make_shared<singlePredicate>(getEqualTerm(value));
+		auto filterOutArr = exe_qry_ind_naive_filter<value_type>(sourceArr,
+																 myNaivePredicate, false);
+		//////////////////////////////
+
+		//////////////////////////////
+		// 03-2. Filtered Value Test
+		equalTest<value_type>(outArr, value);
+		//////////////////////////////
+
+		//////////////////////////////
+		// 03-3. Filtered Array Test
+		compArrary<value_type>(filterOutArr, outArr);
+		//////////////////////////////
+	}
+	//////////////////////////////
+
+	return outArr;
+}
+
+template <typename value_type>
 pArray test_body_seq_compass_index_filter(_pFuncGetSourceArray_,
 										  _pFuncGetSourceArrayDesc_,
 										  eleDefault numBins, int64_t value,
-										  bool saveArray = true, bool validation = true, bool printFlag = false)
+										  bool saveArray = false, bool validation = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Get Source Array
@@ -412,10 +597,10 @@ pArray test_body_seq_compass_index_filter(_pFuncGetSourceArray_,
 }
 
 template <typename value_type>
-pArray test_body_seq_zip_index_filter(_pFuncGetSourceArray_,
+pArray test_body_seq_zip_naive_filter(_pFuncGetSourceArray_,
 									  _pFuncGetSourceArrayDesc_,
 									  int64_t value,
-									  bool saveArray = true, bool validation = true, bool printFlag = false)
+									  bool saveArray = false, bool validation = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Get Source Array
@@ -434,7 +619,7 @@ pArray test_body_seq_zip_index_filter(_pFuncGetSourceArray_,
 	// 02-1. Index filter array
 	pPredicate myPredicate = std::make_shared<singlePredicate>(getEqualTerm(value));
 	auto outArr = exe_qbundle_seq_zip_naive_filter<value_type>(sourceArr,
-															   myPredicate, 
+															   myPredicate,
 															   saveArray, printFlag);
 	//////////////////////////////
 	// 03. Validation
@@ -461,6 +646,7 @@ pArray test_body_seq_zip_index_filter(_pFuncGetSourceArray_,
 
 	return outArr;
 }
+
 // ##################################################
 
 pArray exe_act_ind_naive_filter(_vectorSourceArray_, pPredicate myPredicate, pQuery qry = nullptr);
@@ -472,7 +658,7 @@ pTerm getEqualTerm(int64_t value, attributeId attrId = 0);
 template <typename value_type>
 pArray exe_qbundle_seq_load_naive_filter(_vectorSourceArray_,
 										 pPredicate myPredicate,
-										 bool saveArray = true, bool printFlag = false)
+										 bool saveArray = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Save Source Array
@@ -492,7 +678,7 @@ template <typename value_type>
 pArray exe_qbundle_seq_spiht_naive_filter(_vectorSourceArray_,
 										  pPredicate inPredicate,
 										  eleDefault wtLevel,
-										  bool saveArray = true, bool printFlag = false)
+										  bool saveArray = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Save Source Array
@@ -510,11 +696,35 @@ pArray exe_qbundle_seq_spiht_naive_filter(_vectorSourceArray_,
 }
 
 template <typename value_type>
+pArray exe_qbundle_seq_se_naive_filter(_vectorSourceArray_,
+									   pPredicate inPredicate,
+									   eleDefault wtLevel,
+									   eleDefault mmtLevel,
+									   bool saveArray = false, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Save Source Array
+	if (saveArray)
+	{
+		exe_qry_ind_mmt_build<value_type>(sourceArr, mmtLevel, false);
+		exe_qry_ind_se_compression<value_type>(sourceArr, wtLevel, mmtLevel, false);
+	}
+
+	//////////////////////////////
+	// 02. Index Filter Array
+	return exe_qry_seq_se_naive_filter<value_type>(sourceArr,
+												   inPredicate,
+												   wtLevel, mmtLevel,
+												   printFlag);
+}
+
+
+template <typename value_type>
 pArray exe_qbundle_seq_se_index_filter(_vectorSourceArray_,
 									   pPredicate inPredicate,
 									   eleDefault wtLevel,
 									   eleDefault mmtLevel,
-									   bool saveArray = true, bool printFlag = false)
+									   bool saveArray = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Save Source Array
@@ -533,10 +743,32 @@ pArray exe_qbundle_seq_se_index_filter(_vectorSourceArray_,
 }
 
 template <typename value_type>
+pArray exe_qbundle_seq_compass_naive_filter(_vectorSourceArray_,
+											pPredicate inPredicate,
+											eleDefault numBins,
+											bool saveArray = false, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Save Source Array
+	if (saveArray)
+	{
+		exe_qry_ind_compass_index_build<value_type>(sourceArr, numBins, false);
+		exe_qry_ind_compass_encode<value_type>(sourceArr, numBins, false);
+	}
+
+	//////////////////////////////
+	// 02. Index Filter Array
+	return exe_qry_seq_compass_naive_filter<value_type>(sourceArr,
+														inPredicate,
+														numBins,
+														printFlag);
+}
+
+template <typename value_type>
 pArray exe_qbundle_seq_compass_index_filter(_vectorSourceArray_,
 											pPredicate inPredicate,
 											eleDefault numBins,
-											bool saveArray = true, bool printFlag = false)
+											bool saveArray = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Save Source Array
@@ -557,7 +789,7 @@ pArray exe_qbundle_seq_compass_index_filter(_vectorSourceArray_,
 template <typename value_type>
 pArray exe_qbundle_seq_zip_naive_filter(_vectorSourceArray_,
 										pPredicate inPredicate,
-										bool saveArray = true, bool printFlag = false)
+										bool saveArray = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Save Source Array
@@ -700,6 +932,62 @@ pArray exe_qry_seq_spiht_naive_filter(_vectorSourceArray_,
 }
 
 template <typename value_type>
+pArray exe_qry_seq_se_naive_filter(_vectorSourceArray_,
+								   pPredicate inPredicate,
+								   eleDefault wtLevel,
+								   eleDefault mmtLevel,
+								   bool printFlag = false)
+{
+	pQuery qry = std::make_shared<query>();
+
+	auto seDecompPlan = getSeDecompressionPlan(sourceArr[0]->getDesc(), wtLevel, qry);
+	auto wtDecodePlan = getWaveletDecodePlan(seDecompPlan, wtLevel, qry);
+	auto deltaDecodePlan = getMMTDeltaDecodePlan(wtDecodePlan, qry);
+	auto filterPlan = getNaiveFilterPlan(deltaDecodePlan, inPredicate, qry);
+
+	auto outArr = seDecompPlan->getAction()->execute(sourceArr, qry);
+	if (printFlag)
+	{
+		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "Se Decomp Arr" << std::endl;
+		outArr->print();
+		//outArr->getChunkBitmap()->print();
+	}
+
+	outArr = wtDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	if (printFlag)
+	{
+		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "Wt Decode Arr" << std::endl;
+		outArr->print();
+		//outArr->getChunkBitmap()->print();
+	}
+
+	outArr = deltaDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	if (printFlag)
+	{
+		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "Delta Decode Arr" << std::endl;
+		outArr->print();
+		//outArr->getChunkBitmap()->print();
+	}
+
+	outArr = filterPlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	if (printFlag)
+	{
+		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "Filtered Arr" << std::endl;
+		outArr->print();
+		//outArr->getChunkBitmap()->print();
+	}
+
+	tearDownQuery(qry);
+
+	return outArr;
+}
+
+
+template <typename value_type>
 pArray exe_qry_seq_se_index_filter(_vectorSourceArray_,
 								   pPredicate inPredicate,
 								   eleDefault wtLevel,
@@ -755,7 +1043,7 @@ pArray exe_qry_seq_se_index_filter(_vectorSourceArray_,
 }
 
 template <typename value_type>
-pArray exe_qry_seq_compass_index_filter(_vectorSourceArray_,
+pArray exe_qry_seq_compass_naive_filter(_vectorSourceArray_,
 										pPredicate inPredicate,
 										eleDefault numBins,
 										bool printFlag = false)
@@ -763,7 +1051,7 @@ pArray exe_qry_seq_compass_index_filter(_vectorSourceArray_,
 	pQuery qry = std::make_shared<query>();
 
 	auto cpDecodePlan = getCompassDecodePlan(sourceArr[0]->getDesc(), numBins, qry);
-	auto filterPlan = getIndexFilterPlan(cpDecodePlan, inPredicate, qry);
+	auto filterPlan = getNaiveFilterPlan(cpDecodePlan, inPredicate, qry);
 
 	auto outArr = cpDecodePlan->getAction()->execute(sourceArr, qry);
 	if (printFlag)
@@ -774,6 +1062,41 @@ pArray exe_qry_seq_compass_index_filter(_vectorSourceArray_,
 		//outArr->getChunkBitmap()->print();
 	}
 
+	outArr = filterPlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	if (printFlag)
+	{
+		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "Filtered Arr" << std::endl;
+		outArr->print();
+		//outArr->getChunkBitmap()->print();
+	}
+
+	tearDownQuery(qry);
+
+	return outArr;
+}
+
+template <typename value_type>
+pArray exe_qry_seq_compass_index_filter(_vectorSourceArray_,
+										pPredicate inPredicate,
+										eleDefault numBins,
+										bool printFlag = false)
+{
+	pQuery qry = std::make_shared<query>();
+
+	auto cpDecodePlan = getCompassDecodePlan(sourceArr[0]->getDesc(), numBins, qry);
+	auto outArr = cpDecodePlan->getAction()->execute(sourceArr, qry);
+	if (printFlag)
+	{
+		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "Compass Decode Arr" << std::endl;
+		outArr->print();
+		//outArr->getChunkBitmap()->print();
+	}
+
+	// Its special case of COMPASS index filter
+	// To use index in FilterPlan, the hole array should be reconstructred before the query
+	auto filterPlan = getIndexFilterPlan(cpDecodePlan, inPredicate, qry);
 	outArr = filterPlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
 	if (printFlag)
 	{

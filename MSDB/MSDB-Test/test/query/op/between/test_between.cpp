@@ -13,11 +13,11 @@ coor sp = { 0, 125 };
 coor ep = { 6, 129 };
 
 size_t numTests = 3;
-std::vector<float> selectivities = { 0.001, 0.01, 0.1 };
+std::vector<float> selectivities = { 0.01, 0.1, 1, 10, 20, 40 };
 
-bool saveArray = true;
+bool saveArray = false;
 bool printFlag = false;
-bool validation = true;
+bool validation = false;
 
 // ##################################################
 // # star1024x1024
@@ -338,6 +338,154 @@ TEST(experiment_query_op_between, mars4096x2048_seq_random_zip_between)
 												 saveArray, validation, printFlag);
 }	// TEST()
 }	// data2D_mars4096x2048
+// ##################################################
+
+// ##################################################
+// # data2D_mercurydem20480x10240
+namespace data2D_mercurydem20480x10240
+{
+TEST(query_op_between, mercurydem20480x10240_seq_se_between)
+{
+	test_body_seq_se_between<value_type>(&getSourceArrayIfEmpty,
+										 &getSourceArrayDesc, wtLevel, mmtLevel,
+										 sp, ep,
+										 saveArray, validation, printFlag);
+}	// TEST()
+
+TEST(query_op_between, mercurydem20480x10240_seq_spiht_between)
+{
+	test_body_seq_spiht_between<value_type>(&getSourceArrayIfEmpty,
+											&getSourceArrayDesc, wtLevel,
+											sp, ep,
+											saveArray, validation, printFlag);
+}	// TEST()
+
+TEST(query_op_between, mercurydem20480x10240_seq_load_between)
+{
+	test_body_seq_load_between<value_type>(&getSourceArrayIfEmpty,
+										   &getSourceArrayDesc,
+										   sp, ep, printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, mercurydem20480x10240_seq_random_load_between)
+{
+	test_body_seq_random_load_between<value_type>(&getSourceArrayIfEmpty,
+												  &getSourceArrayDesc,
+												  numTests, selectivities,
+												  dimX, dimY,
+												  saveArray, validation, printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, mercurydem20480x10240_seq_random_spiht_between)
+{
+	test_body_seq_random_spiht_between<value_type>(&getSourceArrayIfEmpty,
+												   &getSourceArrayDesc, wtLevel,
+												   numTests, selectivities,
+												   dimX, dimY,
+												   saveArray, validation, printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, mercurydem20480x10240_seq_random_se_between)
+{
+	test_body_seq_random_se_between<value_type>(&getSourceArrayIfEmpty,
+												&getSourceArrayDesc, wtLevel, mmtLevel,
+												numTests, selectivities,
+												dimX, dimY,
+												saveArray, validation, printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, mercurydem20480x10240_seq_random_compass_between)
+{
+	test_body_seq_random_compass_between<value_type>(&getSourceArrayIfEmpty,
+													 &getSourceArrayDesc, numBins,
+													 numTests, selectivities,
+													 dimX, dimY,
+													 saveArray, validation, printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, mercurydem20480x10240_seq_random_zip_between)
+{
+	test_body_seq_random_zip_between<value_type>(&getSourceArrayIfEmpty,
+												 &getSourceArrayDesc,
+												 numTests, selectivities,
+												 dimX, dimY,
+												 saveArray, validation, printFlag);
+}	// TEST()
+}	// data2D_mercurydem20480x10240
+// ##################################################
+
+// ##################################################
+// # data2D_lunar102400x40960
+namespace data2D_lunar102400x40960
+{
+TEST(query_op_between, lunar102400x40960_seq_se_between)
+{
+	test_body_seq_se_between<value_type>(&getSourceArrayIfEmpty,
+										 &getSourceArrayDesc, wtLevel, mmtLevel,
+										 sp, ep,
+										 saveArray, validation, printFlag);
+}	// TEST()
+
+TEST(query_op_between, lunar102400x40960_seq_spiht_between)
+{
+	test_body_seq_spiht_between<value_type>(&getSourceArrayIfEmpty,
+											&getSourceArrayDesc, wtLevel,
+											sp, ep,
+											saveArray, validation, printFlag);
+}	// TEST()
+
+TEST(query_op_between, lunar102400x40960_seq_load_between)
+{
+	test_body_seq_load_between<value_type>(&getSourceArrayIfEmpty,
+										   &getSourceArrayDesc,
+										   sp, ep, printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, lunar102400x40960_seq_random_load_between)
+{
+	test_body_seq_random_load_between<value_type>(&getSourceArrayIfEmpty,
+												  &getSourceArrayDesc,
+												  numTests, selectivities,
+												  dimX, dimY,
+												  saveArray, validation, printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, lunar102400x40960_seq_random_spiht_between)
+{
+	test_body_seq_random_spiht_between<value_type>(&getSourceArrayIfEmpty,
+												   &getSourceArrayDesc, wtLevel,
+												   numTests, selectivities,
+												   dimX, dimY,
+												   saveArray, validation, printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, lunar102400x40960_seq_random_se_between)
+{
+	test_body_seq_random_se_between<value_type>(&getSourceArrayIfEmpty,
+												&getSourceArrayDesc, wtLevel, mmtLevel,
+												numTests, selectivities,
+												dimX, dimY,
+												saveArray, validation, printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, lunar102400x40960_seq_random_compass_between)
+{
+	test_body_seq_random_compass_between<value_type>(&getSourceArrayIfEmpty,
+													 &getSourceArrayDesc, numBins,
+													 numTests, selectivities,
+													 dimX, dimY,
+													 saveArray, validation, printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, lunar102400x40960_seq_random_zip_between)
+{
+	test_body_seq_random_zip_between<value_type>(&getSourceArrayIfEmpty,
+												 &getSourceArrayDesc,
+												 numTests, selectivities,
+												 dimX, dimY,
+												 saveArray, validation, printFlag);
+}	// TEST()
+}	// data2D_lunar102400x40960
 // ##################################################
 }	// caDummy
 }	// msdb

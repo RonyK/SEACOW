@@ -256,6 +256,55 @@ std::vector<pArray> getSourceArrayDesc()
 void getSourceArrayDesc(std::vector<pArray>& sourceArr);
 void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
 }	// data2D_mars4096x2048
+
+namespace data2D_lunar102400x40960
+{
+using value_type = char;
+static const eleType ele_type = eleType::INT16;
+
+static const dim_type origianlDimX = 102400;
+static const dim_type originalDimY = 40960;
+static const size_t originalDataLength = origianlDimX * originalDimY;
+static const dim_type dimX = 98304;	//16384;
+static const dim_type dimY = 32768;	// 8192;
+static const size_t dataLength = dimX * dimY;
+static const size_t wtLevel = 3;
+static const size_t mmtLevel = 3;
+static const size_t numBins = 64;
+static const arrayId aid = 10240;
+
+extern std::vector<dim_type> dims;
+extern std::vector<dim_type> originalDims;
+extern std::vector<dim_type> chunkDims;
+extern std::vector<dim_type> chunkNums;
+extern std::vector<dim_type> blockDims;
+extern std::vector<dim_type> blockNums;
+
+void getDummy(value_type* output, size_t length);
+
+template<class Aty_ = memBlockArray>
+std::vector<pArray> getSourceArray()
+{
+	// Get Dummy data
+	value_type* data = new value_type[originalDataLength];
+	getDummy(data, originalDataLength);
+
+	std::vector<pArray> arrs(
+		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_lunar102400x40960", originalDims, dims, chunkDims, blockDims, ele_type)) });
+	return arrs;
+}
+
+template<class Aty_ = memBlockArray>
+std::vector<pArray> getSourceArrayDesc()
+{
+	std::vector<pArray> arrs(
+		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_>(aid, "data2D_lunar102400x40960", dims, chunkDims, blockDims, ele_type)) });
+	return arrs;
+}
+
+void getSourceArrayDesc(std::vector<pArray>& sourceArr);
+void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
+}	// data2D_mars4096x2048
 }	// caDummy
 }	// msdb
 #endif	// _MSDB_DUMMY_ASTRONOMY_H_

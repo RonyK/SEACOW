@@ -185,5 +185,17 @@ TEST(query_op_se_compression, mercurydem20480x10240_seq_se_compr_decomp)
 											 printFlag);						// 20102
 }	// TEST()
 }	// data2D_mercurydem20480x10240
+
+namespace data2D_lunar102400x40960
+{
+TEST(query_op_se_compression, lunar102400x40960_seq_se_compr_decomp)
+{
+	bool printFlag = false;
+	test_body_seq_se_comp_decomp<value_type>(&getSourceArrayIfEmpty,
+											 &getSourceArrayDesc,
+											 wtLevel, mmtLevel,
+											 printFlag);						// 20102
+}	// TEST()
+}	// data2D_lunar102400x40960
 }	// caDummy
 }	// msdb

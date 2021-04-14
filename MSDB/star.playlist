@@ -155,6 +155,47 @@
                     </Rule>
                   </Rule>
                 </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="experiment_query_op_index_filter" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="experiment_query_op_index_filter.star1024x1024_seq_random_load_naive_filter" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="experiment_query_op_index_filter.star1024x1024_seq_random_load_naive_filter" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="experiment_query_op_index_filter.star1024x1024_seq_random_spiht_naive_filter" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="experiment_query_op_index_filter.star1024x1024_seq_random_spiht_naive_filter" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="experiment_query_op_index_filter.star1024x1024_seq_random_se_index_filter" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="experiment_query_op_index_filter.star1024x1024_seq_random_se_index_filter" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="experiment_query_op_index_filter.star1024x1024_seq_random_zip_naive_filter" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="experiment_query_op_index_filter.star1024x1024_seq_random_zip_naive_filter" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="experiment_query_op_index_filter.star1024x1024_seq_random_compass_index_filter" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="experiment_query_op_index_filter.star1024x1024_seq_random_compass_index_filter" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="experiment_query_op_index_filter.star1024x1024_seq_random_se_naive_filter" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="experiment_query_op_index_filter.star1024x1024_seq_random_se_naive_filter" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
               </Rule>
             </Rule>
           </Rule>

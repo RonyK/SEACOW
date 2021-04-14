@@ -301,6 +301,7 @@ protected:
 		coorItr leafItr = coorItr(leafSpace);
 
 		BOOST_LOG_TRIVIAL(debug) << "leaf Space: " << leafSpace.toString();
+		BOOST_LOG_TRIVIAL(debug) << "Forward Build Leaf: lv0";
 
 		while (!cItr->isEnd())
 		{
@@ -370,6 +371,7 @@ protected:
 	// Notes: In this method, prev is a lower level nodes (finer)
 	void forwardBuildNonLeaf(const size_type level)
 	{
+		BOOST_LOG_TRIVIAL(debug) << "Forward Build Non Leaf: lv" << level;
 		assert(level > 0);
 
 		////////////////////////////////////////
@@ -436,6 +438,7 @@ protected:
 	void forwardBuildRoot()
 	{
 		assert(this->maxLevel_ > 0);
+		BOOST_LOG_TRIVIAL(debug) << "Forward Build Root";
 
 		////////////////////////////////////////
 		// Create new mmtNodes
@@ -491,6 +494,7 @@ protected:
 	void backwardBuildRoot()
 	{
 		assert(this->nodes_.back().size() == 1);
+		BOOST_LOG_TRIVIAL(debug) << "Backward Build Root";
 
 		this->nodes_.back()[0]->initBits<Ty_>();
 		updateChildNodeOrder<Ty_>(this->nodes_.back()[0]);
@@ -499,6 +503,7 @@ protected:
 	// For max level nodes
 	void backwardBuildFromRoot()
 	{
+		BOOST_LOG_TRIVIAL(debug) << "Backward Build From Root: lv" << this->maxLevel_ - 1;
 		pMmtNode rootNode = this->nodes_[this->maxLevel_][0];
 		pMmtNode* curLevel = this->nodes_[this->maxLevel_ - 1].data();
 
@@ -511,6 +516,7 @@ protected:
 	// Except max level nodes ((refineLevel - 1) -> level 0 )
 	void backwardBuildNonRoot(const size_type level)
 	{
+		BOOST_LOG_TRIVIAL(debug) << "Backward Build Non Root: lv" << level;
 		assert(level < this->nodes_.size() - 2);		// Not for max level nodes
 		assert(level != (size_type)-1);
 

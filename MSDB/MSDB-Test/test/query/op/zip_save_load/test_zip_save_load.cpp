@@ -46,5 +46,23 @@ TEST(query_op_zip, mars4096x2048_ind_zip_save)
 									  &getSourceArrayDesc);
 }
 }	// data2D_mars4096x2048
+
+namespace data2D_mercurydem20480x10240
+{
+TEST(query_op_zip, mercurydem20480x10240_ind_zip_save)
+{
+	test_qry_ind_zip_save<value_type>(&getSourceArrayIfEmpty,
+									  &getSourceArrayDesc);
+}
+}	// data2D_mercurydem20480x10240
+
+namespace data2D_lunar102400x40960
+{
+TEST(query_op_zip, lunar102400x40960_ind_zip_save)
+{
+	test_qry_ind_zip_save<value_type>(&getSourceArrayIfEmpty,
+									  &getSourceArrayDesc);
+}
+}	// data2D_lunar102400x40960
 }	// caDummy
 }	// msdb

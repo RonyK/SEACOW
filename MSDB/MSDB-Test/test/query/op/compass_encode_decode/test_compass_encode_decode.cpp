@@ -56,5 +56,15 @@ TEST(query_op_compass_encode_decode, mercurydem20480x10240_ind_compass_encode_de
 												   numBins);
 }
 }	// data2D_mercurydem20480x10240
+
+namespace data2D_lunar102400x40960
+{
+TEST(query_op_compass_encode_decode, lunar102400x40960_ind_compass_encode_decode)
+{
+	test_qry_ind_compass_encode_decode<value_type>(&getSourceArrayIfEmpty,
+												   &getSourceArrayDesc,
+												   numBins);
+}
+}	// data2D_lunar102400x40960
 }	// caDummy
 }	// msdb
