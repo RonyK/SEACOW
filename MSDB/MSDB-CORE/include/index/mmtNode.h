@@ -70,11 +70,11 @@ public:
 	inline void inChildOrderChanged(bstream& bs)
 	{
 		bit_cnt_type orderChangedDelta = 0;
-		bs >> setw(this->bits_) >> orderChangedDelta;
-		if(orderChangedDelta)
+		bs >> setw(msb<sig_bit_type>(abs_(this->bMax_ - 1))) >> orderChangedDelta;
+		if (orderChangedDelta)
 		{
 			this->childOrder_ = this->order_ + orderChangedDelta;
-		}else
+		} else
 		{
 			this->childOrder_ = 0;
 		}
@@ -83,17 +83,20 @@ public:
 	inline void outChildOrderChanged(bstream& bs)
 	{
 		//////////
-		// Order has range [0:max({bMax, bMin})]
-		// Required bits for order change is this->bits_
+		// To change the child order, bMax == bMin.
+		// Order has range [0 : max({bMax, bMin}) - 1] -> [0:bMax-1]
 		//
-		if(this->childOrder_ > this->order_)
+		// this->bits_ = msb(bMax - bMin)
+		// required bit = msb(abs(bMax));
+		//
+		if (this->childOrder_ > this->order_)
 		{
 			// Next order
-			bs << setw(this->bits_) << this->childOrder_ - this->order_;
-		}else
+			bs << setw(msb<sig_bit_type>(abs_(this->bMax_ - 1))) << this->childOrder_ - this->order_;
+		} else
 		{
 			// cur node is last, end
-			bs << setw(this->bits_) << 0x0;
+			bs << setw(msb<sig_bit_type>(abs_(this->bMax_ - 1))) << 0x0;
 		}
 	}
 
@@ -116,7 +119,7 @@ public:
 				++jumpBits;
 				inBit = 0;
 				bs >> inBit;
-				jumpValue << 1;
+				jumpValue <<= 1;
 				jumpValue |= inBit;
 
 				if (inBit)
@@ -127,27 +130,30 @@ public:
 
 			// erase last significant bit
 			jumpValue >>= 1;
-			--jumpBits;;
+			--jumpBits;
 
 			// Postfix size should be >= 0
-			assert(this->bMax_ - jumpBits - 1 >= 0);
+			assert(abs_(this->bMax_) - jumpBits - 1 >= 0);
 			// Make to original value
-			jumpValue <<= this->bMax_ - jumpBits - 1;
+			jumpValue <<= abs_(this->bMax_) - jumpBits - 1;
 			this->jumpBits_ = jumpBits;
-
 		}else
 		{
 			char inBit = 0;
 
-			if(this->bMax_ > 0)
+			if(abs_(this->bMax_) > 1)
 			{
-				jumpBits = this->bMax_ - 1;
+				jumpBits = abs_(this->bMax_) - 1;
 				bs >> setw(jumpBits) >> jumpValue;
 			}
 
 			bs >> setw(1) >> inBit;
 			this->jumpBits_ = jumpBits;
 
+			if(inBit != 1)
+			{
+				BOOST_LOG_TRIVIAL(error) << "NOT IN BIT 1: " << static_cast<int>(abs_(this->bMax_)) << " / jumpBits: " << static_cast<int>(jumpBits) << " / jumpValue: " << static_cast<int>(jumpValue);
+			}
 			assert(inBit == 1);
 		}
 	}
@@ -156,13 +162,14 @@ public:
 	template <typename Ty_>
 	inline void outJumpedBits(bstream& bs, bit_cnt_type jumpBits, Ty_ jumpValue)
 	{
-		if(jumpBits)
+		if (jumpBits)
 		{
 			Ty_ mask = ~((Ty_)-1 << jumpBits);
 			bit_cnt_type postfixSize = abs_(this->bMax_) - jumpBits - 1;
+			assert(postfixSize >= 0);
 			bs << setw(jumpBits) << (Ty_)(abs_(jumpValue) >> (postfixSize));
 
-			assert(this->bMax_ - jumpBits - 1 >= 0);
+			assert(abs_(this->bMax_) - jumpBits - 1 >= 0);
 		}
 		bs << setw(1) << 0x1;
 
@@ -215,7 +222,7 @@ public:
 	{
 		this->bMax_ = msb<Ty_>(abs_(boost::any_cast<Ty_>(max_)), this->order_) * SIGN(boost::any_cast<Ty_>(max_));
 		this->bMin_ = msb<Ty_>(abs_(boost::any_cast<Ty_>(min_)), this->order_) * SIGN(boost::any_cast<Ty_>(min_));
-		
+
 #ifndef NDEBUG
 		//if(this->bMax_ < 0 || this->bMin_ < 0)
 		//{
@@ -294,18 +301,18 @@ void nodeUpdateWhenChildOrderChanged(pMmtNode curNode, bit_cnt_type jumpBits, Ty
 	Ty_ min_ = curNode->getMin<Ty_>();
 	Ty_ max_ = curNode->getMax<Ty_>();
 
-	if(curNode->childOrder_ == 0)
+	if (curNode->childOrder_ == 0)
 	{
 		min_ = (Ty_)((prefixMask & abs_((Ty_)min_)) | (jumpMask & abs_((Ty_)jumpValue)));
 		max_ = (Ty_)((prefixMask & abs_((Ty_)max_)) | (jumpMask & abs_((Ty_)jumpValue)));
-		
-	}else if (max_ >= 0)
+
+	} else if (max_ >= 0)
 	{
 		min_ = (Ty_)((prefixMask & abs_((Ty_)min_)) | (jumpMask & abs_((Ty_)jumpValue)));
-		max_ = getMaxBoundary<Ty_>(max_, curNode->childOrder_, curNode->bMax_ - jumpBits);;
+		max_ = getMaxBoundary<Ty_>(max_, curNode->childOrder_, curNode->bMax_ - jumpBits);
 	} else
 	{
-		min_ = getMinBoundary<Ty_>(min_, curNode->childOrder_, curNode->bMin_ + jumpBits);;
+		min_ = getMinBoundary<Ty_>(min_, curNode->childOrder_, curNode->bMin_ + jumpBits);
 		max_ = (Ty_)((prefixMask & abs_((Ty_)max_)) | (jumpMask & abs_((Ty_)jumpValue)));
 	}
 
@@ -368,7 +375,7 @@ bit_cnt_type updateChildNodeOrder(pMmtNode curNode)
 		return 0;
 	}
 
-	if(curNode->bMax_ == 0 && curNode->bMin_ == 0)
+	if (curNode->bMax_ == 0 && curNode->bMin_ == 0)
 	{
 		curNode->childOrder_ = 0;
 		return 0;
@@ -408,6 +415,8 @@ bit_cnt_type updateChildNodeOrder(pMmtNode curNode)
 
 	curNode->childOrder_ = childOrder;
 
+	// Now, bMax != bMin
+	//BOOST_LOG_TRIVIAL(debug) << static_cast<int>(abs_(curNode->bMax_) - bMax - 1) << "/" << static_cast<int>(abs_(curNode->bMin_) - bMin - 1);
 	return std::min({ abs_(curNode->bMax_) - bMax - 1, abs_(curNode->bMin_) - bMin - 1 });	// return jumped bits
 }
 

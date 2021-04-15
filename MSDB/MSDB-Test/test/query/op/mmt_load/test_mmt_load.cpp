@@ -108,6 +108,22 @@ TEST_F(query_op_mmt_load, mmt_save_load_sc4x4)
 }	// TEST()
 }	// data2D_sc4x4
 
+namespace data2D_star1024x1024
+{
+TEST_F(query_op_mmt_load, star1024x1024_mmt_save_load)
+{
+    test_body_mmt_save_load<value_type>(&getSourceArrayIfEmpty, mmtLevel);        // 24243
+}   // TEST
+}   // data2D_star1024x1024
+
+namespace data2D_saturn1024x1024
+{
+TEST_F(query_op_mmt_load, saturn1024x1024_mmt_save_load)
+{
+    test_body_mmt_save_load<value_type>(&getSourceArrayIfEmpty, mmtLevel);        // 24243
+}   // TEST
+}   // data2D_saturn1024x1024
+
 namespace data2D_solar1024x1024
 {
 TEST_F(query_op_mmt_load, solar1024x1024_mmt_save_load)
@@ -115,5 +131,29 @@ TEST_F(query_op_mmt_load, solar1024x1024_mmt_save_load)
     test_body_mmt_save_load<value_type>(&getSourceArrayIfEmpty, mmtLevel);        // 24243
 }   // TEST
 }   // solar1024x1024
+
+namespace data2D_mars4096x2048
+{
+TEST_F(query_op_mmt_load, mars4096x2048_mmt_save_load)
+{
+    test_body_mmt_save_load<value_type>(&getSourceArrayIfEmpty, mmtLevel);        // 24243
+}   // TEST
+}   // data2D_mars4096x2048
+
+namespace data2D_mercurydem20480x10240
+{
+TEST_F(query_op_mmt_load, mercurydem20480x10240_mmt_save_load)
+{
+    test_body_mmt_save_load<value_type>(&getSourceArrayIfEmpty, mmtLevel);        // 24243
+}   // TEST
+}   // data2D_mercurydem20480x10240
+
+namespace data2D_lunar102400x40960
+{
+TEST_F(query_op_mmt_load, lunar102400x40960_mmt_save_load)
+{
+    test_body_mmt_save_load<value_type>(&getSourceArrayIfEmpty, mmtLevel);        // 24243
+}   // TEST
+}   // data2D_lunar102400x40960
 }	// caDummy
 }	// msdb

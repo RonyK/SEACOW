@@ -45,7 +45,7 @@ TEST(query_op_between, star1024x1024_ind_raw_between)
 	outArr->print();
 }	// TEST()
 
-TEST(query_op_between, start1024x1024_seq_se_between)
+TEST(query_op_between, star1024x1024_seq_se_between)
 {
 	test_body_seq_se_between<value_type>(&getSourceArrayIfEmpty,
 										 &getSourceArrayDesc, wtLevel, mmtLevel,
@@ -53,7 +53,7 @@ TEST(query_op_between, start1024x1024_seq_se_between)
 										 saveArray, validation, printFlag);
 }	// TEST()
 
-TEST(query_op_between, start1024x1024_seq_spiht_between)
+TEST(query_op_between, star1024x1024_seq_spiht_between)
 {
 	test_body_seq_spiht_between<value_type>(&getSourceArrayIfEmpty,
 											&getSourceArrayDesc, wtLevel,
@@ -61,7 +61,7 @@ TEST(query_op_between, start1024x1024_seq_spiht_between)
 											saveArray, validation, printFlag);
 }	// TEST()
 
-TEST(query_op_between, start1024x1024_seq_load_between)
+TEST(query_op_between, star1024x1024_seq_load_between)
 {
 	test_body_seq_load_between<value_type>(&getSourceArrayIfEmpty,
 										   &getSourceArrayDesc,
@@ -69,7 +69,7 @@ TEST(query_op_between, start1024x1024_seq_load_between)
 										   saveArray, validation, printFlag);
 }	// TEST()
 
-TEST(experiment_query_op_between, start1024x1024_seq_random_load_between)
+TEST(experiment_query_op_between, star1024x1024_seq_random_load_between)
 {
 	test_body_seq_random_load_between<value_type>(&getSourceArrayIfEmpty,
 												  &getSourceArrayDesc,
@@ -78,7 +78,7 @@ TEST(experiment_query_op_between, start1024x1024_seq_random_load_between)
 												  saveArray, validation, printFlag);
 }	// TEST()
 
-TEST(experiment_query_op_between, start1024x1024_seq_random_spiht_between)
+TEST(experiment_query_op_between, star1024x1024_seq_random_spiht_between)
 {
 	test_body_seq_random_spiht_between<value_type>(&getSourceArrayIfEmpty,
 												   &getSourceArrayDesc, wtLevel,
@@ -87,7 +87,7 @@ TEST(experiment_query_op_between, start1024x1024_seq_random_spiht_between)
 												   saveArray, validation, printFlag);
 }	// TEST()
 
-TEST(experiment_query_op_between, start1024x1024_seq_random_se_between)
+TEST(experiment_query_op_between, star1024x1024_seq_random_se_between)
 {
 	test_body_seq_random_se_between<value_type>(&getSourceArrayIfEmpty,
 												&getSourceArrayDesc, wtLevel, mmtLevel,
@@ -96,7 +96,7 @@ TEST(experiment_query_op_between, start1024x1024_seq_random_se_between)
 												saveArray, validation, printFlag);
 }	// TEST()
 
-TEST(experiment_query_op_between, start1024x1024_seq_random_compass_between)
+TEST(experiment_query_op_between, star1024x1024_seq_random_compass_between)
 {
 	test_body_seq_random_compass_between<value_type>(&getSourceArrayIfEmpty,
 													 &getSourceArrayDesc, numBins,
@@ -105,7 +105,7 @@ TEST(experiment_query_op_between, start1024x1024_seq_random_compass_between)
 													 saveArray, validation, printFlag);
 }	// TEST()
 
-TEST(experiment_query_op_between, start1024x1024_seq_random_zip_between)
+TEST(experiment_query_op_between, star1024x1024_seq_random_zip_between)
 {
 	test_body_seq_random_zip_between<value_type>(&getSourceArrayIfEmpty,
 												 &getSourceArrayDesc,

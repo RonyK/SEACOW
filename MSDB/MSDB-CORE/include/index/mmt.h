@@ -169,11 +169,13 @@ public:
 		this->findChunkBlockLevel();
 		this->nodes_.clear();
 
+		assert(this->maxLevel_ > 0);
+
 		//////////////////////////////
 		// Forward build
 		// Set Min/Max values [0 (leaf) level -> refineLevel]
 		this->forwardBuildLeaf(it);
-		for (size_type level = 1; level <= this->maxLevel_; ++level)
+		for (size_type level = 1; level < this->maxLevel_; ++level)
 		{
 			this->forwardBuildNonLeaf(level);
 			if(this->nodes_[level].size() == 1)
@@ -182,11 +184,7 @@ public:
 			}
 		}
 
-		if(this->nodes_[this->maxLevel_].size() != 1)
-		{
-			++this->maxLevel_;
-			this->forwardBuildRoot();
-		}
+		this->forwardBuildRoot();
 		//////////////////////////////
 
 		//////////////////////////////
@@ -228,7 +226,8 @@ public:
 		BOOST_LOG_TRIVIAL(debug) << "root: " << this->nodes_[maxLevel].size();
 		nodeNums += this->nodes_[maxLevel].size();
 
-		for (size_type l = maxLevel - 1; l != (size_type)this->lowerLevel_ - 1; l--)
+		//for (size_type l = maxLevel - 1; l != (size_type)this->lowerLevel_ - 1; l--)
+		for (size_type l = maxLevel - 1; l != (size_type)-1; l--)
 		{
 			this->serializeNonRoot(bs, l);
 			BOOST_LOG_TRIVIAL(debug) << "level" << l << ": " << this->nodes_[l].size();
@@ -260,10 +259,20 @@ public:
 			this->nodes_.push_back(std::vector<pMmtNode>());
 		}
 
+		assert(this->lowerLevel_ > 0);
 		this->deserializeRoot(bs);
-		for (size_type l = this->maxLevel_ - 1; l != (size_type)this->lowerLevel_ - 1; l--)
+		BOOST_LOG_TRIVIAL(debug) << "root: " << this->nodes_[this->maxLevel_].size();
+		if(this->maxLevel_ - 1 != (size_type)this->lowerLevel_ - 1)
+		{
+			this->deserializeFromRoot(bs, this->maxLevel_ - 1);
+			BOOST_LOG_TRIVIAL(debug) << "level" << this->maxLevel_ - 1 << ": " << this->nodes_[this->maxLevel_ - 1].size();
+		}
+
+		//for (size_type l = this->maxLevel_ - 2; l != (size_type)this->lowerLevel_ - 1; l--)
+		for (size_type l = this->maxLevel_ - 2; l != (size_type)-1; l--)
 		{
 			this->deserializeNonRoot(bs, l);
+			BOOST_LOG_TRIVIAL(debug) << "level" << l << ": " << this->nodes_[l].size();
 		}
 	}
 
@@ -509,7 +518,7 @@ protected:
 
 		for (size_type i = 0; i < this->nodes_[this->maxLevel_ - 1].size(); ++i)
 		{
-			backwardUpdateNode(rootNode, curLevel[i], isFinished(rootNode), isChildOrderChanged(rootNode));
+			backwardUpdateNode(rootNode, curLevel[i], isFinished(rootNode), isChildOrderChanged(rootNode), i);
 		}
 	}
 
@@ -566,12 +575,12 @@ protected:
 				// Update
 				pMmtNode curNode = (*cit);
 				assert(pcit.coor() == this->getParentCoor(cit.coor()));
-				backwardUpdateNode(prevNode, curNode, isFinished(prevNode), isChildOrderChanged(prevNode));
+				backwardUpdateNode(prevNode, curNode, isFinished(prevNode), isChildOrderChanged(prevNode), cID);
 			}
 		}
 	}
 
-	void backwardUpdateNode(pMmtNode prevNode, pMmtNode curNode, bool finished, bool orderChanged)
+	void backwardUpdateNode(pMmtNode prevNode, pMmtNode curNode, bool finished, bool orderChanged, int i)
 	{
 		bit_cnt_type jumpBits = 0;
 		curNode->parent_ = prevNode;
@@ -615,7 +624,9 @@ protected:
 			curNode->bMinDelta_ = abs_(curNode->bMin_ - prevNode->bMin_) - 1;
 			curNode->bMaxDelta_ = abs_(prevNode->bMax_ - curNode->bMax_) - 1;
 
-			jumpBits = updateChildNodeOrder<Ty_>(curNode);		// order changed -> child node order changed
+			//BOOST_LOG_TRIVIAL(debug) << "order changed: MIN(" << static_cast<int>(curNode->bMin_) << " / " << static_cast<int>(prevNode->bMin_) << " /d: " << static_cast<int>(curNode->bMinDelta_) << "), MAX(" << static_cast<int>(curNode->bMax_) << " / " << static_cast<int>(prevNode->bMax_) << "/d:" << static_cast<int>(curNode->bMaxDelta_) << ")";
+
+			//jumpBits = updateChildNodeOrder<Ty_>(curNode);		// order changed -> child node order changed
 		} else
 		{
 			// Order not changed
@@ -626,9 +637,12 @@ protected:
 			curNode->bMinDelta_ = static_cast<bit_cnt_type>(curNode->bMin_ - prevNode->bMin_);	// min: prev <= cur
 			curNode->bMaxDelta_ = static_cast<bit_cnt_type>(prevNode->bMax_ - curNode->bMax_);	// max: prev >= cur
 
-			jumpBits = updateChildNodeOrder<Ty_>(curNode);		// order changed -> child node order changed
+			//jumpBits = updateChildNodeOrder<Ty_>(curNode);		// order changed -> child node order changed
 			//curNode->childOrder_ = prevNode->childOrder_;	// order not changed -> child node order sustained
 		}
+
+		// Regardless of order change of current node, the order of child node can be changed.
+		jumpBits = updateChildNodeOrder<Ty_>(curNode);		// order changed -> child node order changed
 
 //#ifndef NDEBUG
 //		Ty_ tMax = curNode->getMax<Ty_>();
@@ -643,6 +657,7 @@ protected:
 			// Jumped part would same in realMin_ and realMax_
 			// Just use one of them (realMin, realMax_)
 			nodeUpdateWhenChildOrderChanged<Ty_>(curNode, jumpBits, curNode->getRealMax<Ty_>());
+			//BOOST_LOG_TRIVIAL(debug) << "(" << i << ")" << static_cast<int>(curNode->childOrder_) << " / " << static_cast<int>(jumpBits);
 			//if (curNode->childOrder_)
 			//{
 
@@ -687,6 +702,7 @@ protected:
 
 	void serializeNonRoot(bstream& bs, size_type level)
 	{
+		//BOOST_LOG_TRIVIAL(debug) << "serializeNonRoot";
 		pMmtNode* curLevelNodes = this->nodes_[level].data();
 		for (size_type i = 0; i < this->nodes_[level].size(); i++)
 		{
@@ -704,7 +720,9 @@ protected:
 			{
 				// non-root node record both 'order changed' and 'jumped bits'
 				curNode->outChildOrderChanged(bs);
-				curNode->outJumpedBits<Ty_>(bs, curNode->jumpBits_, curNode->getMax<Ty_>());
+				curNode->outJumpedBits<Ty_>(bs, curNode->jumpBits_, curNode->getRealMax<Ty_>());		// TODO:: If jump, correct real max from child node																	// TODO:: or correct max from child node
+
+				//BOOST_LOG_TRIVIAL(debug) << "(" << i << ")" << static_cast<int>(curNode->childOrder_) << " / " << static_cast<int>(curNode->jumpBits_) << " / " << static_cast<int>(curNode->bMin_) << " ~ " << static_cast<int>(curNode->bMax_);
 				//if (curNode->childOrder_)
 				//{
 				//	// min_, max_ has same jumpValue
@@ -714,6 +732,8 @@ protected:
 				//	curNode->outJumpedBits<Ty_>(bs, curNode->jumpBits_, curNode->getMax<Ty_>());	// copy to end
 				//}
 			}
+
+			//BOOST_LOG_TRIVIAL(debug) << "(" << i << ") " << static_cast<int>(curNode->bits_) << " / " << static_cast<int>(curNode->bMin_) << ", " << static_cast<int>(curNode->bMinDelta_) << " / " << static_cast<int>(curNode->bMax_) << ", " << static_cast<int>(curNode->bMaxDelta_);
 			//////////////////////////////
 		}
 	}
@@ -749,8 +769,45 @@ protected:
 		rootNodes[0] = rootNode;
 	}
 
+	void deserializeFromRoot(bstream& bs, size_type level)
+	{
+		// Calc chunk num of prev and current level
+		dimension pChunksInDim = this->nodeSpace_[level + 1];
+		dimension chunksInDim = this->nodeSpace_[level];
+		size_type chunkCnt = calcNumItems(chunksInDim.data(), chunksInDim.size());
+		this->nodes_[level].resize(chunkCnt);
+
+		// Prev
+		itemIterator<Dty_, pMmtNode> pcit(this->nodes_[level + 1].data(), this->dSize_,
+										  pChunksInDim.data());
+
+		   // Current
+		itemIterator<Dty_, pMmtNode> cit(this->nodes_[level].data(), this->dSize_,
+										 chunksInDim.data());
+
+		pMmtNode prevNode = (*pcit);
+
+		for (size_type i = 0; i < chunkCnt; i++)
+		{
+			pMmtNode curNode = std::make_shared<mmtNode>();
+			(*cit) = curNode;
+
+			curNode->parent_ = prevNode;
+
+			deserializeUpdateNode(bs, prevNode, curNode, isFinished(prevNode), isChildOrderChanged(prevNode), i, level);
+			//if(!isFinished(prevNode))
+			//{
+			//	BOOST_LOG_TRIVIAL(debug) << "(" << i << ") " << static_cast<int>(curNode->bits_) << " / " << static_cast<int>(curNode->bMin_) << ", " << static_cast<int>(curNode->bMinDelta_) << " / " << static_cast<int>(curNode->bMax_) << ", " << static_cast<int>(curNode->bMaxDelta_);
+			//}
+			curNode->seqPos_ = i;
+
+			++cit;	// Move to next data
+		}
+	}
+
 	void deserializeNonRoot(bstream& bs, size_type level)
 	{
+		//BOOST_LOG_TRIVIAL(debug) << "deserializeNonRoot";
 		// Calc chunk num of prev and current level
 		dimension pChunksInDim = this->nodeSpace_[level + 1];
 		dimension chunksInDim = this->nodeSpace_[level];
@@ -774,13 +831,18 @@ protected:
 			pMmtNode prevNode = (*pcit);
 			curNode->parent_ = prevNode;
 
-			deserializeUpdateNode(bs, prevNode, curNode, isFinished(prevNode), isChildOrderChanged(prevNode));
+			deserializeUpdateNode(bs, prevNode, curNode, isFinished(prevNode), isChildOrderChanged(prevNode), i, level);
+			//if (!isFinished(prevNode))
+			//{
+			//	BOOST_LOG_TRIVIAL(debug) << "(" << i << ") " << static_cast<int>(curNode->bits_) << " / " << static_cast<int>(curNode->bMin_) << ", " << static_cast<int>(curNode->bMinDelta_) << " / " << static_cast<int>(curNode->bMax_) << ", " << static_cast<int>(curNode->bMaxDelta_);
+			//}
+			curNode->seqPos_ = i;
 
 			++cit;	// Move to next data
 		}
 	}
 
-	void deserializeUpdateNode(bstream& bs, pMmtNode prevNode, pMmtNode curNode, bool finished, bool orderChanged)
+	void deserializeUpdateNode(bstream& bs, pMmtNode prevNode, pMmtNode curNode, bool finished, bool orderChanged, int i, int level)
 	{
 		if (finished)
 		{
@@ -809,8 +871,15 @@ protected:
 
 		curNode->inDelta(bs);
 
-		curNode->bMin_ = prevNode->bMin_ + curNode->bMinDelta_;
-		curNode->bMax_ = prevNode->bMax_ - curNode->bMaxDelta_;
+		if(orderChanged)
+		{
+			curNode->bMin_ = (abs_(prevNode->bMin_) - curNode->bMinDelta_ - 1) * SIGN(prevNode->bMin_);
+			curNode->bMax_ = (abs_(prevNode->bMax_) - curNode->bMaxDelta_ - 1) * SIGN(prevNode->bMax_);
+		}else
+		{
+			curNode->bMin_ = prevNode->bMin_ + curNode->bMinDelta_;
+			curNode->bMax_ = prevNode->bMax_ - curNode->bMaxDelta_;
+		}
 
 		curNode->order_ = prevNode->childOrder_;
 		curNode->childOrder_ = curNode->order_;
@@ -825,7 +894,9 @@ protected:
 			// Get jump value and bits
 			bit_cnt_type jumpBits = 0;
 			Ty_ jumpValue = 0;
+			//BOOST_LOG_TRIVIAL(debug) << "inChildOrderChange";
 			curNode->inJumpedBits<Ty_>(bs, jumpBits, jumpValue);
+			//BOOST_LOG_TRIVIAL(debug) << "(" << i << ")" << static_cast<int>(curNode->childOrder_) << " / " << static_cast<int>(curNode->jumpBits_);
 
 			nodeUpdateWhenChildOrderChanged(curNode, jumpBits, jumpValue);
 		}
@@ -846,8 +917,9 @@ protected:
 		this->nodeSpace_.clear();
 		dimension nodeSpace = (this->dims_ / this->blockDims_) * pow(2, this->lowerLevel_);
 		size_type level = 0;
+		bool fatherMerge = true;
 
-		while(true)
+		while(fatherMerge)
 		{
 			this->nodeSpace_.push_back(nodeSpace);
 			for(dimensionId d = 0; d < this->dSize_; ++d)
@@ -855,13 +927,29 @@ protected:
 				if(nodeSpace[d] <= 1)
 				{
 					// nodes cannot be merged farther.
-					this->maxLevel_ = level;
-					return;
+					fatherMerge = false;
+					break;
 				}
 			}
-			nodeSpace /= 2;
-			++level;
+
+			if(fatherMerge)
+			{
+				nodeSpace /= 2;
+				++level;
+			}
 		}
+
+		// Check the last level is root
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			if (nodeSpace[d] > 1)
+			{
+				this->nodeSpace_.push_back(dimension(this->dSize_));
+				++level;
+				break;
+			}
+		}
+		this->maxLevel_ = level;
 	}
 
 	void findChunkBlockLevel()
@@ -1044,7 +1132,8 @@ public:
 	{
 		for(size_type level = 0; level <= this->getMaxLevel(); ++level)
 		{
-			BOOST_LOG_TRIVIAL(debug) << "==============================\n" << "Level: " << level;
+			BOOST_LOG_TRIVIAL(debug) << "==============================\n";
+			BOOST_LOG_TRIVIAL(debug) << "Level: " << level;
 
 			auto levelNodes = this->nodes_[level];
 			int nodeSize = nodeSpace_[level].area();

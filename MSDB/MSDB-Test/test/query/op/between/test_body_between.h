@@ -445,7 +445,7 @@ pArray exe_qbundle_seq_compass_between(_vectorSourceArray_,
 												   numBins,
 												   sp, ep,
 												   printFlag);
-	  //////////////////////////////
+	 //////////////////////////////
 }
 
 template <typename value_type>

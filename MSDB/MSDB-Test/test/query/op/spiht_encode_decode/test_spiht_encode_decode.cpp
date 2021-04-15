@@ -47,7 +47,7 @@ template <typename value_type>
 pArray test_qry_seq_spiht_encode_decode(_pFuncGetSourceArray_,
 										_pFuncGetSourceArrayDesc_,
 										eleDefault wtLevel,
-										bool printFlag = false)
+										bool printFlag = false, bool validation = false)
 {
 	auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, printFlag);
 	sourceArr[0]->setId(sourceArr[0]->getId() + spiht_array_id);
@@ -94,11 +94,15 @@ pArray test_qry_seq_spiht_encode_decode(_pFuncGetSourceArray_,
 	//	BOOST_LOG_TRIVIAL(debug) << "Wavelet Decode Arr" << std::endl;
 	//	outArr->print();
 	//}
-	//////////////////////
-	//compArrary<value_type>(wtOutArr, spOutArr);
 
-   //compArrary<value_type>(sourceArr[0], outArr);
-   //BOOST_LOG_TRIVIAL(debug) << "Array: " << sourceArr[0]->getDesc()->name_;
+	//////////////////////
+	// 03. Validation
+	if(validation)
+	{
+		compArrary<value_type>(sourceArr[0], outArr);
+		BOOST_LOG_TRIVIAL(debug) << "validation finished";
+	}
+	//////////////////////
 
 	return outArr;
 }
@@ -164,9 +168,11 @@ TEST(query_op_spiht_encode_decode, solar1024x1024_ind_spiht_encode_decode)
 
 TEST(query_op_spiht_encode_decode, solar1024x1024_seq_spiht_encode_decode)
 {
+	bool printFlag = false;
+	bool validation = true;
 	test_qry_seq_spiht_encode_decode<value_type>(&getSourceArrayIfEmpty,
 												 &getSourceArrayDesc,
-												 wtLevel);
+												 wtLevel, printFlag, validation);
 }
 }	// data2D_solar1024x1024
 

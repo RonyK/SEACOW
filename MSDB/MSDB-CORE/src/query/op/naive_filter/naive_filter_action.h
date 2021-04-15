@@ -22,6 +22,8 @@ private:
 	template<class Ty_>
 	void attributeFilter(pArray outArr, pArray inArr, pAttributeDesc attrDesc, pPredicate inPredicate)
 	{
+		int64_t attrFilteredValues = 0;
+
 		auto inChunkItr = inArr->getChunkIterator();
 		//auto outChunkItr = outArr->getChunkIterator();
 
@@ -35,21 +37,29 @@ private:
 				auto outChunk = outArr->makeChunk(attrDesc->id_, inChunk->getId());
 				outChunk->bufferRef(inChunk);
 
-				auto isEmptyChunk = this->chunkFilter<Ty_>(outChunk, inChunk, inPredicate);
+				int64_t chunkFilteredValue = 0;
+				auto isEmptyChunk = this->chunkFilter<Ty_>(outChunk, inChunk, inPredicate, chunkFilteredValue);
 				if(isEmptyChunk)
 				{
 					outArr->freeChunk(inChunk->getId());
 				}
+
+				attrFilteredValues += chunkFilteredValue;
 			}
 			++(*inChunkItr);
 			//++(*outChunkItr);
 		}
+
+		BOOST_LOG_TRIVIAL(debug) << "=====";
+		BOOST_LOG_TRIVIAL(debug) << "Attr filtered value: " << attrFilteredValues;
+		BOOST_LOG_TRIVIAL(debug) << "=====";
 	}
 
 	template <class Ty_>
-	bool chunkFilter(pChunk outChunk, pChunk inChunk, pPredicate inPredicate)
+	bool chunkFilter(pChunk outChunk, pChunk inChunk, pPredicate inPredicate, int64_t& outFilteredValue)
 	{
 		bool isEmptyChunk = true;
+		int64_t chunkFilteredValue = 0;
 
 		auto inBlockItr = inChunk->getBlockIterator();
 		auto outBlockItr = outChunk->getBlockIterator();
@@ -60,7 +70,8 @@ private:
 				auto inBlock = (**inBlockItr);
 				auto outBlock = outChunk->makeBlock(inBlock->getId());
 
-				auto isEmptyBlock = this->blockFilter<Ty_>(outBlock, inBlock, inPredicate);
+				int64_t blockFilteredValue = 0;
+				auto isEmptyBlock = this->blockFilter<Ty_>(outBlock, inBlock, inPredicate, blockFilteredValue);
 				if(isEmptyBlock)
 				{
 					outChunk->freeBlock(inBlock->getId());
@@ -69,17 +80,20 @@ private:
 					isEmptyChunk = false;
 				}
 
+				chunkFilteredValue += blockFilteredValue;
 				++(*inBlockItr);
 				++(*outBlockItr);
 			}
 		}
 
+		outFilteredValue = chunkFilteredValue;
 		return isEmptyChunk;
 	}
 
 	template <class Ty_>
-	bool blockFilter(pBlock outBlock, pBlock inBlock, pPredicate inPredicate)
+	bool blockFilter(pBlock outBlock, pBlock inBlock, pPredicate inPredicate, int64_t& outFilteredValue)
 	{
+		int64_t filteredValue = 0;
 		bool isEmpty = true;
 
 		auto inBlockItemItr = inBlock->getItemIterator();
@@ -92,6 +106,7 @@ private:
 				//std::cout << "setExist: "
 				//	<< static_cast<int>((**outBlockItemItr).get<char>()) << std::endl;
 				outBlockItemItr->setExist();
+				filteredValue++;
 				isEmpty = false;
 			}else
 			{
@@ -102,6 +117,8 @@ private:
 			++(*inBlockItemItr);
 			++(*outBlockItemItr);
 		}
+
+		outFilteredValue = filteredValue;
 
 		return isEmpty;
 	}

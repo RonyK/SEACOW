@@ -97,7 +97,7 @@ void compass_decode_action::decodeChunk(pChunk outChunk, pCompassChunk inChunk, 
 									  serialChunk);
 
 	//----------------------------------------//
-	qry->getTimer()->nextWork(0, workType::COMPUTING);
+	qry->getTimer()->nextWork(threadId, workType::COMPUTING);
 	//----------------------------------------//
 
 	outChunk->copyBlockBitmap(inChunk->getBlockBitmap());

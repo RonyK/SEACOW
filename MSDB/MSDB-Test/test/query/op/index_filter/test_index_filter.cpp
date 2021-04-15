@@ -15,8 +15,8 @@ namespace data2D_sc4x4
 TEST(query_op_index_filter, sc4x4_seq_load_naive_filter)
 {
 	bool saveArray = false;
-	bool printFlag = true;
-	bool validation = true;
+	bool printFlag = false;
+	bool validation = false;
 
 	test_body_seq_load_naive_filter<value_type>(&getSourceArrayIfEmpty,
 												&getSourceArrayDesc,
@@ -26,8 +26,8 @@ TEST(query_op_index_filter, sc4x4_seq_load_naive_filter)
 TEST(query_op_index_filter, sc4x4_seq_se_index_filter)
 {
 	bool saveArray = false;
-	bool printFlag = true;
-	bool validation = true;
+	bool printFlag = false;
+	bool validation = false;
 
 	test_body_seq_se_index_filter<value_type>(&getSourceArrayIfEmpty,
 											  &getSourceArrayDesc, wtLevel, mmtLevel,
@@ -44,7 +44,7 @@ TEST(query_op_index_filter, star1024x1024_seq_load_naive_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = true;
+	bool validation = false;
 
 	test_body_seq_load_naive_filter<value_type>(&getSourceArrayIfEmpty,
 												&getSourceArrayDesc,
@@ -55,7 +55,7 @@ TEST(query_op_index_filter, star1024x1024_seq_spiht_naive_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = true;
+	bool validation = false;
 
 	test_body_seq_spiht_naive_filter<value_type>(&getSourceArrayIfEmpty,
 												 &getSourceArrayDesc, wtLevel,
@@ -64,9 +64,9 @@ TEST(query_op_index_filter, star1024x1024_seq_spiht_naive_filter)
 
 TEST(query_op_index_filter, star1024x1024_seq_se_index_filter)
 {
-	bool saveArray = true;
+	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = true;
+	bool validation = false;
 
 	test_body_seq_se_index_filter<value_type>(&getSourceArrayIfEmpty,
 											  &getSourceArrayDesc, wtLevel, mmtLevel,
@@ -75,9 +75,9 @@ TEST(query_op_index_filter, star1024x1024_seq_se_index_filter)
 
 TEST(query_op_index_filter, star1024x1024_seq_compass_index_filter)
 {
-	bool saveArray = true;
+	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = true;
+	bool validation = false;
 
 	test_body_seq_compass_index_filter<value_type>(&getSourceArrayIfEmpty,
 												   &getSourceArrayDesc, numBins,
@@ -88,7 +88,7 @@ TEST(query_op_index_filter, star1024x1024_seq_zip_naive_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = true;
+	bool validation = false;
 
 	test_body_seq_zip_naive_filter<value_type>(&getSourceArrayIfEmpty,
 											   &getSourceArrayDesc,
@@ -182,7 +182,7 @@ TEST(query_op_index_filter, saturn1024x1024_seq_load_index_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = true;
+	bool validation = false;
 
 	test_body_seq_load_naive_filter<value_type>(&getSourceArrayIfEmpty,
 												&getSourceArrayDesc,
@@ -193,7 +193,7 @@ TEST(query_op_index_filter, saturn1024x1024_seq_spiht_index_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = true;
+	bool validation = false;
 
 	test_body_seq_spiht_naive_filter<value_type>(&getSourceArrayIfEmpty,
 												 &getSourceArrayDesc, wtLevel,
@@ -202,9 +202,9 @@ TEST(query_op_index_filter, saturn1024x1024_seq_spiht_index_filter)
 
 TEST(query_op_index_filter, saturn1024x1024_seq_se_index_filter)
 {
-	bool saveArray = true;
+	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = true;
+	bool validation = false;
 
 	test_body_seq_se_index_filter<value_type>(&getSourceArrayIfEmpty,
 											  &getSourceArrayDesc, wtLevel, mmtLevel,
@@ -298,7 +298,7 @@ TEST(query_op_index_filter, solar1024x1024_seq_load_index_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = true;
+	bool validation = false;
 
 	test_body_seq_load_naive_filter<value_type>(&getSourceArrayIfEmpty,
 												&getSourceArrayDesc,
@@ -309,7 +309,7 @@ TEST(query_op_index_filter, solar1024x1024_seq_spiht_index_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = true;
+	bool validation = false;
 
 	test_body_seq_spiht_naive_filter<value_type>(&getSourceArrayIfEmpty,
 												 &getSourceArrayDesc, wtLevel,
@@ -318,9 +318,9 @@ TEST(query_op_index_filter, solar1024x1024_seq_spiht_index_filter)
 
 TEST(query_op_index_filter, solar1024x1024_seq_se_index_filter)
 {
-	bool saveArray = true;
+	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = true;
+	bool validation = false;
 
 	test_body_seq_se_index_filter<value_type>(&getSourceArrayIfEmpty,
 											  &getSourceArrayDesc, wtLevel, mmtLevel,
@@ -414,7 +414,7 @@ TEST(query_op_index_filter, mars4096x2048_seq_load_index_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = true;
+	bool validation = false;
 
 	test_body_seq_load_naive_filter<value_type>(&getSourceArrayIfEmpty,
 												&getSourceArrayDesc,
@@ -425,7 +425,7 @@ TEST(query_op_index_filter, mars4096x2048_seq_spiht_index_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = true;
+	bool validation = false;
 
 	test_body_seq_spiht_naive_filter<value_type>(&getSourceArrayIfEmpty,
 												 &getSourceArrayDesc, wtLevel,
@@ -434,9 +434,9 @@ TEST(query_op_index_filter, mars4096x2048_seq_spiht_index_filter)
 
 TEST(query_op_index_filter, mars4096x2048_seq_se_index_filter)
 {
-	bool saveArray = true;
+	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = true;
+	bool validation = false;
 
 	test_body_seq_se_index_filter<value_type>(&getSourceArrayIfEmpty,
 											  &getSourceArrayDesc, wtLevel, mmtLevel,
@@ -530,7 +530,7 @@ TEST(query_op_index_filter, mercurydem20480x10240_seq_load_index_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = true;
+	bool validation = false;
 
 	test_body_seq_load_naive_filter<value_type>(&getSourceArrayIfEmpty,
 												&getSourceArrayDesc,
@@ -541,7 +541,7 @@ TEST(query_op_index_filter, mercurydem20480x10240_seq_spiht_index_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = true;
+	bool validation = false;
 
 	test_body_seq_spiht_naive_filter<value_type>(&getSourceArrayIfEmpty,
 												 &getSourceArrayDesc, wtLevel,
@@ -550,9 +550,9 @@ TEST(query_op_index_filter, mercurydem20480x10240_seq_spiht_index_filter)
 
 TEST(query_op_index_filter, mercurydem20480x10240_seq_se_index_filter)
 {
-	bool saveArray = true;
+	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = true;
+	bool validation = false;
 
 	test_body_seq_se_index_filter<value_type>(&getSourceArrayIfEmpty,
 											  &getSourceArrayDesc, wtLevel, mmtLevel,
@@ -646,7 +646,7 @@ TEST(query_op_index_filter, lunar102400x40960_seq_load_index_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = true;
+	bool validation = false;
 
 	test_body_seq_load_naive_filter<value_type>(&getSourceArrayIfEmpty,
 												&getSourceArrayDesc,
@@ -657,7 +657,7 @@ TEST(query_op_index_filter, lunar102400x40960_seq_spiht_index_filter)
 {
 	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = true;
+	bool validation = false;
 
 	test_body_seq_spiht_naive_filter<value_type>(&getSourceArrayIfEmpty,
 												 &getSourceArrayDesc, wtLevel,
@@ -666,9 +666,9 @@ TEST(query_op_index_filter, lunar102400x40960_seq_spiht_index_filter)
 
 TEST(query_op_index_filter, lunar102400x40960_seq_se_index_filter)
 {
-	bool saveArray = true;
+	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = true;
+	bool validation = false;
 
 	test_body_seq_se_index_filter<value_type>(&getSourceArrayIfEmpty,
 											  &getSourceArrayDesc, wtLevel, mmtLevel,

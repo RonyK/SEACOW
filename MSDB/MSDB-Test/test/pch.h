@@ -30,7 +30,7 @@ static const int se_array_id = 2;
 static const int delta_spiht_array_id = 3;
 static const int spiht_array_id = 4;
 static const int compass_array_id = 5;
-static const int zip_array_id = 5;
+static const int zip_array_id = 6;
 
-static const int rangeSeed = 210205;
+static const int rangeSeed = 2102;
 static const int filterValueSeed = 210205;

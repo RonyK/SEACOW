@@ -11,17 +11,15 @@ coorRange getRandomRange(const position_t dimX, const position_t dimY, const flo
 	int area = dimX * dimY;
 	float selectedArea = area * selectivity / 100.0;
 
-	int spX;
-	int spY;
-	int width;
-	int height;
+	int spX = 0, spY = 0;
+	int width = 1, height = 1;
 
 	while (1)
 	{
 		spX = rand() % (size_t)(dimX - dimX * selectivity / 100.0);
 		spY = rand() % (size_t)(dimY - dimY * selectivity / 100.0);
 
-		for (int i = 0; i < 3; i++)
+		for(int retry = 0; retry < 5; ++retry)
 		{
 			width = rand() % (dimX - spX);
 			if (width > selectedArea)
@@ -29,11 +27,11 @@ coorRange getRandomRange(const position_t dimX, const position_t dimY, const flo
 
 			height = selectedArea / width;
 
-			if (spX + width < dimX && spY + height < dimY)
+			if (width > 0 && height > 0 && (spX + width) < dimX && (spY + height) < dimY)
 				break;
 		}
 
-		if (spX + width < dimX && spY + height < dimY)
+		if (width > 0 && height > 0 && (spX + width) < dimX && (spY + height) < dimY)
 			break;
 	}
 

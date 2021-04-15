@@ -207,7 +207,15 @@ pArray test_body_seq_compass_random_index_filter(_pFuncGetSourceArray_,
 	//////////////////////////////
 
 	//////////////////////////////
-	// 02. Execute Testcases
+	// 02. Build Compass Index
+	// TODO:: Load Compass Index from a disk
+	test_qry_ind_compass_index_build<value_type>(getSourceArrayIfEmpty,
+												 getSourceArrayDesc,
+												 numBins);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 03. Execute Testcases
 	for (size_t i = 0; i < numTests; ++i)
 	{
 		v = (value_type)rand();
@@ -273,7 +281,8 @@ pArray test_body_seq_se_random_index_filter(_pFuncGetSourceArray_,
 
 	//////////////////////////////
 	// 02. Build MMT
-	test_body_mmt_build<value_type>(getSourceArrayIfEmpty, mmtLevel, false);
+	//test_body_mmt_build<value_type>(getSourceArrayIfEmpty, mmtLevel, false);
+	test_body_mmt_load<value_type>(getSourceArrayDesc, validation, printFlag);
 	//////////////////////////////
 
 	//////////////////////////////

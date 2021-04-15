@@ -64,20 +64,23 @@ namespace caDummy
 std::shared_ptr<save_plan> getSavePlan(pPlan sourcPlan, pQuery qry);
 std::shared_ptr<load_plan> getLoadPlan(pArrayDesc sourceArrDesc, pQuery qry);
 
+std::shared_ptr<zip_save_plan> getZipSavePlan(pArrayDesc sourceArrDesc, pQuery qry);
 std::shared_ptr<zip_load_plan> getZipLoadPlan(pArrayDesc sourceArrDesc, pQuery qry);
+
+std::shared_ptr<compass_encode_plan> getCompassEncodePlan(pArrayDesc sourceArrDesc, eleDefault numBins, pQuery qry);
 std::shared_ptr<compass_decode_plan> getCompassDecodePlan(pArrayDesc sourceArrDesc, eleDefault numBins, pQuery qry);
 
 //////////////////////////////
 // Wavelet Operators
-//std::shared_ptr<wavelet_encode_plan> getWaveletEncodePlan(pPlan sourcPlan, eleDefault wtLevel, pQuery qry);
+std::shared_ptr<wavelet_encode_plan> getWaveletEncodePlan(pPlan sourcPlan, eleDefault wtLevel, pQuery qry);
 std::shared_ptr<wavelet_decode_plan> getWaveletDecodePlan(pPlan sourcPlan, eleDefault wtLevel, pQuery qry);
 
-//std::shared_ptr<spiht_encode_plan> getSPIHTEncodePlan(pPlan sourcPlan, pQuery qry);
+std::shared_ptr<spiht_encode_plan> getSPIHTEncodePlan(pArrayDesc sourceArrDesc, eleDefault wtLevel, pQuery qry);
 std::shared_ptr<spiht_decode_plan> getSPIHTDecodePlan(pArrayDesc sourceArrDesc, eleDefault wtLevel, pQuery qry);
 
 //////////////////////////////
 // Se Compression Operators
-//std::shared_ptr<se_compression_plan> getSeCompressionPlan(pPlan sourcPlan, eleDefault wtLevel, pQuery qry);
+std::shared_ptr<se_compression_plan> getSeCompressionPlan(pArrayDesc sourceArrDesc, eleDefault wtLevel, pQuery qry);
 std::shared_ptr<se_decompression_plan> getSeDecompressionPlan(pArrayDesc sourceArrDesc, eleDefault wtLevel, pQuery qry);
 
 //std::shared_ptr<mmt_delta_encode_plan> getMMTDeltaEncodePlan(pPlan sourcPlan, pQuery qry);

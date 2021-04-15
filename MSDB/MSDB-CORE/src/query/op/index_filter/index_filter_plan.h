@@ -48,6 +48,7 @@ protected:
 		{
 			auto pMmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
 			auto mmtLevel = pMmtIndex->getMaxLevel();
+			auto blockLevel = pMmtIndex->getBlockLevel();
 
 			if (inPredicate->evaluateNode(pMmtIndex->getNode(0, mmtLevel)))		// Check root node
 			{
@@ -71,7 +72,7 @@ protected:
 				//////////////////////////////
 				// Level (mmtLevel - 2) ~ 0
 				curLevel -= 1;
-				while (curLevel >= 0)
+				while (curLevel >= blockLevel)
 				{
 					this->evaluateChildLevel(inPredicate, pMmtIndex, nodes, curLevel, dSize);
 					curLevel -= 1;
@@ -244,7 +245,7 @@ protected:
 			}else
 			{
 				myBitmap->setNull(cid);
-				// TODO:: make child null
+				myBitmap->makeChild(cid, blockNums, false);
 			}
 		}
 
