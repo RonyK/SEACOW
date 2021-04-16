@@ -90,9 +90,10 @@ TEST(query_op_zip, mercurydem20480x10240_ind_zip_save)
 TEST(query_op_zip_load, mercurydem20480x10240_seq_zip_load)
 {
 	bool printFlag = false;
+	bool validation = true;
 	test_body_seq_zip_load<value_type>(&getSourceArrayIfEmpty,
 									   &getSourceArrayDesc,
-									   printFlag);
+									   printFlag, validation);
 }
 }	// data2D_mercurydem20480x10240
 
