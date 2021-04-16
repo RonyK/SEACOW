@@ -39,8 +39,8 @@ coorRange getRandomRange(const position_t dimX, const position_t dimY, const flo
 	int epY = spY + height;
 	int cal = (epX - spX) * (epY - spY);
 
-	coor sp = { spX, spY };
-	coor ep = { spX + width, spY + height };
+	coor sp = { spY, spX };
+	coor ep = { spY + height, spX + width };
 
 	return coorRange(sp, ep);
 }

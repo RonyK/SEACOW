@@ -20,6 +20,7 @@ pArray wavelet_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 	assert(inputArrays.size() == 1);
 	//========================================//
 	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
+	//----------------------------------------//
 
 	auto planBitmap = this->getPlanChunkBitmap();
 
@@ -84,6 +85,7 @@ pArray wavelet_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 		}
 	}
+	//----------------------------------------//
 	qry->getTimer()->pause(0);
 	//========================================//
 

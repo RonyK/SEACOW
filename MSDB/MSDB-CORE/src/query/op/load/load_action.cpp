@@ -35,6 +35,8 @@ pArray load_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 	{
 		this->loadAttribute(outArr, attr, qry);
 	}
+
+	//----------------------------------------//
 	qry->getTimer()->pause(0);
 	//========================================//
 
@@ -48,6 +50,8 @@ void load_action::loadAttribute(pArray outArr, pAttributeDesc attrDesc, pQuery q
 	//========================================//
 	qry->getTimer()->nextWork(0, workType::PARALLEL);
 	//----------------------------------------//
+
+	this->threadCreate(_MSDB_ACTION_THREAD_NUM_);
 
 	auto cit = outArr->getChunkIterator(iterateMode::ALL);
 

@@ -110,9 +110,9 @@
     <ClCompile Include="src\compression\zipBlock.cpp" />
     <ClCompile Include="src\compression\zipChunk.cpp" />
     <ClCompile Include="src\util\ioutil.cpp" />
-    <ClCompile Include="include\index\compass.cpp" />
     <ClCompile Include="src\query\op\compass_index_build\compass_index_build_plan.cpp" />
     <ClCompile Include="src\query\op\compass_index_build\compass_index_build_action.cpp" />
+    <ClCompile Include="src\index\compass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\array\array.h" />
