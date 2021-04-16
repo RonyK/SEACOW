@@ -21,6 +21,7 @@ pArray mmt_delta_decode_action::execute(std::vector<pArray>& inputArrays, pQuery
 	assert(inputArrays.size() == 1);
 	//========================================//
 	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
+	//----------------------------------------//
 
 	std::shared_ptr<mmt_delta_encode_array> sourceArr = std::static_pointer_cast<mmt_delta_encode_array>(inputArrays[0]);
 	arrayId arrId = sourceArr->getId();
@@ -32,37 +33,38 @@ pArray mmt_delta_decode_action::execute(std::vector<pArray>& inputArrays, pQuery
 		switch (attr->type_)
 		{
 		case eleType::CHAR:
-			this->attributeDecode<char>(deltaArr, sourceArr, attr);
+			this->attributeDecode<char>(deltaArr, sourceArr, attr, qry);
 			break;
 		case eleType::INT8:
-			this->attributeDecode<int8_t>(deltaArr, sourceArr, attr);
+			this->attributeDecode<int8_t>(deltaArr, sourceArr, attr, qry);
 			break;
 		case eleType::INT16:
-			this->attributeDecode<int16_t>(deltaArr, sourceArr, attr);
+			this->attributeDecode<int16_t>(deltaArr, sourceArr, attr, qry);
 			break;
 		case eleType::INT32:
-			this->attributeDecode<int32_t>(deltaArr, sourceArr, attr);
+			this->attributeDecode<int32_t>(deltaArr, sourceArr, attr, qry);
 			break;
 		case eleType::INT64:
-			this->attributeDecode<int64_t>(deltaArr, sourceArr, attr);
+			this->attributeDecode<int64_t>(deltaArr, sourceArr, attr, qry);
 			break;
 		case eleType::UINT8:
-			this->attributeDecode<uint8_t>(deltaArr, sourceArr, attr);
+			this->attributeDecode<uint8_t>(deltaArr, sourceArr, attr, qry);
 			break;
 		case eleType::UINT16:
-			this->attributeDecode<uint16_t>(deltaArr, sourceArr, attr);
+			this->attributeDecode<uint16_t>(deltaArr, sourceArr, attr, qry);
 			break;
 		case eleType::UINT32:
-			this->attributeDecode<uint32_t>(deltaArr, sourceArr, attr);
+			this->attributeDecode<uint32_t>(deltaArr, sourceArr, attr, qry);
 			break;
 		case eleType::UINT64:
-			this->attributeDecode<uint64_t>(deltaArr, sourceArr, attr);
+			this->attributeDecode<uint64_t>(deltaArr, sourceArr, attr, qry);
 			break;
 		default:
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 		}
 	}
 
+	//----------------------------------------//
 	qry->getTimer()->pause(0);
 	//========================================//
 
