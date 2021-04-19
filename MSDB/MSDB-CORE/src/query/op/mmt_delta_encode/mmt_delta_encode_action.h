@@ -45,7 +45,7 @@ void mmt_delta_encode_action::saveAttribute(std::shared_ptr<mmt_delta_encode_arr
 		auto cDesc = (**cit)->getDesc();
 		//pChunk deltaChunk = std::make_shared<memBlockChunk>(std::make_shared<chunkDesc>(*cDesc));
 		pChunk deltaChunk = outArr->makeChunk(*cDesc);
-		deltaChunk->makeAllBlocks();
+		//deltaChunk->makeAllBlocks();
 		deltaChunk->bufferAlloc();
 
 		this->chunkEncode(deltaChunk, **cit, mmtIndex);
@@ -65,22 +65,26 @@ void mmt_delta_encode_action::chunkEncode(pChunk outChunk, pChunk inChunk,
 
 	while (!ibItr->isEnd())
 	{
-		auto iit = (**ibItr)->getItemIterator();
-		auto oit = (**obItr)->getItemIterator();
-		auto node = mmtIndex->getNode(inChunk->getDesc()->chunkCoor_, ibItr->coor(), mmtIndex->getBlockLevel());
-		Ty_ nodeMin = node->getMin<Ty_>();
+		if(ibItr->isExist())
+		{
+			outChunk->makeBlock(ibItr->seqPos());
+
+			auto iit = (**ibItr)->getItemIterator();
+			auto oit = (**obItr)->getItemIterator();
+			auto node = mmtIndex->getNode(inChunk->getDesc()->chunkCoor_, ibItr->coor(), mmtIndex->getBlockLevel());
+			Ty_ nodeMin = node->getMin<Ty_>();
 
 #ifndef NDEBUG
-		Ty_ min_ = (**iit).get<Ty_>();
-		Ty_ max_ = (**iit).get<Ty_>();
+			Ty_ min_ = (**iit).get<Ty_>();
+			Ty_ max_ = (**iit).get<Ty_>();
 #endif
 
 		// Block encode
-		while (!iit->isEnd())
-		{
-			auto inValue = (**iit).get<Ty_>();
-			auto outValue = inValue - nodeMin;
-			(**oit).set<Ty_>(outValue);
+			while (!iit->isEnd())
+			{
+				auto inValue = (**iit).get<Ty_>();
+				auto outValue = inValue - nodeMin;
+				(**oit).set<Ty_>(outValue);
 #ifndef NDEBUG
 			//assert(outValue >= 0);
 			//if (min_ > outValue)
@@ -89,13 +93,15 @@ void mmt_delta_encode_action::chunkEncode(pChunk outChunk, pChunk inChunk,
 			//	max_ = outValue;
 #endif
 
-			++(*iit);
-			++(*oit);
-		}
+				++(*iit);
+				++(*oit);
+			}
 
 #ifndef NDEBUG
 		//BOOST_LOG_TRIVIAL(trace) << "Delta encode " << inChunk->getDesc()->chunkCoor_.toString() << "|" << ibItr->coor().toString() << "=> min: " << static_cast<int64_t>(min_) << ", max: " << static_cast<int64_t>(max_) << ", mmt: " << node->toString<Ty_>();
 #endif
+		}
+
 
 		++(*ibItr);
 		++(*obItr);

@@ -28,7 +28,7 @@ namespace caDummy
 template <typename value_type>
 bool equalTest(pArray arr, int64_t value)
 {
-	size_t numFilteredCell = 0;
+	size_t numCells = 0;
 
 	for (auto attrDesc : *arr->getDesc()->attrDescs_)
 	{
@@ -50,7 +50,7 @@ bool equalTest(pArray arr, int64_t value)
 							if (iit->isExist())
 							{
 								EXPECT_EQ((**iit).get<value_type>(), static_cast<value_type>(value));
-								++numFilteredCell;
+								++numCells;
 							}
 							++(*iit);
 						}
@@ -62,7 +62,7 @@ bool equalTest(pArray arr, int64_t value)
 		}
 	}
 
-	BOOST_LOG_TRIVIAL(info) << "Num of filtered cells: " << numFilteredCell << std::endl;
+	BOOST_LOG_TRIVIAL(info) << "[Validation] num cells: " << numCells << std::endl;
 	return true;
 }
 
@@ -315,7 +315,7 @@ pArray test_body_seq_load_naive_filter(_pFuncGetSourceArray_,
 	//////////////////////////////
 	// 01. Get Source Array
 	std::vector<pArray> sourceArr;
-	if (saveArray)
+	if (saveArray || validation)
 	{
 		getSourceArrayIfEmpty(sourceArr);
 	} else
@@ -353,7 +353,7 @@ pArray test_body_seq_spiht_naive_filter(_pFuncGetSourceArray_,
 	//////////////////////////////
 	// 01. Get Source Array
 	std::vector<pArray> sourceArr;
-	if (saveArray)
+	if (saveArray || validation)
 	{
 		getSourceArrayIfEmpty(sourceArr);
 	} else
@@ -459,7 +459,7 @@ pArray test_body_seq_se_index_filter(_pFuncGetSourceArray_,
 	//////////////////////////////
 	// 01. Get Source Array
 	std::vector<pArray> sourceArr;
-	if (saveArray)
+	if (saveArray || validation)
 	{
 		getSourceArrayIfEmpty(sourceArr);
 	} else
@@ -512,7 +512,7 @@ pArray test_body_seq_compass_naive_filter(_pFuncGetSourceArray_,
 	//////////////////////////////
 	// 01. Get Source Array
 	std::vector<pArray> sourceArr;
-	if (saveArray)
+	if (saveArray || validation)
 	{
 		getSourceArrayIfEmpty(sourceArr);
 	} else
@@ -563,7 +563,7 @@ pArray test_body_seq_compass_index_filter(_pFuncGetSourceArray_,
 	//////////////////////////////
 	// 01. Get Source Array
 	std::vector<pArray> sourceArr;
-	if (saveArray)
+	if (saveArray || validation)
 	{
 		getSourceArrayIfEmpty(sourceArr);
 	} else
@@ -614,7 +614,7 @@ pArray test_body_seq_zip_naive_filter(_pFuncGetSourceArray_,
 	//////////////////////////////
 	// 01. Get Source Array
 	std::vector<pArray> sourceArr;
-	if (saveArray)
+	if (saveArray || validation)
 	{
 		getSourceArrayIfEmpty(sourceArr);
 	} else
@@ -1009,7 +1009,6 @@ pArray exe_qry_seq_se_index_filter(_vectorSourceArray_,
 	auto wtDecodePlan = getWaveletDecodePlan(seDecompPlan, wtLevel, qry);
 	auto deltaDecodePlan = getMMTDeltaDecodePlan(wtDecodePlan, qry);
 	auto filterPlan = getIndexFilterPlan(deltaDecodePlan, inPredicate, qry);
-
 	auto outArr = seDecompPlan->getAction()->execute(sourceArr, qry);
 	if (printFlag)
 	{

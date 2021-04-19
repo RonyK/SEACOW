@@ -47,23 +47,23 @@ protected:
 		if (arrIndex->getType() == attrIndexType::MMT)
 		{
 			auto pMmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
-			auto mmtLevel = pMmtIndex->getMaxLevel();
+			auto curLevel = pMmtIndex->getMaxLevel();
 			auto blockLevel = pMmtIndex->getBlockLevel();
 
-			if (inPredicate->evaluateNode(pMmtIndex->getNode(0, mmtLevel)))		// Check root node
+			if (inPredicate->evaluateNode(pMmtIndex->getNode(0, curLevel)))		// Check root node
 			{
 				// Target chunk exists
 				// Start searching nodes
-				std::vector<std::vector<bool>> nodes(mmtLevel + 1);
+				std::vector<std::vector<bool>> nodes(curLevel + 1);
 				size_t childs = (size_t)pow(2, dSize);
 
 				//////////////////////////////
 				// Level (mmtLevel)
-				nodes[mmtLevel] = std::vector<bool>({ true });
+				nodes[curLevel] = std::vector<bool>({ true });
 
 				//////////////////////////////
 				// Level (mmtLevel - 1)
-				int64_t curLevel = mmtLevel - 1;
+				curLevel -= 1;
 				if (curLevel >= 0)
 				{
 					this->evaluateFirstLevel(inPredicate, pMmtIndex, nodes, curLevel, dSize);

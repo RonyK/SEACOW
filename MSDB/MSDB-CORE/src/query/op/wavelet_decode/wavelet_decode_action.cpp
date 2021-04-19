@@ -22,8 +22,7 @@ pArray wavelet_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
 	//----------------------------------------//
 
-	auto planBitmap = this->getPlanChunkBitmap();
-
+	auto planBitmap = this->getPlanChunkBitmap();		
 	pArray inArr = inputArrays[0];
 
 	//////////////////////////////

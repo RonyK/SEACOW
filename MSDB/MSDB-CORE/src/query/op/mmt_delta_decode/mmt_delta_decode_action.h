@@ -57,7 +57,7 @@ public:
 				auto cDesc = (**cit)->getDesc();
 				//pChunk deltaChunk = std::make_shared<memBlockChunk>(std::make_shared<chunkDesc>(*cDesc));
 				pChunk deltaChunk = outArr->makeChunk(*cDesc);
-				deltaChunk->makeAllBlocks();
+				//deltaChunk->makeAllBlocks();
 				deltaChunk->replaceBlockBitmap((**cit)->getBlockBitmap());
 				deltaChunk->bufferAlloc();
 
@@ -97,6 +97,8 @@ public:
 		{
 			if (ibItr->isExist())
 			{
+				outChunk->makeBlock(ibItr->seqPos());
+
 				auto iit = (**ibItr)->getItemIterator();
 				auto oit = (**obItr)->getItemIterator();
 				auto node = mmtIndex->getNode(inChunk->getDesc()->chunkCoor_, ibItr->coor(), mmtIndex->getBlockLevel());

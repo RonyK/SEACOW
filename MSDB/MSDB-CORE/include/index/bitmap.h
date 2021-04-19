@@ -47,6 +47,19 @@ public:
 	}
 
 	virtual bool isTree() const;
+	
+	inline bool isEmpty()
+	{
+		for(int i = 0 ; i < this->data_.size(); ++i)
+		{
+			if(this->data_[i])
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
 
 	void andMerge(bitmap& mit);
 	void orMerge(bitmap& mit);

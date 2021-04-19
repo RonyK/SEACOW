@@ -331,7 +331,7 @@ TEST(experiment_query_op_index_filter, solar1024x1024_seq_random_load_naive_filt
 {
 	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = false;
+	bool validation = true;
 
 	test_body_seq_load_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
 													   &getSourceArrayDesc,
@@ -340,9 +340,9 @@ TEST(experiment_query_op_index_filter, solar1024x1024_seq_random_load_naive_filt
 
 TEST(experiment_query_op_index_filter, solar1024x1024_seq_random_spiht_naive_filter)
 {
-	bool saveArray = false;
+	bool saveArray = true;
 	bool printFlag = false;
-	bool validation = false;
+	bool validation = true;
 
 	test_body_seq_spiht_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
 														&getSourceArrayDesc, wtLevel,
@@ -353,7 +353,7 @@ TEST(experiment_query_op_index_filter, solar1024x1024_seq_random_zip_naive_filte
 {
 	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = false;
+	bool validation = true;
 
 	test_body_seq_zip_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
 													  &getSourceArrayDesc,
@@ -375,7 +375,7 @@ TEST(experiment_query_op_index_filter, solar1024x1024_seq_random_compass_index_f
 {
 	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = false;
+	bool validation = true;
 
 	test_body_seq_compass_random_index_filter<value_type>(&getSourceArrayIfEmpty,
 														  &getSourceArrayDesc, numBins,
@@ -386,7 +386,7 @@ TEST(experiment_query_op_index_filter, solar1024x1024_seq_random_se_naive_filter
 {
 	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = false;
+	bool validation = true;
 
 	test_body_seq_se_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
 													 &getSourceArrayDesc, wtLevel, mmtLevel,
@@ -397,7 +397,7 @@ TEST(experiment_query_op_index_filter, solar1024x1024_seq_random_se_index_filter
 {
 	bool saveArray = false;
 	bool printFlag = false;
-	bool validation = false;
+	bool validation = true;
 
 	test_body_seq_se_random_index_filter<value_type>(&getSourceArrayIfEmpty,
 													 &getSourceArrayDesc, wtLevel, mmtLevel,
