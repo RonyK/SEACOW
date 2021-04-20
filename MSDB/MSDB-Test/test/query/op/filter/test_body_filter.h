@@ -28,6 +28,10 @@ namespace caDummy
 template <typename value_type>
 bool equalTest(pArray arr, int64_t value)
 {
+	BOOST_LOG_TRIVIAL(debug) << "##############################";
+	BOOST_LOG_TRIVIAL(debug) << "Value Equal Test";
+	BOOST_LOG_TRIVIAL(debug) << "##############################";
+
 	size_t numCells = 0;
 
 	for (auto attrDesc : *arr->getDesc()->attrDescs_)
@@ -62,7 +66,7 @@ bool equalTest(pArray arr, int64_t value)
 		}
 	}
 
-	BOOST_LOG_TRIVIAL(info) << "[Validation] num cells: " << numCells << std::endl;
+	BOOST_LOG_TRIVIAL(info) << "[Validation] num values: " << numCells << std::endl;
 	return true;
 }
 
@@ -132,7 +136,7 @@ pArray test_body_seq_zip_random_naive_filter(_pFuncGetSourceArray_,
 
 	return nullptr;
 }
- 
+
 template <typename value_type>
 pArray test_body_seq_spiht_random_naive_filter(_pFuncGetSourceArray_,
 											   _pFuncGetSourceArrayDesc_,
@@ -209,13 +213,26 @@ pArray test_body_seq_compass_random_index_filter(_pFuncGetSourceArray_,
 	//////////////////////////////
 	// 02. Build Compass Index
 	// TODO:: Load Compass Index from a disk
+	// Do not print in saveArray
 	test_qry_ind_compass_index_build<value_type>(getSourceArrayIfEmpty,
 												 getSourceArrayDesc,
 												 numBins);
 	//////////////////////////////
 
 	//////////////////////////////
-	// 03. Execute Testcases
+	// 03. Save Source Array
+	if (saveArray)
+	{
+		std::vector<pArray> sourceArr;
+		getSourceArrayIfEmpty(sourceArr);
+		sourceArr[0]->setId(sourceArr[0]->getId() + compass_array_id);
+
+		exe_qry_ind_compass_index_build<value_type>(sourceArr, numBins, false);		// Do not print in saveArray
+		exe_qry_ind_compass_encode<value_type>(sourceArr, numBins, false);			// Do not print in saveArray
+	}
+
+	//////////////////////////////
+	// 04. Execute Testcases
 	for (size_t i = 0; i < numTests; ++i)
 	{
 		v = (value_type)rand();
@@ -223,7 +240,7 @@ pArray test_body_seq_compass_random_index_filter(_pFuncGetSourceArray_,
 		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
 		BOOST_LOG_TRIVIAL(info) << "# Find value: " << static_cast<int64_t>(v);
 		test_body_seq_compass_index_filter<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
-													   numBins, v, saveArray, validation, printFlag);
+													   numBins, v, false, validation, printFlag);	// Set saveArray = false
 		BOOST_LOG_TRIVIAL(info) << "##################################################";
 	}
 	//////////////////////////////
@@ -245,12 +262,26 @@ pArray test_body_seq_se_random_naive_filter(_pFuncGetSourceArray_,
 	//////////////////////////////
 
 	//////////////////////////////
-	// 02. Build MMT
-	test_body_mmt_build<value_type>(getSourceArrayIfEmpty, mmtLevel, false);
+	// 02. Save Source Array
+	if (saveArray)
+	{
+		std::vector<pArray> sourceArr;
+		getSourceArrayIfEmpty(sourceArr);
+		sourceArr[0]->setId(sourceArr[0]->getId() + se_array_id);
+
+		exe_qry_ind_mmt_build<value_type>(sourceArr, mmtLevel, false);					// Do not print in saveArray
+		exe_qry_ind_se_compression<value_type>(sourceArr, wtLevel, mmtLevel, false);	// Do not print in saveArray
+	}
 	//////////////////////////////
 
 	//////////////////////////////
-	// 03. Execute Testcases
+	// 03. Build MMT
+	//test_body_mmt_build<value_type>(getSourceArrayIfEmpty, mmtLevel, false);	// MMT is used to reconstruct the array
+	test_body_mmt_load<value_type>(getSourceArrayDesc, validation, false);		// MMT is used to reconstruct the array
+	//////////////////////////////
+
+	//////////////////////////////
+	// 04. Execute Testcases
 	for (size_t i = 0; i < numTests; ++i)
 	{
 		v = (value_type)rand();
@@ -258,7 +289,7 @@ pArray test_body_seq_se_random_naive_filter(_pFuncGetSourceArray_,
 		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
 		BOOST_LOG_TRIVIAL(info) << "# Find value: " << static_cast<int64_t>(v);
 		test_body_seq_se_naive_filter<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
-												  wtLevel, mmtLevel, v, saveArray, validation, printFlag);
+												  wtLevel, mmtLevel, v, false, validation, printFlag);	// Set saveArray = false
 		BOOST_LOG_TRIVIAL(info) << "##################################################";
 	}
 	//////////////////////////////
@@ -280,13 +311,26 @@ pArray test_body_seq_se_random_index_filter(_pFuncGetSourceArray_,
 	//////////////////////////////
 
 	//////////////////////////////
-	// 02. Build MMT
-	//test_body_mmt_build<value_type>(getSourceArrayIfEmpty, mmtLevel, false);
-	test_body_mmt_load<value_type>(getSourceArrayDesc, validation, printFlag);
+	// 02. Save Source Array
+	if (saveArray)
+	{
+		std::vector<pArray> sourceArr;
+		getSourceArrayIfEmpty(sourceArr);
+		sourceArr[0]->setId(sourceArr[0]->getId() + se_array_id);
+
+		exe_qry_ind_mmt_build<value_type>(sourceArr, mmtLevel, false);					// Do not print in saveArray
+		exe_qry_ind_se_compression<value_type>(sourceArr, wtLevel, mmtLevel, false);	// Do not print in saveArray
+	}
 	//////////////////////////////
 
 	//////////////////////////////
-	// 03. Execute Testcases
+	// 03. Build MMT
+	//test_body_mmt_build<value_type>(getSourceArrayIfEmpty, mmtLevel, false);
+	test_body_mmt_load<value_type>(getSourceArrayDesc, validation, false);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 04. Execute Testcases
 	for (size_t i = 0; i < numTests; ++i)
 	{
 		v = (value_type)rand();
@@ -294,7 +338,7 @@ pArray test_body_seq_se_random_index_filter(_pFuncGetSourceArray_,
 		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
 		BOOST_LOG_TRIVIAL(info) << "# Find value: " << static_cast<int64_t>(v);
 		test_body_seq_se_index_filter<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
-												  wtLevel, mmtLevel, v, saveArray, validation, printFlag);
+												  wtLevel, mmtLevel, v, false, validation, printFlag);		// Set saveArray = false
 		BOOST_LOG_TRIVIAL(info) << "##################################################";
 	}
 	//////////////////////////////
@@ -331,6 +375,8 @@ pArray test_body_seq_load_naive_filter(_pFuncGetSourceArray_,
 																myNaivePredicate,
 																saveArray, printFlag);
 	//////////////////////////////
+
+	//////////////////////////////
 	// 03. Validation
 	if (validation)
 	{
@@ -364,11 +410,13 @@ pArray test_body_seq_spiht_naive_filter(_pFuncGetSourceArray_,
 	//////////////////////////////
 
 	//////////////////////////////
-	// 02-1. Index filter array
+	// 02. Index filter array
 	pPredicate myPredicate = std::make_shared<singlePredicate>(getEqualTerm(value));
 	auto outArr = exe_qbundle_seq_spiht_naive_filter<value_type>(sourceArr,
 																 myPredicate, wtLevel,
 																 saveArray, printFlag);
+	//////////////////////////////
+
 	//////////////////////////////
 	// 03. Validation
 	if (validation)
@@ -405,7 +453,7 @@ pArray test_body_seq_se_naive_filter(_pFuncGetSourceArray_,
 	//////////////////////////////
 	// 01. Get Source Array
 	std::vector<pArray> sourceArr;
-	if (saveArray)
+	if (saveArray || validation)
 	{
 		getSourceArrayIfEmpty(sourceArr);
 	} else
@@ -427,6 +475,10 @@ pArray test_body_seq_se_naive_filter(_pFuncGetSourceArray_,
 	// 03. Validation
 	if (validation)
 	{
+		BOOST_LOG_TRIVIAL(debug) << "##############################";
+		BOOST_LOG_TRIVIAL(debug) << "Validation";
+		BOOST_LOG_TRIVIAL(debug) << "##############################";
+
 		//////////////////////////////
 		// 03-1. Naive Filter Array
 		pPredicate myNaivePredicate = std::make_shared<singlePredicate>(getEqualTerm(value));
@@ -481,6 +533,10 @@ pArray test_body_seq_se_index_filter(_pFuncGetSourceArray_,
 	// 03. Validation
 	if (validation)
 	{
+		BOOST_LOG_TRIVIAL(debug) << "##############################";
+		BOOST_LOG_TRIVIAL(debug) << "Validation";
+		BOOST_LOG_TRIVIAL(debug) << "##############################";
+
 		//////////////////////////////
 		// 03-1. Naive Filter Array
 		pPredicate myNaivePredicate = std::make_shared<singlePredicate>(getEqualTerm(value));
@@ -523,13 +579,15 @@ pArray test_body_seq_compass_naive_filter(_pFuncGetSourceArray_,
 	//////////////////////////////
 
 	//////////////////////////////
-	// 02-1. Index filter array
+	// 02. Index filter array
 	pPredicate myPredicate = std::make_shared<singlePredicate>(getEqualTerm(value));
 	auto outArr = exe_qbundle_seq_compass_naive_filter<value_type>(sourceArr,
 																   myPredicate, numBins,
 																   saveArray, printFlag);
-	  //////////////////////////////
-	  // 03. Validation
+	//////////////////////////////
+
+	//////////////////////////////
+	// 03. Validation
 	if (validation)
 	{
 		//////////////////////////////
@@ -574,13 +632,15 @@ pArray test_body_seq_compass_index_filter(_pFuncGetSourceArray_,
 	//////////////////////////////
 
 	//////////////////////////////
-	// 02-1. Index filter array
+	// 02. Index filter array
 	pPredicate myPredicate = std::make_shared<singlePredicate>(getEqualTerm(value));
 	auto outArr = exe_qbundle_seq_compass_index_filter<value_type>(sourceArr,
 																   myPredicate, numBins,
 																   saveArray, printFlag);
-	  //////////////////////////////
-	  // 03. Validation
+	//////////////////////////////
+
+	//////////////////////////////
+	// 03. Validation
 	if (validation)
 	{
 		//////////////////////////////
@@ -625,11 +685,13 @@ pArray test_body_seq_zip_naive_filter(_pFuncGetSourceArray_,
 	//////////////////////////////
 
 	//////////////////////////////
-	// 02-1. Index filter array
+	// 02. Index filter array
 	pPredicate myPredicate = std::make_shared<singlePredicate>(getEqualTerm(value));
 	auto outArr = exe_qbundle_seq_zip_naive_filter<value_type>(sourceArr,
 															   myPredicate,
 															   saveArray, printFlag);
+	//////////////////////////////
+
 	//////////////////////////////
 	// 03. Validation
 	if (validation)
@@ -681,6 +743,7 @@ pArray exe_qbundle_seq_load_naive_filter(_vectorSourceArray_,
 	return exe_qry_seq_load_naive_filter<value_type>(sourceArr,
 													 myPredicate,
 													 printFlag);
+	//////////////////////////////
 }
 
 template <typename value_type>
@@ -702,6 +765,7 @@ pArray exe_qbundle_seq_spiht_naive_filter(_vectorSourceArray_,
 													  inPredicate,
 													  wtLevel,
 													  printFlag);
+	//////////////////////////////
 }
 
 template <typename value_type>
@@ -725,6 +789,7 @@ pArray exe_qbundle_seq_se_naive_filter(_vectorSourceArray_,
 												   inPredicate,
 												   wtLevel, mmtLevel,
 												   printFlag);
+	//////////////////////////////
 }
 
 
@@ -749,6 +814,7 @@ pArray exe_qbundle_seq_se_index_filter(_vectorSourceArray_,
 												   inPredicate,
 												   wtLevel, mmtLevel,
 												   printFlag);
+	//////////////////////////////
 }
 
 template <typename value_type>
@@ -771,6 +837,7 @@ pArray exe_qbundle_seq_compass_naive_filter(_vectorSourceArray_,
 														inPredicate,
 														numBins,
 														printFlag);
+	//////////////////////////////
 }
 
 template <typename value_type>
@@ -793,6 +860,7 @@ pArray exe_qbundle_seq_compass_index_filter(_vectorSourceArray_,
 														inPredicate,
 														numBins,
 														printFlag);
+	//////////////////////////////
 }
 
 template <typename value_type>
@@ -812,6 +880,7 @@ pArray exe_qbundle_seq_zip_naive_filter(_vectorSourceArray_,
 	return exe_qry_seq_zip_naive_filter<value_type>(sourceArr,
 													inPredicate,
 													printFlag);
+	//////////////////////////////
 }
 
 template <typename value_type>

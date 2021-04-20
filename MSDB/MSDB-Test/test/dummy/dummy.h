@@ -111,6 +111,10 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 template <typename Ty_>
 void compArrary(pArray lArr, pArray rArr)
 {
+	BOOST_LOG_TRIVIAL(debug) << "##############################";
+	BOOST_LOG_TRIVIAL(debug) << "Comp Array Test";
+	BOOST_LOG_TRIVIAL(debug) << "##############################";
+
 	bool isFirstWrongChunk = true;
 	size_t wrongValue = 0;
 	auto lAttrDesc = lArr->getDesc()->attrDescs_;

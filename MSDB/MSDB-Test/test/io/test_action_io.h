@@ -51,26 +51,81 @@ pArray exe_qry_ind_load(_vectorSourceArray_, bool printFlag = false)
 }
 
 template <typename value_type>
-void test_body_save_load(_pFuncGetSourceArray_)
+pArray exe_qry_seq_load(_vectorSourceArray_, bool printFlag = false)
 {
-	bool printFlag = false;
+	pQuery qry = std::make_shared<query>();
 
+	auto loadPlan = getLoadPlan(sourceArr[0]->getDesc(), qry);
+
+	auto outArr = loadPlan->getAction()->execute(sourceArr, qry);
+	if (printFlag)
+	{
+		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "Load Arr" << std::endl;
+		outArr->print();
+		//outArr->getChunkBitmap()->print();
+	}
+
+	tearDownQuery(qry);
+
+	return outArr;
+}
+
+template <typename value_type>
+void test_body_ind_save_load(_pFuncGetSourceArray_, bool validation = false, bool printFlag = false)
+{
 	//////////////////////////////
 	// 01 Source Arr
 	std::vector<pArray> sourceArr;
 	getSourceArrayIfEmpty(sourceArr);
+	//////////////////////////////
 
 	//////////////////////////////
 	// 02. Save Source Arr
 	exe_qry_ind_save<value_type>(sourceArr, false);
+	//////////////////////////////
 
 	//////////////////////////////
-	// 02. Load Arr
+	// 03. Load Arr
 	auto outArr = exe_qry_ind_load<value_type>(sourceArr, printFlag);
+	//////////////////////////////
 
-	compArrary<value_type>(sourceArr[0], outArr);
+	//////////////////////////////
+	// 04. Validation
+	if(validation)
+	{
+		compArrary<value_type>(sourceArr[0], outArr);
+	}
+	//////////////////////////////
 }
 
+template <typename value_type>
+void test_body_seq_save_load(_pFuncGetSourceArray_, bool validation = false, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01 Source Arr
+	std::vector<pArray> sourceArr;
+	getSourceArrayIfEmpty(sourceArr);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Save Source Arr
+	exe_qry_ind_save<value_type>(sourceArr, false);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 03. Load Arr
+	auto outArr = exe_qry_seq_load<value_type>(sourceArr, printFlag);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 04. Validation
+	if (validation)
+	{
+		compArrary<value_type>(sourceArr[0], outArr);
+	}
+	//////////////////////////////
+}
 
 namespace data2D_sc4x4
 {

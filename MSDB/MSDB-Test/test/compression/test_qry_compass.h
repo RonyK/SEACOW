@@ -226,14 +226,14 @@ template <typename value_type>
 pArray test_body_seq_compass_encode_decode(_pFuncGetSourceArray_,
 										   _pFuncGetSourceArrayDesc_,
 										   eleDefault numBin,
-										   bool printFlag = false, bool validation = false)
+										   bool validation = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Get Source Array
-	auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, printFlag);
+	auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, false);
 	sourceArr[0]->setId(sourceArr[0]->getId() + compass_array_id);
 
-	auto sourceArrDesc = getArrayFromFunction<value_type>(getSourceArrayDesc, printFlag);
+	auto sourceArrDesc = getArrayFromFunction<value_type>(getSourceArrayDesc, false);
 	sourceArrDesc[0]->setId(sourceArrDesc[0]->getId() + compass_array_id);
 	//////////////////////////////
 

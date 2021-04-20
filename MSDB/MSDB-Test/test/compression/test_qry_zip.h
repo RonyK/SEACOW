@@ -97,7 +97,7 @@ pArray exe_qry_seq_zip_load(_vectorSourceArray_,
 
 template<typename value_type>
 pArray test_body_seq_zip_load(_pFuncGetSourceArray_,
-							  _pFuncGetSourceArrayDesc_, 
+							  _pFuncGetSourceArrayDesc_,
 							  bool printFlag = false, bool validation = false)
 {
 	//////////////////////////////
@@ -113,11 +113,46 @@ pArray test_body_seq_zip_load(_pFuncGetSourceArray_,
 
 	//////////////////////////////
 	// 03. Evaluation
-	if(validation)
+	if (validation)
 	{
 		auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, printFlag);
 		sourceArr[0]->setId(sourceArr[0]->getId() + zip_array_id);
 
+		compArrary<value_type>(sourceArr[0], outArr);
+	}
+	//////////////////////////////
+
+	return outArr;
+}
+
+template<typename value_type>
+pArray test_body_seq_zip_save_load(_pFuncGetSourceArray_,
+								   _pFuncGetSourceArrayDesc_,
+								   bool validation = false, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Get Source Array
+	auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, false);
+	sourceArr[0]->setId(sourceArr[0]->getId() + zip_array_id);
+
+	auto sourceArrDesc = getArrayFromFunction<value_type>(getSourceArrayDesc, false);
+	sourceArrDesc[0]->setId(sourceArrDesc[0]->getId() + zip_array_id);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Save Array
+	exe_qry_ind_zip_save<value_type>(sourceArr, printFlag);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 03. Load Array
+	auto outArr = exe_qry_seq_zip_load<value_type>(sourceArrDesc, printFlag);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 03. Evaluation
+	if (validation)
+	{
 		compArrary<value_type>(sourceArr[0], outArr);
 	}
 	//////////////////////////////
