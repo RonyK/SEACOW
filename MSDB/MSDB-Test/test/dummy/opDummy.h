@@ -11,7 +11,7 @@ namespace msdb
 {
 namespace caDummy
 {
-void tearDownQuery(pQuery qry);
+void tearDownQuery(pQuery qry, size_t expId = 0, size_t expTrial = 0, size_t dataId = 0);
 
 template <typename value_type>
 std::vector<pArray> getArrayFromFunction(_pFuncGetSourceArray_, bool printFlag = false)

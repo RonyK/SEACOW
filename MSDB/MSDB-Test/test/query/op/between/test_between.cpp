@@ -11,15 +11,21 @@ namespace caDummy
 {
 namespace between
 {
-	coor sp = { 0, 125 };
-	coor ep = { 6, 129 };
+coor sp = { 0, 125 };
+coor ep = { 6, 129 };
 
-	size_t numTests = 3;
-	std::vector<float> selectivities = { 0.01, 0.1, 1, 10, 20, 40 };
+size_t numTests = 3;
+std::vector<float> selectivities = { 0.01, 0.1, 1, 10, 20, 40 };
 
-	bool saveArray = false;
-	bool printFlag = false;
-	bool validation = false;
+bool saveArray = false;
+bool printFlag = false;
+bool validation = false;
+
+namespace expRandom
+{
+size_t expId = 100;
+std::string expName = "ran_between";
+}
 }
 
 // ##################################################

@@ -14,6 +14,8 @@
 #include <op/between/between_plan.h>
 #include <op/between/between_action.h>
 
+#include <exp/experimentsInfo.h>
+
 namespace msdb
 {
 namespace caDummy
@@ -37,6 +39,7 @@ pArray test_body_seq_random_load_between(_pFuncGetSourceArray_,
 
 	//////////////////////////////
 	// 02. Execute Testcases
+	size_t j = 0;
 	for (auto selectivity : selectivities)
 	{
 		for (size_t i = 0; i < numTests; ++i)
@@ -50,9 +53,10 @@ pArray test_body_seq_random_load_between(_pFuncGetSourceArray_,
 
 			test_body_seq_load_between<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
 												   qRange.getSp(), qRange.getEp(),
-												   saveArray, validation, printFlag);
+												   saveArray, validation, printFlag, j * numTests + i);
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 		}
+		++j;
 	}
 	//////////////////////////////
 
@@ -75,6 +79,7 @@ pArray test_body_seq_random_spiht_between(_pFuncGetSourceArray_,
 
 	//////////////////////////////
 	// 02. Execute Testcases
+	size_t j = 0;
 	for (auto selectivity : selectivities)
 	{
 		for (size_t i = 0; i < numTests; ++i)
@@ -88,9 +93,10 @@ pArray test_body_seq_random_spiht_between(_pFuncGetSourceArray_,
 
 			test_body_seq_spiht_between<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
 													wtLevel, qRange.getSp(), qRange.getEp(),
-													saveArray, validation, printFlag);
+													saveArray, validation, printFlag, j * numTests + i);
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 		}
+		++j;
 	}
 	//////////////////////////////
 
@@ -113,6 +119,7 @@ pArray test_body_seq_random_compass_between(_pFuncGetSourceArray_,
 
 	//////////////////////////////
 	// 02. Execute Testcases
+	size_t j = 0;
 	for (auto selectivity : selectivities)
 	{
 		for (size_t i = 0; i < numTests; ++i)
@@ -127,9 +134,10 @@ pArray test_body_seq_random_compass_between(_pFuncGetSourceArray_,
 			test_body_seq_compass_between<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
 													  numBins,
 													  qRange.getSp(), qRange.getEp(),
-													  saveArray, validation, printFlag);
+													  saveArray, validation, printFlag, j * numTests + i);
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 		}
+		++j;
 	}
 	//////////////////////////////
 
@@ -151,6 +159,7 @@ pArray test_body_seq_random_zip_between(_pFuncGetSourceArray_,
 
 	//////////////////////////////
 	// 02. Execute Testcases
+	size_t j = 0;
 	for (auto selectivity : selectivities)
 	{
 		for (size_t i = 0; i < numTests; ++i)
@@ -164,9 +173,10 @@ pArray test_body_seq_random_zip_between(_pFuncGetSourceArray_,
 
 			test_body_seq_zip_between<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
 												  qRange.getSp(), qRange.getEp(),
-												  saveArray, validation, printFlag);
+												  saveArray, validation, printFlag, j * numTests + i);
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 		}
+		++j;
 	}
 	//////////////////////////////
 
@@ -194,6 +204,7 @@ pArray test_body_seq_random_se_between(_pFuncGetSourceArray_,
 
 	//////////////////////////////
 	// 03. Execute Testcases
+	size_t j = 0;
 	for (auto selectivity : selectivities)
 	{
 		for (size_t i = 0; i < numTests; ++i)
@@ -208,9 +219,10 @@ pArray test_body_seq_random_se_between(_pFuncGetSourceArray_,
 			test_body_seq_se_between<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
 												 wtLevel, mmtLevel,
 												 qRange.getSp(), qRange.getEp(),
-												 saveArray, validation, printFlag);
+												 saveArray, validation, printFlag, j * numTests + i);
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 		}
+		++j;
 	}
 	//////////////////////////////
 
@@ -225,7 +237,8 @@ pArray test_body_seq_se_between(_pFuncGetSourceArray_,
 								_pFuncGetSourceArrayDesc_,
 								eleDefault wtLevel, eleDefault mmtLevel,
 								coor sp, coor ep,
-								bool saveArray = false, bool validation = false, bool printFlag = false)
+								bool saveArray = false, bool validation = false, bool printFlag = false,
+								size_t expTrial = 0)
 {
 	//////////////////////////////
 	// 01. Get Source Array
@@ -245,7 +258,8 @@ pArray test_body_seq_se_between(_pFuncGetSourceArray_,
 	auto outArr = exe_qbundle_seq_se_between<value_type>(sourceArr,
 														 sp, ep,
 														 wtLevel, mmtLevel,
-														 saveArray, printFlag);
+														 saveArray, printFlag, 
+														 experiments::between_random::expId, expTrial);
 	//////////////////////////////
 
 	return outArr;
@@ -256,7 +270,8 @@ pArray test_body_seq_spiht_between(_pFuncGetSourceArray_,
 								   _pFuncGetSourceArrayDesc_,
 								   eleDefault wtLevel,
 								   coor sp, coor ep,
-								   bool saveArray = false, bool validation = false, bool printFlag = false)
+								   bool saveArray = false, bool validation = false, bool printFlag = false,
+								   size_t expTrial = 0)
 {
 	//////////////////////////////
 	// 01. Get Source Array
@@ -276,7 +291,8 @@ pArray test_body_seq_spiht_between(_pFuncGetSourceArray_,
 	auto outArr = exe_qbundle_seq_spiht_between<value_type>(sourceArr,
 															sp, ep,
 															wtLevel,
-															saveArray, printFlag);
+															saveArray, printFlag,
+															experiments::between_random::expId, expTrial);
 	//////////////////////////////
 
 	return outArr;
@@ -286,7 +302,8 @@ template <typename value_type>
 pArray test_body_seq_load_between(_pFuncGetSourceArray_,
 								  _pFuncGetSourceArrayDesc_,
 								  coor sp, coor ep,
-								  bool saveArray = false, bool validation = false, bool printFlag = false)
+								  bool saveArray = false, bool validation = false, bool printFlag = false, 
+								  size_t expTrial = 0)
 {
 	//////////////////////////////
 	// 01. Get Source Array
@@ -305,7 +322,8 @@ pArray test_body_seq_load_between(_pFuncGetSourceArray_,
 	// 02. Between
 	auto outArr = exe_qbundle_seq_load_between<value_type>(sourceArr,
 														   sp, ep,
-														   saveArray, printFlag);
+														   saveArray, printFlag,
+														   experiments::between_random::expId, expTrial);
 	//////////////////////////////
 
 	return outArr;
@@ -316,7 +334,8 @@ pArray test_body_seq_compass_between(_pFuncGetSourceArray_,
 									 _pFuncGetSourceArrayDesc_,
 									 eleDefault numBins,
 									 coor sp, coor ep,
-									 bool saveArray = false, bool validation = false, bool printFlag = false)
+									 bool saveArray = false, bool validation = false, bool printFlag = false, 
+									 size_t expTrial = 0)
 {
 	//////////////////////////////
 	// 01. Get Source Array
@@ -336,7 +355,8 @@ pArray test_body_seq_compass_between(_pFuncGetSourceArray_,
 	auto outArr = exe_qbundle_seq_compass_between<value_type>(sourceArr,
 															  numBins,
 															  sp, ep,
-															  saveArray, printFlag);
+															  saveArray, printFlag,
+															  experiments::between_random::expId, expTrial);
 	   //////////////////////////////
 
 	return outArr;
@@ -346,7 +366,8 @@ template <typename value_type>
 pArray test_body_seq_zip_between(_pFuncGetSourceArray_,
 								 _pFuncGetSourceArrayDesc_,
 								 coor sp, coor ep,
-								 bool saveArray = false, bool validation = false, bool printFlag = false)
+								 bool saveArray = false, bool validation = false, bool printFlag = false, 
+								 size_t expTrial = 0)
 {
 	//////////////////////////////
 	// 01. Get Source Array
@@ -365,7 +386,8 @@ pArray test_body_seq_zip_between(_pFuncGetSourceArray_,
 	// 02. Between
 	auto outArr = exe_qbundle_seq_zip_between<value_type>(sourceArr,
 														  sp, ep,
-														  saveArray, printFlag);
+														  saveArray, printFlag,
+														  experiments::between_random::expId, expTrial);
    //////////////////////////////
 
 	return outArr;
@@ -380,7 +402,8 @@ pArray exe_qbundle_seq_se_between(_vectorSourceArray_,
 								  coor sp, coor ep,
 								  eleDefault wtLevel,
 								  eleDefault mmtLevel,
-								  bool saveArray = false, bool printFlag = false)
+								  bool saveArray = false, bool printFlag = false,
+								  size_t expId = 0, size_t expTrial = 0)
 {
 	//////////////////////////////
 	// 01. Save Source Array
@@ -395,7 +418,8 @@ pArray exe_qbundle_seq_se_between(_vectorSourceArray_,
 	return exe_qry_seq_se_between<value_type>(sourceArr,
 											  sp, ep,
 											  wtLevel, mmtLevel,
-											  printFlag);
+											  printFlag,
+											  expId, expTrial);
 	//////////////////////////////
 }
 
@@ -403,7 +427,8 @@ template <typename value_type>
 pArray exe_qbundle_seq_spiht_between(_vectorSourceArray_,
 									 coor sp, coor ep,
 									 eleDefault wtLevel,
-									 bool saveArray = false, bool printFlag = false)
+									 bool saveArray = false, bool printFlag = false, 
+									 size_t expId = 0, size_t expTrial = 0)
 {
 	//////////////////////////////
 	// 01. Save Source Array
@@ -417,14 +442,16 @@ pArray exe_qbundle_seq_spiht_between(_vectorSourceArray_,
 	return exe_qry_seq_spiht_between<value_type>(sourceArr,
 												 sp, ep,
 												 wtLevel,
-												 printFlag);
+												 printFlag, 
+												 expId, expTrial);
 	//////////////////////////////
 }
 
 template <typename value_type>
 pArray exe_qbundle_seq_load_between(_vectorSourceArray_,
 									coor sp, coor ep,
-									bool saveArray = false, bool printFlag = false)
+									bool saveArray = false, bool printFlag = false, 
+									size_t expId = 0, size_t expTrial = 0)
 {
 	//////////////////////////////
 	// 01. Save Source Array
@@ -437,7 +464,8 @@ pArray exe_qbundle_seq_load_between(_vectorSourceArray_,
 	// 02. Between
 	return exe_qry_seq_load_between<value_type>(sourceArr,
 												sp, ep,
-												printFlag);
+												printFlag,
+												expId, expTrial);
 	//////////////////////////////
 }
 
@@ -445,7 +473,8 @@ template <typename value_type>
 pArray exe_qbundle_seq_compass_between(_vectorSourceArray_,
 									   eleDefault numBins,
 									   coor sp, coor ep,
-									   bool saveArray = false, bool printFlag = false)
+									   bool saveArray = false, bool printFlag = false, 
+									   size_t expId = 0, size_t expTrial = 0)
 {
 	//////////////////////////////
 	// 01. Save Source Array
@@ -459,14 +488,16 @@ pArray exe_qbundle_seq_compass_between(_vectorSourceArray_,
 	return exe_qry_seq_compass_between<value_type>(sourceArr,
 												   numBins,
 												   sp, ep,
-												   printFlag);
+												   printFlag,
+												   expId, expTrial);
 	 //////////////////////////////
 }
 
 template <typename value_type>
 pArray exe_qbundle_seq_zip_between(_vectorSourceArray_,
 								   coor sp, coor ep,
-								   bool saveArray = false, bool printFlag = false)
+								   bool saveArray = false, bool printFlag = false, 
+								   size_t expId = 0, size_t expTrial = 0)
 {
 	//////////////////////////////
 	// 01. Save Source Array
@@ -479,7 +510,8 @@ pArray exe_qbundle_seq_zip_between(_vectorSourceArray_,
 	// 02. Between
 	return exe_qry_seq_zip_between<value_type>(sourceArr,
 											   sp, ep,
-											   printFlag);
+											   printFlag, 
+											   expId, expTrial);
    //////////////////////////////
 }
 
@@ -491,7 +523,8 @@ pArray exe_qry_seq_se_between(_vectorSourceArray_,
 							  coor sp, coor ep,
 							  eleDefault wtLevel,
 							  eleDefault mmtLevel,
-							  bool printFlag = false)
+							  bool printFlag = false, 
+							  size_t expId = 0, size_t expTrial = 0)
 {
 	pQuery qry = std::make_shared<query>();
 
@@ -536,7 +569,7 @@ pArray exe_qry_seq_se_between(_vectorSourceArray_,
 		//outArr->getChunkBitmap()->print();
 	}
 
-	tearDownQuery(qry);
+	tearDownQuery(qry, expId, expTrial, sourceArr[0]->getId());
 
 	return outArr;
 }
@@ -545,7 +578,8 @@ template <typename value_type>
 pArray exe_qry_seq_spiht_between(_vectorSourceArray_,
 								 coor sp, coor ep,
 								 eleDefault wtLevel,
-								 bool printFlag = false)
+								 bool printFlag = false, 
+								 size_t expId = 0, size_t expTrial = 0)
 {
 	pQuery qry = std::make_shared<query>();
 
@@ -586,7 +620,7 @@ pArray exe_qry_seq_spiht_between(_vectorSourceArray_,
 		//outArr->getChunkBitmap()->print();
 	}
 
-	tearDownQuery(qry);
+	tearDownQuery(qry, expId, expTrial, sourceArr[0]->getId());
 
 	return outArr;
 }
@@ -594,7 +628,8 @@ pArray exe_qry_seq_spiht_between(_vectorSourceArray_,
 template <typename value_type>
 pArray exe_qry_seq_load_between(_vectorSourceArray_,
 								coor sp, coor ep,
-								bool printFlag = false)
+								bool printFlag = false,
+								size_t expId = 0, size_t expTrial = 0)
 {
 	pQuery qry = std::make_shared<query>();
 
@@ -619,7 +654,7 @@ pArray exe_qry_seq_load_between(_vectorSourceArray_,
 		//outArr->getChunkBitmap()->print();
 	}
 
-	tearDownQuery(qry);
+	tearDownQuery(qry, expId, expTrial, sourceArr[0]->getId());
 
 	return outArr;
 }
@@ -628,7 +663,8 @@ template <typename value_type>
 pArray exe_qry_seq_compass_between(_vectorSourceArray_,
 								   eleDefault numBins,
 								   coor sp, coor ep,
-								   bool printFlag = false)
+								   bool printFlag = false, 
+								   size_t expId = 0, size_t expTrial = 0)
 {
 	pQuery qry = std::make_shared<query>();
 
@@ -653,7 +689,7 @@ pArray exe_qry_seq_compass_between(_vectorSourceArray_,
 		//outArr->getChunkBitmap()->print();
 	}
 
-	tearDownQuery(qry);
+	tearDownQuery(qry, expId, expTrial, sourceArr[0]->getId());
 
 	return outArr;
 }
@@ -661,7 +697,7 @@ pArray exe_qry_seq_compass_between(_vectorSourceArray_,
 template <typename value_type>
 pArray exe_qry_seq_zip_between(_vectorSourceArray_,
 							   coor sp, coor ep,
-							   bool printFlag = false)
+							   bool printFlag = false, size_t expId = 0, size_t expTrial = 0)
 {
 	pQuery qry = std::make_shared<query>();
 
@@ -686,7 +722,7 @@ pArray exe_qry_seq_zip_between(_vectorSourceArray_,
 		//outArr->getChunkBitmap()->print();
 	}
 
-	tearDownQuery(qry);
+	tearDownQuery(qry, expId, expTrial, sourceArr[0]->getId());
 
 	return outArr;
 }

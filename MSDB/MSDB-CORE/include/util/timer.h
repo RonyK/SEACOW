@@ -38,6 +38,7 @@ public:
 	void resume(size_t threadId, const std::string& nextJobName, workType nextWorkType);
 
 	void printTime(bool printDetail = false);
+	void recordTime(size_t expId, size_t trialId, size_t dataId);
 	size_t getNextJobId();
 	size_t getMyJobId(size_t threadId);
 	// TODO:: Job, Job name, getJobId
