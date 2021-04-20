@@ -45,6 +45,9 @@ pArray test_body_seq_random_load_between(_pFuncGetSourceArray_,
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
 			BOOST_LOG_TRIVIAL(info) << "# Range : " << qRange.toString() << "(" << selectivity << ")";
+			std::cout << "# TEST CASE: " << i << std::endl;
+			std::cout << "# Range : " << qRange.toString() << "(" << selectivity << ")" << std::endl;
+
 			test_body_seq_load_between<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
 												   qRange.getSp(), qRange.getEp(),
 												   saveArray, validation, printFlag);
@@ -79,7 +82,10 @@ pArray test_body_seq_random_spiht_between(_pFuncGetSourceArray_,
 			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
-			BOOST_LOG_TRIVIAL(info) << "# Range : " << qRange.toString();
+			BOOST_LOG_TRIVIAL(info) << "# Range : " << qRange.toString() << "(" << selectivity << ")";
+			std::cout << "# TEST CASE: " << i << std::endl;
+			std::cout << "# Range : " << qRange.toString() << "(" << selectivity << ")" << std::endl;
+
 			test_body_seq_spiht_between<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
 													wtLevel, qRange.getSp(), qRange.getEp(),
 													saveArray, validation, printFlag);
@@ -114,7 +120,10 @@ pArray test_body_seq_random_compass_between(_pFuncGetSourceArray_,
 			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
-			BOOST_LOG_TRIVIAL(info) << "# Range : " << qRange.toString();
+			BOOST_LOG_TRIVIAL(info) << "# Range : " << qRange.toString() << "(" << selectivity << ")";
+			std::cout << "# TEST CASE: " << i << std::endl;
+			std::cout << "# Range : " << qRange.toString() << "(" << selectivity << ")" << std::endl;
+
 			test_body_seq_compass_between<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
 													  numBins,
 													  qRange.getSp(), qRange.getEp(),
@@ -149,7 +158,10 @@ pArray test_body_seq_random_zip_between(_pFuncGetSourceArray_,
 			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
-			BOOST_LOG_TRIVIAL(info) << "# Range : " << qRange.toString();
+			BOOST_LOG_TRIVIAL(info) << "# Range : " << qRange.toString() << "(" << selectivity << ")";
+			std::cout << "# TEST CASE: " << i << std::endl;
+			std::cout << "# Range : " << qRange.toString() << "(" << selectivity << ")" << std::endl;
+
 			test_body_seq_zip_between<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
 												  qRange.getSp(), qRange.getEp(),
 												  saveArray, validation, printFlag);
@@ -189,7 +201,10 @@ pArray test_body_seq_random_se_between(_pFuncGetSourceArray_,
 			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
-			BOOST_LOG_TRIVIAL(info) << "# Range : " << qRange.toString();
+			BOOST_LOG_TRIVIAL(info) << "# Range : " << qRange.toString() << "(" << selectivity << ")";
+			std::cout << "# TEST CASE: " << i << std::endl;
+			std::cout << "# Range : " << qRange.toString() << "(" << selectivity << ")" << std::endl;
+
 			test_body_seq_se_between<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
 												 wtLevel, mmtLevel,
 												 qRange.getSp(), qRange.getEp(),
@@ -538,7 +553,9 @@ pArray exe_qry_seq_spiht_between(_vectorSourceArray_,
 	auto wtDecodePlan = getWaveletDecodePlan(spihtPlan, wtLevel, qry);
 	auto betweenPlan = getBetweenPlan(wtDecodePlan, sp, ep, qry);
 
+	std::cout << "execute: spiht start" << std::endl;
 	auto outArr = spihtPlan->getAction()->execute(sourceArr, qry);
+	std::cout << "execute: spiht end" << std::endl;
 	if (printFlag)
 	{
 		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
@@ -547,7 +564,9 @@ pArray exe_qry_seq_spiht_between(_vectorSourceArray_,
 		//outArr->getChunkBitmap()->print();
 	}
 
+	std::cout << "execute: wtDecode start" << std::endl;
 	outArr = wtDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	std::cout << "execute: wtDecode end" << std::endl;
 	if (printFlag)
 	{
 		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
@@ -556,7 +575,9 @@ pArray exe_qry_seq_spiht_between(_vectorSourceArray_,
 		//outArr->getChunkBitmap()->print();
 	}
 
+	std::cout << "execute: betweenPlan start" << std::endl;
 	outArr = betweenPlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	std::cout << "execute: betweenPlan end" << std::endl;
 	if (printFlag)
 	{
 		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;

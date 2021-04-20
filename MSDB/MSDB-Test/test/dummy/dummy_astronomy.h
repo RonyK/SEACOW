@@ -75,7 +75,7 @@ static const size_t dataLength = dimX * dimY;
 static const size_t wtLevel = 3;
 static const size_t mmtLevel = 3;
 static const size_t numBins = 64;
-static const arrayId aid = 19360;
+static const arrayId aid = 1300;
 
 extern std::vector<dim_type> dims;
 extern std::vector<dim_type> originalDims;
@@ -124,7 +124,7 @@ static const size_t dataLength = dimX * dimY;
 static const size_t wtLevel = 3;
 static const size_t mmtLevel = 3;
 static const size_t numBins = 64;
-static const arrayId aid = 10240;
+static const arrayId aid = 1500;
 
 extern std::vector<dim_type> dims;
 extern std::vector<dim_type> originalDims;
@@ -173,7 +173,7 @@ static const size_t dataLength = dimX * dimY;
 static const size_t wtLevel = 3;
 static const size_t mmtLevel = 3;
 static const size_t numBins = 64;
-static const arrayId aid = 40960;
+static const arrayId aid = 1700;
 
 extern std::vector<dim_type> dims;
 extern std::vector<dim_type> originalDims;
@@ -271,7 +271,7 @@ static const size_t dataLength = dimX * dimY;
 static const size_t wtLevel = 3;
 static const size_t mmtLevel = 3;
 static const size_t numBins = 64;
-static const arrayId aid = 10240;
+static const arrayId aid = 40240;
 
 extern std::vector<dim_type> dims;
 extern std::vector<dim_type> originalDims;

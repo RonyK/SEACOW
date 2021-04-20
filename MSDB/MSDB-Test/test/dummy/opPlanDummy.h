@@ -86,6 +86,8 @@ std::shared_ptr<se_decompression_plan> getSeDecompressionPlan(pArrayDesc sourceA
 //std::shared_ptr<mmt_delta_encode_plan> getMMTDeltaEncodePlan(pPlan sourcPlan, pQuery qry);
 std::shared_ptr<mmt_delta_decode_plan> getMMTDeltaDecodePlan(pPlan sourcPlan, pQuery qry);
 
+std::shared_ptr<mmt_load_plan> getMMTLoadPlan(pArrayDesc sourceArrDesc, pQuery qry);
+
 //////////////////////////////
 // Filter Operators
 std::shared_ptr<naive_filter_plan> getNaiveFilterPlan(pPlan sourcPlan, pPredicate inPredicate, pQuery qry);

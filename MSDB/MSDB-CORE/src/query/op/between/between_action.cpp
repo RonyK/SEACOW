@@ -35,52 +35,56 @@ pArray between_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 		auto chunkItr = inArr->getChunkIterator();
 		while (!chunkItr->isEnd())
 		{
-			if(!chunkItr->isExist())
+			if(chunkItr->isExist())
 			{
-				++(*chunkItr);
-				continue;
-			}
+				std::cout << "[" << chunkItr->seqPos() << "]: exist / ";
+				auto inChunk = (**chunkItr);
+				std::cout << "**ChunkItr / " << std::endl;
+				auto chunkRange = inChunk->getChunkRange();
+				std::cout << "chunkRange /" << std::endl;
 
-			auto inChunk = (**chunkItr);
-			auto chunkRange = inChunk->getChunkRange();
-
-			if (chunkRange.isIntersect(betweenRange))
-			{
-				auto outChunk = outArr->makeChunk(attr->id_, inChunk->getId());
-
-				outChunk->bufferRef(inChunk);
-
-				//if (chunkRange.isFullyInside(betweenRange))
-				//{
-				//	this->fullyInsideChunk(outChunk, inChunk);
-				//}else
-				//{
-				//	this->betweenChunk(outChunk, inChunk, betweenRange);
-				//}
-
-				//////////////////////////////
-				auto blockItr = inChunk->getBlockIterator();
-				while (!blockItr->isEnd())
+				if (chunkRange.isIntersect(betweenRange))
 				{
-					if (!blockItr->isExist())
+					std::cout << "Intersect" << std::endl;
+					auto outChunk = outArr->makeChunk(attr->id_, inChunk->getId());
+					outChunk->bufferRef(inChunk);
+
+					//if (chunkRange.isFullyInside(betweenRange))
+					//{
+					//	this->fullyInsideChunk(outChunk, inChunk);
+					//}else
+					//{
+					//	this->betweenChunk(outChunk, inChunk, betweenRange);
+					//}
+
+					//////////////////////////////
+					auto blockItr = inChunk->getBlockIterator();
+					while (!blockItr->isEnd())
 					{
+						if (blockItr->isExist())
+						{
+							auto inBlock = (**blockItr);
+							auto inDesc = inBlock->getDesc();
+
+							auto outBlock = outChunk->makeBlock(inBlock->getId());
+							auto outDesc = outBlock->getDesc();
+
+							outDesc->setIsp(inDesc->getIsp());
+							outDesc->setIep(inDesc->getIep());
+							outBlock->copyBitmap(inBlock->getBitmap());
+						}
+
 						++(*blockItr);
-						continue;
 					}
-
-					auto inBlock = (**blockItr);
-					auto inDesc = inBlock->getDesc();
-
-					auto outBlock = outChunk->makeBlock(inBlock->getId());
-					auto outDesc = outBlock->getDesc();
-
-					outDesc->setIsp(inDesc->getIsp());
-					outDesc->setIep(inDesc->getIep());
-					outBlock->copyBitmap(inBlock->getBitmap());
-
-					++(*blockItr);
+				}else
+				{
+					std::cout << " Not Intersect" << std::endl;
 				}
+			}else
+			{
+				std::cout << "[" << chunkItr->seqPos() << "]: not exist" << std::endl;
 			}
+
 			++(*chunkItr);
 		}
 	}
