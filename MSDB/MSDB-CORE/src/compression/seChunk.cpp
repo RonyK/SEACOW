@@ -124,6 +124,7 @@ void seChunk::serializeGap(bstream& bs, int64_t gap)
 	}
 	if(gap)
 	{
+		assert(abs_(gap) <= 128);
 		bs << setw(abs_(gap));
 		bs << (uint64_t)0;
 	}

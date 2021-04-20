@@ -418,6 +418,18 @@ public:
 	}
 	//////////////////////////////
 
+public:
+	coordinate<Dty_> divCoor(const coordinate<Dty_>& right)
+	{
+		coordinate<Dty_> output(*this);
+		for (dimensionId d = 0; d < this->dSize_; ++d)
+		{
+			output.coor_[d] /= right.coor_[d];
+		}
+
+		return output;
+	}
+
 protected:
 	void memcpyCoor(dim_type* dest, const dim_type* src)
 	{

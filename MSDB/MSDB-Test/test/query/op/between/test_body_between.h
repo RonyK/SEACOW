@@ -481,9 +481,9 @@ pArray exe_qry_seq_se_between(_vectorSourceArray_,
 	pQuery qry = std::make_shared<query>();
 
 	auto seDecompPlan = getSeDecompressionPlan(sourceArr[0]->getDesc(), wtLevel, qry);
-	auto wtDecodePlan = getWaveletDecodePlan(seDecompPlan, wtLevel, qry);
-	auto deltaDecodePlan = getMMTDeltaDecodePlan(wtDecodePlan, qry);
-	auto betweenPlan = getBetweenPlan(deltaDecodePlan, sp, ep, qry);
+	auto deltaDecodePlan = getMMTDeltaDecodePlan(seDecompPlan, qry);
+	auto wtDecodePlan = getWaveletDecodePlan(deltaDecodePlan, wtLevel, qry);
+	auto betweenPlan = getBetweenPlan(wtDecodePlan, sp, ep, qry);
 
 	auto outArr = seDecompPlan->getAction()->execute(sourceArr, qry);
 	if (printFlag)
@@ -494,20 +494,20 @@ pArray exe_qry_seq_se_between(_vectorSourceArray_,
 		//outArr->getChunkBitmap()->print();
 	}
 
-	outArr = wtDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
-	if (printFlag)
-	{
-		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
-		BOOST_LOG_TRIVIAL(info) << "Wt Decode Arr" << std::endl;
-		outArr->print();
-		//outArr->getChunkBitmap()->print();
-	}
-
 	outArr = deltaDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
 	if (printFlag)
 	{
 		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
 		BOOST_LOG_TRIVIAL(info) << "Delta Decode Arr" << std::endl;
+		outArr->print();
+		//outArr->getChunkBitmap()->print();
+	}
+
+	outArr = wtDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	if (printFlag)
+	{
+		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "Wt Decode Arr" << std::endl;
 		outArr->print();
 		//outArr->getChunkBitmap()->print();
 	}
