@@ -85,49 +85,39 @@ private:
 	{
 		auto threadId = getThreadId();
 
-		try
+		//========================================//
+		qry->getTimer()->nextJob(threadId, this->name(), workType::COMPUTING);
+		//----------------------------------------//
+		auto maxLevel = outArr->getMaxLevel();
+		arrayId arrId = outArr->getId();
+
+		bool hasNegative = false;
+		if ((Ty_)-1 < 0)
 		{
-			//========================================//
-			qry->getTimer()->nextJob(threadId, this->name(), workType::COMPUTING);
-			//----------------------------------------//
-			auto maxLevel = outArr->getMaxLevel();
-			arrayId arrId = outArr->getId();
-
-			bool hasNegative = false;
-			if ((Ty_)-1 < 0)
-			{
-				hasNegative = true;
-			}
-
-			// TODO::Create se_compression_array, seChunk
-			// Make seChunk in se_compression_array
-			this->requiredBitsFindingForChunk(inChunk, mmtIndex, maxLevel, hasNegative);
-
-			//----------------------------------------//
-			qry->getTimer()->nextWork(threadId, workType::IO);
-			//----------------------------------------//
-
-			pSerializable serialChunk
-				= std::static_pointer_cast<serializable>(inChunk);
-			storageMgr::instance()->loadChunk(arrId, attrId, inChunk->getId(),
-											  serialChunk);
-
-			//----------------------------------------//
-			qry->getTimer()->nextWork(threadId, workType::COMPUTING);
-			//----------------------------------------//
-
-			outChunk->setLevel(inChunk->getLevel());
-			outChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
-			outChunk->makeBlocks();
-			outChunk->bufferCopy(inChunk);
-		} catch (std::exception& e)
-		{
-			BOOST_LOG_TRIVIAL(error) << "Exception occured in a thread(" << threadId << " while it executes decompressChunk()";
-			BOOST_LOG_TRIVIAL(error) << e.what();
-		} catch (...)
-		{
-			BOOST_LOG_TRIVIAL(error) << "Unknown exception occured in a thread(" << threadId << " while it executes decompressChunk()";
+			hasNegative = true;
 		}
+
+		// TODO::Create se_compression_array, seChunk
+		// Make seChunk in se_compression_array
+		this->requiredBitsFindingForChunk(inChunk, mmtIndex, maxLevel, hasNegative);
+
+		//----------------------------------------//
+		qry->getTimer()->nextWork(threadId, workType::IO);
+		//----------------------------------------//
+
+		pSerializable serialChunk
+			= std::static_pointer_cast<serializable>(inChunk);
+		storageMgr::instance()->loadChunk(arrId, attrId, inChunk->getId(),
+											serialChunk);
+
+		//----------------------------------------//
+		qry->getTimer()->nextWork(threadId, workType::COMPUTING);
+		//----------------------------------------//
+
+		outChunk->setLevel(inChunk->getLevel());
+		outChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
+		outChunk->makeBlocks();
+		outChunk->bufferCopy(inChunk);
 
 		//----------------------------------------//
 		qry->getTimer()->pause(threadId);

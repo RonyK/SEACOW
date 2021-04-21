@@ -14,12 +14,12 @@ experimentRecorder::~experimentRecorder()
 	this->print();
 }
 
-void experimentRecorder::insert(size_t experimentId, size_t trialId, size_t dataId, size_t opId, std::string opName, float procTime)
+void experimentRecorder::insert(size_t experimentId, size_t trialId, size_t dataId, size_t opId, std::string opName, float procTime, size_t methodId)
 {
 	this->experimentIds_.insert(experimentId);
 	this->dataIds_.insert(dataId);
 
-	this->records_.push_back(record{ experimentId, trialId, dataId, opId, opName, procTime });
+	this->records_.push_back(record{ experimentId, trialId, dataId, opId, opName, procTime, methodId });
 }
 
 void experimentRecorder::print()
@@ -59,7 +59,7 @@ void experimentRecorder::print()
 			BOOST_LOG_TRIVIAL(info) << "------------------------------";
 
 			// Collect Same Data
-			std::map<size_t, std::vector<record>> trialRecords;
+			std::map<size_t, std::vector<std::vector<record>>> trialRecords;
 
 			auto dataIdIt = this->dataIds_.begin();
 			while(dataIdIt != this->dataIds_.end())
@@ -70,10 +70,15 @@ void experimentRecorder::print()
 					{
 						if (trialRecords.find(r.dataId) == trialRecords.end())
 						{
-							trialRecords[r.dataId] = std::vector<record>();
+							trialRecords[r.dataId] = std::vector<std::vector<record>>();
 						}
 
-						trialRecords[r.dataId].push_back(r);
+						while(trialRecords[r.dataId].size() <= r.methodId)
+						{
+							trialRecords[r.dataId].push_back(std::vector<record>());
+						}
+
+						trialRecords[r.dataId][r.methodId].push_back(r);
 					}
 				}
 
@@ -82,26 +87,31 @@ void experimentRecorder::print()
 
 			for(auto dataRecords : trialRecords)
 			{
-				std::map<size_t, record> line;
-				for(auto r : dataRecords.second)
+				size_t methodId = 0;
+				for(auto methodRecords : dataRecords.second)
 				{
-					line[r.opId] = r;
-				}
+					std::map<size_t, record> line;
+					for (auto r : methodRecords)
+					{
+						line[r.opId] = r;
+					}
 
-				std::stringstream ss;
-				ss << "{" << dataRecords.first << "} / ";	// dataId
-				for(auto r : line)
-				{
-					ss << boost::format("%1$.5f") % r.second.procTime << ", ";		// procTimes
-				}
+					std::stringstream ss;
+					ss << "{" << dataRecords.first << "-" << methodId << "} / ";	// dataId
+					for (auto r : line)
+					{
+						ss << boost::format("%1$.5f") % r.second.procTime << ", ";		// procTimes
+					}
 
-				ss << " / ";
-				for (auto r : line)
-				{
-					ss << "[" << r.second.opName<< "] ";	// operator Names
-				}
+					ss << " / ";
+					for (auto r : line)
+					{
+						ss << "[" << r.second.opName << "] ";	// operator Names
+					}
 
-				BOOST_LOG_TRIVIAL(info) << ss.str();		// print
+					BOOST_LOG_TRIVIAL(info) << ss.str();		// print
+					++methodId;
+				}
 			}
 			++curTrial;
 		}

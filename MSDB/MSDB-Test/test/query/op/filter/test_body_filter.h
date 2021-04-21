@@ -1093,7 +1093,7 @@ pArray exe_qry_seq_se_naive_filter(_vectorSourceArray_,
 		//outArr->getChunkBitmap()->print();
 	}
 
-	tearDownQuery(qry, expId, expTrial, sourceArr[0]->getId());
+	tearDownQuery(qry, expId, expTrial, sourceArr[0]->getId(), 0);
 
 	return outArr;
 }
@@ -1149,7 +1149,7 @@ pArray exe_qry_seq_se_index_filter(_vectorSourceArray_,
 		//outArr->getChunkBitmap()->print();
 	}
 
-	tearDownQuery(qry, expId, expTrial, sourceArr[0]->getId());
+	tearDownQuery(qry, expId, expTrial, sourceArr[0]->getId(), 1);
 
 	return outArr;
 }
@@ -1184,7 +1184,7 @@ pArray exe_qry_seq_compass_naive_filter(_vectorSourceArray_,
 		//outArr->getChunkBitmap()->print();
 	}
 
-	tearDownQuery(qry, expId, expTrial, sourceArr[0]->getId());
+	tearDownQuery(qry, expId, expTrial, sourceArr[0]->getId(), 0);
 
 	return outArr;
 }
@@ -1220,7 +1220,7 @@ pArray exe_qry_seq_compass_index_filter(_vectorSourceArray_,
 		//outArr->getChunkBitmap()->print();
 	}
 
-	tearDownQuery(qry, expId, expTrial, sourceArr[0]->getId());
+	tearDownQuery(qry, expId, expTrial, sourceArr[0]->getId(), 1);
 
 	return outArr;
 }

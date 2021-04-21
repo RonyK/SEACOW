@@ -216,7 +216,7 @@ void timer::printTime(bool printDetail)
 	//////////////////////////////
 }
 
-void timer::recordTime(size_t expId, size_t trialId, size_t dataId)
+void timer::recordTime(size_t expId, size_t trialId, size_t dataId, size_t methodId)
 {
 	auto expRecorder = experimentRecorder::instance();
 
@@ -240,7 +240,7 @@ void timer::recordTime(size_t expId, size_t trialId, size_t dataId)
 	
 	for(auto j : mainThreadJobInfo)
 	{
-		expRecorder->insert(expId, trialId, dataId, j.second.jobId, jobName_[j.second.jobId], mainThreadJob[j.first]);
+		expRecorder->insert(expId, trialId, dataId, j.second.jobId, jobName_[j.second.jobId], mainThreadJob[j.first], methodId);
 	}
 }
 

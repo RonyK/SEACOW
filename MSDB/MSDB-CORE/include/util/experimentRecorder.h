@@ -17,7 +17,7 @@ public:
 	~experimentRecorder();
 
 public:
-	void insert(size_t experimentId, size_t trialId, size_t dataId, size_t jobId, std::string jobName, float procTime);
+	void insert(size_t experimentId, size_t trialId, size_t dataId, size_t jobId, std::string jobName, float procTime, size_t methodId = 0);
 	void print();
 
 private:
@@ -29,6 +29,7 @@ private:
 		size_t opId;
 		std::string opName;
 		float procTime;
+		size_t methodId;
 	};
 
 private:
