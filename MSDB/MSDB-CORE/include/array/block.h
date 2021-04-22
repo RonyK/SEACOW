@@ -135,6 +135,34 @@ protected:
 		}
 		BOOST_LOG_TRIVIAL(debug) << ss.str() << "";
 	}
+
+	template<>
+	void printImp<unsigned char>()
+	{
+		auto iit = this->getItemIterator();
+		std::stringstream ss;
+		ss << "Block [" << static_cast<int64_t>(this->getId()) << "]";
+		int64_t row = -1;
+		while (!iit->isEnd())
+		{
+			int64_t curRow = iit->coor()[0];
+			if (row != curRow)
+			{
+				ss << "\n";
+				ss << curRow << " : ";
+				row = curRow;
+			}
+			if (iit->isExist())
+			{
+				ss << static_cast<unsigned int>((**iit).get<unsigned char>()) << ", ";
+			} else
+			{
+				ss << "*, ";
+			}
+			++(*iit);
+		}
+		BOOST_LOG_TRIVIAL(debug) << ss.str() << "";
+	}
 };
 }	// msdb
 

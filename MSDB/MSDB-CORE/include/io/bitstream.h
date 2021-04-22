@@ -241,7 +241,7 @@ namespace msdb
 			}
 			this->bitPos %= _BlockBits;
 
-			return length - last;
+			return (unsigned char)(length - last);
 		}
 
 		// out: number of filled bits

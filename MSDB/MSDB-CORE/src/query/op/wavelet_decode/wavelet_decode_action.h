@@ -57,6 +57,7 @@ private:
 		qry->getTimer()->nextWork(0, workType::COMPUTING);
 		//========================================//
 
+		// Free empty chunks
 		ocItr->moveToStart();
 		while(!ocItr->isEnd())
 		{

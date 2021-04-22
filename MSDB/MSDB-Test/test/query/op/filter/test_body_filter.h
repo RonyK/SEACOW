@@ -1053,8 +1053,8 @@ pArray exe_qry_seq_se_naive_filter(_vectorSourceArray_,
 	pQuery qry = std::make_shared<query>();
 
 	auto seDecompPlan = getSeDecompressionPlan(sourceArr[0]->getDesc(), wtLevel, qry);
-	auto deltaDecodePlan = getMMTDeltaDecodePlan(seDecompPlan, qry);
-	auto wtDecodePlan = getWaveletDecodePlan(deltaDecodePlan, wtLevel, qry);
+	//auto deltaDecodePlan = getMMTDeltaDecodePlan(seDecompPlan, qry);
+	auto wtDecodePlan = getWaveletDecodePlan(seDecompPlan, wtLevel, qry);
 	auto filterPlan = getNaiveFilterPlan(wtDecodePlan, inPredicate, qry);
 
 	auto outArr = seDecompPlan->getAction()->execute(sourceArr, qry);
@@ -1066,14 +1066,14 @@ pArray exe_qry_seq_se_naive_filter(_vectorSourceArray_,
 		//outArr->getChunkBitmap()->print();
 	}
 
-	outArr = deltaDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
-	if (printFlag)
-	{
-		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
-		BOOST_LOG_TRIVIAL(debug) << "Delta Decode Arr" << std::endl;
-		outArr->print();
-		//outArr->getChunkBitmap()->print();
-	}
+	//outArr = deltaDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	//if (printFlag)
+	//{
+	//	BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+	//	BOOST_LOG_TRIVIAL(debug) << "Delta Decode Arr" << std::endl;
+	//	outArr->print();
+	//	//outArr->getChunkBitmap()->print();
+	//}
 
 	outArr = wtDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
 	if (printFlag)
@@ -1110,8 +1110,8 @@ pArray exe_qry_seq_se_index_filter(_vectorSourceArray_,
 	pQuery qry = std::make_shared<query>();
 
 	auto seDecompPlan = getSeDecompressionPlan(sourceArr[0]->getDesc(), wtLevel, qry);
-	auto deltaDecodePlan = getMMTDeltaDecodePlan(seDecompPlan, qry);
-	auto wtDecodePlan = getWaveletDecodePlan(deltaDecodePlan, wtLevel, qry);
+	//auto deltaDecodePlan = getMMTDeltaDecodePlan(seDecompPlan, qry);
+	auto wtDecodePlan = getWaveletDecodePlan(seDecompPlan, wtLevel, qry);
 	auto filterPlan = getIndexFilterPlan(wtDecodePlan, inPredicate, qry);
 	auto outArr = seDecompPlan->getAction()->execute(sourceArr, qry);
 	if (printFlag)
@@ -1122,14 +1122,14 @@ pArray exe_qry_seq_se_index_filter(_vectorSourceArray_,
 		//outArr->getChunkBitmap()->print();
 	}
 
-	outArr = deltaDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
-	if (printFlag)
-	{
-		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
-		BOOST_LOG_TRIVIAL(debug) << "Delta Decode Arr" << std::endl;
-		outArr->print();
-		//outArr->getChunkBitmap()->print();
-	}
+	//outArr = deltaDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	//if (printFlag)
+	//{
+	//	BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+	//	BOOST_LOG_TRIVIAL(debug) << "Delta Decode Arr" << std::endl;
+	//	outArr->print();
+	//	//outArr->getChunkBitmap()->print();
+	//}
 
 	outArr = wtDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
 	if (printFlag)

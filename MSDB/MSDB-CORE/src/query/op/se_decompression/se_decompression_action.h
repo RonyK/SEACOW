@@ -47,6 +47,26 @@ private:
 		auto mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
 		auto cit = outArr->getChunkIterator(iterateMode::ALL);
 
+		//////////////////////////////
+		// Calculate offsets
+		//
+		// - Get Coordinate Offsets
+		//
+		dimension blockDims = outArr->getDesc()->getDimDescs()->getChunkDims();
+		size_t blockCapa = blockDims.area();
+		dimension bandDims = blockDims / std::pow(2, outArr->getMaxLevel() + 1);
+		size_t bandCapa = bandDims.area();
+
+		std::vector<uint64_t> offsets;
+		auto iit = itemRangeItr(nullptr, attrDesc->type_, blockDims, bandDims);
+
+		while(iit.isEnd() != true)
+		{
+			offsets.push_back(iit.seqPos() * sizeof(Ty_));
+			++iit;
+		}
+		//////////////////////////////
+
 		//----------------------------------------//
 		qry->getTimer()->nextWork(0, workType::PARALLEL);
 		//----------------------------------------//
@@ -62,6 +82,7 @@ private:
 				chunkId cid = cit->seqPos();
 				coor chunkCoor = cit->coor();
 				auto inChunk = this->makeInChunk(outArr, attrDesc, cid, chunkCoor);
+				inChunk->setTileOffset(offsets);
 				auto outChunk = outArr->makeChunk(*inChunk->getDesc());
 
 				io_service_->post(boost::bind(&se_decompression_action::decompressChunk<Ty_>, this,
@@ -99,7 +120,7 @@ private:
 
 		// TODO::Create se_compression_array, seChunk
 		// Make seChunk in se_compression_array
-		this->requiredBitsFindingForChunk(inChunk, mmtIndex, maxLevel, hasNegative);
+		this->requiredBitsFindingForChunk<Ty_>(inChunk, mmtIndex, maxLevel, hasNegative);
 
 		//----------------------------------------//
 		qry->getTimer()->nextWork(threadId, workType::IO);
@@ -134,13 +155,13 @@ private:
 		size_t numBandsInLevel = std::pow(2, dSize) - 1;
 
 		// For Level 0
-		this->findRequiredBitsForRootLevel(inChunk,
+		this->findRequiredBitsForRootLevel<Ty_>(inChunk,
 										   mmtIndex,
 										   numBandsInLevel, 
 										   hasNegative);
 
 		// For child level
-		this->findRequiredBitsForChildLevel(inChunk,
+		this->findRequiredBitsForChildLevel<Ty_>(inChunk,
 											mmtIndex,
 											maxLevel,
 											numBandsInLevel,
@@ -157,6 +178,8 @@ private:
 		auto blockLevel = mmtIndex->getBlockLevel();
 		auto mNode = mmtIndex->getNode(chunkCoor, blockLevel);
 		bit_cnt_type fromMMT = getRBitFromMMT(mNode, hasNegative);
+
+		inChunk->setMin(mNode->getMin<Ty_>());
 
 		for (size_t band = 0; band <= numBandsInLevel; ++band)
 		{

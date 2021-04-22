@@ -27,9 +27,11 @@ pChunk wavelet_encode_array::makeChunk(const chunkDesc& desc)
 	auto chunkObj
 		= std::make_shared<wtChunk>(std::make_shared<chunkDesc>(desc));
 	this->insertChunk(desc.attrDesc_->id_, chunkObj);
+	//chunkObj->setLevel(this->getMaxLevel());
 	return chunkObj;
 }
 
+// TODO:: Change name to getWTLeve()
 size_t wavelet_encode_array::getMaxLevel()
 {
 	return this->maxLevel_;
@@ -40,6 +42,7 @@ dimension wavelet_encode_array::getOrigianlChunkDims()
 	return this->originalChunkDims_;
 }
 
+// TODO:: Change name to setWTLevel()
 void wavelet_encode_array::setLevel(const size_t maxLevel)
 {
 	this->maxLevel_ = maxLevel;

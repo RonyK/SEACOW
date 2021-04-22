@@ -25,13 +25,13 @@ pArray exe_qry_ind_se_compression(_vectorSourceArray_,
 		outArr->print();
 	}
 
-	outArr = exe_act_ind_mmt_delta_encode(std::vector<pArray>({ outArr }));
-	if (printFlag)
-	{
-		BOOST_LOG_TRIVIAL(debug) << "##############################";
-		BOOST_LOG_TRIVIAL(debug) << "MMT Delta Arr";
-		outArr->print();
-	}
+	//outArr = exe_act_ind_mmt_delta_encode(std::vector<pArray>({ outArr }));
+	//if (printFlag)
+	//{
+	//	BOOST_LOG_TRIVIAL(debug) << "##############################";
+	//	BOOST_LOG_TRIVIAL(debug) << "MMT Delta Arr";
+	//	outArr->print();
+	//}
 
 	outArr = exe_act_ind_se_compression(std::vector<pArray>({ outArr }));
 	if (printFlag)
@@ -57,13 +57,13 @@ pArray exe_qry_ind_se_decompression(_vectorSourceArray_,
 		outArr->print();
 	}
 
-	outArr = exe_act_ind_mmt_delta_decode(std::vector<pArray>({ outArr }));
-	if (printFlag)
-	{
-		BOOST_LOG_TRIVIAL(debug) << "##############################";
-		BOOST_LOG_TRIVIAL(debug) << "MMT Delta Decode Arr";
-		outArr->print();
-	}
+	//outArr = exe_act_ind_mmt_delta_decode(std::vector<pArray>({ outArr }));
+	//if (printFlag)
+	//{
+	//	BOOST_LOG_TRIVIAL(debug) << "##############################";
+	//	BOOST_LOG_TRIVIAL(debug) << "MMT Delta Decode Arr";
+	//	outArr->print();
+	//}
 
 	outArr = exe_act_ind_wavelet_decode(std::vector<pArray>({ outArr }), wtLevel);
 	if (printFlag)
@@ -84,8 +84,8 @@ pArray exe_qry_seq_se_decompression(_vectorSourceArray_,
 	pQuery qry = std::make_shared<query>();
 
 	auto seDecompPlan = getSeDecompressionPlan(sourceArr[0]->getDesc(), wtLevel, qry);
-	auto deltaDecodePlan = getMMTDeltaDecodePlan(seDecompPlan, qry);
-	auto wtDecodePlan = getWaveletDecodePlan(deltaDecodePlan, wtLevel, qry);
+	//auto deltaDecodePlan = getMMTDeltaDecodePlan(seDecompPlan, qry);
+	auto wtDecodePlan = getWaveletDecodePlan(seDecompPlan, wtLevel, qry);
 	
 	auto outArr = seDecompPlan->getAction()->execute(sourceArr, qry);
 	if (printFlag)
@@ -95,13 +95,13 @@ pArray exe_qry_seq_se_decompression(_vectorSourceArray_,
 		outArr->print();
 	}
 
-	outArr = deltaDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
-	if (printFlag)
-	{
-		BOOST_LOG_TRIVIAL(debug) << "##############################";
-		BOOST_LOG_TRIVIAL(debug) << "MMT Delta Decode Arr";
-		outArr->print();
-	}
+	//outArr = deltaDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	//if (printFlag)
+	//{
+	//	BOOST_LOG_TRIVIAL(debug) << "##############################";
+	//	BOOST_LOG_TRIVIAL(debug) << "MMT Delta Decode Arr";
+	//	outArr->print();
+	//}
 
 	outArr = wtDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
 	if (printFlag)

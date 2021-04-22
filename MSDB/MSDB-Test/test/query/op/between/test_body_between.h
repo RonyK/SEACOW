@@ -199,7 +199,17 @@ pArray test_body_seq_random_se_between(_pFuncGetSourceArray_,
 
 	//////////////////////////////
 	// 02. Build MMT
-	test_body_mmt_build<value_type>(getSourceArrayIfEmpty, mmtLevel, false);
+	try
+	{
+		attributeId attrId = 0;
+		std::vector<pArray> sourceArr;
+		getSourceArrayDesc(sourceArr);
+
+		arrayMgr::instance()->getAttributeIndex(sourceArr[0]->getId(), attrId);
+	}catch (msdb_exception e)
+	{
+		test_body_mmt_build<value_type>(getSourceArrayIfEmpty, mmtLevel, false);
+	}
 	//////////////////////////////
 
 	//////////////////////////////
@@ -529,8 +539,8 @@ pArray exe_qry_seq_se_between(_vectorSourceArray_,
 	pQuery qry = std::make_shared<query>();
 
 	auto seDecompPlan = getSeDecompressionPlan(sourceArr[0]->getDesc(), wtLevel, qry);
-	auto deltaDecodePlan = getMMTDeltaDecodePlan(seDecompPlan, qry);
-	auto wtDecodePlan = getWaveletDecodePlan(deltaDecodePlan, wtLevel, qry);
+	//auto deltaDecodePlan = getMMTDeltaDecodePlan(seDecompPlan, qry);
+	auto wtDecodePlan = getWaveletDecodePlan(seDecompPlan, wtLevel, qry);
 	auto betweenPlan = getBetweenPlan(wtDecodePlan, sp, ep, qry);
 
 	auto outArr = seDecompPlan->getAction()->execute(sourceArr, qry);
@@ -542,14 +552,14 @@ pArray exe_qry_seq_se_between(_vectorSourceArray_,
 		//outArr->getChunkBitmap()->print();
 	}
 
-	outArr = deltaDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
-	if (printFlag)
-	{
-		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
-		BOOST_LOG_TRIVIAL(info) << "Delta Decode Arr" << std::endl;
-		outArr->print();
-		//outArr->getChunkBitmap()->print();
-	}
+	//outArr = deltaDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	//if (printFlag)
+	//{
+	//	BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
+	//	BOOST_LOG_TRIVIAL(info) << "Delta Decode Arr" << std::endl;
+	//	outArr->print();
+	//	//outArr->getChunkBitmap()->print();
+	//}
 
 	outArr = wtDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
 	if (printFlag)

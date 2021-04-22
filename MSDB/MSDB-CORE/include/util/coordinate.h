@@ -342,6 +342,10 @@ public:
 		return *this;
 	}
 
+	// TODO:: Change intDivCeil to intDivFloor
+	//  Why the divide operator uses 'intDivCeil'???
+	// - To calculate chunk, block size.
+
 	self_type& operator/= (const self_type& mit)
 	{
 		for (dimensionId d = 0; d < this->dSize_; ++d)
@@ -775,7 +779,7 @@ public:
 		: coor_(dSize), dSize_(dSize), end_(false), basisDimOffset_(1), seqPos_(0), 
 		dims_(dSize, dims), sP_(dSize), eP_(dSize, dims)
 	{
-		this->basisDim_ = this->dSize() - 1;
+		this->basisDim_ = (dimensionId)(this->dSize() - 1);
 		this->initSeqCapacity();
 	}
 
@@ -783,7 +787,7 @@ public:
 		: coor_(lst.size()), dSize_(lst.size()), end_(false), basisDimOffset_(1), seqPos_(0),
 		dims_(lst), sP_(lst.size()), eP_(lst)
 	{
-		this->basisDim_ = this->dSize() - 1;
+		this->basisDim_ = (dimensionId)(this->dSize() - 1);
 		this->initSeqCapacity();
 	}
 
@@ -791,7 +795,7 @@ public:
 		: coor_(space.size()), dSize_(space.size()), end_(false), basisDimOffset_(1), seqPos_(0),
 		dims_(space), sP_(space.size()), eP_(space)
 	{
-		this->basisDim_ = this->dSize() - 1;
+		this->basisDim_ = (dimensionId)(this->dSize() - 1);
 		this->initSeqCapacity();
 	}
 
@@ -805,7 +809,7 @@ public:
 			this->dims_[d] = value;
 			this->eP_[d] = value;
 		}
-		this->basisDim_ = this->dSize() - 1;
+		this->basisDim_ = (dimensionId)(this->dSize() - 1);
 		this->initSeqCapacity();
 	}
 
@@ -915,7 +919,7 @@ public:
 			offset *= this->dims_[d];
 		}
 
-		for (int d = this->dSize() - 1; d > this->basisDim_; d--)
+		for (int d = (int)(this->dSize() - 1); d > this->basisDim_; d--)
 		{
 			seq += (left % this->dims_[d]) * offset;
 			left = left / this->dims_[d];
@@ -978,7 +982,7 @@ public:
 			this->coor_[curDim] = this->sP_[curDim];
 
 			if (curDim != 0)		--curDim;
-			else				curDim = this->dSize() - 1;
+			else				curDim = (dimensionId)(this->dSize() - 1);
 
 		} while (curDim != this->basisDim_);
 

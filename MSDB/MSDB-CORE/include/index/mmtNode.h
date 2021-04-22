@@ -45,7 +45,7 @@ public:
 	mmtNode() : bMax_(0), bMin_(0), bits_(0x80), order_(1),
 		bMaxDelta_(0), bMinDelta_(0), max_(0), min_(0),
 		realMin_(0), realMax_(0), finished_(false),
-		seqPos_(0), jumpBits_(0)
+		seqPos_(0), jumpBits_(0), childOrder_(0)
 		//chunkCoor_(1), blockCoor_(1), nodeCoor_(1),
 	{
 	}

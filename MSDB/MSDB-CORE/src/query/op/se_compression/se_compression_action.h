@@ -85,13 +85,13 @@ private:
 		dimension bandDims = inBlockDims / std::pow(2, inChunk->getLevel() + 1);
 
 		// For Level 0
-		this->findRequiredBitsForRootLevel(outChunk, outBlock, 
+		this->findRequiredBitsForRootLevel<Ty_>(outChunk, outBlock, 
 										   mmtIndex, 
 										   bandDims, 
 										   numBandsInLevel, hasNegative);
 
 		// For child level
-		this->findRequiredBitsForChildLevel(outChunk, outBlock, 
+		this->findRequiredBitsForChildLevel<Ty_>(outChunk, outBlock, 
 											mmtIndex,
 											bandDims, inChunk->getLevel(),
 											numBandsInLevel, hasNegative);
@@ -130,7 +130,7 @@ private:
 
 	template <class Ty_>
 	void findRequiredBitsForRootLevel(pSeChunk outChunk, pBlock outBlock,
-									  std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex, 
+									  std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex,
 									  const dimension& bandDims, const size_t numBandsInLevel, 
 									  const bool hasNegative)
 	{
@@ -138,6 +138,8 @@ private:
 		auto blockLevel = mmtIndex->getBlockLevel();
 		auto mNode = mmtIndex->getNode(chunkCoor, blockLevel);
 		bit_cnt_type fromMMT = getRBitFromMMT(mNode, hasNegative);
+
+		outChunk->setMin(mNode->getMin<Ty_>());
 
 		for (size_t band = 0; band <= numBandsInLevel; ++band)
 		{
@@ -157,7 +159,7 @@ private:
 
 	template <class Ty_>
 	void findRequiredBitsForChildLevel(pSeChunk outChunk, pBlock outBlock,
-									   std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex, 
+									   std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex,
 									   const dimension& bandDims, 
 									   const size_t maxLevel,
 									   const size_t numBandsInLevel, 

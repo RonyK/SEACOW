@@ -100,7 +100,7 @@ bit_cnt_type getPrefixPosForPrevLimit(Ty_ prevLimit, bit_cnt_type order)
 		(absPrevLimit & mask) && --order;
 		mask >>= 1;
 	}
-	return prefixPos;
+	return (bit_cnt_type)prefixPos;
 }
 
 // Return Max Limit value where num of bits is provided.

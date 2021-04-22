@@ -15,7 +15,7 @@ void getDummyFromBinaryFile(char* output, const char* filePath, size_t length, s
 namespace data2D_star1024x1024
 {
 using value_type = char;
-static const eleType ele_type = eleType::CHAR;
+static const eleType ele_type = eleType::UINT8;
 
 static const dim_type origianlDimX = 1024;
 static const dim_type originalDimY = 1024;
@@ -64,7 +64,7 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
 namespace data2D_saturn1024x1024
 {
 using value_type = char;
-static const eleType ele_type = eleType::CHAR;
+static const eleType ele_type = eleType::UINT8;
 
 static const dim_type origianlDimX = 1024;
 static const dim_type originalDimY = 1024;
@@ -113,7 +113,7 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
 namespace data2D_solar1024x1024
 {
 using value_type = char;
-static const eleType ele_type = eleType::CHAR;
+static const eleType ele_type = eleType::UINT8;
 
 static const dim_type origianlDimX = 1024;
 static const dim_type originalDimY = 1024;
@@ -162,7 +162,7 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
 namespace data2D_mars4096x2048
 {
 using value_type = char;
-static const eleType ele_type = eleType::CHAR;
+static const eleType ele_type = eleType::UINT8;
 
 static const dim_type origianlDimX = 4096;
 static const dim_type originalDimY = 2048;
@@ -211,7 +211,7 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
 namespace data2D_mercurydem20480x10240
 {
 using value_type = char;
-static const eleType ele_type = eleType::CHAR;
+static const eleType ele_type = eleType::UINT8;
 
 static const dim_type origianlDimX = 20480;
 static const dim_type originalDimY = 10240;
@@ -260,7 +260,7 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
 namespace data2D_lunar102400x40960
 {
 using value_type = char;
-static const eleType ele_type = eleType::INT16;
+static const eleType ele_type = eleType::UINT16;
 
 static const dim_type origianlDimX = 102400;
 static const dim_type originalDimY = 40960;

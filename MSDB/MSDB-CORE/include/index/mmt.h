@@ -113,6 +113,8 @@ public:
 
 	using self_type = MinMaxTreeImpl<Dty_, Ty_>;
 
+	using node_type = Ty_;
+
 	//////////////////////////////
 	// MMT NODE					//
 	//////////////////////////////
@@ -212,6 +214,15 @@ public:
 	//////////////////////////////
 	// MMT Serialize			//
 	//////////////////////////////
+	virtual void serialize(std::ostream& os)
+	{
+		bstream bs;
+		this->serialize(bs);
+
+		this->getOutHeader()->serialize(os);
+		os.write(bs.data(), bs.capacity());
+	}
+
 	void serialize(bstream& bs)
 	{
 		size_type maxLevel = this->nodes_.size() - 1;
@@ -238,13 +249,14 @@ public:
 		this->serializedSize_ = bs.capacity();	// set serialized size
 	}
 
-	virtual void serialize(std::ostream& os)
+	virtual void deserialize(std::istream& is)
 	{
+		this->getHeader()->deserialize(is);
+		this->updateFromHeader();
 		bstream bs;
-		this->serialize(bs);
-
-		this->getOutHeader()->serialize(os);
-		os.write(bs.data(), bs.capacity());
+		bs.resize(this->serializedSize_);
+		is.read(bs.data(), this->serializedSize_);
+		this->deserialize(bs);
 	}
 
 	// build MMT from bstream
@@ -274,16 +286,6 @@ public:
 			this->deserializeNonRoot(bs, l);
 			BOOST_LOG_TRIVIAL(debug) << "level" << l << ": " << this->nodes_[l].size();
 		}
-	}
-
-	virtual void deserialize(std::istream& is)
-	{
-		this->getHeader()->deserialize(is);
-		this->updateFromHeader();
-		bstream bs;
-		bs.resize(this->serializedSize_);
-		is.read(bs.data(), this->serializedSize_);
-		this->deserialize(bs);
 	}
 
 public:
@@ -355,7 +357,7 @@ protected:
 
 		while (!iit->isEnd())
 		{
-			v = preprocessingForValue((**iit).get<Ty_>());
+			v = preprocessingForValue((**iit).get<unsigned char>());
 			//std::cout << static_cast<int>(v) << ", ";
 			if (max_ < v)
 			{
@@ -898,7 +900,7 @@ protected:
 			curNode->inJumpedBits<Ty_>(bs, jumpBits, jumpValue);
 			//BOOST_LOG_TRIVIAL(debug) << "(" << i << ")" << static_cast<int>(curNode->childOrder_) << " / " << static_cast<int>(curNode->jumpBits_);
 
-			nodeUpdateWhenChildOrderChanged(curNode, jumpBits, jumpValue);
+			nodeUpdateWhenChildOrderChanged<Ty_>(curNode, jumpBits, jumpValue);
 		}
 
 		curNode->realMin_ = curNode->getMin<Ty_>();

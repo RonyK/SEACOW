@@ -109,7 +109,7 @@ public:
 		// Get mmtNode
 		// MMT is built from the origianl array
 		auto node = mmtIndex->getNode(originalChunkCoor, originalBlockCoor, mmtIndex->getBlockLevel());
-		Ty_ nodeMin = node->getMin<Ty_>();
+		Ty_ nodeMin = node->getMin<uint32_t>();
 
 		while (!iit->isEnd())
 		{

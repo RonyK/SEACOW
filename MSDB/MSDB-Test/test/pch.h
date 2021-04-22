@@ -33,4 +33,4 @@ static const int compass_array_id = 5;
 static const int zip_array_id = 6;
 
 static const int rangeSeed = 2102;
-static const int filterValueSeed = 2102;
+static const int filterValueSeed = 21020;
