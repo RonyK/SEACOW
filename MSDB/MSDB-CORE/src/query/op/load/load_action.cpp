@@ -71,7 +71,7 @@ void load_action::loadAttribute(pArray outArr, pAttributeDesc attrDesc, pQuery q
 				// If there were no bitmap, set all blocks as true.
 				outChunk->replaceBlockBitmap(std::make_shared<bitmap>(outChunk->getBlockCapacity(), true));
 			}
-			outChunk->makeAllBlocks();
+			outChunk->makeBlocks();
 
 			io_service_->post(boost::bind(&load_action::loadChunk, this,
 							  outArr, outChunk, attrDesc->id_, qry, currentThreadId));
@@ -86,6 +86,8 @@ void load_action::loadAttribute(pArray outArr, pAttributeDesc attrDesc, pQuery q
 	//----------------------------------------//
 	qry->getTimer()->nextWork(0, workType::COMPUTING);
 	//========================================//
+
+	this->getArrayStatus(outArr);
 }
 
 void load_action::loadChunk(pArray outArr, pChunk outChunk, attributeId attrId, pQuery qry, const size_t parentThreadId)

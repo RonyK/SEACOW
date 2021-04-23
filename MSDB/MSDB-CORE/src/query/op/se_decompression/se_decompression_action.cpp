@@ -20,7 +20,7 @@ pArray se_decompression_action::execute(std::vector<pArray>& inputArrays, pQuery
 	assert(inputArrays.size() == 1);
 
 	//========================================//
-	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
+	qry->getTimer()->nextJob(0, this->name(), workType::ARRAY_CONSTRUCTING);
 	//----------------------------------------//
 
 	pStableElement ele = std::static_pointer_cast<stableElement>(this->params_[1]->getParam());

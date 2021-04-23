@@ -81,6 +81,8 @@ void compass_decode_action::decodeAttribute(pArray outArr, pAttributeDesc attrDe
 	//----------------------------------------//
 	qry->getTimer()->nextWork(0, workType::COMPUTING);
 	//========================================//
+
+	this->getArrayStatus(outArr);
 }
 
 void compass_decode_action::decodeChunk(pChunk outChunk, pCompassChunk inChunk, pQuery qry, pArray outArr, const attributeId attrId, const size_t parentThreadId)
@@ -103,6 +105,7 @@ void compass_decode_action::decodeChunk(pChunk outChunk, pCompassChunk inChunk, 
 	outChunk->copyBlockBitmap(inChunk->getBlockBitmap());
 	outChunk->makeBlocks();
 	outChunk->bufferCopy(inChunk);
+	outChunk->setSerializedSize(inChunk->getSerializedSize());
 
 	//----------------------------------------//
 	qry->getTimer()->pause(threadId);

@@ -24,6 +24,8 @@ public:
 	void setArrayDesc(pArrayDesc aDesc);
 	void setPlanBitmap(pBitmap planBitmap);
 	cpBitmap getPlanChunkBitmap() const;
+	void getArrayStatus(pArray arr);
+
 	virtual cpBitmap getPlanBlockBitmap(chunkId cid) const;
 	virtual const char* name() = 0;
 

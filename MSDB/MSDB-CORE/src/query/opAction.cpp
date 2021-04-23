@@ -34,6 +34,38 @@ cpBitmap opAction::getPlanChunkBitmap() const
 {
 	return this->planBitmap_;
 }
+void opAction::getArrayStatus(pArray arr)
+{
+	size_t numChunks = 0, numBlocks = 0, serialSize = 0;
+
+	auto cit = arr->getChunkIterator();
+	while(!cit->isEnd())
+	{
+		if(cit->isExist())
+		{
+			++numChunks;
+			serialSize += (*cit)->getSerializedSize();
+			auto bit = (*cit)->getBlockIterator();
+			while(!bit->isEnd())
+			{
+				
+				if(bit->isExist())
+				{
+					++numBlocks;
+				}
+
+				++(*bit);
+			}
+		}
+
+		++(*cit);
+	}
+
+	BOOST_LOG_TRIVIAL(info) << "- Num chunks: " << numChunks;
+	BOOST_LOG_TRIVIAL(info) << "- Num blocks: " << numBlocks;
+	BOOST_LOG_TRIVIAL(info) << "- Serialized size: " << serialSize;
+}
+
 cpBitmap opAction::getPlanBlockBitmap(chunkId cid) const
 {
 	if(this->planBitmap_->isTree())

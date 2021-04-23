@@ -96,20 +96,25 @@ void experimentRecorder::print()
 						line[r.opId] = r;
 					}
 
-					std::stringstream ss;
-					ss << "{" << dataRecords.first << "-" << methodId << "} / ";	// dataId
-					for (auto r : line)
+					if(line.size())
 					{
-						ss << boost::format("%1$.5f") % r.second.procTime << ", ";		// procTimes
+						// Print if line exist
+						std::stringstream ss;
+						ss << "{" << dataRecords.first << "-" << methodId << "} / ";	// dataId
+						for (auto r : line)
+						{
+							ss << boost::format("%1$.5f") % r.second.procTime << ", ";		// procTimes
+						}
+
+						ss << " / ";
+						for (auto r : line)
+						{
+							ss << "[" << r.second.opName << "] ";	// operator Names
+						}
+
+						BOOST_LOG_TRIVIAL(info) << ss.str();		// print
 					}
 
-					ss << " / ";
-					for (auto r : line)
-					{
-						ss << "[" << r.second.opName << "] ";	// operator Names
-					}
-
-					BOOST_LOG_TRIVIAL(info) << ss.str();		// print
 					++methodId;
 				}
 			}

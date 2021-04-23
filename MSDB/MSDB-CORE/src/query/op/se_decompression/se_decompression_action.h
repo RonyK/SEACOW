@@ -46,26 +46,7 @@ private:
 		}
 		auto mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
 		auto cit = outArr->getChunkIterator(iterateMode::ALL);
-
-		//////////////////////////////
-		// Calculate offsets
-		//
-		// - Get Coordinate Offsets
-		//
-		dimension blockDims = outArr->getDesc()->getDimDescs()->getChunkDims();
-		size_t blockCapa = blockDims.area();
-		dimension bandDims = blockDims / std::pow(2, outArr->getMaxLevel() + 1);
-		size_t bandCapa = bandDims.area();
-
-		std::vector<uint64_t> offsets;
-		auto iit = itemRangeItr(nullptr, attrDesc->type_, blockDims, bandDims);
-
-		while(iit.isEnd() != true)
-		{
-			offsets.push_back(iit.seqPos() * sizeof(Ty_));
-			++iit;
-		}
-		//////////////////////////////
+		std::vector<uint64_t> offsets = this->getSeqOffInBand<Ty_>(outArr);
 
 		//----------------------------------------//
 		qry->getTimer()->nextWork(0, workType::PARALLEL);
@@ -98,6 +79,28 @@ private:
 		//----------------------------------------//
 		qry->getTimer()->nextWork(0, workType::COMPUTING);
 		//========================================//
+
+		this->getArrayStatus(outArr);
+	}
+
+	template <typename Ty_>
+	std::vector<uint64_t> getSeqOffInBand(std::shared_ptr<wavelet_encode_array> outArr)
+	{
+		dimension blockDims = outArr->getDesc()->getDimDescs()->getChunkDims();
+		size_t blockCapa = blockDims.area();
+		dimension bandDims = blockDims / std::pow(2, outArr->getMaxLevel() + 1);
+		size_t bandCapa = bandDims.area();
+
+		std::vector<uint64_t> offsets;
+		auto iit = itemRangeItr(nullptr, eleType::CHAR, blockDims, bandDims);		// type not necessary
+
+		while (iit.isEnd() != true)
+		{
+			offsets.push_back(iit.seqPos() * sizeof(Ty_));
+			++iit;
+		}
+
+		return offsets;
 	}
 
 	template <typename Ty_>
@@ -139,6 +142,7 @@ private:
 		outChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
 		outChunk->makeBlocks();
 		outChunk->bufferCopy(inChunk);
+		outChunk->setSerializedSize(inChunk->getSerializedSize());
 
 		//----------------------------------------//
 		qry->getTimer()->pause(threadId);

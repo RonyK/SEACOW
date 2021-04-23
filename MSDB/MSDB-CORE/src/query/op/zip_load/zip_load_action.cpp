@@ -73,6 +73,8 @@ void zip_load_action::loadAttribute(pArray outArr, pAttributeDesc attrDesc, pQue
 	//----------------------------------------//
 	qry->getTimer()->nextWork(0, workType::COMPUTING);
 	//========================================//
+
+	this->getArrayStatus(outArr);
 }
 
 void zip_load_action::loadChunk(pArray outArr, pChunk outChunk, pZipChunk inChunk, attributeId attrId, pQuery qry, const size_t parentThreadId)
@@ -95,6 +97,7 @@ void zip_load_action::loadChunk(pArray outArr, pChunk outChunk, pZipChunk inChun
 	outChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
 	outChunk->makeBlocks();
 	outChunk->bufferCopy(inChunk);
+	outChunk->setSerializedSize(inChunk->getSerializedSize());
 
 	//----------------------------------------//
 	qry->getTimer()->pause(threadId);
