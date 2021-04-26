@@ -226,22 +226,22 @@ public:
 	void serialize(bstream& bs)
 	{
 		size_type maxLevel = this->nodes_.size() - 1;
+		size_t nodeNums = 0;
 
 		if (maxLevel == (size_type)-1)
 		{
 			return;		// Empty
 		}
 
-		this->serializeRoot(bs);
-		size_t nodeNums = 0;
 		BOOST_LOG_TRIVIAL(debug) << "root: " << this->nodes_[maxLevel].size();
+		this->serializeRoot(bs);
 		nodeNums += this->nodes_[maxLevel].size();
 
 		//for (size_type l = maxLevel - 1; l != (size_type)this->lowerLevel_ - 1; l--)
 		for (size_type l = maxLevel - 1; l != (size_type)-1; l--)
 		{
-			this->serializeNonRoot(bs, l);
 			BOOST_LOG_TRIVIAL(debug) << "level" << l << ": " << this->nodes_[l].size();
+			this->serializeNonRoot(bs, l);
 			nodeNums += this->nodes_[l].size();
 		}
 		BOOST_LOG_TRIVIAL(debug) << "Total Nodes: " << nodeNums;
@@ -694,6 +694,8 @@ protected:
 		assert(this->nodes_.back().size() == 1);
 		pMmtNode* rootNodes = this->nodes_.back().data();
 		pMmtNode rootNode = rootNodes[0];
+
+		BOOST_LOG_TRIVIAL(debug) << "[" << static_cast<int64_t>(rootNode->getRealMin<Ty_>()) << "~" << static_cast<int64_t>(rootNode->getRealMax<Ty_>()) << "]";
 		
 		rootNode->outMinMax<Ty_>(bs);		
 		if(isChildOrderChanged(rootNode))
@@ -706,6 +708,7 @@ protected:
 	void serializeNonRoot(bstream& bs, size_type level)
 	{
 		//BOOST_LOG_TRIVIAL(debug) << "serializeNonRoot";
+		std::stringstream ss;
 		pMmtNode* curLevelNodes = this->nodes_[level].data();
 		for (size_type i = 0; i < this->nodes_[level].size(); i++)
 		{
@@ -736,9 +739,16 @@ protected:
 				//}
 			}
 
+			if(i < 10)
+			{
+				ss << "[" << static_cast<int64_t>(curNode->getRealMin<Ty_>()) << "~" << static_cast<int64_t>(curNode->getRealMax<Ty_>()) << "] ";
+			}
+
 			//BOOST_LOG_TRIVIAL(debug) << "(" << i << ") " << static_cast<int>(curNode->bits_) << " / " << static_cast<int>(curNode->bMin_) << ", " << static_cast<int>(curNode->bMinDelta_) << " / " << static_cast<int>(curNode->bMax_) << ", " << static_cast<int>(curNode->bMaxDelta_);
 			//////////////////////////////
 		}
+
+		BOOST_LOG_TRIVIAL(debug) << ss.str();
 	}
 
 	////////////////////////////////////////
