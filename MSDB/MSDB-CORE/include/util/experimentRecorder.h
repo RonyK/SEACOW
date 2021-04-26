@@ -16,10 +16,6 @@ public:
 	experimentRecorder();
 	~experimentRecorder();
 
-public:
-	void insert(size_t experimentId, size_t trialId, size_t dataId, size_t jobId, std::string jobName, float procTime, size_t methodId = 0);
-	void print();
-
 private:
 	typedef struct record
 	{
@@ -31,6 +27,11 @@ private:
 		float procTime;
 		size_t methodId;
 	};
+
+public:
+	void insert(size_t experimentId, size_t trialId, size_t dataId, size_t jobId, std::string jobName, float procTime, size_t methodId = 0);
+	void print();
+	void printLine(size_t tag, std::map<size_t, record>& line);
 
 private:
 	std::vector<record> records_;
