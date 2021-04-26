@@ -227,7 +227,7 @@ public:
 		auto itemCapa = bandDims.area();
 		char* spData = (char*)this->getBuffer()->getData() + spOffset;
 
-		if(negativeMask < 0)
+		if((Ty_)-1 < 0)
 		{
 			// Ty_ has negative values
 			for (int i = 0; i < itemCapa; ++i)
@@ -357,7 +357,7 @@ public:
 
 						//////////////////////////////
 						// 01
-						if (negativeMask < 0)
+						if ((Ty_)-1 < 0)
 						{
 							for (size_type i = 0; i < itemCapa; ++i)
 							{

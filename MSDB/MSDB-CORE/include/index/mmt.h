@@ -274,7 +274,8 @@ public:
 		assert(this->lowerLevel_ > 0);
 		this->deserializeRoot(bs);
 		BOOST_LOG_TRIVIAL(debug) << "root: " << this->nodes_[this->maxLevel_].size();
-		if(this->maxLevel_ - 1 != (size_type)this->lowerLevel_ - 1)
+		//if(this->maxLevel_ - 1 != (size_type)this->lowerLevel_ - 1)
+		if (this->maxLevel_ - 1 != (size_type)-1)
 		{
 			this->deserializeFromRoot(bs, this->maxLevel_ - 1);
 			BOOST_LOG_TRIVIAL(debug) << "level" << this->maxLevel_ - 1 << ": " << this->nodes_[this->maxLevel_ - 1].size();
