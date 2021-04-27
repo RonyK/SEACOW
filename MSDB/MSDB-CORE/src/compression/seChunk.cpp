@@ -51,16 +51,16 @@ void seChunk::serialize(std::ostream& os)
 		this->serialize<int64_t>(bs);
 		break;
 	case eleType::UINT8:
-		this->serialize<uint8_t>(bs);
+		this->serialize<int8_t>(bs);
 		break;
 	case eleType::UINT16:
-		this->serialize<uint16_t>(bs);
+		this->serialize<int16_t>(bs);
 		break;
 	case eleType::UINT32:
-		this->serialize<uint32_t>(bs);
+		this->serialize<int32_t>(bs);
 		break;
 	case eleType::UINT64:
-		this->serialize<uint64_t>(bs);
+		this->serialize<int64_t>(bs);
 		break;
 	default:
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
@@ -98,16 +98,16 @@ void seChunk::deserialize(std::istream& is)
 		this->deserialize<int64_t>(bs);
 		break;
 	case eleType::UINT8:
-		this->deserialize<uint8_t>(bs);
+		this->deserialize<int8_t>(bs);
 		break;
 	case eleType::UINT16:
-		this->deserialize<uint16_t>(bs);
+		this->deserialize<int16_t>(bs);
 		break;
 	case eleType::UINT32:
-		this->deserialize<uint32_t>(bs);
+		this->deserialize<int32_t>(bs);
 		break;
 	case eleType::UINT64:
-		this->deserialize<uint64_t>(bs);
+		this->deserialize<int64_t>(bs);
 		break;
 	default:
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));

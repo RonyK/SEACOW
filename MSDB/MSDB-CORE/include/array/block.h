@@ -86,7 +86,7 @@ protected:
 	{
 		auto iit = this->getItemIterator();
 		std::stringstream ss;
-		ss << "Block [" << static_cast<int64_t>(this->getId()) << "]";
+		ss << "Block [" << this->desc_->blockCoor_.toString() << " (" << static_cast<int64_t>(this->getId()) << ")]";
 		int64_t row = -1;
 		while(!iit->isEnd())
 		{
@@ -113,7 +113,7 @@ protected:
 	{
 		auto iit = this->getItemIterator();
 		std::stringstream ss;
-		ss << "Block [" << static_cast<int64_t>(this->getId()) << "]";
+		ss << "Block [" << this->desc_->blockCoor_.toString() << " (" << static_cast<int64_t>(this->getId()) << ")]";
 		int64_t row = -1;
 		while (!iit->isEnd())
 		{
@@ -141,7 +141,7 @@ protected:
 	{
 		auto iit = this->getItemIterator();
 		std::stringstream ss;
-		ss << "Block [" << static_cast<int64_t>(this->getId()) << "]";
+		ss << "Block [" << this->desc_->blockCoor_.toString() << " (" << static_cast<int64_t>(this->getId()) << ")]";
 		int64_t row = -1;
 		while (!iit->isEnd())
 		{

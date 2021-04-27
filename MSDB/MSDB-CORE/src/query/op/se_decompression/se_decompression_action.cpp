@@ -60,16 +60,16 @@ pArray se_decompression_action::execute(std::vector<pArray>& inputArrays, pQuery
 			decompressAttribute<int64_t>(outArr, attrDesc, qry);
 			break;
 		case eleType::UINT8:
-			decompressAttribute<uint8_t>(outArr, attrDesc, qry);
+			decompressAttribute<int8_t>(outArr, attrDesc, qry);
 			break;
 		case eleType::UINT16:
-			decompressAttribute<uint16_t>(outArr, attrDesc, qry);
+			decompressAttribute<int16_t>(outArr, attrDesc, qry);
 			break;
 		case eleType::UINT32:
-			decompressAttribute<uint32_t>(outArr, attrDesc, qry);
+			decompressAttribute<int32_t>(outArr, attrDesc, qry);
 			break;
 		case eleType::UINT64:
-			decompressAttribute<uint64_t>(outArr, attrDesc, qry);
+			decompressAttribute<int64_t>(outArr, attrDesc, qry);
 			break;
 		default:
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));

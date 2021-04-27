@@ -156,7 +156,7 @@ protected:
 
 			is.read((char*)(&this->version_), sizeof(this->version_));
 			is.read((char*)(&this->bodySize_), sizeof(this->bodySize_));
-
+			//BOOST_LOG_TRIVIAL(info) << "BODY: " << this->bodySize_;
 			//std::cout << this->version_ << ", " << this->bodySize_ << std::endl;
 		}
 	};

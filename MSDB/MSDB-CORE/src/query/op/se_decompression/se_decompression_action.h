@@ -183,7 +183,9 @@ private:
 		auto mNode = mmtIndex->getNode(chunkCoor, blockLevel);
 		bit_cnt_type fromMMT = getRBitFromMMT(mNode, hasNegative);
 
-		inChunk->setMin(mNode->getMin<Ty_>());
+		// TODO::Synopsis Delta Decoding
+		//inChunk->setMin(mNode->getMin<Ty_>());
+		inChunk->setMin(0);
 
 		for (size_t band = 0; band <= numBandsInLevel; ++band)
 		{

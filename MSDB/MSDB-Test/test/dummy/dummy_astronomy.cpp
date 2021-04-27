@@ -169,11 +169,13 @@ namespace data2D_lunar102400x40960
 {
 std::vector<dim_type> dims = { dimY, dimX };
 std::vector<dim_type> originalDims = { dimY, dimX };
+std::vector<dim_type> chunkNums = { 64, 192 };
 //std::vector<dim_type> chunkNums = { 16, 48 };
-std::vector<dim_type> chunkNums = { 32, 96 };
+//std::vector<dim_type> chunkNums = { 128, 384 };
 std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
 //std::vector<dim_type> blockNums = { 8, 8 };
-std::vector<dim_type> blockNums = { 4, 4 };
+//std::vector<dim_type> blockNums = { 4, 4 };
+std::vector<dim_type> blockNums = { 1, 1 };
 std::vector<dim_type> blockDims = { chunkDims[0] / blockNums[0], chunkDims[1] / blockNums[1] };
 
 void getDummy(value_type* output, size_t length)

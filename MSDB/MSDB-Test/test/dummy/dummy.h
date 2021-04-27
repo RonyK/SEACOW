@@ -179,7 +179,7 @@ void compArrary(pArray lArr, pArray rArr)
 								if (li != ri)
 								{
 									BOOST_LOG_TRIVIAL(debug) << "Diff : " << static_cast<int64_t>(li) << ", " << static_cast<int64_t>(ri);
-									BOOST_LOG_TRIVIAL(debug) << "Chunk: " << lcItr->coor().toString() << " / Block: " << lbItr->coor().toString() << " / Item: " << liItr->coor().toString();
+									BOOST_LOG_TRIVIAL(debug) << "Chunk: " << lcItr->coor().toString() << "(" << lcItr->seqPos() << ") / Block: " << lbItr->coor().toString() << "(" << lbItr->seqPos() << ") / Item: " << liItr->coor().toString();
 									++wrongValue;
 
 									if(isFirstWrongChunk)

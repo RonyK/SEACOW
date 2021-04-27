@@ -401,50 +401,85 @@ protected:
 
 		////////////////////////////////////////
 		// Update min/max values
-		itemIterator<Dty_, pMmtNode> pcit(this->nodes_[level - 1].data(), this->dSize_,
-									   prevNodeSpace.data());
-		itemIterator<Dty_, pMmtNode> cit(this->nodes_[level].data(), this->dSize_,
-									  nodeSpace.data());
+		//itemIterator<Dty_, pMmtNode> pcit(this->nodes_[level - 1].data(), this->dSize_,
+		//							   prevNodeSpace.data());
+		//itemIterator<Dty_, pMmtNode> cit(this->nodes_[level].data(), this->dSize_,
+		//							  nodeSpace.data());
 
-		for (size_type i = 0; i < this->nodes_[level - 1].size(); i++)
+		auto childIt = this->getNodeIterator(level - 1);
+		auto parentIt = this->getNodeIterator(level);
+
+		while(!childIt.isEnd())
 		{
-			// current iterator coordiate -> parent coordinate
-			coordinate<Dty_> cur = pcit.coor();
-			for (size_type d = 0; d < this->dSize_; ++d)
-			{
-				cur[d] /= 2;
-			}
+			auto childNode = *childIt;
+			auto parentCoor = this->getParentCoor(childIt.coor());
+			parentIt.moveTo(parentCoor);
 
-			// get target chunk
-			cit.moveTo(cur);
-			auto node = (*cit);
-
+			auto parentNode = *parentIt;
 			// init min, max value
-			if (node->bits_ == 0x80)
+			if (parentNode->bits_ == 0x80)
 			{
-				node->realMax_ = node->max_ = (*pcit)->getMax<Ty_>();
-				node->realMin_ = node->min_ = (*pcit)->getMin<Ty_>();
-				node->bits_ = (bit_cnt_type)TyBits_;
+				parentNode->realMax_ = parentNode->max_ = (*childIt)->getMax<Ty_>();
+				parentNode->realMin_ = parentNode->min_ = (*childIt)->getMin<Ty_>();
+				parentNode->bits_ = (bit_cnt_type)TyBits_;
 			} else
 			{
 				// compare min max value
-				if (node->getMax<Ty_>() < (*pcit)->getMax<Ty_>())
+				if (parentNode->getMax<Ty_>() < (*childIt)->getMax<Ty_>())
 				{
-					node->realMax_ = node->max_ = (*pcit)->getMax<Ty_>();
+					parentNode->realMax_ = parentNode->max_ = (*childIt)->getMax<Ty_>();
 				}
-				if (node->getMin<Ty_>() > (*pcit)->getMin<Ty_>())
+				if (parentNode->getMin<Ty_>() > (*childIt)->getMin<Ty_>())
 				{
-					node->realMin_ = node->min_ = (*pcit)->getMin<Ty_>();
+					parentNode->realMin_ = parentNode->min_ = (*childIt)->getMin<Ty_>();
 				}
 			}
-			this->nodes_[level][cit.coorToSeq(cur)] = node;
 
-			//std::cout << "forward-" << std::endl;
-			//std::cout << "[" << cur[0] << ", " << cur[1] << "] : " << static_cast<int>(node->getMin<Ty_>()) << "~" << static_cast<int>(node->max_) << std::endl;
-
-			// move to next chunk
-			++pcit;
+			++childIt;
 		}
+
+		//for (size_type i = 0; i < this->nodes_[level - 1].size(); i++)
+		//{
+		//	auto childNode = this->nodes_[level - 1][i];
+		//	auto parentCoor = this->getParentCoor();
+
+		//	// current iterator coordiate -> parent coordinate
+		//	coordinate<Dty_> cur = pcit.coor();
+		//	for (size_type d = 0; d < this->dSize_; ++d)
+		//	{
+		//		cur[d] /= 2;
+		//	}
+
+		//	// get target chunk
+		//	cit.moveTo(cur);
+		//	auto node = (*cit);
+
+		//	// init min, max value
+		//	if (node->bits_ == 0x80)
+		//	{
+		//		node->realMax_ = node->max_ = (*pcit)->getMax<Ty_>();
+		//		node->realMin_ = node->min_ = (*pcit)->getMin<Ty_>();
+		//		node->bits_ = (bit_cnt_type)TyBits_;
+		//	} else
+		//	{
+		//		// compare min max value
+		//		if (node->getMax<Ty_>() < (*pcit)->getMax<Ty_>())
+		//		{
+		//			node->realMax_ = node->max_ = (*pcit)->getMax<Ty_>();
+		//		}
+		//		if (node->getMin<Ty_>() > (*pcit)->getMin<Ty_>())
+		//		{
+		//			node->realMin_ = node->min_ = (*pcit)->getMin<Ty_>();
+		//		}
+		//	}
+		//	this->nodes_[level][cit.coorToSeq(cur)] = node;
+
+		//	//std::cout << "forward-" << std::endl;
+		//	//std::cout << "[" << cur[0] << ", " << cur[1] << "] : " << static_cast<int>(node->getMin<Ty_>()) << "~" << static_cast<int>(node->max_) << std::endl;
+
+		//	// move to next chunk
+		//	++pcit;
+		//}
 	}
 
 	void forwardBuildRoot()

@@ -65,16 +65,16 @@ pArray wavelet_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 			attributeDecode<int64_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::UINT8:
-			attributeDecode<uint8_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
+			attributeDecode<int8_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::UINT16:
-			attributeDecode<uint16_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
+			attributeDecode<int16_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::UINT32:
-			attributeDecode<uint32_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
+			attributeDecode<int32_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::UINT64:
-			attributeDecode<uint64_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
+			attributeDecode<int64_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		//case eleType::DOUBLE:
 		//	attributeDecode<double>(inChunk, arrRange,w, d, q);

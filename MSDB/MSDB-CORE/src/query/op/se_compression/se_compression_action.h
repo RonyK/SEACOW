@@ -123,7 +123,7 @@ private:
 		}
 
 #ifndef NDEBUG
-		//BOOST_LOG_TRIVIAL(trace) << "Max value: " << static_cast<int>(maxValue) << ", maxValueBits: " << static_cast<int>(maxValueBits);
+		BOOST_LOG_TRIVIAL(trace) << "Max value: " << static_cast<int>(maxValue) << ", maxValueBits: " << static_cast<int>(maxValueBits);
 #endif
 		return maxValueBits;
 	}
@@ -139,7 +139,9 @@ private:
 		auto mNode = mmtIndex->getNode(chunkCoor, blockLevel);
 		bit_cnt_type fromMMT = getRBitFromMMT(mNode, hasNegative);
 
-		outChunk->setMin(mNode->getMin<Ty_>());
+		// TODO::Synopsis Delta Encoding
+		//outChunk->setMin(mNode->getMin<Ty_>());
+		outChunk->setMin(0);
 
 		for (size_t band = 0; band <= numBandsInLevel; ++band)
 		{

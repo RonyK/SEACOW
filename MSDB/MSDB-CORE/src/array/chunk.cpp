@@ -134,6 +134,7 @@ void chunk::print()
 	while (!bit->isEnd())
 	{
 		BOOST_LOG_TRIVIAL(debug) << "------------------------------\n";
+		BOOST_LOG_TRIVIAL(debug) << "Chunk [" << this->getChunkCoor().toString() << " (" << static_cast<int64_t>(this->getId()) << ")]";
 		if (bit->isExist())
 		{
 			(**bit)->print();
