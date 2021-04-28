@@ -22,8 +22,10 @@ public:
 	const pArrayDesc getArrayDesc();
 	void setParams(const parameters& params);
 	void setArrayDesc(pArrayDesc aDesc);
-	void setPlanBitmap(pBitmap planBitmap);
-	cpBitmap getPlanChunkBitmap() const;
+	void setPlanInBitmap(pBitmap planBitmap);
+	void setPlanOutBitmap(pBitmap planBitmap);
+	cpBitmap getPlanInChunkBitmap() const;
+	cpBitmap getPlanOutChunkBitmap() const;
 	void getArrayStatus(pArray arr);
 
 	virtual cpBitmap getPlanBlockBitmap(chunkId cid) const;
@@ -33,7 +35,8 @@ public:
 
 protected:
 	pArrayDesc aDesc_;
-	pBitmap planBitmap_;	// chunk bitmap or chunk-block bitmap tree
+	pBitmap planInBitmap_;	// chunk bitmap or chunk-block bitmap tree
+	pBitmap planOutBitmap_;	// chunk bitmap or chunk-block bitmap tree
 	//std::vector<action> sources_;
 	parameters params_;
 

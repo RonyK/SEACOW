@@ -27,7 +27,7 @@ pArray se_decompression_action::execute(std::vector<pArray>& inputArrays, pQuery
 	eleDefault maxLevel;
 	ele->getData(&maxLevel);
 
-	auto planBitmap = this->getPlanChunkBitmap();
+	auto planBitmap = this->getPlanInChunkBitmap();
 	auto arrDesc = this->getArrayDesc();
 	dimension originalChunkDims = arrDesc->getDimDescs()->getChunkDims();
 	for (dimensionId d = 0; d < arrDesc->getDSize(); ++d)

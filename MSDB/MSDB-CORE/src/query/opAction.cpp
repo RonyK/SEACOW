@@ -26,17 +26,26 @@ void opAction::setArrayDesc(pArrayDesc aDesc)
 {
 	this->aDesc_ = aDesc;
 }
-void opAction::setPlanBitmap(pBitmap planBitmap)
+void opAction::setPlanInBitmap(pBitmap planBitmap)
 {
-	this->planBitmap_ = planBitmap;
+	this->planInBitmap_ = planBitmap;
 }
-cpBitmap opAction::getPlanChunkBitmap() const
+void opAction::setPlanOutBitmap(pBitmap planBitmap)
 {
-	return this->planBitmap_;
+	this->planOutBitmap_ = planBitmap;
+}
+cpBitmap opAction::getPlanInChunkBitmap() const
+{
+	return this->planInBitmap_;
+}
+cpBitmap opAction::getPlanOutChunkBitmap() const
+{
+	return this->planOutBitmap_;
 }
 void opAction::getArrayStatus(pArray arr)
 {
 	size_t numChunks = 0, numBlocks = 0, serialSize = 0;
+	std::stringstream ss;
 
 	auto cit = arr->getChunkIterator();
 	while(!cit->isEnd())
@@ -45,6 +54,7 @@ void opAction::getArrayStatus(pArray arr)
 		{
 			++numChunks;
 			serialSize += (*cit)->getSerializedSize();
+			ss << cit->seqPos() << "/" << (*cit)->getSerializedSize() << ", ";
 			auto bit = (*cit)->getBlockIterator();
 			while(!bit->isEnd())
 			{
@@ -61,6 +71,7 @@ void opAction::getArrayStatus(pArray arr)
 		++(*cit);
 	}
 
+	//BOOST_LOG_TRIVIAL(info) << "- Chunks: " << ss.str();
 	BOOST_LOG_TRIVIAL(info) << "- Num chunks: " << numChunks;
 	BOOST_LOG_TRIVIAL(info) << "- Num blocks: " << numBlocks;
 	BOOST_LOG_TRIVIAL(info) << "- Serialized size: " << serialSize;
@@ -68,9 +79,9 @@ void opAction::getArrayStatus(pArray arr)
 
 cpBitmap opAction::getPlanBlockBitmap(chunkId cid) const
 {
-	if(this->planBitmap_->isTree())
+	if(this->planInBitmap_->isTree())
 	{
-		return std::static_pointer_cast<bitmapTree>(this->planBitmap_)->getChild(cid);
+		return std::static_pointer_cast<bitmapTree>(this->planInBitmap_)->getChild(cid);
 	}
 	return nullptr;
 }

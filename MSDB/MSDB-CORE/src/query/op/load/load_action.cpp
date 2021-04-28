@@ -25,7 +25,7 @@ pArray load_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 	//----------------------------------------//
 
 	assert(inputArrays.size() == 1);
-	auto planChunkBitmap = this->getPlanChunkBitmap();
+	auto planChunkBitmap = this->getPlanInChunkBitmap();
 
 	pArray outArr = arrayMgr::instance()->makeArray<memBlockArray>(this->getArrayDesc());
 	outArr->copyChunkBitmap(planChunkBitmap);

@@ -29,6 +29,8 @@ private:
 		//========================================//
 		qry->getTimer()->nextWork(0, workType::COMPUTING);
 		//----------------------------------------//
+		auto outChunkBitmap = this->inferBottomUpBitmap(outArr->getDesc(), inArr->getChunkBitmap());
+		outArr->replaceChunkBitmap(outChunkBitmap);
 		auto ocItr = outArr->getChunkIterator(iterateMode::ALL);
 
 		//----------------------------------------//
@@ -39,13 +41,16 @@ private:
 
 		while (!ocItr->isEnd())
 		{
-			pChunk outChunk = outArr->makeChunk(attrDesc->id_, ocItr->seqPos());
-			outChunk->bufferAlloc();
+			if(ocItr->isExist())
+			{
+				pChunk outChunk = outArr->makeChunk(attrDesc->id_, ocItr->seqPos());
+				outChunk->bufferAlloc();
 
-			io_service_->post(boost::bind(&wavelet_decode_action::parallelChunkDecode<Ty_>, this,
-							  outArr, outChunk, inArr->getChunkIterator(),
-							  ocItr->coor(),
-							  w, maxLevel, qry, currentThreadId));
+				io_service_->post(boost::bind(&wavelet_decode_action::parallelChunkDecode<Ty_>, this,
+								  outArr, outChunk, inArr->getChunkIterator(),
+								  ocItr->coor(),
+								  w, maxLevel, qry, currentThreadId));
+			}
 
 			++(*ocItr);
 		}
@@ -126,14 +131,18 @@ private:
 
 		if (!isOutChunkEmpty)
 		{
+#ifndef NDEBUG
 			BOOST_LOG_TRIVIAL(trace) << "[" << outChunk->getId() << "]: chunk exist";
+#endif
 			//isChunkExist->at(outChunk->getId()) = true;
 
 			this->chunkDecode<Ty_>(chunks, outChunk, outChunkCoor, chunkDims,
 								   blockSpace, w, maxLevel, qry);
 		} else
 		{
+#ifndef NDEBUG
 			BOOST_LOG_TRIVIAL(trace) << "[" << outChunk->getId() << "]: chunk empty";
+#endif
 			//isChunkExist->at(outChunk->getId()) = false;
 			//outArr->freeChunk(outChunk->getId());		// Occur errors: multi-thread race condition
 														// Bitmap: true / chunk: null
@@ -258,6 +267,44 @@ private:
 		}
 
 		delete[] row;
+	}
+
+	pBitmapTree inferBottomUpBitmap(pArrayDesc aDesc, cpBitmap fromBottom)
+	{
+		dimension chunkSpace = aDesc->getDimDescs()->getChunkSpace();
+		dimension blockSpace = aDesc->getDimDescs()->getBlockSpace();
+		dimension seChunkSpace = chunkSpace * blockSpace;
+
+		auto inChunkItr = coorItr(seChunkSpace);
+		auto outChunkItr = coorItr(chunkSpace);
+		auto outBlockItr = coorItr(blockSpace);
+
+		pBitmapTree outBitmap = std::make_shared<bitmapTree>(chunkSpace.area(), false);
+
+		while (!inChunkItr.isEnd())
+		{
+			if (fromBottom->isExist(inChunkItr.seqPos()))
+			{
+				dimension blockCoor = inChunkItr.coor() % blockSpace;
+				dimension chunkCoor = (inChunkItr.coor() - blockCoor) / blockSpace;	// Divide operator for dimension is rounded up by default
+				outChunkItr.moveTo(chunkCoor);
+				outBlockItr.moveTo(blockCoor);
+
+				outBitmap->setExist(outChunkItr.seqPos());
+
+				if (!outBitmap->hasChild(outChunkItr.seqPos()))
+				{
+					outBitmap->makeChild(outChunkItr.seqPos(), blockSpace.area(), false);
+				}
+
+				auto blockBitmap = outBitmap->getChild(outChunkItr.seqPos());
+				blockBitmap->setExist(outBlockItr.seqPos());
+			}
+
+			++inChunkItr;
+		}
+
+		return outBitmap;
 	}
 
 public:

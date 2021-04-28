@@ -31,7 +31,7 @@ pArray compass_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 	arrayId arrId = sourceArr->getId();
 
 	auto outArr = std::make_shared<memBlockArray>(this->getArrayDesc());
-	outArr->copyChunkBitmap(this->getPlanChunkBitmap());
+	outArr->copyChunkBitmap(this->getPlanInChunkBitmap());
 
 	// Get Parameter - NumBin
 	eleDefault numBins;

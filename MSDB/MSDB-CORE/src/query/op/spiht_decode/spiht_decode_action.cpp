@@ -31,7 +31,7 @@ pArray spiht_decode_action::execute(std::vector<pArray>& inputArrays, pQuery qry
 	eleDefault maxLevel;
 	ele->getData(&maxLevel);
 
-	auto planBitmap = this->getPlanChunkBitmap();
+	auto planBitmap = this->getPlanInChunkBitmap();
 	auto arrDesc = this->getArrayDesc();
 	dimension originalChunkDims = arrDesc->getDimDescs()->getChunkDims();
 	for (dimensionId d = 0; d < arrDesc->getDSize(); ++d)

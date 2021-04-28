@@ -28,7 +28,7 @@ pArray zip_load_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 	arrayId arrId = sourceArr->getId();
 
 	auto outArr = std::make_shared<memBlockArray>(this->getArrayDesc());
-	outArr->copyChunkBitmap(this->getPlanChunkBitmap());
+	outArr->copyChunkBitmap(this->getPlanInChunkBitmap());
 
 	for (auto attr : *sourceArr->getDesc()->attrDescs_)
 	{
