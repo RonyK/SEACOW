@@ -160,11 +160,9 @@ namespace msdb
 
 		void setCurLevel(size_type level, bool adjustCoor = false)
 		{
-			if (level > this->maxLevel_)
-			{
-				std::cout << level << " / " << this->maxLevel_ << std::endl;
-			}
+#ifndef NDEBUG
 			assert(level <= this->maxLevel_);
+#endif // !NDEBUG
 
 			this->curLevel_ = level;
 
@@ -184,8 +182,10 @@ namespace msdb
 		// adjustCoor: make true if you want to move the coordinate it have.
 		void setCurBand(size_type band, bool adjustCoor = false)
 		{
+#ifndef NDEBUG
 			assert(band != 0 || (band == 0 && this->curLevel_ == this->maxLevel_));
 			assert(band < pow(2, this->dSize_));
+#endif // !NDEBUG
 
 			this->curBand_ = band;
 			this->calcBandBoundary();

@@ -149,16 +149,18 @@ void arrayBase::print()
 
 	while (!cit->isEnd())
 	{
-		BOOST_LOG_TRIVIAL(debug) << "==============================\n";
 		if(cit->isExist())
 		{
+			BOOST_LOG_TRIVIAL(debug) << "==============================\n";
 			(**cit)->print();
-			
+			BOOST_LOG_TRIVIAL(debug) << "==============================\n";
 		}else
 		{
-			BOOST_LOG_TRIVIAL(debug) << "Chunk (" << cit->seqPos() << ") is not exist\n";
+			BOOST_LOG_TRIVIAL(trace) << "==============================\n";
+			BOOST_LOG_TRIVIAL(trace) << "Chunk (" << cit->seqPos() << ") is not exist\n";
+			BOOST_LOG_TRIVIAL(trace) << "==============================\n";
 		}
-		BOOST_LOG_TRIVIAL(debug) << "==============================\n";
+		
 		++(*cit);
 	}
 }

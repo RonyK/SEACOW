@@ -133,16 +133,20 @@ void chunk::print()
 
 	while (!bit->isEnd())
 	{
-		BOOST_LOG_TRIVIAL(debug) << "------------------------------\n";
-		BOOST_LOG_TRIVIAL(debug) << "Chunk [" << this->getChunkCoor().toString() << " (" << static_cast<int64_t>(this->getId()) << ")]";
 		if (bit->isExist())
 		{
+			BOOST_LOG_TRIVIAL(debug) << "------------------------------\n";
+			BOOST_LOG_TRIVIAL(debug) << "Chunk [" << this->getChunkCoor().toString() << " (" << static_cast<int64_t>(this->getId()) << ")]";
 			(**bit)->print();
+			BOOST_LOG_TRIVIAL(debug) << "------------------------------\n";
 		} else
 		{
-			BOOST_LOG_TRIVIAL(debug) << "Block (" << bit->seqPos() << ") is not exist;";
+			BOOST_LOG_TRIVIAL(trace) << "------------------------------\n";
+			BOOST_LOG_TRIVIAL(trace) << "Chunk [" << this->getChunkCoor().toString() << " (" << static_cast<int64_t>(this->getId()) << ")]";
+			BOOST_LOG_TRIVIAL(trace) << "Block (" << bit->seqPos() << ") is not exist;";
+			BOOST_LOG_TRIVIAL(trace) << "------------------------------\n";
 		}
-		BOOST_LOG_TRIVIAL(debug) << "------------------------------\n";
+		
 
 		++(*bit);
 	}

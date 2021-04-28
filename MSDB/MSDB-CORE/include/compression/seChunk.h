@@ -6,6 +6,7 @@
 #include <array/blockChunk.h>
 #include <array/block.h>
 #include <compression/waveletUtil.h>
+#include <numeric>
 
 namespace msdb
 {
@@ -116,6 +117,11 @@ public:
 	void serializeChildLevelBand(bstream& bs, pBlock inBlock, size_t seqId, dimension& bandDims, size_t numBandsInLevel)
 	{
 		auto dSize = this->getDSize();
+
+#ifndef NDEBUG
+		std::vector<int64_t> gaps;
+#endif
+
 		for (size_t level = 1; level <= this->level_; ++level)
 		{
 			auto innerSize = pow(2, level);
@@ -145,7 +151,11 @@ public:
 					//assert(rbFromMMT >= rbFromDelta);
 #endif
 
-					this->serializeGap(bs, rbFromMMT - rbFromDelta);
+					this->serializeGap(bs, (int64_t)rbFromMMT - (int64_t)rbFromDelta);
+
+#ifndef NDEBUG
+					gaps.push_back((int64_t)rbFromMMT - (int64_t)rbFromDelta);
+#endif
 
 					if(rbFromDelta != 0)
 					{
@@ -170,6 +180,12 @@ public:
 				++innerItr;
 			}
 		}
+
+#ifndef NDEBUG
+		BOOST_LOG_TRIVIAL(debug) << "avg gaps: " << static_cast<double>(std::accumulate(gaps.begin(), gaps.end(), 0.0) / gaps.size());
+		BOOST_LOG_TRIVIAL(debug) << "avg from MMT: " << static_cast<double>(std::accumulate(rBitFromMMT.begin(), rBitFromMMT.end(), 0.0) / rBitFromMMT.size());
+		BOOST_LOG_TRIVIAL(debug) << "avg from Delta: " << static_cast<double>(std::accumulate(rBitFromDelta.begin(), rBitFromDelta.end(), 0.0) / rBitFromDelta.size());
+#endif
 	}
 
 	template<typename Ty_>
@@ -409,7 +425,7 @@ public:
 			}
 		}
 	}
-
+	
 public:
 	void setTileOffset(std::vector<uint64_t>& offset);
 	inline void setMin(int64_t min)

@@ -37,15 +37,15 @@ pArray between_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 		{
 			if(chunkItr->isExist())
 			{
-				std::cout << "[" << chunkItr->seqPos() << "]: exist / ";
+				//std::cout << "[" << chunkItr->seqPos() << "]: exist / ";
 				auto inChunk = (**chunkItr);
-				std::cout << "**ChunkItr / " << std::endl;
+				//std::cout << "**ChunkItr / " << std::endl;
 				auto chunkRange = inChunk->getChunkRange();
-				std::cout << "chunkRange /" << std::endl;
+				//std::cout << "chunkRange /" << std::endl;
 
 				if (chunkRange.isIntersect(betweenRange))
 				{
-					std::cout << "Intersect" << std::endl;
+					//std::cout << "Intersect" << std::endl;
 					auto outChunk = outArr->makeChunk(attr->id_, inChunk->getId());
 					outChunk->bufferRef(inChunk);
 
@@ -76,13 +76,7 @@ pArray between_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 
 						++(*blockItr);
 					}
-				}else
-				{
-					std::cout << " Not Intersect" << std::endl;
 				}
-			}else
-			{
-				std::cout << "[" << chunkItr->seqPos() << "]: not exist" << std::endl;
 			}
 
 			++(*chunkItr);
