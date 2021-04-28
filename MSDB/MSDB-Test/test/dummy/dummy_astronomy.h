@@ -10,12 +10,18 @@ using dim_type = position_t;
 
 namespace caDummy
 {
+#define _DUMMY_CHAR_VALUE_TYPE_		unsigned char
+#define _DUMMY_CHAR_ELE_TYPE_		eleType::UINT8
+
+#define _DUMMY_SHORT_VALUE_TYPE_	uint16_t
+#define _DUMMY_SHORT_ELE_TYPE_		eleType::UINT16
+
 void getDummyFromBinaryFile(char* output, const char* filePath, size_t length, size_t sizeofValueType);
 
 namespace data2D_star1024x1024
 {
-using value_type = unsigned char;
-static const eleType ele_type = eleType::UINT8;
+using value_type = _DUMMY_CHAR_VALUE_TYPE_;
+static const eleType ele_type = _DUMMY_CHAR_ELE_TYPE_;
 
 static const dim_type origianlDimX = 1024;
 static const dim_type originalDimY = 1024;
@@ -26,7 +32,7 @@ static const size_t dataLength = dimX * dimY;
 static const size_t wtLevel = 3;
 static const size_t mmtLevel = 3;
 static const size_t numBins = 128;
-static const arrayId aid = 19420;
+static const arrayId aid = 1100;
 
 extern std::vector<dim_type> dims;
 extern std::vector<dim_type> originalDims;
@@ -42,7 +48,7 @@ std::vector<pArray> getSourceArray()
 {
 	// Get Dummy data
 	value_type* data = new value_type[originalDataLength]();
-	getDummy(data, originalDataLength);
+	getDummy(data, originalDataLength * sizeof(value_type));
 
 	std::vector<pArray> arrs(
 		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_star1024x1024", originalDims, dims, chunkDims, blockDims, ele_type)) });
@@ -63,8 +69,8 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
 
 namespace data2D_saturn1024x1024
 {
-using value_type = unsigned char;
-static const eleType ele_type = eleType::UINT8;
+using value_type = _DUMMY_CHAR_VALUE_TYPE_;
+static const eleType ele_type = _DUMMY_CHAR_ELE_TYPE_;
 
 static const dim_type origianlDimX = 1024;
 static const dim_type originalDimY = 1024;
@@ -91,7 +97,7 @@ std::vector<pArray> getSourceArray()
 {
 	// Get Dummy data
 	value_type* data = new value_type[originalDataLength];
-	getDummy(data, originalDataLength);
+	getDummy(data, originalDataLength * sizeof(value_type));
 
 	std::vector<pArray> arrs(
 		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_saturn1024x1024", originalDims, dims, chunkDims, blockDims, ele_type)) });
@@ -112,8 +118,8 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
 
 namespace data2D_solar1024x1024
 {
-using value_type = unsigned char;
-static const eleType ele_type = eleType::UINT8;
+using value_type = _DUMMY_CHAR_VALUE_TYPE_;
+static const eleType ele_type = _DUMMY_CHAR_ELE_TYPE_;
 
 static const dim_type origianlDimX = 1024;
 static const dim_type originalDimY = 1024;
@@ -140,7 +146,7 @@ std::vector<pArray> getSourceArray()
 {
 	// Get Dummy data
 	value_type* data = new value_type[originalDataLength];
-	getDummy(data, originalDataLength);
+	getDummy(data, originalDataLength * sizeof(value_type));
 
 	std::vector<pArray> arrs(
 		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_solar1024x1024", originalDims, dims, chunkDims, blockDims, ele_type)) });
@@ -161,8 +167,8 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
 
 namespace data2D_mars4096x2048
 {
-using value_type = unsigned char;
-static const eleType ele_type = eleType::UINT8;
+using value_type = _DUMMY_CHAR_VALUE_TYPE_;
+static const eleType ele_type = _DUMMY_CHAR_ELE_TYPE_;
 
 static const dim_type origianlDimX = 4096;
 static const dim_type originalDimY = 2048;
@@ -189,7 +195,7 @@ std::vector<pArray> getSourceArray()
 {
 	// Get Dummy data
 	value_type* data = new value_type[originalDataLength];
-	getDummy(data, originalDataLength);
+	getDummy(data, originalDataLength * sizeof(value_type));
 
 	std::vector<pArray> arrs(
 		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_mars4096x2048", originalDims, dims, chunkDims, blockDims, ele_type)) });
@@ -210,8 +216,8 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
 
 namespace data2D_mercurydem20480x10240
 {
-using value_type = unsigned char;
-static const eleType ele_type = eleType::UINT8;
+using value_type = _DUMMY_CHAR_VALUE_TYPE_;
+static const eleType ele_type = _DUMMY_CHAR_ELE_TYPE_;
 
 static const dim_type origianlDimX = 20480;
 static const dim_type originalDimY = 10240;
@@ -238,7 +244,7 @@ std::vector<pArray> getSourceArray()
 {
 	// Get Dummy data
 	value_type* data = new value_type[originalDataLength];
-	getDummy(data, originalDataLength);
+	getDummy(data, originalDataLength * sizeof(value_type));
 
 	std::vector<pArray> arrs(
 		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_mercurydem20480x10240", originalDims, dims, chunkDims, blockDims, ele_type)) });
@@ -259,8 +265,8 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
 
 namespace data2D_lunar102400x40960
 {
-using value_type = uint16_t;
-static const eleType ele_type = eleType::UINT16;
+using value_type = _DUMMY_SHORT_VALUE_TYPE_;
+static const eleType ele_type = _DUMMY_SHORT_ELE_TYPE_;
 
 static const dim_type origianlDimX = 102400;
 static const dim_type originalDimY = 40960;
@@ -287,7 +293,7 @@ std::vector<pArray> getSourceArray()
 {
 	// Get Dummy data
 	value_type* data = new value_type[originalDataLength];
-	getDummy(data, originalDataLength);
+	getDummy(data, originalDataLength * sizeof(value_type));
 
 	std::vector<pArray> arrs(
 		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_lunar102400x40960", originalDims, dims, chunkDims, blockDims, ele_type)) });

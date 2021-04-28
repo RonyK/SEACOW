@@ -33,8 +33,8 @@ protected:
 	public:
 		virtual void serialize(std::ostream& os) override
 		{
-			std::cout << "Header serialize" << std::endl;
-			std::cout << this->version_ << ", " << this->bodySize_ << ", " << static_cast<int>(this->eType_) << ", " << this->lowerLevel_ << std::endl;
+			//std::cout << "Header serialize" << std::endl;
+			//std::cout << this->version_ << ", " << this->bodySize_ << ", " << static_cast<int>(this->eType_) << ", " << this->lowerLevel_ << std::endl;
 
 			int eTypeOut = static_cast<int>(this->eType_);
 			os.write((char*)(&this->version_), sizeof(this->version_));
@@ -46,7 +46,7 @@ protected:
 		}
 		virtual void deserialize(std::istream& is) override
 		{
-			std::cout << "Header deserialize" << std::endl;
+			//std::cout << "Header deserialize" << std::endl;
 
 			int eTypeIn;
 			is.read((char*)(&this->version_), sizeof(this->version_));
@@ -56,7 +56,7 @@ protected:
 			this->eType_ = static_cast<eleType>(eTypeIn);
 
 			//is >> this->version_ >> this->size_ >> eTypeIn >> lowerLevel_;
-			std::cout << this->version_ << ", " << this->bodySize_ << ", " << static_cast<int>(this->eType_) << ", " << this->lowerLevel_ << std::endl;
+			//std::cout << this->version_ << ", " << this->bodySize_ << ", " << static_cast<int>(this->eType_) << ", " << this->lowerLevel_ << std::endl;
 		}
 
 	public:

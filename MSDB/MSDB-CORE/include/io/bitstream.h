@@ -494,13 +494,13 @@ namespace msdb
 
 		void print()
 		{
-			std::cout << std::hex;
+			std::stringstream ss;
+			ss << std::hex;
 			for(size_t i = 0; i < this->_concreateContainer.size(); ++i)
 			{
-				std::cout << static_cast<uint8_t>(_concreateContainer[i]);
+				ss << static_cast<uint8_t>(_concreateContainer[i]);
 			}
-			std::cout << std::endl;
-			std::cout << std::dec;
+			BOOST_LOG_TRIVIAL(debug) << ss.str();
 		}
 
 	protected:

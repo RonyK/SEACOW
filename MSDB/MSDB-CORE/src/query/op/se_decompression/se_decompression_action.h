@@ -210,7 +210,7 @@ private:
 			{
 				coor innerCoor(innerItr.coor() + inChunk->getChunkCoor() * innerSpace);
 				auto mNode = mmtIndex->getNode(innerCoor, mmtIndex->getBlockLevel() - level);
-				bit_cnt_type rbFromMMT = getRBitFromMMT(mNode, hasNegative);
+				bit_cnt_type rbFromMMT = std::max(static_cast<int64_t>(getRBitFromMMT(mNode, hasNegative) - (int64_t)level), static_cast<int64_t>(static_cast<char>(hasNegative)));
 				for (size_t band = 1; band <= numBandsInLevel; ++band)
 				{
 					inChunk->rBitFromMMT.push_back(rbFromMMT);
