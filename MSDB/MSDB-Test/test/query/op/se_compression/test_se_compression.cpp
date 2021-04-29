@@ -110,7 +110,7 @@ TEST(experiment_query_op_se_compr_decomp, star1024x1024_seq)
 	test_body_seq_se_comp_decomp<value_type>(&getSourceArrayIfEmpty,
 											 &getSourceArrayDesc,
 											 wtLevel, mmtLevel,
-											 se_comp_decomp::printFlag);				// 19422
+											 se_comp_decomp::validation, se_comp_decomp::printFlag);				// 19422
 }	// TEST()
 
 TEST(query_op_spiht_delta, star1024x1024_ind_spiht_delta_encode_decode)
@@ -128,7 +128,7 @@ TEST(experiment_query_op_se_compr_decomp, saturn1014x1024_seq)
 	test_body_seq_se_comp_decomp<value_type>(&getSourceArrayIfEmpty,
 											 &getSourceArrayDesc,
 											 wtLevel, mmtLevel,
-											 se_comp_decomp::printFlag);						// 19362
+											 se_comp_decomp::validation, se_comp_decomp::printFlag);						// 19362
 }	// TEST()
 }	// data2D_saturn1024x1024
 
@@ -139,7 +139,7 @@ TEST(experiment_query_op_se_compr_decomp, solar1024x1024_seq)
 	test_body_seq_se_comp_decomp<value_type>(&getSourceArrayIfEmpty,
 											 &getSourceArrayDesc,
 											 wtLevel, mmtLevel,
-											 se_comp_decomp::printFlag);						// 19362
+											 se_comp_decomp::validation, se_comp_decomp::printFlag);						// 19362
 }	// TEST()
 }	// data2D_solar1024x1024
 
@@ -150,7 +150,7 @@ TEST(experiment_query_op_se_compr_decomp, mars4096x2048_seq)
 	test_body_seq_se_comp_decomp<value_type>(&getSourceArrayIfEmpty,
 											 &getSourceArrayDesc,
 											 wtLevel, mmtLevel,
-											 se_comp_decomp::printFlag);						// 19362
+											 se_comp_decomp::validation, se_comp_decomp::printFlag);						// 19362
 }	// TEST()
 TEST(query_op_spiht_delta, mars4096x2048_ind_spiht_delta_encode_decode)
 {
@@ -174,7 +174,7 @@ TEST(experiment_query_op_se_compr_decomp, mercurydem20480x10240_seq)
 	test_body_seq_se_comp_decomp<value_type>(&getSourceArrayIfEmpty,
 											 &getSourceArrayDesc,
 											 wtLevel, mmtLevel,
-											 se_comp_decomp::printFlag);						// 20102
+											 se_comp_decomp::validation, se_comp_decomp::printFlag);						// 20102
 }	// TEST()
 }	// data2D_mercurydem20480x10240
 
@@ -185,7 +185,7 @@ TEST(experiment_query_op_se_compr_decomp, lunar102400x40960_seq)
 	test_body_seq_se_comp_decomp<value_type>(&getSourceArrayIfEmpty,
 											 &getSourceArrayDesc,
 											 wtLevel, mmtLevel,
-											 se_comp_decomp::printFlag);						// 20102
+											 se_comp_decomp::validation, se_comp_decomp::printFlag);						// 20102
 }	// TEST()
 }	// data2D_lunar102400x40960
 }	// caDummy

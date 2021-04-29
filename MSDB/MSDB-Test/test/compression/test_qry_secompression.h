@@ -195,7 +195,7 @@ pArray exe_qbundle_ind_se_comp(_vectorSourceArray_,
 {
 	//////////////////////////////
 	// 01. Build MMT
-	exe_qry_ind_mmt_build<value_type>(sourceArr, mmtLevel, printFlag);
+	exe_qry_ind_mmt_build<value_type>(sourceArr, mmtLevel, false);
 
 	//////////////////////////////
 	// 02. Save SE Array
@@ -248,7 +248,7 @@ pArray test_body_seq_se_comp_decomp(_pFuncGetSourceArray_,
 									_pFuncGetSourceArrayDesc_,
 									eleDefault wtLevel,
 									eleDefault mmtLevel,
-									bool printFlag = false)
+									bool validation = false, bool printFlag = false)
 {
 	//////////////////////////////
 	// 01. Get Source Array
@@ -262,6 +262,7 @@ pArray test_body_seq_se_comp_decomp(_pFuncGetSourceArray_,
 	//////////////////////////////
 	// 02. Save Source Array
 	exe_qbundle_ind_se_comp<value_type>(sourceArr, wtLevel, mmtLevel, printFlag);
+	//exe_qry_ind_mmt_build<value_type>(sourceArr, mmtLevel, false);
 	//////////////////////////////
 
 	//////////////////////////////
@@ -271,7 +272,10 @@ pArray test_body_seq_se_comp_decomp(_pFuncGetSourceArray_,
 
 	//////////////////////////////
 	// 04. Evaluation
-	compArrary<value_type>(sourceArr[0], outArr);
+	if(validation)
+	{
+		compArrary<value_type>(sourceArr[0], outArr);
+	}
 	//////////////////////////////
 
 	return outArr;

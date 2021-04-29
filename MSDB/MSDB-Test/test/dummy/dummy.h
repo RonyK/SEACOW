@@ -124,6 +124,8 @@ void compArrary(pArray lArr, pArray rArr)
 
 	EXPECT_EQ(lAttrDesc->size(), rAttrDesc->size());
 
+	size_t numChunks = 0, numBlocks = 0, numCells = 0;
+
 	for (int attrId = 0; attrId < lAttrDesc->size(); ++attrId)
 	{
 		auto lcItr = lArr->getChunkIterator();
@@ -135,9 +137,9 @@ void compArrary(pArray lArr, pArray rArr)
 		while (!lcItr->isEnd() && !rcItr->isEnd())
 		{
 			EXPECT_EQ(lcItr->isExist(), rcItr->isExist());
-			
 			if(lcItr->isExist())
 			{
+				++numChunks;
 				EXPECT_TRUE(lcItr->coor() == rcItr->coor());
 #ifndef NDEBUG
 				//if(!(*(**lcItr) == *(**rcItr)))
@@ -154,14 +156,17 @@ void compArrary(pArray lArr, pArray rArr)
 				auto lbItr = (*lcItr)->getBlockIterator();
 				auto rbItr = (*rcItr)->getBlockIterator();
 
+				EXPECT_EQ(lbItr->isEnd(), rbItr->isEnd());
 				while (!lbItr->isEnd() && !rbItr->isEnd())
 				{
 					EXPECT_EQ(lbItr->isExist(), rbItr->isExist());
 					if(lbItr->isExist())
 					{
+						++numBlocks;
 						auto liItr = (*lbItr)->getItemIterator();
 						auto riItr = (*rbItr)->getItemIterator();
 
+						EXPECT_EQ(liItr->isEnd(), riItr->isEnd());
 						while (!liItr->isEnd() && !riItr->isEnd())
 						{
 							// Limit wrong value output
@@ -169,10 +174,11 @@ void compArrary(pArray lArr, pArray rArr)
 							{
 								return;
 							}
-							EXPECT_EQ(liItr->isExist(), riItr->isExist());
 
+							EXPECT_EQ(liItr->isExist(), riItr->isExist());
 							if(liItr->isExist())
 							{
+								++numCells;
 								Ty_ li = (**liItr).get<Ty_>();
 								Ty_ ri = (**riItr).get<Ty_>();
 
@@ -198,22 +204,28 @@ void compArrary(pArray lArr, pArray rArr)
 
 							++(*liItr);
 							++(*riItr);
-						}
 
-						EXPECT_EQ(liItr->isEnd(), riItr->isEnd());
+							EXPECT_EQ(liItr->isEnd(), riItr->isEnd());
+						}
 					}
 
 					++(*lbItr);
 					++(*rbItr);
+
+					EXPECT_EQ(lbItr->isEnd(), rbItr->isEnd());
 				}
 			}
 
 			++(*lcItr);
 			++(*rcItr);
-		}
 
-		EXPECT_EQ(lcItr->isEnd(), rcItr->isEnd());
+			EXPECT_EQ(lcItr->isEnd(), rcItr->isEnd());
+		}
 	}
+
+	BOOST_LOG_TRIVIAL(debug) << "Comp chunks: " << numChunks;
+	BOOST_LOG_TRIVIAL(debug) << "Comp blocks: " << numBlocks;
+	BOOST_LOG_TRIVIAL(debug) << "Comp cells: " << numCells;
 }
 
 template <typename Ty_>
