@@ -49,7 +49,7 @@ coorRange getRandomRange(const position_t dimX, const position_t dimY, const flo
 {
 	int area = dimX * dimY;
 	float selectedArea = area * selectivity / 100.0;
-	
+
 	int width = sqrt(selectivity / 100.0) * dimX, height = sqrt(selectivity / 100.0) * dimY;
 	int spX = rand() % (size_t)(dimX - width), spY = rand() % (size_t)(dimY - height);
 
@@ -62,5 +62,32 @@ coorRange getRandomRange(const position_t dimX, const position_t dimY, const flo
 
 	return coorRange(sp, ep);
 }
+
+void getOpBetween(pArrayDesc sourceArrDesc, std::shared_ptr<between_plan>& plan, std::shared_ptr<between_action>& action, pQuery& qry, coor sp, coor ep)
+{
+	parameters params = {
+	std::make_shared<opParamArray>(sourceArrDesc),
+	std::make_shared<opParamCoor>(std::make_shared<coor>(sp)),
+	std::make_shared<opParamCoor>(std::make_shared<coor>(ep))
+	};
+
+	plan = std::make_shared<between_plan>();
+	plan->setParamSet(std::make_shared<between_array_pset>(params));
+	action = std::static_pointer_cast<between_action>(plan->getAction());
+	qry = std::make_shared<query>();
+}
+
+pArray exe_act_ind_raw_between(std::vector<pArray> sourceArr, coor sp, coor ep)
+{
+	std::shared_ptr<between_plan> myPlan;
+	std::shared_ptr<between_action> myAction;
+	pQuery myQuery;
+	getOpBetween(sourceArr[0]->getDesc(), myPlan, myAction, myQuery, sp, ep);
+
+	auto outArr = myAction->execute(sourceArr, myQuery);
+
+	return outArr;
+}
+
 }	// caDummy
 }	// msdb

@@ -1,22 +1,22 @@
 #include <stdafx.h>
-#include <op/zip_save/zip_save_action.h>
+#include <op/lzw_encode/lzw_encode_action.h>
 #include <system/storageMgr.h>
-#include <compression/zipChunk.h>
+#include <compression/lzwChunk.h>
 #include <util/logger.h>
 
 namespace msdb
 {
-zip_save_action::zip_save_action()
+lzw_encode_action::lzw_encode_action()
 {
 }
-zip_save_action::~zip_save_action()
+lzw_encode_action::~lzw_encode_action()
 {
 }
-const char* zip_save_action::name()
+const char* lzw_encode_action::name()
 {
-	return "zip_save_action";
+	return "lzw_encode_action";
 }
-pArray zip_save_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
+pArray lzw_encode_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 {
 	assert(inputArrays.size() == 1);
 
@@ -40,9 +40,9 @@ pArray zip_save_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 			pSerializable serialChunk
 				= std::static_pointer_cast<serializable>(outChunk);
 			storageMgr::instance()->saveChunk(arrId, attr->id_, (outChunk)->getId(),
-				serialChunk);
+											  serialChunk);
 
-			//========================================//
+										  //========================================//
 			qry->getTimer()->nextWork(0, workType::COMPUTING);
 			//----------------------------------------//
 			mSizeTotal += serialChunk->getSerializedSize();
@@ -56,11 +56,10 @@ pArray zip_save_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 
 	return sourceArr;
 }
-
-pZipChunk zip_save_action::makeOutChunk(pChunk inChunk)
+pLzwChunk lzw_encode_action::makeOutChunk(pChunk inChunk)
 {
 	auto outChunkDesc = std::make_shared<chunkDesc>(*inChunk->getDesc());
-	pZipChunk outChunk = std::make_shared<zipChunk>(outChunkDesc);
+	pLzwChunk outChunk = std::make_shared<lzwChunk>(outChunkDesc);
 	outChunk->copyBlockBitmap(inChunk->getBlockBitmap());
 	outChunk->makeBlocks();
 	outChunk->bufferRef(inChunk);

@@ -49,34 +49,34 @@ pArray between_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 					auto outChunk = outArr->makeChunk(attr->id_, inChunk->getId());
 					outChunk->bufferRef(inChunk);
 
-					//if (chunkRange.isFullyInside(betweenRange))
-					//{
-					//	this->fullyInsideChunk(outChunk, inChunk);
-					//}else
-					//{
-					//	this->betweenChunk(outChunk, inChunk, betweenRange);
-					//}
-
-					//////////////////////////////
-					auto blockItr = inChunk->getBlockIterator();
-					while (!blockItr->isEnd())
+					if (chunkRange.isFullyInside(betweenRange))
 					{
-						if (blockItr->isExist())
-						{
-							auto inBlock = (**blockItr);
-							auto inDesc = inBlock->getDesc();
-
-							auto outBlock = outChunk->makeBlock(inBlock->getId());
-							auto outDesc = outBlock->getDesc();
-
-							outDesc->setIsp(inDesc->getIsp());
-							outDesc->setIep(inDesc->getIep());
-							outBlock->copyBitmap(inBlock->getBitmap());
-						}
-
-						++(*blockItr);
+						this->fullyInsideChunk(outChunk, inChunk);
+					}else
+					{
+						this->betweenChunk(outChunk, inChunk, betweenRange);
 					}
 				}
+
+				////////////////////////////////
+				//auto blockItr = inChunk->getBlockIterator();
+				//while (!blockItr->isEnd())
+				//{
+				//	if (blockItr->isExist())
+				//	{
+				//		auto inBlock = (**blockItr);
+				//		auto inDesc = inBlock->getDesc();
+
+				//		auto outBlock = outChunk->makeBlock(inBlock->getId());
+				//		auto outDesc = outBlock->getDesc();
+
+				//		outDesc->setIsp(inDesc->getIsp());
+				//		outDesc->setIep(inDesc->getIep());
+				//		outBlock->copyBitmap(inBlock->getBitmap());
+				//	}
+
+				//	++(*blockItr);
+				//}
 			}
 
 			++(*chunkItr);
@@ -87,6 +87,7 @@ pArray between_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 
 	return outArr;
 }
+
 void between_action::betweenChunk(pChunk outChunk, pChunk inChunk, coorRange& betweenRange)
 {
 	auto blockItr = inChunk->getBlockIterator();
@@ -95,19 +96,22 @@ void between_action::betweenChunk(pChunk outChunk, pChunk inChunk, coorRange& be
 
 	while (!blockItr->isEnd())
 	{
-		auto inBlock = (**blockItr);
-		auto blockRange = inBlock->getBlockRange();
-
-		if(blockRange.isIntersect(betweenRangeInChunk))
+		if(blockItr->isExist())
 		{
-			auto outBlock = outChunk->makeBlock(inBlock->getId());
+			auto inBlock = (**blockItr);
+			auto blockRange = inBlock->getBlockRange();
 
-			if(blockRange.isFullyInside(betweenRangeInChunk))
+			if (blockRange.isIntersect(betweenRangeInChunk))
 			{
-				fullyInsideBlock(outBlock, inBlock);
-			}else
-			{
-				this->betweenBlock(outBlock, inBlock, betweenRangeInChunk);
+				auto outBlock = outChunk->makeBlock(inBlock->getId());
+
+				if (blockRange.isFullyInside(betweenRangeInChunk))
+				{
+					fullyInsideBlock(outBlock, inBlock);
+				} else
+				{
+					this->betweenBlock(outBlock, inBlock, betweenRangeInChunk);
+				}
 			}
 		}
 

@@ -52,6 +52,7 @@
     <ClCompile Include="test\query\op\filter\test_body_filter.cpp" />
     <ClCompile Include="test\query\op\compass_index_build\test_compass_index_build.cpp" />
     <ClCompile Include="test\exp\experimentsInfo.cpp" />
+    <ClCompile Include="test\query\op\lzw\test_lzw_encode_decode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">
@@ -73,6 +74,7 @@
     <ClInclude Include="test\query\op\between\test_body_between.h" />
     <ClInclude Include="test\query\op\filter\test_body_filter.h" />
     <ClInclude Include="test\exp\experimentsInfo.h" />
+    <ClInclude Include="test\compression\test_qry_lzw.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="test">

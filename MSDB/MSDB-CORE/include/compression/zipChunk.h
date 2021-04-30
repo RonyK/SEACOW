@@ -64,7 +64,7 @@ public:
 	template<class Ty_>
 	void deserializeTy(std::stringstream& compressed)
 	{
-		this->bufferAlloc();
+		//this->bufferAlloc();
 
 		//////////////////////////////
 		// Block IO

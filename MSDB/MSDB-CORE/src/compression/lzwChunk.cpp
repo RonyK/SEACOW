@@ -1,35 +1,30 @@
 #include <stdafx.h>
-#include <compression/zipChunk.h>
+#include <compression/lzwChunk.h>
 #include <util/ioutil.h>
 
 namespace msdb
 {
-zipChunk::zipChunk(pChunkDesc desc)
+lzwChunk::lzwChunk(pChunkDesc desc)
 	: memBlockChunk(desc)
 {
 }
-
-zipChunk::~zipChunk()
+lzwChunk::~lzwChunk()
 {
 }
-
-pBlock zipChunk::makeBlock(const blockId bId)
+pBlock lzwChunk::makeBlock(const blockId bId)
 {
 	assert(this->blockCapacity_ > bId);
 	if (this->blocks_[bId] == nullptr)
 	{
 		// Make new one
 		auto desc = this->getBlockDesc(bId);
-		auto blockObj = std::make_shared<zipBlock>(desc);
+		auto blockObj = std::make_shared<lzwBlock>(desc);
 		this->insertBlock(blockObj);
-		return blockObj;
 	}
-	// Alread exist
-	// Return old one
+
 	return this->blocks_[bId];
 }
-
-void zipChunk::serialize(std::ostream& os)
+void lzwChunk::serialize(std::ostream& os)
 {
 	std::stringstream oss;
 	switch (this->desc_->attrDesc_->type_)
@@ -70,7 +65,7 @@ void zipChunk::serialize(std::ostream& os)
 	os << oss.str();
 }
 
-void zipChunk::deserialize(std::istream& is)
+void lzwChunk::deserialize(std::istream& is)
 {
 	this->getHeader()->deserialize(is);
 	this->updateFromHeader();
@@ -111,4 +106,4 @@ void zipChunk::deserialize(std::istream& is)
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 	}
 }
-}	// msdb
+}

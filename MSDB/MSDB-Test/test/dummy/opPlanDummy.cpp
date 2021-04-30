@@ -35,6 +35,16 @@ std::shared_ptr<compass_decode_plan> getCompassDecodePlan(pArrayDesc sourceArrDe
 	return getLevelArrayParamPlan<compass_decode_plan, compass_decode_array_pset>(sourceArrDesc, numBins, qry);
 }
 
+std::shared_ptr<lzw_encode_plan> getLzwEncodePlan(pArrayDesc sourceArrDesc, pQuery qry)
+{
+	return getSingleArrayParamPlan<lzw_encode_plan, lzw_encode_array_pset>(sourceArrDesc, qry);
+}
+
+std::shared_ptr<lzw_decode_plan> getLzwDecodePlan(pArrayDesc sourceArrDesc, pQuery qry)
+{
+	return getSingleArrayParamPlan<lzw_decode_plan, lzw_decode_array_pset>(sourceArrDesc, qry);
+}
+
 //////////////////////////////
 // Wavelet Operators
 std::shared_ptr<wavelet_encode_plan> getWaveletEncodePlan(pPlan sourcPlan, eleDefault wtLevel, pQuery qry)

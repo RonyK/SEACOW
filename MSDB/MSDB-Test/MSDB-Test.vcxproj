@@ -42,6 +42,7 @@
   <ItemGroup>
     <ClInclude Include="test\compression\getOpCompression.h" />
     <ClInclude Include="test\compression\test_action_compression.h" />
+    <ClInclude Include="test\compression\test_qry_lzw.h" />
     <ClInclude Include="test\compression\test_qry_secompression.h" />
     <ClInclude Include="test\compression\test_qry_spiht.h" />
     <ClInclude Include="test\compression\test_qry_zip.h" />
@@ -93,6 +94,7 @@
     <ClCompile Include="test\query\op\delta_decode\test_mmt_delta_decode.cpp" />
     <ClCompile Include="test\query\op\delta_encode\test_delta_encode.cpp" />
     <ClCompile Include="test\query\op\index_filter\test_index_filter.cpp" />
+    <ClCompile Include="test\query\op\lzw\test_lzw_encode_decode.cpp" />
     <ClCompile Include="test\query\op\zip_save_load\test_zip_save_load.cpp" />
     <ClCompile Include="test\query\op\between\test_body_between.cpp" />
     <ClCompile Include="test\query\op\filter\test_body_filter.cpp" />

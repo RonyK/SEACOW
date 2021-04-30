@@ -22,5 +22,8 @@ pArray exe_act_ind_compass_index_build(std::vector<pArray> sourceArr, eleDefault
 
 pArray exe_act_ind_zip_save(std::vector<pArray> sourceArr);
 pArray exe_act_ind_zip_load(std::vector<pArray> sourceArr);
+
+pArray exe_act_ind_lzw_encode(std::vector<pArray> sourceArr);
+pArray exe_act_ind_lzw_decode(std::vector<pArray> sourceArr);
 }	// caDummy
 }	// msdb

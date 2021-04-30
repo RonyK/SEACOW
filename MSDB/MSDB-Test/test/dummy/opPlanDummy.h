@@ -47,6 +47,11 @@
 #include <op/compass_decode/compass_decode_plan.h>
 #include <op/compass_decode/compass_decode_action.h>
 
+#include <op/lzw_encode/lzw_encode_plan.h>
+#include <op/lzw_encode/lzw_encode_action.h>
+#include <op/lzw_decode/lzw_decode_plan.h>
+#include <op/lzw_decode/lzw_decode_action.h>
+
 #include <op/naive_filter/naive_filter_plan.h>
 #include <op/naive_filter/naive_filter_action.h>
 #include <op/index_filter/index_filter_plan.h>
@@ -69,6 +74,10 @@ std::shared_ptr<zip_load_plan> getZipLoadPlan(pArrayDesc sourceArrDesc, pQuery q
 
 std::shared_ptr<compass_encode_plan> getCompassEncodePlan(pArrayDesc sourceArrDesc, eleDefault numBins, pQuery qry);
 std::shared_ptr<compass_decode_plan> getCompassDecodePlan(pArrayDesc sourceArrDesc, eleDefault numBins, pQuery qry);
+
+std::shared_ptr<lzw_encode_plan> getLzwEncodePlan(pArrayDesc sourceArrDesc, pQuery qry);
+std::shared_ptr<lzw_decode_plan> getLzwDecodePlan(pArrayDesc sourceArrDesc, pQuery qry);
+
 
 //////////////////////////////
 // Wavelet Operators
