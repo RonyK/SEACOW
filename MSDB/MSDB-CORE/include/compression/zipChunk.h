@@ -58,6 +58,7 @@ public:
 		compressed << static_cast<size_t>(mChunkSize);
 
 		compressed << chunkCompressed.rdbuf();
+		chunkCompressed.clear();
 		//////////////////////////////
 	}
 

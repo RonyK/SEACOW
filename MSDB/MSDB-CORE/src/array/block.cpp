@@ -10,7 +10,8 @@ block::block(pBlockDesc desc)
 }
 block::~block()
 {
-
+	this->cached_ = nullptr;
+	this->itemBitmap_ = nullptr;
 }
 blockId block::getId()
 {

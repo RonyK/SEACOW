@@ -13,7 +13,10 @@ arrayBase::arrayBase(pArrayDesc desc)
 }
 arrayBase::~arrayBase()
 {
-	//std::cout << "~arrayBase()" << std::endl;
+	//BOOST_LOG_TRIVIAL(debug) << "~arrayBase(): " << this->desc_->name_;
+	this->chunks_.clear();
+	this->chunkBitmap_ = nullptr;
+	this->desc_ = nullptr;
 }
 pArrayDesc arrayBase::getDesc()
 {
@@ -49,7 +52,7 @@ pChunk arrayBase::insertChunk(const attributeId attrId, pChunk inputChunk)
 
 void arrayBase::flush()
 {
-	this->chunks_.clear();
+
 }
 
 pChunk arrayBase::makeChunk(const chunkDesc& desc)

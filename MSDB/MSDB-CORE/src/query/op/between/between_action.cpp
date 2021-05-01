@@ -25,7 +25,8 @@ pArray between_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
 
 	pArray inArr = inputArrays[0];
-	pArray outArr = arrayMgr::instance()->makeArray<memBlockArray>(this->getArrayDesc());
+	//pArray outArr = arrayMgr::instance()->makeArray<memBlockArray>(this->getArrayDesc());
+	pArray outArr = std::make_shared<memBlockArray>(this->getArrayDesc());
 	pCoor sp = std::static_pointer_cast<coor>(this->params_[1]->getParam());
 	pCoor ep = std::static_pointer_cast<coor>(this->params_[2]->getParam());
 	coorRange betweenRange(*sp, *ep);
@@ -47,7 +48,8 @@ pArray between_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 				{
 					//std::cout << "Intersect" << std::endl;
 					auto outChunk = outArr->makeChunk(attr->id_, inChunk->getId());
-					outChunk->bufferRef(inChunk);
+					outChunk->bufferCopy(inChunk);
+					//outChunk->bufferRef(inChunk);
 
 					if (chunkRange.isFullyInside(betweenRange))
 					{

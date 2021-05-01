@@ -102,7 +102,7 @@ TEST(experiment_query_op_index_filter, star1024x1024_seq_random_lzw_naive_filter
 													  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
 }	// TEST()
 
-TEST(experiment_query_op_index_filter, star1024x1024_seq_random_compass_naive_filter)
+TEST(query_op_index_filter, star1024x1024_seq_random_compass_naive_filter)
 {
 	test_body_seq_compass_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
 														  &getSourceArrayDesc,
@@ -178,7 +178,7 @@ TEST(experiment_query_op_index_filter, saturn1024x1024_seq_random_zip_naive_filt
 													  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
 }	// TEST()
 
-TEST(experiment_query_op_index_filter, lunar102400x40960_seq_random_compass_naive_filter)
+TEST(query_op_index_filter, lunar102400x40960_seq_random_compass_naive_filter)
 {
 	test_body_seq_compass_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
 														  &getSourceArrayDesc,
@@ -254,7 +254,7 @@ TEST(experiment_query_op_index_filter, solar1024x1024_seq_random_zip_naive_filte
 													  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
 }	// TEST()
 
-TEST(experiment_query_op_index_filter, lunar102400x40960_seq_random_compass_naive_filter)
+TEST(query_op_index_filter, lunar102400x40960_seq_random_compass_naive_filter)
 {
 	test_body_seq_compass_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
 														  &getSourceArrayDesc,
@@ -406,7 +406,7 @@ TEST(experiment_query_op_index_filter, mercurydem20480x10240_seq_random_zip_naiv
 													  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
 }	// TEST()
 
-TEST(experiment_query_op_index_filter, lunar102400x40960_seq_random_compass_naive_filter)
+TEST(query_op_index_filter, lunar102400x40960_seq_random_compass_naive_filter)
 {
 	test_body_seq_compass_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
 														  &getSourceArrayDesc,
@@ -482,7 +482,7 @@ TEST(experiment_query_op_index_filter, lunar102400x40960_seq_random_zip_naive_fi
 													  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
 }	// TEST()
 
-TEST(experiment_query_op_index_filter, lunar102400x40960_seq_random_compass_naive_filter)
+TEST(query_op_index_filter, lunar102400x40960_seq_random_compass_naive_filter)
 {
 	test_body_seq_compass_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
 														  &getSourceArrayDesc,

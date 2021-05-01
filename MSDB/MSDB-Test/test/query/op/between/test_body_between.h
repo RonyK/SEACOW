@@ -35,7 +35,7 @@ pArray exe_qry_ind_raw_between(_vectorSourceArray_, coor sp, coor ep,
 	if (printFlag)
 	{
 		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
-		BOOST_LOG_TRIVIAL(debug) << "Lzw Save Arr" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "Raw Betwee Arr" << std::endl;
 		outArr->print();
 	}
 

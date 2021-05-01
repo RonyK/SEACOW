@@ -15,12 +15,12 @@ coor sp = { 0, 125 };
 coor ep = { 6, 129 };
 
 size_t numTests = 3;
-std::vector<float> selectivities = { 0.01, 0.1, 1, 10, 20, 40, 60, 80 };
-//std::vector<float> selectivities = { 50 };
+//std::vector<float> selectivities = { 0.01, 0.1, 1, 10, 20, 40, 60, 80 };
+std::vector<float> selectivities = { 0.01 };
 
 bool saveArray = false;
 bool printFlag = false;
-bool validation = false;
+bool validation = true;
 
 namespace expRandom
 {

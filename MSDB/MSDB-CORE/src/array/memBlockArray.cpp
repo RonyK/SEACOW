@@ -10,6 +10,16 @@ memBlockArray::memBlockArray(pArrayDesc desc)
 }
 memBlockArray::~memBlockArray()
 {
+	auto cit = this->getChunkIterator();
+	while (!cit->isEnd())
+	{
+		if (cit->isExist())
+		{
+			this->freeChunk(cit->seqPos());
+		}
+		++(*cit);
+	}
+	this->chunks_.clear();
 }
 pChunk memBlockArray::makeChunk(const attributeId attrId, const chunkId cId)
 {
@@ -27,6 +37,10 @@ pChunk memBlockArray::makeChunk(const chunkDesc& desc)
 }
 void memBlockArray::freeChunk(const chunkId cId)
 {
+	if (this->chunks_[cId] != nullptr)
+	{
+		this->chunks_[cId]->flush();
+	}
 	this->chunks_[cId] = nullptr;
 	this->chunkBitmap_->setNull(cId);
 }

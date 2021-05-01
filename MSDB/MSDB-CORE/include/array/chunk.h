@@ -34,6 +34,7 @@ public:
 	size_type numCells();
 	coor getChunkCoor();
 	coorRange getChunkRange();
+	void flush();
 
 protected:
 	pChunkDesc desc_;		// chunk desc

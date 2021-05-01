@@ -18,6 +18,7 @@ memBlock::memBlock(pBlockDesc desc)
 
 memBlock::~memBlock()
 {
+	this->desc_ = nullptr;
 }
 
 void memBlock::serialize(bstream& bs)

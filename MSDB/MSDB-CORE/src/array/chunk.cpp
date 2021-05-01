@@ -162,10 +162,20 @@ coorRange chunk::getChunkRange()
 	return coorRange(this->desc_->sp_, this->desc_->ep_);
 }
 
+void chunk::flush()
+{
+	this->freeBuffer();
+}
+
 void chunk::freeBuffer()
 {
 	if (this->isMaterialized())
 	{
+		if(this->cached_ != nullptr)
+		{
+			this->cached_->free();
+		}
+
 		this->cached_ = nullptr;
 	}
 }
