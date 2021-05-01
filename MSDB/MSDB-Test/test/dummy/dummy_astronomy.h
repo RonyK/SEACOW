@@ -52,6 +52,7 @@ std::vector<pArray> getSourceArray()
 
 	std::vector<pArray> arrs(
 		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_star1024x1024", originalDims, dims, chunkDims, blockDims, ele_type)) });
+	delete[] data;
 	return arrs;
 }
 
@@ -101,6 +102,7 @@ std::vector<pArray> getSourceArray()
 
 	std::vector<pArray> arrs(
 		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_saturn1024x1024", originalDims, dims, chunkDims, blockDims, ele_type)) });
+	delete[] data;
 	return arrs;
 }
 
@@ -150,6 +152,7 @@ std::vector<pArray> getSourceArray()
 
 	std::vector<pArray> arrs(
 		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_solar1024x1024", originalDims, dims, chunkDims, blockDims, ele_type)) });
+	delete[] data;
 	return arrs;
 }
 
@@ -199,6 +202,7 @@ std::vector<pArray> getSourceArray()
 
 	std::vector<pArray> arrs(
 		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_mars4096x2048", originalDims, dims, chunkDims, blockDims, ele_type)) });
+	delete[] data;
 	return arrs;
 }
 
@@ -248,6 +252,7 @@ std::vector<pArray> getSourceArray()
 
 	std::vector<pArray> arrs(
 		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_mercurydem20480x10240", originalDims, dims, chunkDims, blockDims, ele_type)) });
+	delete[] data;
 	return arrs;
 }
 
@@ -297,6 +302,7 @@ std::vector<pArray> getSourceArray()
 
 	std::vector<pArray> arrs(
 		{ std::static_pointer_cast<arrayBase>(get2DCharArray<Aty_, value_type>(data, aid, "data2D_lunar102400x40960", originalDims, dims, chunkDims, blockDims, ele_type)) });
+	delete[] data;
 	return arrs;
 }
 
