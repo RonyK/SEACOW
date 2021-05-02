@@ -35,7 +35,8 @@ private:
 			{
 				auto inChunk = (**inChunkItr);
 				auto outChunk = outArr->makeChunk(attrDesc->id_, inChunk->getId());
-				outChunk->bufferRef(inChunk);
+				//outChunk->bufferRef(inChunk);
+				outChunk->bufferCopy(inChunk);
 
 				int64_t chunkFilteredValue = 0;
 				auto isEmptyChunk = this->chunkFilter<Ty_>(outChunk, inChunk, inPredicate, chunkFilteredValue);
