@@ -548,7 +548,176 @@ pArray test_body_seq_lzw_between(_pFuncGetSourceArray_,
 
 	return outArr;
 }
+
 // ##################################################
+
+template <typename value_type>
+pArray test_body_seq_se_between(std::vector<pArray> sourceArr,
+								std::vector<pArray> sourceArrDesc,
+								eleDefault wtLevel, eleDefault mmtLevel,
+								coor sp, coor ep,
+								bool saveArray = false, bool validation = false, bool printFlag = false,
+								size_t expTrial = 0)
+{
+	//////////////////////////////
+	// 01. Between
+	auto outArr = exe_qbundle_seq_se_between<value_type>(sourceArrDesc,
+														 sp, ep,
+														 wtLevel, mmtLevel,
+														 saveArray, printFlag,
+														 experiments::between_random::expId, expTrial);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Validation
+	if (validation)
+	{
+		auto rawArr = exe_qry_ind_raw_between<value_type>(sourceArr, sp, ep);
+		compArrary<value_type>(outArr, rawArr);
+	}
+	//////////////////////////////
+
+	return outArr;
+}
+
+template <typename value_type>
+pArray test_body_seq_spiht_between(std::vector<pArray> sourceArr,
+								   std::vector<pArray> sourceArrDesc,
+								   eleDefault wtLevel,
+								   coor sp, coor ep,
+								   bool saveArray = false, bool validation = false, bool printFlag = false,
+								   size_t expTrial = 0)
+{
+	//////////////////////////////
+	// 01. Between
+	auto outArr = exe_qbundle_seq_spiht_between<value_type>(sourceArr,
+															sp, ep,
+															wtLevel,
+															saveArray, printFlag,
+															experiments::between_random::expId, expTrial);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Validation
+	if (validation)
+	{
+		auto rawArr = exe_qry_ind_raw_between<value_type>(sourceArr, sp, ep);
+		compArrary<value_type>(outArr, rawArr);
+	}
+	//////////////////////////////
+
+	return outArr;
+}
+
+template <typename value_type>
+pArray test_body_seq_load_between(std::vector<pArray> sourceArr,
+								  std::vector<pArray> sourceArrDesc,
+								  coor sp, coor ep,
+								  bool saveArray = false, bool validation = false, bool printFlag = false,
+								  size_t expTrial = 0)
+{
+	//////////////////////////////
+	// 01. Between
+	auto outArr = exe_qbundle_seq_load_between<value_type>(sourceArr,
+														   sp, ep,
+														   saveArray, printFlag,
+														   experiments::between_random::expId, expTrial);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Validation
+	if (validation)
+	{
+		auto rawArr = exe_qry_ind_raw_between<value_type>(sourceArr, sp, ep);
+		compArrary<value_type>(outArr, rawArr);
+	}
+	//////////////////////////////
+
+	return outArr;
+}
+
+template <typename value_type>
+pArray test_body_seq_compass_between(std::vector<pArray> sourceArr,
+									 std::vector<pArray> sourceArrDesc,
+									 eleDefault numBins,
+									 coor sp, coor ep,
+									 bool saveArray = false, bool validation = false, bool printFlag = false,
+									 size_t expTrial = 0)
+{
+	//////////////////////////////
+	// 01. Between
+	auto outArr = exe_qbundle_seq_compass_between<value_type>(sourceArr,
+															  numBins,
+															  sp, ep,
+															  saveArray, printFlag,
+															  experiments::between_random::expId, expTrial);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Validation
+	if (validation)
+	{
+		auto rawArr = exe_qry_ind_raw_between<value_type>(sourceArr, sp, ep);
+		compArrary<value_type>(outArr, rawArr);
+	}
+	//////////////////////////////
+
+	return outArr;
+}
+
+template <typename value_type>
+pArray test_body_seq_zip_between(std::vector<pArray> sourceArr,
+								 std::vector<pArray> sourceArrDesc,
+								 coor sp, coor ep,
+								 bool saveArray = false, bool validation = false, bool printFlag = false,
+								 size_t expTrial = 0)
+{
+	//////////////////////////////
+	// 01. Between
+	auto outArr = exe_qbundle_seq_zip_between<value_type>(sourceArr,
+														  sp, ep,
+														  saveArray, printFlag,
+														  experiments::between_random::expId, expTrial);
+   //////////////////////////////
+
+	//////////////////////////////
+	// 02. Validation
+	if (validation)
+	{
+		auto rawArr = exe_qry_ind_raw_between<value_type>(sourceArr, sp, ep);
+		compArrary<value_type>(outArr, rawArr);
+	}
+	//////////////////////////////
+
+	return outArr;
+}
+
+template <typename value_type>
+pArray test_body_seq_lzw_between(std::vector<pArray> sourceArr,
+								 std::vector<pArray> sourceArrDesc,
+								 coor sp, coor ep,
+								 bool saveArray = false, bool validation = false, bool printFlag = false,
+								 size_t expTrial = 0)
+{
+	//////////////////////////////
+	// 01. Between
+	auto outArr = exe_qbundle_seq_lzw_between<value_type>(sourceArr,
+														  sp, ep,
+														  saveArray, printFlag,
+														  experiments::between_random::expId, expTrial);
+   //////////////////////////////
+
+	//////////////////////////////
+	// 02. Validation
+	if (validation)
+	{
+		auto rawArr = exe_qry_ind_raw_between<value_type>(sourceArr, sp, ep);
+		compArrary<value_type>(outArr, rawArr);
+	}
+	//////////////////////////////
+
+	return outArr;
+}
 
 //////////////////////////////
 // qBundles

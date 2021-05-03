@@ -28,8 +28,8 @@ public:
 	blockId getId();
 	pBlockDesc getDesc();
 	dimensionId getDSize();
-	void setIsp(coor isp);
-	void setIep(coor iep);
+	//inline void setIsp(coor isp);
+	//inline void setIep(coor iep);
 	coorRange getBlockRange();
 	coorRange getBlockItemRange();
 
