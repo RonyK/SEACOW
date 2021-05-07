@@ -228,6 +228,9 @@ static const dim_type originalDimY = 10240;
 static const size_t originalDataLength = origianlDimX * originalDimY;
 static const dim_type dimX = 16384;
 static const dim_type dimY = 8192;
+//static const dim_type dimX = 128;
+//static const dim_type dimY = 128;
+
 static const size_t dataLength = dimX * dimY;
 static const size_t wtLevel = 3;
 static const size_t mmtLevel = 3;
