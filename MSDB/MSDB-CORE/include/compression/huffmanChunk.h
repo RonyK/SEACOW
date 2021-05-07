@@ -25,10 +25,10 @@ public:
 	virtual void deserialize(std::istream& is) override;
 
 private:
-	template<typename Ty_>
+	template<typename Cty_, typename Ty_>
 	void serializeTy(bstream& out)
 	{
-		aHuffmanCoder<Ty_> coder(sizeof(Ty_) * CHAR_BIT);
+		aHuffmanCoder<Cty_> coder(sizeof(Ty_) * CHAR_BIT);
 
 		auto bit = this->getBlockIterator();
 		while(!bit->isEnd())
@@ -36,17 +36,17 @@ private:
 			if(bit->isExist())
 			{
 				pHuffmanBlock hb = std::static_pointer_cast<huffmanBlock>(**bit);
-				hb->serializeTy<Ty_>(coder, out);
+				hb->serializeTy<Cty_, Ty_>(coder, out);
 			}
 
 			++(*bit);
 		}
 	}
 
-	template<class Ty_>
+	template<typename Cty_, typename Ty_>
 	void deserializeTy(bstream& in)
 	{
-		aHuffmanCoder<Ty_> coder(sizeof(Ty_) * CHAR_BIT);
+		aHuffmanCoder<Cty_> coder(sizeof(Ty_) * CHAR_BIT);
 
 		auto bit = this->getBlockIterator();
 		while (!bit->isEnd())
@@ -55,7 +55,7 @@ private:
 			{
 				auto a = *bit;
 				pHuffmanBlock hb = std::static_pointer_cast<huffmanBlock>(**bit);
-				hb->deserializeTy<Ty_>(coder, in);
+				hb->deserializeTy<Cty_, Ty_>(coder, in);
 			}
 
 			++(*bit);

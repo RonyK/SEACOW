@@ -15,7 +15,7 @@ public:
 
 public:
 	aHuffmanCoder(size_t bits)
-		: bits_(bits), nytNode(nullptr), root(new huffmanNode(-1, 0, 512, nullptr, nullptr, nullptr, true))
+		: bits_(bits), nytNode(nullptr), root(new huffmanNode(-1, 0, pow(2, sizeof(codeType) * CHAR_BIT + 1), nullptr, nullptr, nullptr, true))
 	{
 		assert(sizeof(codeType) * CHAR_BIT >= bits);
 		nytNode = this->root;
@@ -225,9 +225,10 @@ private:
 		delete node;
 	}
 
-	aHuffmanCoder::pathType makePath(codeType symbol, size_t order) const
+	aHuffmanCoder::pathType makePath(codeType symbol, size_t depth) const
 	{
-		return { symbol, order };
+		assert(depth < sizeof(codeType)* CHAR_BIT);
+		return { symbol, depth };
 	}
 
 	huffmanNode* nytNode;

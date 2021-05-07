@@ -18,8 +18,8 @@ public:
 	virtual ~huffmanBlock();
 
 public:
-	template <typename Ty_>
-	void serializeTy(aHuffmanCoder<Ty_>& coder, bstream& out)
+	template<typename Cty_, typename Ty_>
+	void serializeTy(aHuffmanCoder<Cty_>& coder, bstream& out)
 	{
 		auto iit = this->getItemIterator();
 
@@ -31,8 +31,8 @@ public:
 		}
 	}
 
-	template <typename Ty_>
-	void deserializeTy(aHuffmanCoder<Ty_>& coder, bstream& in)
+	template<typename Cty_, typename Ty_>
+	void deserializeTy(aHuffmanCoder<Cty_>& coder, bstream& in)
 	{
 		auto iit = this->getItemIterator();
 

@@ -54,6 +54,8 @@
     <ClCompile Include="test\exp\experimentsInfo.cpp" />
     <ClCompile Include="test\query\op\lzw\test_lzw_encode_decode.cpp" />
     <ClCompile Include="test\compression\test_adaptive_huffman_coding.cpp" />
+    <ClCompile Include="test\query\op\huffman\test_huffman_encode_decode.cpp" />
+    <ClCompile Include="test\query\op\huffman\act_huffman_encode_decode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">
@@ -76,6 +78,8 @@
     <ClInclude Include="test\query\op\filter\test_body_filter.h" />
     <ClInclude Include="test\exp\experimentsInfo.h" />
     <ClInclude Include="test\compression\test_qry_lzw.h" />
+    <ClInclude Include="test\query\op\huffman\qry_huffman_encode_decode.h" />
+    <ClInclude Include="test\query\op\huffman\act_huffman_encode_decode.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="test">
