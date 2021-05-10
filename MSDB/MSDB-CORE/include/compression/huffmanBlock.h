@@ -19,7 +19,7 @@ public:
 
 public:
 	template<typename Cty_, typename Ty_>
-	void serializeTy(aHuffmanCoder<Cty_>& coder, bstream& out)
+	void serializeTy(aHuffmanCoder<Cty_, Ty_>& coder, bstream& out)
 	{
 		auto iit = this->getItemIterator();
 
@@ -32,7 +32,7 @@ public:
 	}
 
 	template<typename Cty_, typename Ty_>
-	void deserializeTy(aHuffmanCoder<Cty_>& coder, bstream& in)
+	void deserializeTy(aHuffmanCoder<Cty_, Ty_>& coder, bstream& in)
 	{
 		auto iit = this->getItemIterator();
 

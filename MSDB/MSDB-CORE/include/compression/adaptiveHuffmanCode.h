@@ -7,7 +7,7 @@
 
 namespace msdb
 {
-template <typename codeType>
+template <typename codeType, typename symbolType>
 class aHuffmanCoder
 {
 public:
@@ -26,7 +26,7 @@ public:
 	}
 
 public:
-	void updateTreeModel(codeType symbol)
+	void updateTreeModel(symbolType symbol)
 	{
 		huffmanNode* leftToIncrement = nullptr;
 		//huffmanNode* symbolNode = this->getSymbolNode(symbol, this->root);
@@ -47,7 +47,7 @@ public:
 		this->slideAndIncrement(symbolNode);
 	}
 
-	void encode(bstream& out, codeType symbol)
+	void encode(bstream& out, symbolType symbol)
 	{
 		//huffmanNode* symbolNode = this->getSymbolNode(symbol, this->root);
 		huffmanNode* symbolNode = this->getSymbolNode(symbol);
@@ -71,23 +71,23 @@ public:
 		out << setw(this->bits_) << symbol;
 	}
 
-	codeType decode(bstream& in)
+	symbolType decode(bstream& in)
 	{
-		codeType result = (codeType)-1;
+		symbolType result;
 		huffmanNode* cur = this->root;
-		while (result == (codeType)-1)
+		while (true)
 		{
-			if (cur->value != (codeType)-1)
+			if (cur->isNYT)
 			{
-				result = cur->value;
-				this->updateTreeModel(cur->value);
-				cur = root;
-			} else if (cur->isNYT)
-			{
-				result = 0;
+				symbolType result = 0;
 				in >> setw(this->bits_) >> result;
 				this->updateTreeModel(result);
-				cur = root;
+				return result;
+			} else if (cur->left == nullptr && cur->right == nullptr)
+			{
+				symbolType result = cur->value;
+				this->updateTreeModel(cur->value);
+				return result;
 			} else
 			{
 				char b;
@@ -114,13 +114,13 @@ private:
 		{
 		}
 
-		huffmanNode(codeType value, size_t weight, size_t order, huffmanNode* left, huffmanNode* right,
+		huffmanNode(symbolType value, size_t weight, size_t order, huffmanNode* left, huffmanNode* right,
 					huffmanNode* parent, bool isNYT = false)
 			: value(value), path({0, 0}), weight(weight), order(order), left(left), right(right), parent(parent), isNYT(isNYT)
 		{
 		}
 
-		huffmanNode(bool isNYT, codeType value)
+		huffmanNode(bool isNYT, symbolType value)
 			: huffmanNode()
 		{
 			this->isNYT = isNYT;
@@ -151,7 +151,7 @@ private:
 			}
 		}
 
-		codeType value;
+		symbolType value;
 		pathType path;
 		size_t weight;
 		size_t order;
@@ -161,7 +161,7 @@ private:
 		bool isNYT;
 	};
 
-	huffmanNode* getSymbolNode(codeType symbol) const
+	huffmanNode* getSymbolNode(symbolType symbol) const
 	{
 		if(this->table_.find(symbol) != this->table_.end())
 		{
@@ -170,7 +170,7 @@ private:
 
 		return nullptr;
 	}
-	huffmanNode* getSymbolNode(codeType symbol, huffmanNode* cur) const
+	huffmanNode* getSymbolNode(symbolType symbol, huffmanNode* cur) const
 	{
 		if (cur == nullptr || cur->value == symbol)
 		{
@@ -300,13 +300,8 @@ private:
 
 	void slideAndIncrement(huffmanNode* node)
 	{
-		if (node == nullptr)
-		{
-			return;
-		}
-
-		huffmanNode* blockLeader = node;
-		this->findBlockLeader(this->root, blockLeader);
+		//huffmanNode* blockLeader = node;
+		//this->findBlockLeader(this->root, blockLeader);
 		//if (blockLeader != node)
 		//{
 		//	this->swapNodes(blockLeader, node);
@@ -319,8 +314,11 @@ private:
 		}
 
 		++(node->weight);
-		this->updateBlockLeader(node);
-		this->slideAndIncrement(node->parent);
+		this->updateBlockLeaderTable(node);
+		if(node->parent)
+		{
+			this->slideAndIncrement(node->parent);
+		}
 	}
 
 	void deleteTree(huffmanNode* node)
@@ -337,13 +335,13 @@ private:
 		delete node;
 	}
 
-	aHuffmanCoder::pathType makePath(codeType symbol, size_t depth) const
+	inline aHuffmanCoder::pathType makePath(codeType code, size_t depth) const
 	{
 		assert(depth < sizeof(codeType) * CHAR_BIT);
-		return { symbol, depth };
+		return { code, depth };
 	}
 
-	void updateBlockLeader(huffmanNode* node)
+	void updateBlockLeaderTable(huffmanNode* node)
 	{
 		if (this->blockLeaderTable_.size() <= node->weight)
 		{
@@ -376,7 +374,7 @@ private:
 		}
 	}
 
-	std::map<codeType, huffmanNode*> table_;
+	std::map<symbolType, huffmanNode*> table_;
 	std::vector<std::vector<huffmanNode*>> blockLeaderTable_;
 	huffmanNode* nytNode;
 	huffmanNode* root;

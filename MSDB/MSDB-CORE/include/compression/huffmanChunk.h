@@ -28,7 +28,7 @@ private:
 	template<typename Cty_, typename Ty_>
 	void serializeTy(bstream& out)
 	{
-		//aHuffmanCoder<Cty_> coder(sizeof(Ty_) * CHAR_BIT);
+		//aHuffmanCoder<Cty_, Ty_> coder(sizeof(Ty_) * CHAR_BIT);
 
 		//auto bit = this->getBlockIterator();
 		//while(!bit->isEnd())
@@ -42,7 +42,7 @@ private:
 		//	++(*bit);
 		//}
 
-		aHuffmanCoder<uint32_t> coder(sizeof(uint8_t) * CHAR_BIT);
+		aHuffmanCoder<uint32_t, uint8_t> coder(sizeof(uint8_t) * CHAR_BIT);
 		auto buffer = (const char*)this->getBuffer()->getReadData();
 		auto size = this->getBuffer()->size();
 		for(int i = 0; i < size; ++i)
@@ -54,7 +54,7 @@ private:
 	template<typename Cty_, typename Ty_>
 	void deserializeTy(bstream& in)
 	{
-		//aHuffmanCoder<Cty_> coder(sizeof(Ty_) * CHAR_BIT);
+		//aHuffmanCoder<Cty_, Ty_> coder(sizeof(Ty_) * CHAR_BIT);
 
 		//auto bit = this->getBlockIterator();
 		//while (!bit->isEnd())
@@ -69,7 +69,7 @@ private:
 		//	++(*bit);
 		//}
 
-		aHuffmanCoder<uint32_t> coder(sizeof(uint8_t) * CHAR_BIT);
+		aHuffmanCoder<uint32_t, uint8_t> coder(sizeof(uint8_t) * CHAR_BIT);
 		auto buffer = (unsigned char*)this->getBuffer()->getData();
 		auto size = this->getBuffer()->size();
 		for(int i = 0; i < size; ++i)

@@ -8,7 +8,7 @@ namespace caDummy
 {
 TEST(adaptiveHuffmanCoding, encoding_decoding)
 {
-	const int dummySize = 5000;
+	const int dummySize = 10000;
 	unsigned char dummy[dummySize];
 
 	for(int i = 0; i < dummySize; ++i)
@@ -16,7 +16,7 @@ TEST(adaptiveHuffmanCoding, encoding_decoding)
 		dummy[i] = (unsigned char)rand();
 	}
 
-	aHuffmanCoder<uint16_t> encoder(sizeof(unsigned char) * CHAR_BIT);
+	aHuffmanCoder<uint16_t, uint8_t> encoder(sizeof(uint8_t) * CHAR_BIT);
 	bstream bs;
 
 	for(int i = 0; i < dummySize; ++i)
@@ -26,7 +26,7 @@ TEST(adaptiveHuffmanCoding, encoding_decoding)
 
 	std::cout << "Compressed size: " << bs.capacity() << std::endl;
 
-	aHuffmanCoder<uint16_t> decoder(sizeof(unsigned char) * CHAR_BIT);
+	aHuffmanCoder<uint16_t, uint8_t> decoder(sizeof(uint8_t) * CHAR_BIT);
 	unsigned char result[dummySize];
 
 	for(int i = 0; i < dummySize; ++i)
@@ -56,7 +56,7 @@ TEST(adaptiveHuffmanCoding, encoding_decoding_designate)
 	//	dummy[i] = (unsigned char)rand();
 	//}
 
-	aHuffmanCoder<uint16_t> encoder(sizeof(unsigned char) * CHAR_BIT);
+	aHuffmanCoder<uint16_t, uint8_t> encoder(sizeof(uint8_t) * CHAR_BIT);
 	bstream bs;
 
 	for (int i = 0; i < dummySize; ++i)
@@ -70,7 +70,7 @@ TEST(adaptiveHuffmanCoding, encoding_decoding_designate)
 
 	std::cout << "Compressed size: " << bs.capacity() << std::endl;
 
-	aHuffmanCoder<uint16_t> decoder(sizeof(unsigned char) * CHAR_BIT);
+	aHuffmanCoder<uint16_t, uint8_t> decoder(sizeof(uint8_t) * CHAR_BIT);
 	unsigned char result[dummySize];
 
 	for (int i = 0; i < dummySize; ++i)
