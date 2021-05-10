@@ -29,7 +29,8 @@ public:
 	void updateTreeModel(codeType symbol)
 	{
 		huffmanNode* leftToIncrement = nullptr;
-		huffmanNode* symbolNode = this->getSymbolNode(symbol, this->root);
+		//huffmanNode* symbolNode = this->getSymbolNode(symbol, this->root);
+		huffmanNode* symbolNode = this->getSymbolNode(symbol);
 
 		if (symbolNode == nullptr)
 		{
@@ -39,6 +40,8 @@ public:
 			nytNode->right = new huffmanNode(symbol, 0, curMinOrder - 1, nullptr, nullptr, nytNode, false);
 			symbolNode = nytNode->right;
 			nytNode = nytNode->left;
+
+			this->table_[symbol] = symbolNode;
 		}
 
 		this->slideAndIncrement(symbolNode);
@@ -46,16 +49,19 @@ public:
 
 	void encode(bstream& out, codeType symbol)
 	{
-		huffmanNode* symbolNode = this->getSymbolNode(symbol, root);
+		//huffmanNode* symbolNode = this->getSymbolNode(symbol, this->root);
+		huffmanNode* symbolNode = this->getSymbolNode(symbol);
 		if (symbolNode)
 		{
-			auto result = this->getPathToSymbol(root, symbolNode, this->makePath(0, 0));
+			//auto result = this->getPathToSymbolNode(root, symbolNode, this->makePath(0, 0));
+			auto result = this->getPathToSymbolNode(symbolNode);
 			out << setw(result.second) << result.first;
 			this->updateTreeModel(symbol);
 			return;
 		}
 
-		auto result = getPathToSymbol(root, nytNode, this->makePath(0, 0));
+		//auto result = getPathToSymbolNode(root, nytNode, this->makePath(0, 0));
+		auto result = this->getPathToNYT();
 		this->updateTreeModel(symbol);
 
 		if (result.second)
@@ -104,13 +110,13 @@ private:
 	struct huffmanNode
 	{
 		huffmanNode()
-			: value(0), weight(0), order(0), left(nullptr), right(nullptr), parent(nullptr), isNYT(false)
+			: value(0), path({0, 0}), weight(0), order(0), left(nullptr), right(nullptr), parent(nullptr), isNYT(false)
 		{
 		}
 
 		huffmanNode(codeType value, size_t weight, size_t order, huffmanNode* left, huffmanNode* right,
 					huffmanNode* parent, bool isNYT = false)
-			:  value(value), weight(weight), order(order), left(left), right(right), parent(parent), isNYT(isNYT)
+			: value(value), path({0, 0}), weight(weight), order(order), left(left), right(right), parent(parent), isNYT(isNYT)
 		{
 		}
 
@@ -121,15 +127,49 @@ private:
 			this->value = value;
 		}
 
+		void initPath()
+		{
+			this->path = { 0, 0 };
+			if(this->left)
+			{
+				this->left->initPath();
+			}
+			if(this->right)
+			{
+				this->right->initPath();
+			}
+		}
+
+		void initPath(pathType parentPath, bool isLeft)
+		{
+			if (isLeft)
+			{
+				this->path = { parentPath.first << 1, parentPath.second + 1 };
+			} else
+			{
+				this->path = { parentPath.first << 1 | 1, parentPath.second + 1 };
+			}
+		}
+
 		codeType value;
+		pathType path;
 		size_t weight;
 		size_t order;
 		huffmanNode* left;
 		huffmanNode* right;
 		huffmanNode* parent;
 		bool isNYT;
-
 	};
+
+	huffmanNode* getSymbolNode(codeType symbol) const
+	{
+		if(this->table_.find(symbol) != this->table_.end())
+		{
+			return this->table_.at(symbol);
+		}
+
+		return nullptr;
+	}
 	huffmanNode* getSymbolNode(codeType symbol, huffmanNode* cur) const
 	{
 		if (cur == nullptr || cur->value == symbol)
@@ -157,6 +197,33 @@ private:
 		findBlockLeader(cur->right, curMax);
 	}
 
+	huffmanNode* findBlockLeaderFromTable(huffmanNode* node) const
+	{
+		if(this->blockLeaderTable_.size() <= node->weight)
+		{
+			return nullptr;
+		}
+
+		auto it = this->blockLeaderTable_[node->weight].begin();
+		auto out = node;
+		while (it != this->blockLeaderTable_[node->weight].end())
+		{
+			if ((*it) != this->root && (*it) != node->parent && (*it)->order > out->order)
+			{
+				out = *it;
+			}
+
+			++it;
+		}
+
+		if(out != node)
+		{
+			return out;
+		}
+
+		return nullptr;
+	}
+
 	void swapNodes(huffmanNode* first, huffmanNode* second)
 	{
 		if (first->parent == nullptr || second->parent == nullptr)
@@ -171,27 +238,64 @@ private:
 		std::swap(firstRef, secondRef);
 		std::swap(firstRef->parent, secondRef->parent);
 		std::swap(firstRef->order, secondRef->order);
+
+		firstRef->initPath();
+		secondRef->initPath();
+
+		updateTable(firstRef);
+		updateTable(secondRef);
 	}
 
-	std::pair<codeType, size_t> getPathToSymbol(huffmanNode* cur, huffmanNode* result, pathType curPath) const
+	void updateTable(huffmanNode* node)
 	{
-		if (cur == result)
+		if(node->left != nullptr || node->right != nullptr)
 		{
-			return curPath;
+			return;
 		}
 
+		this->table_[node->value] = node;
+	}
+
+	std::pair<codeType, size_t> getPathToSymbolNode(huffmanNode* symbolNode) const
+	{
+		if(symbolNode->path.second != 0)
+		{
+			return symbolNode->path;
+		}
+
+		return this->getPathToSymbolNode(this->root, symbolNode, this->makePath(0, 0));
+	}
+
+	std::pair<codeType, size_t> getPathToNYT() const
+	{
+		if(this->nytNode->path.second != 0)
+		{
+			return this->nytNode->path;
+		}
+
+		return this->getPathToSymbolNode(this->root, this->nytNode, this->makePath(0, 0));
+	}
+
+	std::pair<codeType, size_t> getPathToSymbolNode(huffmanNode* cur, huffmanNode* result, pathType curPath) const
+	{
 		if (cur == nullptr)
 		{
 			return std::make_pair<codeType, size_t>(0, 0);
 		}
 
-		auto left = this->getPathToSymbol(cur->left, result, this->makePath((curPath.first << 1), curPath.second + 1));
+		cur->path = curPath;
+		if (cur == result)
+		{
+			return curPath;
+		}
+
+		auto left = this->getPathToSymbolNode(cur->left, result, this->makePath((curPath.first << 1), curPath.second + 1));
 		if (left.second != 0)
 		{
 			return left;
 		}
 
-		return this->getPathToSymbol(cur->right, result, this->makePath((curPath.first << 1) | 1, curPath.second + 1));
+		return this->getPathToSymbolNode(cur->right, result, this->makePath((curPath.first << 1) | 1, curPath.second + 1));
 	}
 
 	void slideAndIncrement(huffmanNode* node)
@@ -203,12 +307,19 @@ private:
 
 		huffmanNode* blockLeader = node;
 		this->findBlockLeader(this->root, blockLeader);
-		if (blockLeader != node)
+		//if (blockLeader != node)
+		//{
+		//	this->swapNodes(blockLeader, node);
+		//}
+
+		huffmanNode* tableBlockLeader = findBlockLeaderFromTable(node);
+		if(tableBlockLeader != nullptr)
 		{
-			this->swapNodes(blockLeader, node);
+			this->swapNodes(tableBlockLeader, node);
 		}
 
 		++(node->weight);
+		this->updateBlockLeader(node);
 		this->slideAndIncrement(node->parent);
 	}
 
@@ -221,16 +332,52 @@ private:
 
 		this->deleteTree(node->left);
 		this->deleteTree(node->right);
+		this->table_[node->value] = nullptr;
 
 		delete node;
 	}
 
 	aHuffmanCoder::pathType makePath(codeType symbol, size_t depth) const
 	{
-		assert(depth < sizeof(codeType)* CHAR_BIT);
+		assert(depth < sizeof(codeType) * CHAR_BIT);
 		return { symbol, depth };
 	}
 
+	void updateBlockLeader(huffmanNode* node)
+	{
+		if (this->blockLeaderTable_.size() <= node->weight)
+		{
+			int gap = node->weight - this->blockLeaderTable_.size() + 1;
+
+			for (int i = 0; i < gap; ++i)
+			{
+				this->blockLeaderTable_.push_back(std::vector<huffmanNode*>());
+			}
+		}
+
+		this->blockLeaderTable_[node->weight].push_back(node);
+
+		auto prevWeight = node->weight - 1;
+		if(prevWeight > 0)
+		{
+			auto it = this->blockLeaderTable_[prevWeight].begin();
+			auto deleteIt = this->blockLeaderTable_[prevWeight].end();
+			bool inserted = false;
+
+			while (it != this->blockLeaderTable_[prevWeight].end())
+			{
+				if(*it == node)
+				{
+					this->blockLeaderTable_[prevWeight].erase(it);
+					break;
+				}
+				++it;
+			}
+		}
+	}
+
+	std::map<codeType, huffmanNode*> table_;
+	std::vector<std::vector<huffmanNode*>> blockLeaderTable_;
 	huffmanNode* nytNode;
 	huffmanNode* root;
 	size_t bits_;
