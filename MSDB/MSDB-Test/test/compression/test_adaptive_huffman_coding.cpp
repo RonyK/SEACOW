@@ -1,6 +1,7 @@
 #include <pch.h>
 #include <compression/adaptiveHuffmanCode.h>
 #include <io/bitstream.h>
+#include <limits>
 
 namespace msdb
 {

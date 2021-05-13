@@ -170,32 +170,33 @@ private:
 
 		return nullptr;
 	}
-	huffmanNode* getSymbolNode(symbolType symbol, huffmanNode* cur) const
-	{
-		if (cur == nullptr || cur->value == symbol)
-		{
-			return cur;
-		}
 
-		huffmanNode* leftResult = this->getSymbolNode(symbol, cur->left);
-		if (leftResult != nullptr)
-		{
-			return leftResult;
-		}
+	//huffmanNode* getSymbolNode(symbolType symbol, huffmanNode* cur) const
+	//{
+	//	if (cur == nullptr || cur->value == symbol)
+	//	{
+	//		return cur;
+	//	}
 
-		return this->getSymbolNode(symbol, cur->right);
-	}
-	void findBlockLeader(huffmanNode* cur, huffmanNode*& curMax) const
-	{
-		if (cur == nullptr || curMax == root)
-			return;
+	//	huffmanNode* leftResult = this->getSymbolNode(symbol, cur->left);
+	//	if (leftResult != nullptr)
+	//	{
+	//		return leftResult;
+	//	}
 
-		if (cur->weight == curMax->weight && cur != curMax->parent && cur->order > curMax->order)
-			curMax = cur;
+	//	return this->getSymbolNode(symbol, cur->right);
+	//}
+	//void findBlockLeader(huffmanNode* cur, huffmanNode*& curMax) const
+	//{
+	//	if (cur == nullptr || curMax == root)
+	//		return;
 
-		findBlockLeader(cur->left, curMax);
-		findBlockLeader(cur->right, curMax);
-	}
+	//	if (cur->weight == curMax->weight && cur != curMax->parent && cur->order > curMax->order)
+	//		curMax = cur;
+
+	//	findBlockLeader(cur->left, curMax);
+	//	findBlockLeader(cur->right, curMax);
+	//}
 
 	huffmanNode* findBlockLeaderFromTable(huffmanNode* node) const
 	{
@@ -379,6 +380,23 @@ private:
 	huffmanNode* nytNode;
 	huffmanNode* root;
 	size_t bits_;
+};
+
+template <typename codeType, typename symbolType>
+class aHashHuffmanCoder
+{
+public:
+	aHashHuffmanCoder()
+	{
+
+	}
+
+	~aHashHuffmanCoder()
+	{
+	}
+
+private:
+
 };
 }		// msdb
 #endif	// _MSDB_ADAPTIVE_HUFFMAN_CODING_H_

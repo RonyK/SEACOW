@@ -195,6 +195,7 @@
     <ClInclude Include="include\compression\adaptiveHuffmanCode.h" />
     <ClInclude Include="include\compression\huffmanBlock.h" />
     <ClInclude Include="include\compression\huffmanChunk.h" />
+    <ClInclude Include="include\compression\huffmanCode.h" />
     <ClInclude Include="include\compression\lzwBlock.h" />
     <ClInclude Include="include\compression\lzwChunk.h" />
     <ClInclude Include="include\array\memArray.h" />
@@ -319,6 +320,7 @@
     <ClCompile Include="src\compression\adaptiveHuffmanCode.cpp" />
     <ClCompile Include="src\compression\huffmanBlock.cpp" />
     <ClCompile Include="src\compression\huffmanChunk.cpp" />
+    <ClCompile Include="src\compression\huffmanCode.cpp" />
     <ClCompile Include="src\compression\lzwBlock.cpp" />
     <ClCompile Include="src\compression\lzwChunk.cpp" />
     <ClCompile Include="src\index\compass.cpp" />
