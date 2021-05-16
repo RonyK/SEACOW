@@ -68,6 +68,7 @@
     <ClCompile Include="test\compression\getOpCompression.cpp" />
     <ClCompile Include="test\compression\test_action_compression.cpp" />
     <ClCompile Include="test\compression\test_adaptive_huffman_coding.cpp" />
+    <ClCompile Include="test\compression\test_huffman_coding.cpp" />
     <ClCompile Include="test\compression\test_qry_compass.h" />
     <ClCompile Include="test\dummy\dummy.cpp" />
     <ClCompile Include="test\dummy\dummy_astronomy.cpp" />

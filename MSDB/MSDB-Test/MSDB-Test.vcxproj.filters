@@ -56,6 +56,7 @@
     <ClCompile Include="test\compression\test_adaptive_huffman_coding.cpp" />
     <ClCompile Include="test\query\op\huffman\test_huffman_encode_decode.cpp" />
     <ClCompile Include="test\query\op\huffman\act_huffman_encode_decode.cpp" />
+    <ClCompile Include="test\compression\test_huffman_coding.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">

@@ -15,20 +15,22 @@ class huffmanCoder
 public:
 	using codeLenType = unsigned char;
 
-	static const unsigned char maxTableLevel = 16;
+	
 	static const unsigned char bitSymbol = sizeof(symbolType) * CHAR_BIT;
-	static const unsigned char bitLevelUnit = 4;
+	static const unsigned char bitCode = sizeof(codeType) * CHAR_BIT;
+	static const unsigned char maxDecodeTableLevel = 2;
+	inline static const unsigned char bitDecodeTableLevel[maxDecodeTableLevel] = { bitCode / 4, bitCode };
 	inline static const uint16_t remainMask[5] = { 0x0000, 0x0001, 0x0003, 0x0007, 0x000F };
-	static const size_t maxLevel = sizeof(codeType) * CHAR_BIT / bitLevelUnit;
+	
 
 public:
 	huffmanCoder()
-		: bits_(sizeof(symbolType) * CHAR_BIT)
+		: bits_(sizeof(symbolType) * CHAR_BIT), root_(nullptr)
 	{
 	}
 
 	huffmanCoder(size_t bits)
-		: bits_(bits)
+		: bits_(bits), root_(nullptr)
 	{
 	}
 
@@ -40,29 +42,31 @@ public:
 		}
 	}
 
-private:
+public:
 	struct huffmanNode
 	{
 		huffmanNode()
 			: code_(0), symbol_(0), codeLen_(0), parent_(nullptr), left_(nullptr), right_(nullptr)
 		{
-			this->initTableCodeMask();
+			
 		}
 		
 		huffmanNode(symbolType symbol)
-			: huffmanNode(), symbol_(symbol)
+			: huffmanNode()
 		{
+			this->symbol_ = symbol;
 		}
 
 		huffmanNode(huffmanNode* left, huffmanNode* right)
-			: huffmanNode(), left_(left), right_(right)
+			: huffmanNode()
 		{
+			this->left_ = left;
+			this->right_ = right;
 		}
 
 		huffmanNode(codeType code, symbolType symbol, codeLenType codeLen, huffmanNode* parent = nullptr, huffmanNode* left = nullptr, huffmanNode* right = nullptr)
 			: code_(code), symbol_(symbol), codeLen_(codeLen), parent_(parent), left_(left), right_(right)
 		{
-			this->initTableCodeMask();
 		}
 
 		bool isLeaf()
@@ -86,16 +90,16 @@ private:
 		}
 	};
 
-	struct decodeTableNode
+	struct decodeTable
 	{
-		decodeTableNode()
-			: isLeaf_(false), node_(nullptr)
+		decodeTable()
+			: isLeaf_(false), node_(nullptr), level_(0)
 		{
 
 		}
 
-		decodeTableNode(huffmanNode node)
-			: node_(node)
+		decodeTable(huffmanNode node)
+			: node_(node), level_(0)
 		{
 			if (node)
 			{
@@ -105,77 +109,21 @@ private:
 				this->isLeaf_ = false;
 			}
 		}
+
+		size_t level_;
 		bool isLeaf_;
 		huffmanNode* node_;
-		std::vector<decodeTableNode> childLevel_;
+		std::vector<decodeTable> childLevel_;
 	};
 
 private:
-	codeType tableCodeMask[maxTableLevel];
-
-	void initTableCodeMask()
-	{
-		uint64_t mask = this->remainMask[this->bitLevelUnit];		// 1111
-		for(int i = 0; i < maxTableLevel; ++i)
-		{
-			this->tableCodeMask[i] = mask;
-			mask <<= this->bitLevelUnit;
-		}
-	}
-
-	void buildTree(std::vector<size_t>& freq)
-	{
-		std::priority_queue<std::pair<size_t, huffmanNode*>, compareNode> qFreq;
-		for(size_t i = 0; i < freq.size(); ++i)
-		{
-			if (freq[i])
-			{
-				qFreq.push({ freq[i], new huffmanNode(i) });
-			}
-		}
-
-		size_t rootFreq = 0;
-		{
-			// Build root node
-			assert(qFreq.size() >= 2);
-
-			auto left = qFreq.top();
-			qFreq.pop();
-			auto right = qFreq.top();
-			qFreq.pop();
-			rootFreq = left.first + right.first;
-
-			this->root_ = new huffmanNode(left.second, right.second);
-		}
-
-		while (!qFreq.empty())
-		{
-			auto next = qFreq.top();
-			qFreq.pop();
-
-			huffmanNode* left = nullptr, right = nullptr;
-
-			if (rootFreq < next.first)
-			{
-				left = this->root_;
-				right = this->next.second;
-			} else
-			{
-				left = this->next.second;
-				right = this->root_;
-			}
-
-			this->root_ = new huffmanNode(left, right);
-
-			left->parent_ = this->root_;
-			right->parent_ = this->root_;
-
-			rootFreq += next.first;
-		}
-	}
-
 	void deleteTree()
 	{
+		if (this->root_ == nullptr)
+		{
+			return;
+		}
+
 		std::stack<huffmanNode*> dfsStack;
 		dfsStack.push(this->root_);
 
@@ -200,7 +148,7 @@ private:
 public:
 	void encode(bstream& out, symbolType* in, size_t len)
 	{
-		std::vector<size_t> freq(std::numeric_limits<symbolType>::max(), 0);
+		std::vector<size_t> freq(std::numeric_limits<symbolType>::max() + 1, 0);
 		for(size_t i = 0; i < len; ++i)
 		{
 			++freq[in[i]];
@@ -215,10 +163,41 @@ public:
 		}
 	}
 
+	void buildTree(std::vector<size_t>& freq)
+	{
+		std::priority_queue<std::pair<size_t, huffmanNode*>, std::vector<std::pair<size_t, huffmanNode*>>, compareNode> qFreq;	// , compareNode
+		for (size_t i = 0; i < freq.size(); ++i)
+		{
+			if (freq[i])
+			{
+				qFreq.push({ freq[i], new huffmanNode(i) });
+			}
+		}
+
+		while (qFreq.size() > 1)
+		{
+			auto left = qFreq.top();
+			qFreq.pop();
+			auto right = qFreq.top();
+			qFreq.pop();
+
+			auto next = new huffmanNode(left.second, right.second);
+			left.second->parent_ = next;
+			right.second->parent_ = next;
+
+			qFreq.push({ left.first + right.first, next });
+		}
+
+		this->root_ = qFreq.top().second;
+		qFreq.pop();
+	}
+
 	void encodeTree(bstream& out)
 	{
 		std::stack<huffmanNode*> dfsStack;
 		dfsStack.push(this->root_);
+		this->root_->code_ = 0;
+		this->root_->codeLen_ = 0;
 
 		while (!dfsStack.empty())
 		{
@@ -231,9 +210,14 @@ public:
 			{
 				out << setw(1) << (unsigned char)0x1;
 				out << setw(bitSymbol) << node->symbol_;
+				this->encodeLookupTable_[node->symbol_] = node;
 			} else
 			{
 				out << setw(1) << (unsigned char)0x0;
+				node->left_->code_ = node->code_ << 1;
+				node->right_->code_ = node->code_ << 1 | (codeType)0x1;
+				node->left_->codeLen_ = node->codeLen_ + (codeType)1;
+				node->right_->codeLen_ = node->codeLen_ + (codeType)1;
 
 				dfsStack.push(node->left_);
 				dfsStack.push(node->right_);
@@ -249,85 +233,168 @@ public:
 #endif
 
 		auto node = this->encodeLookupTable_[symbol];
-		out << setw(node->codeLen_) << node->code;
+		out << setw(node->codeLen_) << node->code_;
 	}
 
-	void decode(symbolType* out, size_t lenOut, bstream& in)
+	void decode(symbolType* outData, size_t lenOut, symbolType* inData, size_t lenIn)
 	{
-		this->decodeTree(in);
+		bstream bs;
+		bs.resize(sizeof(symbolType) * lenIn);
+		memcpy(bs.data(), (char*)inData, sizeof(symbolType) * lenIn);
 
-		// TODO:: build decode table
+		this->initDecodeTable(&this->decodeLookupTable_, 0);
+		this->decodeTree(bs);
 
 		codeType code = 0x0;
-		in >> setw(sizeof(symbolType) * CHAR_BIT) >> code;
+		bs >> setw(bitCode) >> code;
 		for(size_t i = 0; i < lenOut; ++i)
 		{
-			auto result = this->decodeSymbol(code, in);
-			out[i] = result.first;
+			auto result = this->decodeSymbol(code);
+			outData[i] = result.first;
 
 			codeType nextCode = 0x0;
-			in >> setw(sizeof(symbolType) * CHAR_BIT - result.second) >> nextCode;
+			bs >> setw(result.second) >> nextCode;
 			code = (code << result.second) | nextCode;
-			
+		}
+	}
+
+	void initDecodeTable(decodeTable* table, size_t level)
+	{
+		if (level == 0)
+		{
+			size_t size = pow(2, this->bitDecodeTableLevel[level]);
+			table->childLevel_ = std::vector<decodeTable>(size);
+		}
+		else
+		{
+			size_t size = pow(2, this->bitDecodeTableLevel[level] - this->bitDecodeTableLevel[level-1]);
+			table->childLevel_ = std::vector<decodeTable>(size);
 		}
 	}
 
 	void decodeTree(bstream& in)
 	{
-		this->deleteTree();
-
-		this->root_ = new huffmanNode();
-
-		std::stack<codeType> dfsStack;
-		char isLeaf = 0;
-		bool isLeaf = false;
-		codeType code = 0;
-		dfsStack.push(0);
-		while(!dfsStack.empty())
+		if (this->root_)
 		{
-			code = dfsStack.top();
+			this->deleteTree();
+		}
+		
+		this->root_ = new huffmanNode();
+		this->root_->code_ = 0;
+		this->root_->codeLen_ = 0;
+
+		std::stack<huffmanNode*> dfsStack;
+		dfsStack.push(this->root_);
+
+		char isLeaf = 0;
+		while (!dfsStack.empty())
+		{
+			huffmanNode* node = dfsStack.top();
 			dfsStack.pop();
 
-			in >> setw(1) >> isLeaf;
-			if(isLeaf)
-			{
-				symbolType symbol;
-				in >> setw(bitSymbol) >> symbol;
+			assert(node != nullptr);
 
-			}else
+			in >> setw(1) >> isLeaf;
+
+			if (isLeaf)
 			{
-				dfsStack.push(code << 1);
-				dfsStack.push(code << 1 | (codeType)0x1);
+				in >> setw(bitSymbol) >> node->symbol_;
+				this->insertSymbolInDecodeLookupTable(node);
+				// insert in decode table
+				// insert 0~current code
+			}
+			else
+			{
+				auto left = new huffmanNode();
+				auto right = new huffmanNode();
+
+				left->code_ = node->code_ << 1;
+				right->code_ = node->code_ << 1 | (codeType)0x1;
+
+				left->codeLen_ = node->codeLen_ + (codeType)1;
+				right->codeLen_ = node->codeLen_ + (codeType)1;
+
+				left->parent_ = node;
+				right->parent_ = node;
+
+				node->left_ = left;
+				node->right_ = right;
+				
+				dfsStack.push(left);
+				dfsStack.push(right);
 			}
 		}
 	}
 
 	std::pair<symbolType, size_t> decodeSymbol(codeType code)
 	{
-		codeType code = 0;
-		size_t remain = bitLevelUnit;
-		size_t maxLevel = sizeof(symbolType) * CHAR_BIT / bitLevelUnit;
-
-		for (size_t level = 0; level < maxLevel; ++level)
+		decodeTable* curTable = &this->decodeLookupTable_;
+		for (size_t level = 0; level < this->maxDecodeTableLevel; ++level)
 		{
-			//code = code & remainMask[remain];
-			//code <<= remain;
-			//in >> setw(remain) >> code;
+			// Warning for unsigned data type
+			codeType curCode = code;
+			if (level)
+			{
+				curCode <<= this->bitDecodeTableLevel[level - 1];
+				curCode >>= this->bitDecodeTableLevel[level - 1];
+			}
+			curCode >>= (bitCode - this->bitDecodeTableLevel[level]);
+			
+			assert(curTable->childLevel_.size() > curCode);
 
-			//auto node = this->decodeLookupTable[level][code];
-			//assert(node != nullptr);
-			//if (node->isLeaf_)
-			//{
-			//	return { node->symbol_, node->codeLen_ };
-			//}
+			curTable = &curTable->childLevel_[curCode];
+			if (curTable->isLeaf_)
+			{
+				return {curTable->node_->symbol_, curTable->node_->codeLen_};
+			}
 		}
 
+		return { 0, 0 };
+	}
+
+	void insertSymbolInDecodeLookupTable(huffmanNode* node)
+	{
+		decodeTable* cur = &this->decodeLookupTable_;
+		codeType baseCode = node->code_ << bitCode - node->codeLen_;
+		for (size_t l = 0; l < this->maxDecodeTableLevel; ++l)
+		{
+			if (!cur->childLevel_.size())
+			{
+				this->initDecodeTable(cur, l);
+			}
+
+			codeType curCode = baseCode;
+			if (l)
+			{
+				curCode <<= this->bitDecodeTableLevel[l - 1];
+				curCode >>= this->bitDecodeTableLevel[l - 1];
+			}
+			curCode >>= bitCode - this->bitDecodeTableLevel[l];
+
+			if (node->codeLen_ <= this->bitDecodeTableLevel[l])
+			{
+				size_t gap = pow(2, this->bitDecodeTableLevel[l] - node->codeLen_);
+				for (size_t i = 0; i < gap; ++i)
+				{
+					auto seq = curCode + i;
+					auto t = cur->childLevel_[curCode + i];
+					cur->childLevel_[curCode + i].isLeaf_ = true;
+					cur->childLevel_[curCode + i].node_ = node;
+				}
+			}
+			else
+			{
+				cur = &(cur->childLevel_[curCode]);
+			}
+		}
 	}
 
 private:
 	size_t bits_;
 	std::map<symbolType, huffmanNode*> encodeLookupTable_;
-	std::vector<decodeTableNode*> decodeLookupTable_;
+	decodeTable decodeLookupTable_;
+
+	public:
 	huffmanNode* root_;
 };
 }		// msdb
