@@ -236,6 +236,24 @@ public:
 		out << setw(node->codeLen_) << node->code_;
 	}
 
+	void decode(symbolType* outData, size_t lenOut, bstream& in)
+	{
+		this->initDecodeTable(&this->decodeLookupTable_, 0);
+		this->decodeTree(in);
+
+		codeType code = 0x0;
+		in >> setw(bitCode) >> code;
+		for (size_t i = 0; i < lenOut; ++i)
+		{
+			auto result = this->decodeSymbol(code);
+			outData[i] = result.first;
+
+			codeType nextCode = 0x0;
+			in >> setw(result.second) >> nextCode;
+			code = (code << result.second) | nextCode;
+		}
+	}
+
 	void decode(symbolType* outData, size_t lenOut, symbolType* inData, size_t lenIn)
 	{
 		bstream bs;
