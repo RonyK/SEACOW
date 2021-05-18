@@ -13,10 +13,12 @@ namespace msdb
 {
 class lzwChunk;
 using pLzwChunk = std::shared_ptr<lzwChunk>;
-using lzwCodeType = std::uint16_t;
 
 class lzwChunk : public memBlockChunk
 {
+public:
+	using lzwCodeType = std::uint16_t;
+
 public:
 	lzwChunk(pChunkDesc desc);
 	virtual ~lzwChunk();

@@ -273,6 +273,7 @@
     <ClInclude Include="include\compression\huffmanCode.h" />
     <ClInclude Include="include\compression\lzwHuffmanChunk.h" />
     <ClInclude Include="include\compression\lzwEncoder.h" />
+    <ClInclude Include="include\compression\lzwHuffmanBlock.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">

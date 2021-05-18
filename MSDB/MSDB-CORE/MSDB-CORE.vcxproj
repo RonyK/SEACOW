@@ -209,6 +209,7 @@
     <ClInclude Include="include\compression\compassChunk.h" />
     <ClInclude Include="include\compression\compression.h" />
     <ClInclude Include="include\compression\lzwEncoder.h" />
+    <ClInclude Include="include\compression\lzwHuffmanBlock.h" />
     <ClInclude Include="include\compression\lzwHuffmanChunk.h" />
     <ClInclude Include="include\compression\seChunk.h" />
     <ClInclude Include="include\compression\spihtBlock.h" />
