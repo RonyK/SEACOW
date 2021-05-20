@@ -21,6 +21,7 @@
 #include <op/index_filter/index_filter_action.h>
 
 #include <compression/test_qry_spiht.h>
+#include <query/op/huffman/qry_huffman_encode_decode.h>
 
 #include <exp/experimentsInfo.h>
 
@@ -162,6 +163,35 @@ pArray test_body_seq_lzw_random_naive_filter(_pFuncGetSourceArray_,
 		BOOST_LOG_TRIVIAL(info) << "# Find value: " << static_cast<int64_t>(v);
 		test_body_seq_lzw_naive_filter<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
 												   v, saveArray, validation, printFlag, i);
+		BOOST_LOG_TRIVIAL(info) << "##################################################";
+	}
+	//////////////////////////////
+
+	return nullptr;
+}
+
+template <typename value_type>
+pArray test_body_seq_huffman_random_naive_filter(_pFuncGetSourceArray_,
+												 _pFuncGetSourceArrayDesc_,
+												 size_t numTests,
+												 bool saveArray = false, bool validation = false, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Set Seed For Random Value 
+	srand(filterValueSeed);
+	value_type v = 0;
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Execute Testcases
+	for (size_t i = 0; i < numTests; ++i)
+	{
+		v = (value_type)rand();
+		BOOST_LOG_TRIVIAL(info) << "##################################################";
+		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
+		BOOST_LOG_TRIVIAL(info) << "# Find value: " << static_cast<int64_t>(v);
+		test_body_seq_huffman_naive_filter<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
+													   v, saveArray, validation, printFlag, i);
 		BOOST_LOG_TRIVIAL(info) << "##################################################";
 	}
 	//////////////////////////////
@@ -395,7 +425,8 @@ pArray test_body_seq_load_naive_filter(_pFuncGetSourceArray_,
 	if (saveArray || validation)
 	{
 		getSourceArrayIfEmpty(sourceArr);
-	} else
+	}
+	else
 	{
 		getSourceArrayDesc(sourceArr);
 	}
@@ -437,7 +468,8 @@ pArray test_body_seq_spiht_naive_filter(_pFuncGetSourceArray_,
 	if (saveArray || validation)
 	{
 		getSourceArrayIfEmpty(sourceArr);
-	} else
+	}
+	else
 	{
 		getSourceArrayDesc(sourceArr);
 	}
@@ -493,7 +525,8 @@ pArray test_body_seq_se_naive_filter(_pFuncGetSourceArray_,
 	if (saveArray || validation)
 	{
 		getSourceArrayIfEmpty(sourceArr);
-	} else
+	}
+	else
 	{
 		getSourceArrayDesc(sourceArr);
 	}
@@ -553,7 +586,8 @@ pArray test_body_seq_se_index_filter(_pFuncGetSourceArray_,
 	if (saveArray || validation)
 	{
 		getSourceArrayIfEmpty(sourceArr);
-	} else
+	}
+	else
 	{
 		getSourceArrayDesc(sourceArr);
 	}
@@ -612,7 +646,8 @@ pArray test_body_seq_compass_naive_filter(_pFuncGetSourceArray_,
 	if (saveArray || validation)
 	{
 		getSourceArrayIfEmpty(sourceArr);
-	} else
+	}
+	else
 	{
 		getSourceArrayDesc(sourceArr);
 	}
@@ -667,7 +702,8 @@ pArray test_body_seq_compass_index_filter(_pFuncGetSourceArray_,
 	if (saveArray || validation)
 	{
 		getSourceArrayIfEmpty(sourceArr);
-	} else
+	}
+	else
 	{
 		getSourceArrayDesc(sourceArr);
 	}
@@ -722,7 +758,8 @@ pArray test_body_seq_zip_naive_filter(_pFuncGetSourceArray_,
 	if (saveArray || validation)
 	{
 		getSourceArrayIfEmpty(sourceArr);
-	} else
+	}
+	else
 	{
 		getSourceArrayDesc(sourceArr);
 	}
@@ -777,7 +814,8 @@ pArray test_body_seq_lzw_naive_filter(_pFuncGetSourceArray_,
 	if (saveArray || validation)
 	{
 		getSourceArrayIfEmpty(sourceArr);
-	} else
+	}
+	else
 	{
 		getSourceArrayDesc(sourceArr);
 	}
@@ -791,6 +829,62 @@ pArray test_body_seq_lzw_naive_filter(_pFuncGetSourceArray_,
 															   myPredicate,
 															   saveArray, printFlag,
 															   experiments::filter_random::expId, expTrial);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 03. Validation
+	if (validation)
+	{
+		//////////////////////////////
+		// 03-1. Naive Filter Array
+		pPredicate myNaivePredicate = std::make_shared<singlePredicate>(getEqualTerm(value));
+		auto filterOutArr = exe_qry_ind_naive_filter<value_type>(sourceArr,
+																 myNaivePredicate, false);
+		//////////////////////////////
+
+		//////////////////////////////
+		// 03-2. Filtered Value Test
+		equalTest<value_type>(outArr, value);
+		//////////////////////////////
+
+		//////////////////////////////
+		// 03-3. Filtered Array Test
+		compArrary<value_type>(filterOutArr, outArr);
+		//////////////////////////////
+	}
+	//////////////////////////////
+
+	return outArr;
+}
+
+template <typename value_type>
+pArray test_body_seq_huffman_naive_filter(_pFuncGetSourceArray_,
+										  _pFuncGetSourceArrayDesc_,
+										  int64_t value,
+										  bool saveArray = false, bool validation = false, bool printFlag = false,
+										  size_t expTrial = 0)
+{
+	//////////////////////////////
+	// 01. Get Source Array
+	std::vector<pArray> sourceArr;
+	if (saveArray || validation)
+	{
+		getSourceArrayIfEmpty(sourceArr);
+	}
+	else
+	{
+		getSourceArrayDesc(sourceArr);
+	}
+	sourceArr[0]->setId(sourceArr[0]->getId() + huffman_array_id);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Index filter array
+	pPredicate myPredicate = std::make_shared<singlePredicate>(getEqualTerm(value));
+	auto outArr = exe_qbundle_seq_huffman_naive_filter<value_type>(sourceArr,
+																   myPredicate,
+																   saveArray, printFlag,
+																   experiments::filter_random::expId, expTrial);
 	//////////////////////////////
 
 	//////////////////////////////
@@ -1019,6 +1113,29 @@ pArray exe_qbundle_seq_lzw_naive_filter(_vectorSourceArray_,
 													expId, expTrial);
 	//////////////////////////////
 }
+
+template <typename value_type>
+pArray exe_qbundle_seq_huffman_naive_filter(_vectorSourceArray_,
+											pPredicate inPredicate,
+											bool saveArray = false, bool printFlag = false,
+											size_t expId = 0, size_t expTrial = 0)
+{
+	//////////////////////////////
+	// 01. Save Source Array
+	if (saveArray)
+	{
+		exe_qry_ind_huffman_encode<value_type>(sourceArr, false);
+	}
+
+	//////////////////////////////
+	// 02 Naive Filter Arrary
+	return exe_qry_seq_huffman_naive_filter<value_type>(sourceArr,
+														inPredicate,
+														printFlag,
+														expId, expTrial);
+	//////////////////////////////
+}
+
 
 template <typename value_type>
 pArray exe_qry_ind_naive_filter(_vectorSourceArray_,
@@ -1382,6 +1499,40 @@ pArray exe_qry_seq_lzw_naive_filter(_vectorSourceArray_,
 	{
 		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
 		BOOST_LOG_TRIVIAL(debug) << "Lzw Decode Arr" << std::endl;
+		outArr->print();
+		//outArr->getChunkBitmap()->print();
+	}
+
+	outArr = filterPlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	if (printFlag)
+	{
+		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "Filtered Arr" << std::endl;
+		outArr->print();
+		//outArr->getChunkBitmap()->print();
+	}
+
+	tearDownQuery(qry, expId, expTrial, sourceArr[0]->getId());
+
+	return outArr;
+}
+
+template <typename value_type>
+pArray exe_qry_seq_huffman_naive_filter(_vectorSourceArray_,
+										pPredicate inPredicate,
+										bool printFlag = false,
+										size_t expId = 0, size_t expTrial = 0)
+{
+	pQuery qry = std::make_shared<query>();
+
+	auto loadPlan = getHuffmanDecodePlan(sourceArr[0]->getDesc(), qry);
+	auto filterPlan = getNaiveFilterPlan(loadPlan, inPredicate, qry);
+
+	auto outArr = loadPlan->getAction()->execute(sourceArr, qry);
+	if (printFlag)
+	{
+		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "Huffman Decode Arr" << std::endl;
 		outArr->print();
 		//outArr->getChunkBitmap()->print();
 	}

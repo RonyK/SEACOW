@@ -129,11 +129,18 @@ TEST(experiment_query_op_index_filter, star1024x1024_seq_random_lzw_naive_filter
 													  &getSourceArrayDesc,
 													  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
 }	// TEST()
+
+TEST(experiment_query_op_index_filter, star1024x1024_seq_random_huffman_naive_filter)
+{
+	test_body_seq_huffman_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
+														  &getSourceArrayDesc,
+														  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
+}	// TEST()
 }	// data2D_star1024x1024
 // ##################################################
 
 // ##################################################
-// # star1024x1024
+// # saturn1024x1024
 namespace data2D_saturn1024x1024
 {
 TEST(query_op_index_filter, saturn1024x1024_seq_load_index_filter)
@@ -212,11 +219,18 @@ TEST(experiment_query_op_index_filter, saturn1024x1024_seq_random_lzw_naive_filt
 													  &getSourceArrayDesc,
 													  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
 }	// TEST()
+
+TEST(experiment_query_op_index_filter, saturn1024x1024_seq_random_huffman_naive_filter)
+{
+	test_body_seq_huffman_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
+														  &getSourceArrayDesc,
+														  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
+}	// TEST()
 }	// data2D_saturn1024x1024
 // ##################################################
 
 // ##################################################
-// # star1024x1024
+// # solar1024x1024
 namespace data2D_solar1024x1024
 {
 TEST(query_op_index_filter, solar1024x1024_seq_load_index_filter)
@@ -294,6 +308,13 @@ TEST(experiment_query_op_index_filter, solar1024x1024_seq_random_lzw_naive_filte
 	test_body_seq_lzw_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
 													  &getSourceArrayDesc,
 													  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_index_filter, solar1024x1024_seq_random_huffman_naive_filter)
+{
+	test_body_seq_huffman_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
+														  &getSourceArrayDesc,
+														  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
 }	// TEST()
 }	// data2D_solar1024x1024
 // ##################################################
@@ -378,6 +399,13 @@ TEST(experiment_query_op_index_filter, mars4096x2048_seq_random_lzw_naive_filter
 													  &getSourceArrayDesc,
 													  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
 }	// TEST()
+
+TEST(experiment_query_op_index_filter, mars4096x2048_seq_random_huffman_naive_filter)
+{
+	test_body_seq_huffman_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
+														  &getSourceArrayDesc,
+														  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
+}	// TEST()
 }	// data2D_mars4096x2048
 // ##################################################
 
@@ -461,6 +489,13 @@ TEST(experiment_query_op_index_filter, mercurydem20480x10240_seq_random_lzw_naiv
 													  &getSourceArrayDesc,
 													  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
 }	// TEST()
+
+TEST(experiment_query_op_index_filter, mercurydem20480x10240_seq_random_huffman_naive_filter)
+{
+	test_body_seq_huffman_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
+														  &getSourceArrayDesc,
+														  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
+}	// TEST()
 }	// data2D_mercurydem20480x10240
 // ##################################################
 
@@ -543,6 +578,13 @@ TEST(experiment_query_op_index_filter, lunar102400x40960_seq_random_lzw_naive_fi
 	test_body_seq_lzw_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
 													  &getSourceArrayDesc,
 													  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_index_filter, lunar102400x40960_seq_random_huffman_naive_filter)
+{
+	test_body_seq_huffman_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
+														  &getSourceArrayDesc,
+														  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
 }	// TEST()
 }	// data2D_lunar102400x40960
 // ##################################################

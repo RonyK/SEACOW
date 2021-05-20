@@ -128,6 +128,20 @@
     <ClCompile Include="src\query\op\huffman_decode\huffman_decode_action.cpp" />
     <ClCompile Include="src\query\op\huffman_decode\huffman_decode_plan.cpp" />
     <ClCompile Include="src\compression\huffmanCode.cpp" />
+    <ClCompile Include="src\query\op\lzw_huffman_decode\lzw_huffman_decode_plan.cpp" />
+    <ClCompile Include="src\query\op\lzw_huffman_decode\lzw_huffman_decode_action.cpp" />
+    <ClCompile Include="src\query\op\se_huffman_decode\se_huffman_decode_action.cpp" />
+    <ClCompile Include="src\query\op\se_huffman_decode\se_huffman_decode_plan.cpp" />
+    <ClCompile Include="src\query\op\se_huffman_encode\se_huffman_decode_plan.cpp" />
+    <ClCompile Include="src\query\op\se_huffman_encode\se_huffman_encode_action.cpp" />
+    <ClCompile Include="src\query\op\lzw_huffman_encode\lzw_huffman_encode_plan.cpp" />
+    <ClCompile Include="src\compression\lzwHuffmanChunk.cpp" />
+    <ClCompile Include="src\compression\lzwHuffmanBlock.cpp" />
+    <ClCompile Include="src\compression\seHuffmanChunk.cpp" />
+    <ClCompile Include="src\compression\seHuffmanBlock.cpp" />
+    <ClCompile Include="src\query\op\lzw_huffman_encode\lzw_huffman_encode_action.cpp" />
+    <ClCompile Include="src\compression\adaptHuffmanBlock.cpp" />
+    <ClCompile Include="src\compression\adaptHuffmanChunk.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\array\array.h" />
@@ -274,6 +288,18 @@
     <ClInclude Include="include\compression\lzwHuffmanChunk.h" />
     <ClInclude Include="include\compression\lzwEncoder.h" />
     <ClInclude Include="include\compression\lzwHuffmanBlock.h" />
+    <ClInclude Include="src\query\op\lzw_huffman_decode\lzw_huffman_decode_action.h" />
+    <ClInclude Include="src\query\op\lzw_huffman_decode\lzw_huffman_decode_plan.h" />
+    <ClInclude Include="src\query\op\se_huffman_decode\se_huffman_decode_action.h" />
+    <ClInclude Include="src\query\op\se_huffman_decode\se_huffman_decode_plan.h" />
+    <ClInclude Include="src\query\op\se_huffman_encode\se_huffman_encode_action.h" />
+    <ClInclude Include="src\query\op\se_huffman_encode\se_huffman_decode_plan.h" />
+    <ClInclude Include="src\query\op\lzw_huffman_encode\lzw_huffman_encode_plan.h" />
+    <ClInclude Include="include\compression\seHuffmanChunk.h" />
+    <ClInclude Include="include\compression\seHuffmanBlock.h" />
+    <ClInclude Include="src\query\op\lzw_huffman_encode\lzw_huffman_encode_action.h" />
+    <ClInclude Include="include\compression\adaptHuffmanChunk.h" />
+    <ClInclude Include="include\compression\adaptHuffmanBlock.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">

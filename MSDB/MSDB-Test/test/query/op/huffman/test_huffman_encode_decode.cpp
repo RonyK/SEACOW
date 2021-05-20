@@ -27,6 +27,13 @@ TEST(query_op_huffman, star1024x1024_ind_decode)
 
 TEST(query_op_huffman, star1024x1024_ind_encode_decode)
 {
+	test_body_ind_huffman_encode_decode<value_type>(&getSourceArrayIfEmpty,
+													&getSourceArrayDesc,
+													huffman_encode_decode::validation, huffman_encode_decode::printFlag);
+}
+
+TEST(experiment_query_op_huffman, star1024x1024_seq_encode_decode)
+{
 	test_body_seq_huffman_encode_decode<value_type>(&getSourceArrayIfEmpty,
 													&getSourceArrayDesc,
 													huffman_encode_decode::validation, huffman_encode_decode::printFlag);
@@ -36,6 +43,13 @@ TEST(query_op_huffman, star1024x1024_ind_encode_decode)
 namespace data2D_saturn1024x1024
 {
 TEST(query_op_huffman, saturn1024x1024_ind_encode_decode)
+{
+	test_body_ind_huffman_encode_decode<value_type>(&getSourceArrayIfEmpty,
+													&getSourceArrayDesc,
+													huffman_encode_decode::validation, huffman_encode_decode::printFlag);
+}
+
+TEST(experiment_query_op_huffman, saturn1024x1024_seq_encode_decode)
 {
 	test_body_seq_huffman_encode_decode<value_type>(&getSourceArrayIfEmpty,
 													&getSourceArrayDesc,
@@ -47,6 +61,13 @@ namespace data2D_solar1024x1024
 {
 TEST(query_op_huffman, solar1024x1024_ind_encode_decode)
 {
+	test_body_ind_huffman_encode_decode<value_type>(&getSourceArrayIfEmpty,
+													&getSourceArrayDesc,
+													huffman_encode_decode::validation, huffman_encode_decode::printFlag);
+}
+
+TEST(experiment_query_op_huffman, solar1024x1024_seq_encode_decode)
+{
 	test_body_seq_huffman_encode_decode<value_type>(&getSourceArrayIfEmpty,
 													&getSourceArrayDesc,
 													huffman_encode_decode::validation, huffman_encode_decode::printFlag);
@@ -56,6 +77,13 @@ TEST(query_op_huffman, solar1024x1024_ind_encode_decode)
 namespace data2D_mars4096x2048
 {
 TEST(query_op_huffman, mars4096x2048_ind_encode_decode)
+{
+	test_body_ind_huffman_encode_decode<value_type>(&getSourceArrayIfEmpty,
+													&getSourceArrayDesc,
+													huffman_encode_decode::validation, huffman_encode_decode::printFlag);
+}
+
+TEST(experiment_query_op_huffman, mars4096x2048_seq_encode_decode)
 {
 	test_body_seq_huffman_encode_decode<value_type>(&getSourceArrayIfEmpty,
 													&getSourceArrayDesc,
@@ -67,6 +95,13 @@ namespace data2D_mercurydem20480x10240
 {
 TEST(query_op_huffman, mercurydem20480x10240_ind_encode_decode)
 {
+	test_body_ind_huffman_encode_decode<value_type>(&getSourceArrayIfEmpty,
+													&getSourceArrayDesc,
+													huffman_encode_decode::validation, huffman_encode_decode::printFlag);
+}
+
+TEST(experiment_query_op_huffman, mercurydem20480x10240_seq_encode_decode)
+{
 	test_body_seq_huffman_encode_decode<value_type>(&getSourceArrayIfEmpty,
 													&getSourceArrayDesc,
 													huffman_encode_decode::validation, huffman_encode_decode::printFlag);
@@ -76,6 +111,13 @@ TEST(query_op_huffman, mercurydem20480x10240_ind_encode_decode)
 namespace data2D_lunar102400x40960
 {
 TEST(query_op_huffman, lunar102400x40960_ind_encode_decode)
+{
+	test_body_ind_huffman_encode_decode<value_type>(&getSourceArrayIfEmpty,
+													&getSourceArrayDesc,
+													huffman_encode_decode::validation, huffman_encode_decode::printFlag);
+}
+
+TEST(experiment_query_op_huffman, lunar102400x40960_seq_encode_decode)
 {
 	test_body_seq_huffman_encode_decode<value_type>(&getSourceArrayIfEmpty,
 													&getSourceArrayDesc,
