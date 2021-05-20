@@ -6,7 +6,7 @@
 namespace msdb
 {
 seHuffmanChunk::seHuffmanChunk(pChunkDesc desc)
-	: memBlockChunk(desc)
+	: seChunk(desc)
 {
 }
 

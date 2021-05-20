@@ -36,6 +36,12 @@ public:
 	template<typename Ty_>
 	void serialize(bstream& bs)
 	{
+		this->seEncode<Ty_>(bs);
+	}
+
+	template <typename Ty_>
+	void seEncode(bstream& bs)
+	{
 		pBlock myBlock = this->blocks_.at(0);
 
 		size_t dSize = this->getDSize();
@@ -44,7 +50,7 @@ public:
 		dimension bandDims = inBlockDims / std::pow(2, this->level_ + 1);
 
 #ifndef NDEBUG
-		for(int d = 0; d < dSize; ++d)
+		for (int d = 0; d < dSize; ++d)
 		{
 			assert(bandDims[d] > 0);	// Level is too high for block dim
 		}
@@ -57,11 +63,11 @@ public:
 			//auto before = bs.capacity();
 			//BOOST_LOG_TRIVIAL(debug) << "MIN: " << this->min_;
 #endif
-			
+
 			for (size_t band = 0; band <= numBandsInLevel; ++band, ++seqId)
 			{
 				this->serializeBand<Ty_>(bs, myBlock, seqId, band, bandDims);
-			}
+		}
 
 #ifndef NDEBUG
 			//auto synopsisSize = bs.capacity() - before;
@@ -208,6 +214,12 @@ public:
 	template<typename Ty_>
 	void deserialize(bstream& bs)
 	{
+		this->seDecode<Ty_>(bs);
+	}
+
+	template <typename Ty_>
+	void seDecode(bstream& bs)
+	{
 		pBlock myBlock = this->blocks_.at(0);
 
 		size_t dSize = this->getDSize();
@@ -219,7 +231,7 @@ public:
 		// Level 0
 		{
 			//BOOST_LOG_TRIVIAL(debug) << "MIN: " << this->min_;
-			for(size_t band = 0; band <= numBandsInLevel; ++band, ++seqId)
+			for (size_t band = 0; band <= numBandsInLevel; ++band, ++seqId)
 			{
 				this->deserializeBand<Ty_>(bs, myBlock, seqId, band, bandDims);
 			}

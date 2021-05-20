@@ -267,6 +267,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="include\xml\tinyxml2.h" />
+    <ClInclude Include="src\query\op\adapt_huffman_decode\adapt_huffman_decode_action.h" />
+    <ClInclude Include="src\query\op\adapt_huffman_decode\adapt_huffman_decode_plan.h" />
+    <ClInclude Include="src\query\op\adapt_huffman_encode\adapt_huffman_encode_action.h" />
+    <ClInclude Include="src\query\op\adapt_huffman_encode\adapt_huffman_encode_plan.h" />
     <ClInclude Include="src\query\op\between\between_action.h" />
     <ClInclude Include="src\query\op\between\between_plan.h" />
     <ClInclude Include="src\query\op\compass_decode\compass_decode_action.h" />
@@ -309,7 +313,7 @@
     <ClInclude Include="src\query\op\naive_filter\naive_filter_plan.h" />
     <ClInclude Include="src\query\op\se_huffman_decode\se_huffman_decode_action.h" />
     <ClInclude Include="src\query\op\se_huffman_decode\se_huffman_decode_plan.h" />
-    <ClInclude Include="src\query\op\se_huffman_encode\se_huffman_decode_plan.h" />
+    <ClInclude Include="src\query\op\se_huffman_encode\se_huffman_encode_plan.h" />
     <ClInclude Include="src\query\op\se_huffman_encode\se_huffman_encode_action.h" />
     <ClInclude Include="src\query\op\spiht_decode\spiht_decode_action.h" />
     <ClInclude Include="src\query\op\spiht_decode\spiht_decode_plan.h" />
@@ -378,6 +382,10 @@
     <ClCompile Include="src\parse\expression.cpp" />
     <ClCompile Include="src\parse\predicate.cpp" />
     <ClCompile Include="src\parse\term.cpp" />
+    <ClCompile Include="src\query\op\adapt_huffman_decode\adapt_huffman_decode_action.cpp" />
+    <ClCompile Include="src\query\op\adapt_huffman_decode\adapt_huffman_decode_plan.cpp" />
+    <ClCompile Include="src\query\op\adapt_huffman_encode\adapt_huffman_encode_action.cpp" />
+    <ClCompile Include="src\query\op\adapt_huffman_encode\adapt_huffman_encode_plan.cpp" />
     <ClCompile Include="src\query\op\between\between_action.cpp" />
     <ClCompile Include="src\query\op\between\between_plan.cpp" />
     <ClCompile Include="src\query\op\compass_decode\compass_decode_action.cpp" />
@@ -420,7 +428,7 @@
     <ClCompile Include="src\query\op\naive_filter\naive_filter_plan.cpp" />
     <ClCompile Include="src\query\op\se_huffman_decode\se_huffman_decode_action.cpp" />
     <ClCompile Include="src\query\op\se_huffman_decode\se_huffman_decode_plan.cpp" />
-    <ClCompile Include="src\query\op\se_huffman_encode\se_huffman_decode_plan.cpp" />
+    <ClCompile Include="src\query\op\se_huffman_encode\se_huffman_encode_plan.cpp" />
     <ClCompile Include="src\query\op\se_huffman_encode\se_huffman_encode_action.cpp" />
     <ClCompile Include="src\query\op\spiht_decode\spiht_decode_action.cpp" />
     <ClCompile Include="src\query\op\spiht_decode\spiht_decode_plan.cpp" />

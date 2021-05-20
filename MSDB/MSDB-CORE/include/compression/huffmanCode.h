@@ -15,7 +15,6 @@ class huffmanCoder
 public:
 	using codeLenType = unsigned char;
 
-	
 	static const unsigned char bitSymbol = sizeof(symbolType) * CHAR_BIT;
 	static const unsigned char bitCode = sizeof(codeType) * CHAR_BIT;
 	static const unsigned char maxDecodeTableLevel = 2;
@@ -146,7 +145,7 @@ private:
 	}
 
 public:
-	void encode(bstream& out, symbolType* in, size_t len)
+	void encode(bstream& out, const symbolType* in, size_t len)
 	{
 		std::vector<size_t> freq(std::numeric_limits<symbolType>::max() + 1, 0);
 		for(size_t i = 0; i < len; ++i)
@@ -209,7 +208,7 @@ public:
 			if (node->isLeaf())
 			{
 				out << setw(1) << (unsigned char)0x1;
-				out << setw(bitSymbol) << node->symbol_;
+				out << setw(bits_) << node->symbol_;
 				this->encodeLookupTable_[node->symbol_] = node;
 			} else
 			{
@@ -225,7 +224,7 @@ public:
 		}
 	}
 
-	void encodeSymbol(bstream& out, symbolType symbol)
+	void encodeSymbol(bstream& out, const symbolType symbol)
 	{
 		// TODO:: output encode table or tree
 #ifndef NDEBUG
@@ -316,7 +315,7 @@ public:
 
 			if (isLeaf)
 			{
-				in >> setw(bitSymbol) >> node->symbol_;
+				in >> setw(bits_) >> node->symbol_;
 				this->insertSymbolInDecodeLookupTable(node);
 				// insert in decode table
 				// insert 0~current code

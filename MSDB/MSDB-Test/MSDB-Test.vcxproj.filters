@@ -59,6 +59,10 @@
     <ClCompile Include="test\compression\test_huffman_coding.cpp" />
     <ClCompile Include="test\query\op\lzw_huffman\act_lzw_huffman_encode_decode.cpp" />
     <ClCompile Include="test\query\op\lzw_huffman\test_lzw_huffman_encode_decode.cpp" />
+    <ClCompile Include="test\query\op\adapt_huffman\act_adapt_huffman_encode_decode.cpp" />
+    <ClCompile Include="test\query\op\adapt_huffman\test_adapt_huffman_encode_decode.cpp" />
+    <ClCompile Include="test\query\op\se_huffman\test_se_huffman_encode_decode.cpp" />
+    <ClCompile Include="test\query\op\se_huffman\act_se_huffman_encode_decode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">
@@ -85,6 +89,10 @@
     <ClInclude Include="test\query\op\huffman\act_huffman_encode_decode.h" />
     <ClInclude Include="test\query\op\lzw_huffman\act_lzw_huffman_encode_decode.h" />
     <ClInclude Include="test\query\op\lzw_huffman\qry_lzw_huffman_encode_decode.h" />
+    <ClInclude Include="test\query\op\adapt_huffman\qry_adapt_huffman_encode_decode.h" />
+    <ClInclude Include="test\query\op\adapt_huffman\act_adapt_huffman_encode_decode.h" />
+    <ClInclude Include="test\query\op\se_huffman\qry_se_huffman_encode_decode.h" />
+    <ClInclude Include="test\query\op\se_huffman\act_se_huffman_encode_decode.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="test">

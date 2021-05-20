@@ -123,6 +123,13 @@ TEST(experiment_query_op_index_filter, star1024x1024_seq_random_se_index_filter)
 													 index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
 }	// TEST()
 
+TEST(experiment_query_op_index_filter, star1024x1024_seq_random_se_huffman_index_filter)
+{
+	test_body_seq_se_huffman_random_index_filter<value_type>(&getSourceArrayIfEmpty,
+															 &getSourceArrayDesc, wtLevel, mmtLevel,
+															 index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
+}	// TEST()
+
 TEST(experiment_query_op_index_filter, star1024x1024_seq_random_lzw_naive_filter)
 {
 	test_body_seq_lzw_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
@@ -135,6 +142,20 @@ TEST(experiment_query_op_index_filter, star1024x1024_seq_random_huffman_naive_fi
 	test_body_seq_huffman_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
 														  &getSourceArrayDesc,
 														  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_index_filter, star1024x1024_seq_random_adapt_huffman_naive_filter)
+{
+	test_body_seq_adapt_huffman_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
+																&getSourceArrayDesc,
+																index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_index_filter, star1024x1024_seq_random_lzw_huffman_naive_filter)
+{
+	test_body_seq_lzw_huffman_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
+															  &getSourceArrayDesc,
+															  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
 }	// TEST()
 }	// data2D_star1024x1024
 // ##################################################
@@ -226,6 +247,20 @@ TEST(experiment_query_op_index_filter, saturn1024x1024_seq_random_huffman_naive_
 														  &getSourceArrayDesc,
 														  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
 }	// TEST()
+
+TEST(experiment_query_op_index_filter, saturn1024x1024_seq_random_adapt_huffman_naive_filter)
+{
+	test_body_seq_adapt_huffman_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
+																&getSourceArrayDesc,
+																index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_index_filter, saturn1024x1024_seq_random_lzw_huffman_naive_filter)
+{
+	test_body_seq_lzw_huffman_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
+															  &getSourceArrayDesc,
+															  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
+}	// TEST()
 }	// data2D_saturn1024x1024
 // ##################################################
 
@@ -315,6 +350,20 @@ TEST(experiment_query_op_index_filter, solar1024x1024_seq_random_huffman_naive_f
 	test_body_seq_huffman_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
 														  &getSourceArrayDesc,
 														  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_index_filter, solar1024x1024_seq_random_adapt_huffman_naive_filter)
+{
+	test_body_seq_adapt_huffman_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
+																&getSourceArrayDesc,
+																index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_index_filter, solar1024x1024_seq_random_lzw_huffman_naive_filter)
+{
+	test_body_seq_lzw_huffman_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
+															  &getSourceArrayDesc,
+															  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
 }	// TEST()
 }	// data2D_solar1024x1024
 // ##################################################
@@ -406,6 +455,20 @@ TEST(experiment_query_op_index_filter, mars4096x2048_seq_random_huffman_naive_fi
 														  &getSourceArrayDesc,
 														  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
 }	// TEST()
+
+TEST(experiment_query_op_index_filter, mars4096x2048_seq_random_adapt_huffman_naive_filter)
+{
+	test_body_seq_adapt_huffman_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
+																&getSourceArrayDesc,
+																index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_index_filter, mars4096x2048_seq_random_lzw_huffman_naive_filter)
+{
+	test_body_seq_lzw_huffman_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
+															  &getSourceArrayDesc,
+															  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
+}	// TEST()
 }	// data2D_mars4096x2048
 // ##################################################
 
@@ -496,6 +559,20 @@ TEST(experiment_query_op_index_filter, mercurydem20480x10240_seq_random_huffman_
 														  &getSourceArrayDesc,
 														  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
 }	// TEST()
+
+TEST(experiment_query_op_index_filter, mercurydem20480x10240_seq_random_adapt_huffman_naive_filter)
+{
+	test_body_seq_adapt_huffman_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
+																&getSourceArrayDesc,
+																index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_index_filter, mercurydem20480x10240_seq_random_lzw_huffman_naive_filter)
+{
+	test_body_seq_lzw_huffman_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
+															  &getSourceArrayDesc,
+															  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
+}	// TEST()
 }	// data2D_mercurydem20480x10240
 // ##################################################
 
@@ -585,6 +662,20 @@ TEST(experiment_query_op_index_filter, lunar102400x40960_seq_random_huffman_naiv
 	test_body_seq_huffman_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
 														  &getSourceArrayDesc,
 														  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_index_filter, lunar102400x40960_seq_random_adapt_huffman_naive_filter)
+{
+	test_body_seq_adapt_huffman_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
+																&getSourceArrayDesc,
+																index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_index_filter, lunar102400x40960_seq_random_lzw_huffman_naive_filter)
+{
+	test_body_seq_lzw_huffman_random_naive_filter<value_type>(&getSourceArrayIfEmpty,
+															  &getSourceArrayDesc,
+															  index_filter::numTests, index_filter::saveArray, index_filter::validation, index_filter::printFlag);
 }	// TEST()
 }	// data2D_lunar102400x40960
 // ##################################################

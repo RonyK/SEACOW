@@ -141,6 +141,24 @@ TEST(experiment_query_op_between, star1024x1024_seq_random_huffman_between)
 													 dimX, dimY,
 													 between::saveArray, between::validation, between::printFlag);
 }	// TEST()
+
+TEST(experiment_query_op_between, star1024x1024_seq_random_adapt_huffman_between)
+{
+	test_body_seq_random_adapt_huffman_between<value_type>(&getSourceArrayIfEmpty,
+														   &getSourceArrayDesc,
+														   between::numTests, between::selectivities,
+														   dimX, dimY,
+														   between::saveArray, between::validation, between::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, star1024x1024_seq_random_lzw_huffman_between)
+{
+	test_body_seq_random_lzw_huffman_between<value_type>(&getSourceArrayIfEmpty,
+														 &getSourceArrayDesc,
+														 between::numTests, between::selectivities,
+														 dimX, dimY,
+														 between::saveArray, between::validation, between::printFlag);
+}	// TEST()
 }	// data2D_star1024x1024
 // ##################################################
 
@@ -233,6 +251,24 @@ TEST(experiment_query_op_between, saturn1024x1024_seq_random_huffman_between)
 													 between::numTests, between::selectivities,
 													 dimX, dimY,
 													 between::saveArray, between::validation, between::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, saturn1024x1024_seq_random_adapt_huffman_between)
+{
+	test_body_seq_random_adapt_huffman_between<value_type>(&getSourceArrayIfEmpty,
+														   &getSourceArrayDesc,
+														   between::numTests, between::selectivities,
+														   dimX, dimY,
+														   between::saveArray, between::validation, between::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, saturn1024x1024_seq_random_lzw_huffman_between)
+{
+	test_body_seq_random_lzw_huffman_between<value_type>(&getSourceArrayIfEmpty,
+														 &getSourceArrayDesc,
+														 between::numTests, between::selectivities,
+														 dimX, dimY,
+														 between::saveArray, between::validation, between::printFlag);
 }	// TEST()
 }	// data2D_saturn1024x1024
 // ##################################################
@@ -327,6 +363,24 @@ TEST(experiment_query_op_between, solar1024x1024_seq_random_huffman_between)
 													 dimX, dimY,
 													 between::saveArray, between::validation, between::printFlag);
 }	// TEST()
+
+TEST(experiment_query_op_between, solar1024x1024_seq_random_adapt_huffman_between)
+{
+	test_body_seq_random_adapt_huffman_between<value_type>(&getSourceArrayIfEmpty,
+														   &getSourceArrayDesc,
+														   between::numTests, between::selectivities,
+														   dimX, dimY,
+														   between::saveArray, between::validation, between::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, solar1024x1024_seq_random_lzw_huffman_between)
+{
+	test_body_seq_random_lzw_huffman_between<value_type>(&getSourceArrayIfEmpty,
+														 &getSourceArrayDesc,
+														 between::numTests, between::selectivities,
+														 dimX, dimY,
+														 between::saveArray, between::validation, between::printFlag);
+}	// TEST()
 }	// data2D_solar1024x1024
 // ##################################################
 
@@ -418,6 +472,24 @@ TEST(experiment_query_op_between, mars4096x2048_seq_random_huffman_between)
 													 between::numTests, between::selectivities,
 													 dimX, dimY,
 													 between::saveArray, between::validation, between::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, mars4096x2048_seq_random_adapt_huffman_between)
+{
+	test_body_seq_random_adapt_huffman_between<value_type>(&getSourceArrayIfEmpty,
+														   &getSourceArrayDesc,
+														   between::numTests, between::selectivities,
+														   dimX, dimY,
+														   between::saveArray, between::validation, between::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, mars4096x2048_seq_random_lzw_huffman_between)
+{
+	test_body_seq_random_lzw_huffman_between<value_type>(&getSourceArrayIfEmpty,
+														 &getSourceArrayDesc,
+														 between::numTests, between::selectivities,
+														 dimX, dimY,
+														 between::saveArray, between::validation, between::printFlag);
 }	// TEST()
 }	// data2D_mars4096x2048
 // ##################################################
@@ -511,6 +583,24 @@ TEST(experiment_query_op_between, mercurydem20480x10240_seq_random_huffman_betwe
 													 dimX, dimY,
 													 between::saveArray, between::validation, between::printFlag);
 }	// TEST()
+
+TEST(experiment_query_op_between, mercurydem20480x10240_seq_random_adapt_huffman_between)
+{
+	test_body_seq_random_adapt_huffman_between<value_type>(&getSourceArrayIfEmpty,
+														   &getSourceArrayDesc,
+														   between::numTests, between::selectivities,
+														   dimX, dimY,
+														   between::saveArray, between::validation, between::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, mercurydem20480x10240_seq_random_lzw_huffman_between)
+{
+	test_body_seq_random_lzw_huffman_between<value_type>(&getSourceArrayIfEmpty,
+														 &getSourceArrayDesc,
+														 between::numTests, between::selectivities,
+														 dimX, dimY,
+														 between::saveArray, between::validation, between::printFlag);
+}	// TEST()
 }	// data2D_mercurydem20480x10240
 // ##################################################
 
@@ -598,10 +688,28 @@ TEST(experiment_query_op_between, lunar102400x40960_seq_random_lzw_between)
 TEST(experiment_query_op_between, lunar102400x40960_seq_random_huffman_between)
 {
 	test_body_seq_random_huffman_between<value_type>(&getSourceArrayIfEmpty,
-												 &getSourceArrayDesc,
-												 between::numTests, between::selectivities,
-												 dimX, dimY,
-												 between::saveArray, between::validation, between::printFlag);
+													 &getSourceArrayDesc,
+													 between::numTests, between::selectivities,
+													 dimX, dimY,
+													 between::saveArray, between::validation, between::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, lunar102400x40960_seq_random_adapt_huffman_between)
+{
+	test_body_seq_random_adapt_huffman_between<value_type>(&getSourceArrayIfEmpty,
+														   &getSourceArrayDesc,
+														   between::numTests, between::selectivities,
+														   dimX, dimY,
+														   between::saveArray, between::validation, between::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, lunar102400x40960_seq_random_lzw_huffman_between)
+{
+	test_body_seq_random_lzw_huffman_between<value_type>(&getSourceArrayIfEmpty,
+														 &getSourceArrayDesc,
+														 between::numTests, between::selectivities,
+														 dimX, dimY,
+														 between::saveArray, between::validation, between::printFlag);
 }	// TEST()
 }	// data2D_lunar102400x40960
 // ##################################################

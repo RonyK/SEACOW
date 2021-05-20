@@ -1,10 +1,11 @@
 #pragma once
-#ifndef _MSDB_LZWHUFFMANCHUNK_H_
-#define _MSDB_LZWHUFFMANCHUNK_H_
+#ifndef _MSDB_SEHUFFMANCHUNK_H_
+#define _MSDB_SEHUFFMANCHUNK_H_
 
 #include <stdafx.h>
 #include <array/blockChunk.h>
 #include <io/bitstream.h>
+#include <compression/seChunk.h>
 #include <compression/huffmanCode.h>
 
 namespace msdb
@@ -12,7 +13,7 @@ namespace msdb
 class seHuffmanChunk;
 using pSeHuffmanChunk = std::shared_ptr<seHuffmanChunk>;
 
-class seHuffmanChunk : public memBlockChunk
+class seHuffmanChunk : public seChunk
 {
 public:
 	seHuffmanChunk(pChunkDesc desc);
@@ -30,35 +31,34 @@ public:
 	template<typename Ty_>
 	void serializeTy(bstream& out)
 	{
-		//bstream lzwOut;
-		//lzwCoder<lzwCodeType> lzwEncoder;
-		//lzwEncoder.encode(lzwOut, (const unsigned char*)this->cached_->getReadData(), this->cached_->size());
+		bstream seOut;
+		this->seEncode<Ty_>(seOut);
+		
+		out << setw(sizeof(size_type) * CHAR_BIT) << seOut.capacity();
 
-		//out << setw(sizeof(size_type) * CHAR_BIT) << lzwOut.capacity();
-
-		////////////////////////////////
-		//huffmanCoder<uint16_t, uint8_t> huffmanEncoder;
-		//huffmanEncoder.encode(out, (uint8_t*)lzwOut.data(), lzwOut.capacity());
+		//////////////////////////////
+		huffmanCoder<uint16_t, uint8_t> huffmanEncoder;
+		huffmanEncoder.encode(out, (uint8_t*)seOut.data(), seOut.capacity());
 	}
 
 	template<class Ty_>
 	void deserializeTy(bstream& in)
 	{
-		//size_type lzwSize = 0;
-		//in >> setw(sizeof(size_type) * CHAR_BIT) >> lzwSize;
+		size_type seSize = 0;
+		in >> setw(sizeof(size_type) * CHAR_BIT) >> seSize;
+		uint8_t* tempBuffer = new uint8_t[seSize];
 
-		//uint8_t* tempBuffer = new uint8_t[lzwSize];
+		huffmanCoder<uint16_t, uint8_t> huffmanDecoder;
+		huffmanDecoder.decode((uint8_t*)tempBuffer, seSize, in);
 
-		//huffmanCoder<uint16_t, uint8_t> huffmanDecoder;
-		//huffmanDecoder.decode((uint8_t*)tempBuffer, lzwSize, in);
+		//////////////////////////////
+		bstream seIn;
+		seIn.resize(seSize);
+		memcpy(seIn.data(), tempBuffer, seSize);
+		delete[] tempBuffer;
 
-		//bstream lzwIn;
-		//lzwIn.resize(lzwSize);
-		//memcpy(lzwIn.data(), tempBuffer, lzwSize);
-
-		//lzwCoder<lzwCodeType> lzwDecoder;
-		//lzwDecoder.decode((unsigned char*)this->cached_->getData(), this->cached_->size(), in);
+		this->seDecode<Ty_>(seIn);
 	}
 };
 }		// msdb
-#endif	// _MSDB_LZWHUFFMANCHUNK_H_
+#endif	// _MSDB_SEHUFFMANCHUNK_H_
