@@ -5,15 +5,6 @@
 
 namespace msdb
 {
-//lzwHuffmanChunk(pChunkDesc desc)
-//	: memBlockChunk(desc)
-//{
-//}
-//
-//lzwHuffmanChunk::~lzwHuffmanChunk()
-//{
-//}
-//
 lzwHuffmanChunk::lzwHuffmanChunk(pChunkDesc desc)
 	: memBlockChunk(desc)
 {

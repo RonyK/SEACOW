@@ -399,6 +399,7 @@ public:
 					cur->childLevel_[curCode + i].isLeaf_ = true;
 					cur->childLevel_[curCode + i].node_ = node;
 				}
+				return;
 			}
 			else
 			{

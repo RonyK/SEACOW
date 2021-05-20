@@ -598,7 +598,7 @@ namespace msdb
 	template <class _Block, class _Traits>
 	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const uint64_t _val)
 	{
-		_Ostr.fillLongLong(_val, sizeof(int) * CHAR_BIT);
+		_Ostr.fillLongLong(_val, sizeof(uint64_t) * CHAR_BIT);
 		return _Ostr;
 	}
 

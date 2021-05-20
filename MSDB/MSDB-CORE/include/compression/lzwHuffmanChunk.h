@@ -57,8 +57,10 @@ public:
 		lzwIn.resize(lzwSize);
 		memcpy(lzwIn.data(), tempBuffer, lzwSize);
 
+		delete[] tempBuffer;
+
 		lzwCoder<lzwCodeType> lzwDecoder;
-		lzwDecoder.decode((unsigned char*)this->cached_->getData(), this->cached_->size(), in);
+		lzwDecoder.decode((unsigned char*)this->cached_->getData(), this->cached_->size(), lzwIn);
 	}
 
 private:

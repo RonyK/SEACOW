@@ -1,5 +1,4 @@
 #include <stdafx.h>
-#include <stdafx.h>
 #include <op/huffman_encode/huffman_encode_plan.h>
 #include <op/huffman_encode/huffman_encode_action.h>
 
