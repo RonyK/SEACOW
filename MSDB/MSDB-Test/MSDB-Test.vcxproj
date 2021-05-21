@@ -48,6 +48,7 @@
     <ClInclude Include="test\compression\test_qry_zip.h" />
     <ClInclude Include="test\dummy\dummy.h" />
     <ClInclude Include="test\dummy\dummy_astronomy.h" />
+    <ClInclude Include="test\dummy\equalTest.h" />
     <ClInclude Include="test\dummy\opArrayDummy.h" />
     <ClInclude Include="test\dummy\opDummy.h" />
     <ClInclude Include="test\dummy\opPlanDummy.h" />
@@ -59,6 +60,7 @@
     <ClInclude Include="test\query\op\adapt_huffman\act_adapt_huffman_encode_decode.h" />
     <ClInclude Include="test\query\op\adapt_huffman\qry_adapt_huffman_encode_decode.h" />
     <ClInclude Include="test\query\op\between\test_body_between.h" />
+    <ClInclude Include="test\query\op\between_filter\qry_between_filter.h" />
     <ClInclude Include="test\query\op\filter\test_body_filter.h" />
     <ClInclude Include="test\query\op\huffman\act_huffman_encode_decode.h" />
     <ClInclude Include="test\query\op\huffman\qry_huffman_encode_decode.h" />
@@ -105,6 +107,7 @@
     <ClCompile Include="test\query\op\adapt_huffman\act_adapt_huffman_encode_decode.cpp" />
     <ClCompile Include="test\query\op\adapt_huffman\test_adapt_huffman_encode_decode.cpp" />
     <ClCompile Include="test\query\op\between\test_between.cpp" />
+    <ClCompile Include="test\query\op\between_filter\test_between_filter.cpp" />
     <ClCompile Include="test\query\op\compass_encode_decode\test_compass_encode_decode.cpp" />
     <ClCompile Include="test\query\op\compass_index_build\test_compass_index_build.cpp" />
     <ClCompile Include="test\query\op\delta_decode\test_mmt_delta_decode.cpp" />

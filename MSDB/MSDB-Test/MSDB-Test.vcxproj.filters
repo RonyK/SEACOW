@@ -63,6 +63,7 @@
     <ClCompile Include="test\query\op\adapt_huffman\test_adapt_huffman_encode_decode.cpp" />
     <ClCompile Include="test\query\op\se_huffman\test_se_huffman_encode_decode.cpp" />
     <ClCompile Include="test\query\op\se_huffman\act_se_huffman_encode_decode.cpp" />
+    <ClCompile Include="test\query\op\between_filter\test_between_filter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">
@@ -93,6 +94,8 @@
     <ClInclude Include="test\query\op\adapt_huffman\act_adapt_huffman_encode_decode.h" />
     <ClInclude Include="test\query\op\se_huffman\qry_se_huffman_encode_decode.h" />
     <ClInclude Include="test\query\op\se_huffman\act_se_huffman_encode_decode.h" />
+    <ClInclude Include="test\query\op\between_filter\qry_between_filter.h" />
+    <ClInclude Include="test\dummy\equalTest.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="test">

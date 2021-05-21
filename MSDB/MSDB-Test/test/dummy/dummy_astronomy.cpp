@@ -11,8 +11,8 @@ namespace data2D_star1024x1024
 {
 std::vector<dim_type> dims = { dimY, dimX };
 std::vector<dim_type> originalDims = { dimY, dimX };
-//std::vector<dim_type> chunkNums = { 1, 1 };
 std::vector<dim_type> chunkNums = { 16, 16 };
+//std::vector<dim_type> chunkNums = { 16, 16 };
 std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
 //std::vector<dim_type> blockNums = { 4, 4 };
 std::vector<dim_type> blockNums = { 1, 1 };

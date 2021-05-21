@@ -28,55 +28,12 @@
 
 #include <exp/experimentsInfo.h>
 
+#include <dummy/equalTest.h>
+
 namespace msdb
 {
 namespace caDummy
 {
-template <typename value_type>
-bool equalTest(pArray arr, int64_t value)
-{
-	BOOST_LOG_TRIVIAL(debug) << "##############################";
-	BOOST_LOG_TRIVIAL(debug) << "Value Equal Test";
-	BOOST_LOG_TRIVIAL(debug) << "##############################";
-
-	size_t numCells = 0;
-
-	for (auto attrDesc : *arr->getDesc()->attrDescs_)
-	{
-		auto cit = arr->getChunkIterator();
-		while (!cit->isEnd())
-		{
-			if (cit->isExist())
-			{
-				auto bit = (**cit)->getBlockIterator();
-
-				while (!bit->isEnd())
-				{
-					if (bit->isExist())
-					{
-						auto iit = (**bit)->getItemIterator();
-
-						while (!iit->isEnd())
-						{
-							if (iit->isExist())
-							{
-								EXPECT_EQ((**iit).get<value_type>(), static_cast<value_type>(value));
-								++numCells;
-							}
-							++(*iit);
-						}
-					}
-					++(*bit);
-				}
-			}
-			++(*cit);
-		}
-	}
-
-	BOOST_LOG_TRIVIAL(info) << "[Validation] num values: " << numCells << std::endl;
-	return true;
-}
-
 // ##################################################
 // # Test Body for Sequencial Random Naive/Index Filter
 //

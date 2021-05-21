@@ -56,6 +56,10 @@ namespace filter_random
 {
 static const size_t expId = 200;
 }		// filter_random
+namespace between_filter_random
+{
+static const size_t expId = 300;
+}		// between_filter_random
 }		// experiments
 }		// caDummy
 }		// msdb
