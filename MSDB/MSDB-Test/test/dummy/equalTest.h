@@ -20,6 +20,7 @@ bool equalTest(pArray arr, int64_t value)
 
 	size_t numCells = 0;
 	size_t numErrors = 0;
+	bool isFirstWrongChunk = false;
 
 	for (auto attrDesc : *arr->getDesc()->attrDescs_)
 	{
@@ -43,11 +44,23 @@ bool equalTest(pArray arr, int64_t value)
 								if ((**iit).get<value_type>() != value)
 								{
 									++numErrors;
+									value_type li = (**iit).get<value_type>();
+
+									BOOST_LOG_TRIVIAL(debug) << "Diff : " << static_cast<int64_t>(li) << ", " << static_cast<int64_t>(value);
+									BOOST_LOG_TRIVIAL(debug) << "Chunk: " << cit->coor().toString() << "(" << cit->seqPos() << ") / Block: " << bit->coor().toString() << "(" << bit->seqPos() << ") / Item: " << iit->coor().toString();
+
+									if (!isFirstWrongChunk)
+									{
+										isFirstWrongChunk = false;
+
+										BOOST_LOG_TRIVIAL(debug) << "Block" << std::endl;
+										(*bit)->print();
+									}
 								}
 
 								if (numErrors > _MAX_EQUALTEST_ERROR_REPRESENT_)
 								{
-									return;
+									return false;
 								}
 								EXPECT_EQ((**iit).get<value_type>(), static_cast<value_type>(value));
 								++numCells;

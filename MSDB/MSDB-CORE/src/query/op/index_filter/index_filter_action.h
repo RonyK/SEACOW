@@ -37,8 +37,10 @@ private:
 			{
 				auto inChunk = (**inChunkItr);
 				auto outChunk = outArr->makeChunk(attrDesc->id_, inChunk->getId());
-				//outChunk->bufferRef(inChunk);
+				outChunk->setChunkDesc(inChunk->getDesc());
+				outChunk->copyBlockBitmap(inChunk->getBlockBitmap());
 				outChunk->bufferCopy(inChunk);
+				//outChunk->bufferRef(inChunk);
 
 				int64_t chunkFilteredValue = 0;
 				int64_t readChunkBlocks = 0;
@@ -84,6 +86,9 @@ private:
 			{
 				auto inBlock = (**inBlockItr);
 				auto outBlock = outChunk->makeBlock(inBlock->getId());
+
+				outBlock->setBlockDesc(inBlock->getDesc());
+				outBlock->copyBitmap(inBlock->getBitmap());
 
 				int64_t blockFilteredValue = 0;
 				auto isEmptyBlock = this->blockFilter<Ty_>(outBlock, inBlock, inPredicate, blockFilteredValue);

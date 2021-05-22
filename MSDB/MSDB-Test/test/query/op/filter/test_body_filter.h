@@ -310,6 +310,7 @@ pArray test_body_seq_compass_random_index_filter(_pFuncGetSourceArray_,
 		exe_qry_ind_compass_index_build<value_type>(sourceArr, numBins, false);		// Do not print in saveArray
 		exe_qry_ind_compass_encode<value_type>(sourceArr, numBins, false);			// Do not print in saveArray
 	}
+	//////////////////////////////
 
 	//////////////////////////////
 	// 04. Execute Testcases
@@ -1546,7 +1547,7 @@ pArray exe_qry_seq_spiht_naive_filter(_vectorSourceArray_,
 	if (printFlag)
 	{
 		BOOST_LOG_TRIVIAL(debug) << "##############################" << std::endl;
-		BOOST_LOG_TRIVIAL(debug) << "Se Decomp Arr" << std::endl;
+		BOOST_LOG_TRIVIAL(debug) << "SPIHT Decode Arr" << std::endl;
 		outArr->print();
 		//outArr->getChunkBitmap()->print();
 	}

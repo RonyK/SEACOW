@@ -33,6 +33,10 @@ coorRange block::getBlockItemRange()
 {
 	return coorRange(this->desc_->getIsp(), this->desc_->getIep());
 }
+void block::setBlockDesc(const pBlockDesc inDesc)
+{
+	*this->desc_ = *inDesc;
+}
 void block::unlinkFromChunkBuffer()
 {
 	this->cached_ = nullptr;

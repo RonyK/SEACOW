@@ -32,6 +32,7 @@ public:
 	//inline void setIep(coor iep);
 	coorRange getBlockRange();
 	coorRange getBlockItemRange();
+	void setBlockDesc(const pBlockDesc inDesc);
 
 	virtual void serialize(bstream& os) = 0;
 	virtual void deserialize(bstream& is) = 0;

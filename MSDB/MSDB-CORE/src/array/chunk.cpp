@@ -114,6 +114,10 @@ const pChunkDesc chunk::getDesc() const
 {
 	return this->desc_;
 }
+void chunk::setChunkDesc(const pChunkDesc inDesc)
+{
+	*this->desc_ = *inDesc;
+}
 chunk::size_type chunk::getDSize()
 {
 	return this->desc_->getDimSize();

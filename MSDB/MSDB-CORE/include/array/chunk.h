@@ -30,6 +30,7 @@ public:
 	chunkId getId() const;
 	void setId(chunkId id);	// chunk id can be chnaged in query processing
 	const pChunkDesc getDesc() const;
+	void setChunkDesc(const pChunkDesc inDesc);
 	size_type getDSize();
 	size_type numCells();
 	coor getChunkCoor();

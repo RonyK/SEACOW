@@ -48,6 +48,8 @@ pArray between_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 				{
 					//std::cout << "Intersect" << std::endl;
 					auto outChunk = outArr->makeChunk(attr->id_, inChunk->getId());
+					outChunk->setChunkDesc(inChunk->getDesc());
+					outChunk->copyBlockBitmap(inChunk->getBlockBitmap());
 					outChunk->bufferCopy(inChunk);
 					//outChunk->bufferRef(inChunk);
 
