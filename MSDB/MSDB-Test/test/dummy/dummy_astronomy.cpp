@@ -138,8 +138,10 @@ namespace data2D_mercurydem20480x10240
 std::vector<dim_type> dims = { dimY, dimX };
 std::vector<dim_type> originalDims = { dimY, dimX };
 //std::vector<dim_type> chunkNums = { 1, 1 };
+//std::vector<dim_type> chunkNums = { 4, 8 };
 //std::vector<dim_type> chunkNums = { 8, 16};
-//std::vector<dim_type> chunkNums = { 32, 64 };
+//std::vector<dim_type> chunkNums = { 8, 16};
+//std::vector<dim_type> chunkNums = { 16, 32 };
 std::vector<dim_type> chunkNums = { 64, 128 };
 //std::vector<dim_type> chunkNums = { 128, 256 };
 //std::vector<dim_type> chunkNums = { 256, 512};

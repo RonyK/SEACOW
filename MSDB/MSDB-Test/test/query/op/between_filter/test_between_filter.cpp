@@ -8,8 +8,8 @@ namespace caDummy
 namespace between_filter
 {
 int64_t numTests = 3;
-//std::vector<float> selectivities = { 0.01, 0.1, 1 };
-std::vector<float> selectivities = { 10 };
+std::vector<float> selectivities = { 0.01, 0.1, 1, 10 };
+//std::vector<float> selectivities = { 10 };
 
 bool saveArray = false;
 bool printFlag = false;
