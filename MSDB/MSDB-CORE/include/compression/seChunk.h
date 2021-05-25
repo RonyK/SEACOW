@@ -7,6 +7,7 @@
 #include <array/block.h>
 #include <compression/waveletUtil.h>
 #include <numeric>
+#include <util/valueDistributionRecorder.h>
 
 namespace msdb
 {
@@ -93,6 +94,9 @@ public:
 		//}
 		//assert(rbFromMMT >= rbFromDelta);
 #endif
+#ifndef NDEBUG
+		auto vRecorder = valueDistributionRecorder::instance();
+#endif
 
 		this->serializeGap(bs, rbFromMMT - rbFromDelta);
 		bs << setw(rbFromDelta);
@@ -113,9 +117,12 @@ public:
 				value = abs_(value);
 				value |= signMask;
 			}
-			
 			bs << value;
 			++(*bItemItr);
+
+#ifndef NDEBUG
+			vRecorder->increase(rbFromDelta, value);
+#endif
 		}
 	}
 
@@ -126,6 +133,9 @@ public:
 
 #ifndef NDEBUG
 		std::vector<int64_t> gaps;
+#endif
+#ifndef NDEBUG
+		auto vRecorder = valueDistributionRecorder::instance();
 #endif
 
 		for (size_t level = 1; level <= this->level_; ++level)
@@ -178,6 +188,10 @@ public:
 							}
 							bs << value;
 							++(*bItemItr);
+
+#ifndef NDEBUG
+							vRecorder->increase(rbFromDelta, value);
+#endif
 						}
 					}
 

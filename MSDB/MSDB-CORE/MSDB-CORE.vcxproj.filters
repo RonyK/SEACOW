@@ -146,6 +146,7 @@
     <ClCompile Include="src\query\op\adapt_huffman_encode\adapt_huffman_encode_action.cpp" />
     <ClCompile Include="src\query\op\adapt_huffman_encode\adapt_huffman_encode_plan.cpp" />
     <ClCompile Include="src\query\op\se_huffman_encode\se_huffman_encode_plan.cpp" />
+    <ClCompile Include="src\util\valueDistributionRecorder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\array\array.h" />
@@ -308,6 +309,7 @@
     <ClInclude Include="src\query\op\adapt_huffman_encode\adapt_huffman_encode_action.h" />
     <ClInclude Include="src\query\op\adapt_huffman_encode\adapt_huffman_encode_plan.h" />
     <ClInclude Include="src\query\op\se_huffman_encode\se_huffman_encode_plan.h" />
+    <ClInclude Include="include\util\valueDistributionRecorder.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">

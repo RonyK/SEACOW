@@ -256,6 +256,7 @@
     <ClInclude Include="include\util\logger.h" />
     <ClInclude Include="include\util\math.h" />
     <ClInclude Include="include\util\singleton.h" />
+    <ClInclude Include="include\util\valueDistributionRecorder.h" />
     <ClInclude Include="include\util\waveletIterator.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
@@ -484,6 +485,7 @@
     <ClCompile Include="src\compression\daubechies.cpp" />
     <ClCompile Include="src\compression\haar.cpp" />
     <ClCompile Include="src\compression\wavelet.cpp" />
+    <ClCompile Include="src\util\valueDistributionRecorder.cpp" />
     <ClCompile Include="src\xml\tinyxml2.cpp" />
     <ClCompile Include="src\stdafx.cpp" />
   </ItemGroup>

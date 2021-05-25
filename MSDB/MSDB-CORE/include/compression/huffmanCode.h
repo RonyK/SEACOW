@@ -160,6 +160,8 @@ public:
 		{
 			encodeSymbol(out, in[i]);
 		}
+
+		//printEncodeTable();
 	}
 
 	void buildTree(std::vector<size_t>& freq)
@@ -193,33 +195,44 @@ public:
 
 	void encodeTree(bstream& out)
 	{
-		std::stack<huffmanNode*> dfsStack;
-		dfsStack.push(this->root_);
-		this->root_->code_ = 0;
-		this->root_->codeLen_ = 0;
-
-		while (!dfsStack.empty())
+		if (this->root_->isLeaf())
 		{
-			huffmanNode* node = dfsStack.top();
-			dfsStack.pop();
-			
-			assert(node != nullptr);
+			out << setw(1) << (unsigned char)0x1;
+			out << setw(bits_) << this->root_->symbol_;
+			this->root_->codeLen_ = 1;
+			this->encodeLookupTable_[this->root_->symbol_] = this->root_;
+		}
+		else
+		{
+			std::stack<huffmanNode*> dfsStack;
+			dfsStack.push(this->root_);
+			this->root_->code_ = 0;
+			this->root_->codeLen_ = 0;
 
-			if (node->isLeaf())
+			while (!dfsStack.empty())
 			{
-				out << setw(1) << (unsigned char)0x1;
-				out << setw(bits_) << node->symbol_;
-				this->encodeLookupTable_[node->symbol_] = node;
-			} else
-			{
-				out << setw(1) << (unsigned char)0x0;
-				node->left_->code_ = node->code_ << 1;
-				node->right_->code_ = node->code_ << 1 | (codeType)0x1;
-				node->left_->codeLen_ = node->codeLen_ + (codeType)1;
-				node->right_->codeLen_ = node->codeLen_ + (codeType)1;
+				huffmanNode* node = dfsStack.top();
+				dfsStack.pop();
 
-				dfsStack.push(node->left_);
-				dfsStack.push(node->right_);
+				assert(node != nullptr);
+
+				if (node->isLeaf())
+				{
+					out << setw(1) << (unsigned char)0x1;
+					out << setw(bits_) << node->symbol_;
+					this->encodeLookupTable_[node->symbol_] = node;
+				}
+				else
+				{
+					out << setw(1) << (unsigned char)0x0;
+					node->left_->code_ = node->code_ << 1;
+					node->right_->code_ = node->code_ << 1 | (codeType)0x1;
+					node->left_->codeLen_ = node->codeLen_ + (codeType)1;
+					node->right_->codeLen_ = node->codeLen_ + (codeType)1;
+
+					dfsStack.push(node->left_);
+					dfsStack.push(node->right_);
+				}
 			}
 		}
 	}
@@ -316,6 +329,11 @@ public:
 			if (isLeaf)
 			{
 				in >> setw(bits_) >> node->symbol_;
+
+				if (node == this->root_)
+				{
+					node->codeLen_ = 1;
+				}
 				this->insertSymbolInDecodeLookupTable(node);
 				// insert in decode table
 				// insert 0~current code
@@ -403,6 +421,19 @@ public:
 			else
 			{
 				cur = &(cur->childLevel_[curCode]);
+			}
+		}
+	}
+
+private:
+	void printEncodeTable()
+	{
+		for (symbolType i = 0; i < (symbolType)-1; ++i)
+		{
+			auto node = this->encodeLookupTable_[i];
+			if (node)
+			{
+				BOOST_LOG_TRIVIAL(debug) << static_cast<uint64_t>(i) << ": " << static_cast<uint64_t>(node->code_) << "(" << static_cast<uint64_t>(node->codeLen_) << ")";
 			}
 		}
 	}

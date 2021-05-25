@@ -147,8 +147,8 @@ pArray test_body_seq_huffman_encode_decode(_pFuncGetSourceArray_,
 {
 	//////////////////////////////
 	// 01. Get Source Array
-	//auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, false);
-	//sourceArr[0]->setId(sourceArr[0]->getId() + huffman_array_id);
+	auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, false);
+	sourceArr[0]->setId(sourceArr[0]->getId() + huffman_array_id);
 
 	auto sourceArrDesc = getArrayFromFunction<value_type>(getSourceArrayDesc, false);
 	sourceArrDesc[0]->setId(sourceArrDesc[0]->getId() + huffman_array_id);
@@ -156,7 +156,7 @@ pArray test_body_seq_huffman_encode_decode(_pFuncGetSourceArray_,
 
 	//////////////////////////////
 	// 02. Save Array
-	//exe_qry_ind_huffman_encode<value_type>(sourceArr, printFlag);
+	exe_qry_ind_huffman_encode<value_type>(sourceArr, printFlag);
 	//////////////////////////////
 
 	//////////////////////////////
@@ -166,10 +166,10 @@ pArray test_body_seq_huffman_encode_decode(_pFuncGetSourceArray_,
 
 	//////////////////////////////
 	// 04. Evaluation
-	//if (validation)
-	//{
-	//	compArrary<value_type>(sourceArr[0], outArr);
-	//}
+	if (validation)
+	{
+		compArrary<value_type>(sourceArr[0], outArr);
+	}
 	//////////////////////////////
 
 	return outArr;
