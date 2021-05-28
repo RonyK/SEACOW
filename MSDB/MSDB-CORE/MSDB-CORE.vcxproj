@@ -195,6 +195,7 @@
     <ClInclude Include="include\compression\adaptHuffmanBlock.h" />
     <ClInclude Include="include\compression\adaptHuffmanChunk.h" />
     <ClInclude Include="include\compression\adaptiveHuffmanCode.h" />
+    <ClInclude Include="include\compression\fixedHuffmanCoder.h" />
     <ClInclude Include="include\compression\huffmanBlock.h" />
     <ClInclude Include="include\compression\huffmanChunk.h" />
     <ClInclude Include="include\compression\huffmanCode.h" />

@@ -65,7 +65,7 @@ private:
 				auto outChunk = outArr->makeChunk(*inChunk->getDesc());
 
 				io_service_->post(boost::bind(&se_huffman_decode_action::decompressChunk<Ty_>, this,
-											  std::static_pointer_cast<wtChunk>(outChunk), inChunk, qry, outArr, attrId, mmtIndex, currentThreadId));
+												std::static_pointer_cast<wtChunk>(outChunk), inChunk, qry, outArr, attrId, mmtIndex, currentThreadId));
 			}
 
 			++(*cit);

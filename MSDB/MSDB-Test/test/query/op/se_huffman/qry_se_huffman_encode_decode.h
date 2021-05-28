@@ -224,10 +224,10 @@ pArray test_body_seq_se_huffman_encode_decode(_pFuncGetSourceArray_,
 
 	////////////////////////////////
 	//// 04. Evaluation
-	//if (validation)
-	//{
-	//	compArrary<value_type>(sourceArr[0], outArr);
-	//}
+	if (validation)
+	{
+		compArrary<value_type>(sourceArr[0], outArr);
+	}
 	////////////////////////////////
 
 	//return outArr;

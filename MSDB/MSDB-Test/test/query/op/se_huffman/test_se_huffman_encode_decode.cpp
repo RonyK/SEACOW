@@ -1,5 +1,6 @@
 #include <pch.h>
 #include "qry_se_huffman_encode_decode.h"
+#include <compression/fixedHuffmanCoder.h>
 
 namespace msdb
 {
@@ -11,6 +12,39 @@ bool encodeArray = false;
 bool printFlag = false;
 bool validation = true;
 }	// huffman_encode_decode
+
+class query_op_se_huffman : public ::testing::Test
+{
+protected:
+	virtual void SetUp()
+	{
+		pQuery qry = std::make_shared<query>();
+		BOOST_LOG_TRIVIAL(debug) << "SetUp";
+
+		auto coder1 = fixedHuffmanCoder<1>::instance();
+		auto coder2 = fixedHuffmanCoder<2>::instance();
+		auto coder3 = fixedHuffmanCoder<3>::instance();
+		auto coder4 = fixedHuffmanCoder<4>::instance();
+		auto coder5 = fixedHuffmanCoder<5>::instance();
+		auto coder6 = fixedHuffmanCoder<6>::instance();
+		auto coder7 = fixedHuffmanCoder<7>::instance();
+		auto coder8 = fixedHuffmanCoder<8>::instance();
+
+		coder1->printEncodeTable();
+		coder2->printEncodeTable();
+		coder3->printEncodeTable();
+		coder4->printEncodeTable();
+		coder5->printEncodeTable();
+		coder6->printEncodeTable();
+		coder7->printEncodeTable();
+		coder8->printEncodeTable();
+	}
+
+	virtual void TearDown()
+	{
+
+	}
+};
 
 namespace data2D_star1024x1024
 {
@@ -41,6 +75,32 @@ TEST(experiment_query_op_se_huffman, star1024x1024_seq_encode_decode)
 													   &getSourceArrayDesc,
 													   wtLevel, mmtLevel,
 													   se_huffman_encode_decode::validation, se_huffman_encode_decode::printFlag);
+
+	auto coder1 = fixedHuffmanCoder<1>::instance();
+	auto coder2 = fixedHuffmanCoder<2>::instance();
+	auto coder3 = fixedHuffmanCoder<3>::instance();
+	auto coder4 = fixedHuffmanCoder<4>::instance();
+	auto coder5 = fixedHuffmanCoder<5>::instance();
+	auto coder6 = fixedHuffmanCoder<6>::instance();
+	auto coder7 = fixedHuffmanCoder<7>::instance();
+	auto coder8 = fixedHuffmanCoder<8>::instance();
+
+	BOOST_LOG_TRIVIAL(debug) << "=====";
+	coder1->printEncodeTable();
+	BOOST_LOG_TRIVIAL(debug) << "=====";
+	coder2->printEncodeTable();
+	BOOST_LOG_TRIVIAL(debug) << "=====";
+	coder3->printEncodeTable();
+	BOOST_LOG_TRIVIAL(debug) << "=====";
+	coder4->printEncodeTable();
+	BOOST_LOG_TRIVIAL(debug) << "=====";
+	coder5->printEncodeTable();
+	BOOST_LOG_TRIVIAL(debug) << "=====";
+	coder6->printEncodeTable();
+	BOOST_LOG_TRIVIAL(debug) << "=====";
+	coder7->printEncodeTable();
+	BOOST_LOG_TRIVIAL(debug) << "=====";
+	coder8->printEncodeTable();
 }
 }	// data2D_star1024x1024
 

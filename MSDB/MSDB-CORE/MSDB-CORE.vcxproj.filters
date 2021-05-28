@@ -310,6 +310,7 @@
     <ClInclude Include="src\query\op\adapt_huffman_encode\adapt_huffman_encode_plan.h" />
     <ClInclude Include="src\query\op\se_huffman_encode\se_huffman_encode_plan.h" />
     <ClInclude Include="include\util\valueDistributionRecorder.h" />
+    <ClInclude Include="include\compression\fixedHuffmanCoder.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">

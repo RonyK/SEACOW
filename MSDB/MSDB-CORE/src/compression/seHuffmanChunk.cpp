@@ -49,16 +49,16 @@ void seHuffmanChunk::serialize(std::ostream& os)
 		this->serializeTy<int64_t>(bs);
 		break;
 	case eleType::UINT8:
-		this->serializeTy<uint8_t>(bs);
+		this->serializeTy<int8_t>(bs);
 		break;
 	case eleType::UINT16:
-		this->serializeTy<uint16_t>(bs);
+		this->serializeTy<int16_t>(bs);
 		break;
 	case eleType::UINT32:
-		this->serializeTy<uint32_t>(bs);
+		this->serializeTy<int32_t>(bs);
 		break;
 	case eleType::UINT64:
-		this->serializeTy<uint64_t>(bs);
+		this->serializeTy<int64_t>(bs);
 		break;
 	default:
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
@@ -96,19 +96,31 @@ void seHuffmanChunk::deserialize(std::istream& is)
 		this->deserializeTy<int64_t>(bs);
 		break;
 	case eleType::UINT8:
-		this->deserializeTy<uint8_t>(bs);
+		this->deserializeTy<int8_t>(bs);
 		break;
 	case eleType::UINT16:
-		this->deserializeTy<uint16_t>(bs);
+		this->deserializeTy<int16_t>(bs);
 		break;
 	case eleType::UINT32:
-		this->deserializeTy<uint32_t>(bs);
+		this->deserializeTy<int32_t>(bs);
 		break;
 	case eleType::UINT64:
-		this->deserializeTy<uint64_t>(bs);
+		this->deserializeTy<int64_t>(bs);
 		break;
 	default:
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 	}
 }
+
+std::vector<iFixedHuffmanCoder*> seHuffmanChunk::fixedHuffmanCoders = {
+	fixedHuffmanCoder<1>::instance(),
+	fixedHuffmanCoder<1>::instance(),
+	fixedHuffmanCoder<2>::instance(), 
+	fixedHuffmanCoder<3>::instance(),
+	fixedHuffmanCoder<4>::instance(),
+	fixedHuffmanCoder<5>::instance(),
+	fixedHuffmanCoder<6>::instance(),
+	fixedHuffmanCoder<7>::instance(),
+	fixedHuffmanCoder<8>::instance()
+};
 }	// msdb

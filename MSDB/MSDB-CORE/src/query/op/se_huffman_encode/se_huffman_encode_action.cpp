@@ -70,7 +70,7 @@ pSeHuffmanChunk se_huffman_encode_action::makeOutChunk(pWtChunk inChunk)
 	auto outChunkDesc = std::make_shared<chunkDesc>(*inChunk->getDesc());
 	pSeHuffmanChunk outChunk = std::make_shared<seHuffmanChunk>(outChunkDesc);
 	outChunk->setLevel(inChunk->getLevel());
-	outChunk->copyBlockBitmap(inChunk->getBlockBitmap());
+	//outChunk->copyBlockBitmap(inChunk->getBlockBitmap());
 	outChunk->bufferRef(inChunk);
 	outChunk->makeAllBlocks();
 	

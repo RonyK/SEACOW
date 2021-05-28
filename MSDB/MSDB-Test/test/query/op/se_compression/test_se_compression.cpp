@@ -12,7 +12,7 @@ namespace caDummy
 namespace se_comp_decomp
 {
 	bool saveArray = false;
-	bool printFlag = false;
+	bool printFlag = true;
 	bool validation = true;
 }
 

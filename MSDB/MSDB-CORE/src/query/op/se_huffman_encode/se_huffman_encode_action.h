@@ -54,7 +54,8 @@ private:
 
 			auto attr = outChunk->getDesc()->attrDesc_;
 			storageMgr::instance()->saveChunk(arrId, attr->id_, (outChunk)->getId(),
-											  std::static_pointer_cast<serializable>(outChunk));
+												std::static_pointer_cast<serializable>(outChunk));
+			
 			mSizeTotal += outChunk->getSerializedSize();
 			++(*cit);
 		}
