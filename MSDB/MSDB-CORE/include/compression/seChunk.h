@@ -129,6 +129,8 @@ public:
 	template <typename Ty_>
 	void serializeChildLevelBand(bstream& bs, pBlock inBlock, size_t seqId, dimension& bandDims, size_t numBandsInLevel)
 	{
+		//BOOST_LOG_TRIVIAL(debug) << "SE CHUNK - serializeChildLevelBand";
+
 		auto dSize = this->getDSize();
 
 #ifndef NDEBUG

@@ -136,11 +136,11 @@ int64_t seChunk::deserializeGap(bstream& bs)
 	char negiveGap;
 	bs >> negiveGap;
 
-	size_t gap = 0;
+	int64_t gap = 0;
 	char gapBit = 0;
 	do
 	{
-		assert(gap <= 128);
+		assert(gap <= 64);
 		bs >> gapBit;
 		++gap;
 	} while (gapBit != 1);

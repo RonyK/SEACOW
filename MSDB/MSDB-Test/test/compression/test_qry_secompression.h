@@ -264,7 +264,7 @@ pArray test_body_seq_se_comp_decomp(_pFuncGetSourceArray_,
 	// 02. Save Source Array
 	exe_qbundle_ind_se_comp<value_type>(sourceArr, wtLevel, mmtLevel, printFlag);
 	//exe_qry_ind_mmt_build<value_type>(sourceArr, mmtLevel, false);
-	valueDistributionRecorder::instance()->printTable();
+	//valueDistributionRecorder::instance()->printTable();
 	//////////////////////////////
 
 	//////////////////////////////

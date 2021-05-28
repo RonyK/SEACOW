@@ -164,6 +164,47 @@ public:
 		//printEncodeTable();
 	}
 
+	void decode(symbolType* outData, size_t lenOut, bstream& in)
+	{
+		this->initDecodeTable(&this->decodeLookupTable_, 0);
+		this->decodeTree(in);
+
+		codeType code = 0x0;
+		in >> setw(bitCode) >> code;
+		for (size_t i = 0; i < lenOut; ++i)
+		{
+			auto result = this->decodeSymbol(code);
+			outData[i] = result.first;
+
+			codeType nextCode = 0x0;
+			in >> setw(result.second) >> nextCode;
+			code = (code << result.second) | nextCode;
+		}
+	}
+
+	void decode(symbolType* outData, size_t lenOut, symbolType* inData, size_t lenIn)
+	{
+		bstream bs;
+		bs.resize(sizeof(symbolType) * lenIn);
+		memcpy(bs.data(), (char*)inData, sizeof(symbolType) * lenIn);
+
+		this->initDecodeTable(&this->decodeLookupTable_, 0);
+		this->decodeTree(bs);
+
+		codeType code = 0x0;
+		bs >> setw(bitCode) >> code;
+		for (size_t i = 0; i < lenOut; ++i)
+		{
+			auto result = this->decodeSymbol(code);
+			outData[i] = result.first;
+
+			codeType nextCode = 0x0;
+			bs >> setw(result.second) >> nextCode;
+			code = (code << result.second) | nextCode;
+		}
+	}
+
+protected:
 	void buildTree(std::vector<size_t>& freq)
 	{
 		std::priority_queue<std::pair<size_t, huffmanNode*>, std::vector<std::pair<size_t, huffmanNode*>>, compareNode> qFreq;	// , compareNode
@@ -246,46 +287,7 @@ public:
 
 		auto node = this->encodeLookupTable_[symbol];
 		out << setw(node->codeLen_) << node->code_;
-	}
-
-	void decode(symbolType* outData, size_t lenOut, bstream& in)
-	{
-		this->initDecodeTable(&this->decodeLookupTable_, 0);
-		this->decodeTree(in);
-
-		codeType code = 0x0;
-		in >> setw(bitCode) >> code;
-		for (size_t i = 0; i < lenOut; ++i)
-		{
-			auto result = this->decodeSymbol(code);
-			outData[i] = result.first;
-
-			codeType nextCode = 0x0;
-			in >> setw(result.second) >> nextCode;
-			code = (code << result.second) | nextCode;
-		}
-	}
-
-	void decode(symbolType* outData, size_t lenOut, symbolType* inData, size_t lenIn)
-	{
-		bstream bs;
-		bs.resize(sizeof(symbolType) * lenIn);
-		memcpy(bs.data(), (char*)inData, sizeof(symbolType) * lenIn);
-
-		this->initDecodeTable(&this->decodeLookupTable_, 0);
-		this->decodeTree(bs);
-
-		codeType code = 0x0;
-		bs >> setw(bitCode) >> code;
-		for(size_t i = 0; i < lenOut; ++i)
-		{
-			auto result = this->decodeSymbol(code);
-			outData[i] = result.first;
-
-			codeType nextCode = 0x0;
-			bs >> setw(result.second) >> nextCode;
-			code = (code << result.second) | nextCode;
-		}
+		//BOOST_LOG_TRIVIAL(debug) << "S: " << static_cast<uint64_t>(symbol) << "/ L: " << static_cast<uint64_t>(node->codeLen_);
 	}
 
 	void initDecodeTable(decodeTable* table, size_t level)
@@ -425,7 +427,7 @@ public:
 		}
 	}
 
-private:
+public:
 	void printEncodeTable()
 	{
 		for (symbolType i = 0; i < (symbolType)-1; ++i)
@@ -438,12 +440,12 @@ private:
 		}
 	}
 
-private:
+protected:
 	size_t bits_;
 	std::map<symbolType, huffmanNode*> encodeLookupTable_;
 	decodeTable decodeLookupTable_;
 
-	public:
+public:
 	huffmanNode* root_;
 };
 }		// msdb
