@@ -106,6 +106,15 @@ TEST(experiment_query_op_between, star1024x1024_seq_random_se_between)
 												between::saveArray, between::validation, between::printFlag);
 }	// TEST()
 
+TEST(experiment_query_op_between, star1024x1024_seq_random_se_huffman_between)
+{
+	test_body_seq_random_se_huffman_between<value_type>(&getSourceArrayIfEmpty,
+														&getSourceArrayDesc, wtLevel, mmtLevel,
+														between::numTests, between::selectivities,
+														dimX, dimY,
+														between::saveArray, between::validation, between::printFlag);
+}	// TEST()
+
 TEST(experiment_query_op_between, star1024x1024_seq_random_compass_between)
 {
 	test_body_seq_random_compass_between<value_type>(&getSourceArrayIfEmpty,
@@ -215,6 +224,15 @@ TEST(experiment_query_op_between, saturn1024x1024_seq_random_se_between)
 												between::numTests, between::selectivities,
 												dimX, dimY,
 												between::saveArray, between::validation, between::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, saturn1024x1024_seq_random_se_huffman_between)
+{
+	test_body_seq_random_se_huffman_between<value_type>(&getSourceArrayIfEmpty,
+														&getSourceArrayDesc, wtLevel, mmtLevel,
+														between::numTests, between::selectivities,
+														dimX, dimY,
+														between::saveArray, between::validation, between::printFlag);
 }	// TEST()
 
 TEST(experiment_query_op_between, saturn1024x1024_seq_random_compass_between)
@@ -328,6 +346,15 @@ TEST(experiment_query_op_between, solar1024x1024_seq_random_se_between)
 												between::saveArray, between::validation, between::printFlag);
 }	// TEST()
 
+TEST(experiment_query_op_between, solar1024x1024_seq_random_se_huffman_between)
+{
+	test_body_seq_random_se_huffman_between<value_type>(&getSourceArrayIfEmpty,
+														&getSourceArrayDesc, wtLevel, mmtLevel,
+														between::numTests, between::selectivities,
+														dimX, dimY,
+														between::saveArray, between::validation, between::printFlag);
+}	// TEST()
+
 TEST(experiment_query_op_between, solar1024x1024_seq_random_compass_between)
 {
 	test_body_seq_random_compass_between<value_type>(&getSourceArrayIfEmpty,
@@ -436,6 +463,15 @@ TEST(experiment_query_op_between, mars4096x2048_seq_random_se_between)
 												between::numTests, between::selectivities,
 												dimX, dimY,
 												between::saveArray, between::validation, between::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, mars4096x2048_seq_random_se_huffman_between)
+{
+	test_body_seq_random_se_huffman_between<value_type>(&getSourceArrayIfEmpty,
+														&getSourceArrayDesc, wtLevel, mmtLevel,
+														between::numTests, between::selectivities,
+														dimX, dimY,
+														between::saveArray, between::validation, between::printFlag);
 }	// TEST()
 
 TEST(experiment_query_op_between, mars4096x2048_seq_random_compass_between)
@@ -548,6 +584,15 @@ TEST(experiment_query_op_between, mercurydem20480x10240_seq_random_se_between)
 												between::saveArray, between::validation, between::printFlag);
 }	// TEST()
 
+TEST(experiment_query_op_between, mercurydem20480x10240_seq_random_se_huffman_between)
+{
+	test_body_seq_random_se_huffman_between<value_type>(&getSourceArrayIfEmpty,
+														&getSourceArrayDesc, wtLevel, mmtLevel,
+														between::numTests, between::selectivities,
+														dimX, dimY,
+														between::saveArray, between::validation, between::printFlag);
+}	// TEST()
+
 TEST(experiment_query_op_between, mercurydem20480x10240_seq_random_compass_between)
 {
 	test_body_seq_random_compass_between<value_type>(&getSourceArrayIfEmpty,
@@ -656,6 +701,15 @@ TEST(experiment_query_op_between, lunar102400x40960_seq_random_se_between)
 												between::numTests, between::selectivities,
 												dimX, dimY,
 												between::saveArray, between::validation, between::printFlag);
+}	// TEST()
+
+TEST(experiment_query_op_between, lunar102400x40960_seq_random_se_huffman_between)
+{
+	test_body_seq_random_se_huffman_between<value_type>(&getSourceArrayIfEmpty,
+														&getSourceArrayDesc, wtLevel, mmtLevel,
+														between::numTests, between::selectivities,
+														dimX, dimY,
+														between::saveArray, between::validation, between::printFlag);
 }	// TEST()
 
 TEST(experiment_query_op_between, lunar102400x40960_seq_random_compass_between)

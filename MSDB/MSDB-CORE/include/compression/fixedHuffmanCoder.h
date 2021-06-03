@@ -18,26 +18,29 @@ public:
 };
 
 template <typename codeType, typename symbolType>
-class fixedHuffmanCoderBase : public huffmanCoder<codeType, symbolType>, public iFixedHuffmanCoder
+class fixedHuffmanCoder1ByteSymbolBase : public huffmanCoder<codeType, symbolType>, public iFixedHuffmanCoder
 {
 public:
 	using parentType = huffmanCoder<codeType, symbolType>;
 	using nodeType = huffmanCoder<codeType, symbolType>::huffmanNode;
 
+	using symbolType_ = symbolType;
+	using codeType_ = codeType;
+
 public:
-	fixedHuffmanCoderBase()
+	fixedHuffmanCoder1ByteSymbolBase()
 		: huffmanCoder<codeType, symbolType>()
 	{
 		this->initHuffmanCode();
 	}
 
-	fixedHuffmanCoderBase(size_t bits)
+	fixedHuffmanCoder1ByteSymbolBase(size_t bits)
 		: huffmanCoder<codeType, symbolType>(bits)
 	{
 		this->initHuffmanCode();
 	}
 
-	~fixedHuffmanCoderBase()
+	~fixedHuffmanCoder1ByteSymbolBase()
 	{
 
 	}
@@ -193,12 +196,12 @@ public:
 	}
 };
 
-template <size_t _BITS>
-class fixedHuffmanCoder : public fixedHuffmanCoderBase<uint16_t, uint8_t>, public singleton<fixedHuffmanCoder<_BITS>>
+template <size_t _BITS, typename symbolType>
+class fixedHuffmanCoder : public fixedHuffmanCoder1ByteSymbolBase<uint16_t, symbolType>, public singleton<fixedHuffmanCoder<_BITS, symbolType>>
 {
 public:
 	fixedHuffmanCoder()
-		: fixedHuffmanCoderBase<uint16_t, uint8_t>(_BITS), singleton<fixedHuffmanCoder<_BITS>>()
+		: fixedHuffmanCoder1ByteSymbolBase<uint16_t, symbolType>(_BITS), singleton<fixedHuffmanCoder<_BITS, symbolType>>()
 	{
 
 	}
@@ -209,12 +212,16 @@ public:
 	}
 };
 
-template <>
-class fixedHuffmanCoder<1> : public fixedHuffmanCoderBase<uint8_t, uint8_t>, public singleton<fixedHuffmanCoder<1>>
+template <typename symbolType>
+class fixedHuffmanCoder<1, symbolType> : public fixedHuffmanCoder1ByteSymbolBase<uint8_t, symbolType>, public singleton<fixedHuffmanCoder<1, symbolType>>
 {
 public:
+	using codeType_ = uint8_t;
+	using symbolType_ = symbolType;
+
+public:
 	fixedHuffmanCoder()
-		: fixedHuffmanCoderBase<uint8_t, uint8_t>(1), singleton<fixedHuffmanCoder<1>>()
+		: fixedHuffmanCoder1ByteSymbolBase<uint8_t, symbolType>(1), singleton<fixedHuffmanCoder<1, symbolType>>()
 	{
 
 	}
@@ -225,12 +232,16 @@ public:
 	}
 };
 
-template <>
-class fixedHuffmanCoder<2> : public fixedHuffmanCoderBase<uint8_t, uint8_t>, public singleton<fixedHuffmanCoder<2>>
+template <typename symbolType>
+class fixedHuffmanCoder<2, symbolType> : public fixedHuffmanCoder1ByteSymbolBase<uint8_t, symbolType>, public singleton<fixedHuffmanCoder<2, symbolType>>
 {
 public:
+	using codeType_ = uint8_t;
+	using symbolType_ = symbolType;
+
+public:
 	fixedHuffmanCoder()
-		: fixedHuffmanCoderBase<uint8_t, uint8_t>(2), singleton<fixedHuffmanCoder<2>>()
+		: fixedHuffmanCoder1ByteSymbolBase<uint8_t, symbolType>(2), singleton<fixedHuffmanCoder<2, symbolType>>()
 	{
 
 	}
@@ -241,12 +252,16 @@ public:
 	}
 };
 
-template <>
-class fixedHuffmanCoder<3> : public fixedHuffmanCoderBase<uint8_t, uint8_t>, public singleton<fixedHuffmanCoder<3>>
+template <typename symbolType>
+class fixedHuffmanCoder<3, symbolType> : public fixedHuffmanCoder1ByteSymbolBase<uint8_t, symbolType>, public singleton<fixedHuffmanCoder<3, symbolType>>
 {
 public:
+	using codeType_ = uint8_t;
+	using symbolType_ = symbolType;
+
+public:
 	fixedHuffmanCoder()
-		: fixedHuffmanCoderBase<uint8_t, uint8_t>(3), singleton<fixedHuffmanCoder<3>>()
+		: fixedHuffmanCoder1ByteSymbolBase<uint8_t, symbolType>(3), singleton<fixedHuffmanCoder<3, symbolType>>()
 	{
 
 	}
@@ -257,12 +272,16 @@ public:
 	}
 };
 
-template <>
-class fixedHuffmanCoder<4> : public fixedHuffmanCoderBase<uint8_t, uint8_t>, public singleton<fixedHuffmanCoder<4>>
+template <typename symbolType>
+class fixedHuffmanCoder<4, symbolType> : public fixedHuffmanCoder1ByteSymbolBase<uint8_t, symbolType>, public singleton<fixedHuffmanCoder<4, symbolType>>
 {
 public:
+	using codeType_ = uint8_t;
+	using symbolType_ = symbolType;
+
+public:
 	fixedHuffmanCoder()
-		: fixedHuffmanCoderBase<uint8_t, uint8_t>(4), singleton<fixedHuffmanCoder<4>>()
+		: fixedHuffmanCoder1ByteSymbolBase<uint8_t, symbolType>(4), singleton<fixedHuffmanCoder<4, symbolType>>()
 	{
 
 	}
@@ -273,12 +292,16 @@ public:
 	}
 };
 
-template <>
-class fixedHuffmanCoder<5> : public fixedHuffmanCoderBase<uint16_t, uint8_t>, public singleton<fixedHuffmanCoder<5>>
+template <typename symbolType>
+class fixedHuffmanCoder<5, symbolType> : public fixedHuffmanCoder1ByteSymbolBase<uint16_t, symbolType>, public singleton<fixedHuffmanCoder<5, symbolType>>
 {
 public:
+	using codeType_ = uint16_t;
+	using symbolType_ = symbolType;
+
+public:
 	fixedHuffmanCoder()
-		: fixedHuffmanCoderBase<uint16_t, uint8_t>(5), singleton<fixedHuffmanCoder<5>>()
+		: fixedHuffmanCoder1ByteSymbolBase<uint16_t, symbolType>(5), singleton<fixedHuffmanCoder<5, symbolType>>()
 	{
 
 	}
@@ -289,12 +312,16 @@ public:
 	}
 };
 
-template <>
-class fixedHuffmanCoder<6> : public fixedHuffmanCoderBase<uint16_t, uint8_t>, public singleton<fixedHuffmanCoder<6>>
+template <typename symbolType>
+class fixedHuffmanCoder<6, symbolType> : public fixedHuffmanCoder1ByteSymbolBase<uint16_t, symbolType>, public singleton<fixedHuffmanCoder<6, symbolType>>
 {
 public:
+	using codeType_ = uint16_t;
+	using symbolType_ = symbolType;
+
+public:
 	fixedHuffmanCoder()
-		: fixedHuffmanCoderBase<uint16_t, uint8_t>(6), singleton<fixedHuffmanCoder<6>>()
+		: fixedHuffmanCoder1ByteSymbolBase<uint16_t, symbolType>(6), singleton<fixedHuffmanCoder<6, symbolType>>()
 	{
 
 	}
@@ -305,12 +332,16 @@ public:
 	}
 };
 
-template <>
-class fixedHuffmanCoder<7> : public fixedHuffmanCoderBase<uint16_t, uint8_t>, public singleton<fixedHuffmanCoder<7>>
+template <typename symbolType>
+class fixedHuffmanCoder<7, symbolType> : public fixedHuffmanCoder1ByteSymbolBase<uint16_t, symbolType>, public singleton<fixedHuffmanCoder<7, symbolType>>
 {
 public:
+	using codeType_ = uint16_t;
+	using symbolType_ = symbolType;
+
+public:
 	fixedHuffmanCoder()
-		: fixedHuffmanCoderBase<uint16_t, uint8_t>(7), singleton<fixedHuffmanCoder<7>>()
+		: fixedHuffmanCoder1ByteSymbolBase<uint16_t, symbolType>(7), singleton<fixedHuffmanCoder<7, symbolType>>()
 	{
 
 	}
@@ -321,12 +352,219 @@ public:
 	}
 };
 
-template <>
-class fixedHuffmanCoder<8> : public fixedHuffmanCoderBase<uint16_t, uint8_t>, public singleton<fixedHuffmanCoder<8>>
+template <typename symbolType>
+class fixedHuffmanCoder<8, symbolType> : public fixedHuffmanCoder1ByteSymbolBase<uint16_t, symbolType>, public singleton<fixedHuffmanCoder<8, symbolType>>
+{
+public:
+	using codeType_ = uint16_t;
+	using symbolType_ = symbolType;
+
+public:
+	fixedHuffmanCoder()
+		: fixedHuffmanCoder1ByteSymbolBase<uint16_t, symbolType>(8), singleton<fixedHuffmanCoder<8, symbolType>>()
+	{
+
+	}
+
+	~fixedHuffmanCoder()
+	{
+
+	}
+};
+
+template <size_t FIRST_BITS_, size_t SECOND_BITS_, typename symbolType>
+class fixedHuffmanCoder2ByteSymbolBase : public iFixedHuffmanCoder
+{
+	using parentType = iFixedHuffmanCoder;
+	using firstType = fixedHuffmanCoder<FIRST_BITS_, symbolType>;
+	using secondType = fixedHuffmanCoder<SECOND_BITS_, symbolType>;
+
+public:
+	fixedHuffmanCoder2ByteSymbolBase()
+		: first(fixedHuffmanCoder<FIRST_BITS_, symbolType>::instance()), second(fixedHuffmanCoder<SECOND_BITS_, symbolType>::instance())
+	{
+
+	}
+
+	~fixedHuffmanCoder2ByteSymbolBase()
+	{
+
+	}
+
+	virtual void encode(bstream& out, const void* in, size_t len)
+	{
+		for (size_t i = 0; i < len; )
+		{
+			first->encodeSymbol(out, static_cast<const firstType::symbolType_*>(in)[i++]);
+			second->encodeSymbol(out, static_cast<const secondType::symbolType_*>(in)[i++]);
+		}
+	}
+
+	virtual size_t decode(void* outData, size_t lenOut, bstream& in)
+	{
+		size_t readBits = 0;
+		typename firstType::codeType_ code = 0x0;
+
+		assert(firstType::bitCode >= secondType::bitCode);
+		size_t bitCodeDiff = firstType::bitCode - secondType::bitCode;
+
+		in >> setw(firstType::bitCode) >> code;
+		for (size_t i = 0, bi = 0; i < lenOut; ++i)
+		{
+			{
+				auto result = first->decodeSymbol((typename firstType::codeType_)(code));
+				static_cast<typename firstType::symbolType_*>(outData)[bi++] = result.first;
+
+				typename firstType::codeType_ nextCode = 0x0;
+				in >> setw(result.second) >> nextCode;
+				code = (code << result.second) | nextCode;
+				readBits += result.second;
+			}
+
+			{
+				auto result = second->decodeSymbol((typename secondType::codeType_)(code >> bitCodeDiff));
+				static_cast<typename secondType::symbolType_*>(outData)[bi++] = result.first;
+
+				typename secondType::codeType_ nextCode = 0x0;
+				in >> setw(result.second) >> nextCode;
+				code = (code << result.second) | nextCode;
+				readBits += result.second;
+			}
+
+			//BOOST_LOG_TRIVIAL(debug) << "S: " << static_cast<uint64_t>(result.first) << "/ L: " << static_cast<uint64_t>(result.second);
+		}
+
+		return readBits;
+	}
+
+	virtual size_t getCodeBitWidth() const
+	{
+		return firstType::bitCode + secondType::bitCode;
+	}
+
+private:
+	fixedHuffmanCoder<FIRST_BITS_, symbolType>* const first;
+	fixedHuffmanCoder<SECOND_BITS_, symbolType>* const second;
+};
+
+template <typename symbolType>
+class fixedHuffmanCoder<9, symbolType> : public fixedHuffmanCoder2ByteSymbolBase<8, 1, uint8_t>, public singleton<fixedHuffmanCoder<9, symbolType>>
 {
 public:
 	fixedHuffmanCoder()
-		: fixedHuffmanCoderBase<uint16_t, uint8_t>(8), singleton<fixedHuffmanCoder<8>>()
+		: fixedHuffmanCoder2ByteSymbolBase<8, 1, uint8_t>(), singleton<fixedHuffmanCoder<9, symbolType>>()
+	{
+
+	}
+
+	~fixedHuffmanCoder()
+	{
+
+	}
+};
+
+template <typename symbolType>
+class fixedHuffmanCoder<10, symbolType> : public fixedHuffmanCoder2ByteSymbolBase<8, 2, uint8_t>, public singleton<fixedHuffmanCoder<10, symbolType>>
+{
+public:
+	fixedHuffmanCoder()
+		: fixedHuffmanCoder2ByteSymbolBase<8, 2, uint8_t>(), singleton<fixedHuffmanCoder<10, symbolType>>()
+	{
+
+	}
+
+	~fixedHuffmanCoder()
+	{
+
+	}
+};
+
+template <typename symbolType>
+class fixedHuffmanCoder<11, symbolType> : public fixedHuffmanCoder2ByteSymbolBase<8, 3, uint8_t>, public singleton<fixedHuffmanCoder<11, symbolType>>
+{
+public:
+	fixedHuffmanCoder()
+		: fixedHuffmanCoder2ByteSymbolBase<8, 3, uint8_t>(), singleton<fixedHuffmanCoder<11, symbolType>>()
+	{
+
+	}
+
+	~fixedHuffmanCoder()
+	{
+
+	}
+};
+
+template <typename symbolType>
+class fixedHuffmanCoder<12, symbolType> : public fixedHuffmanCoder2ByteSymbolBase<8, 4, uint8_t>, public singleton<fixedHuffmanCoder<12, symbolType>>
+{
+public:
+	fixedHuffmanCoder()
+		: fixedHuffmanCoder2ByteSymbolBase<8, 4, uint8_t>(), singleton<fixedHuffmanCoder<12, symbolType>>()
+	{
+
+	}
+
+	~fixedHuffmanCoder()
+	{
+
+	}
+};
+
+template <typename symbolType>
+class fixedHuffmanCoder<13, symbolType> : public fixedHuffmanCoder2ByteSymbolBase<8, 5, uint8_t>, public singleton<fixedHuffmanCoder<13, symbolType>>
+{
+public:
+	fixedHuffmanCoder()
+		: fixedHuffmanCoder2ByteSymbolBase<8, 5, uint8_t>(), singleton<fixedHuffmanCoder<13, symbolType>>()
+	{
+
+	}
+
+	~fixedHuffmanCoder()
+	{
+
+	}
+};
+
+template <typename symbolType>
+class fixedHuffmanCoder<14, symbolType> : public fixedHuffmanCoder2ByteSymbolBase<8, 6, uint8_t>, public singleton<fixedHuffmanCoder<14, symbolType>>
+{
+public:
+	fixedHuffmanCoder()
+		: fixedHuffmanCoder2ByteSymbolBase<8, 6, uint8_t>(), singleton<fixedHuffmanCoder<14, symbolType>>()
+	{
+
+	}
+
+	~fixedHuffmanCoder()
+	{
+
+	}
+};
+
+template <typename symbolType>
+class fixedHuffmanCoder<15, symbolType> : public fixedHuffmanCoder2ByteSymbolBase<8, 7, uint8_t>, public singleton<fixedHuffmanCoder<15, symbolType>>
+{
+public:
+	fixedHuffmanCoder()
+		: fixedHuffmanCoder2ByteSymbolBase<8, 7, uint8_t>(), singleton<fixedHuffmanCoder<15, symbolType>>()
+	{
+
+	}
+
+	~fixedHuffmanCoder()
+	{
+
+	}
+};
+
+template <typename symbolType>
+class fixedHuffmanCoder<16, symbolType> : public fixedHuffmanCoder2ByteSymbolBase<8, 8, uint8_t>, public singleton<fixedHuffmanCoder<16, symbolType>>
+{
+public:
+	fixedHuffmanCoder()
+		: fixedHuffmanCoder2ByteSymbolBase<8, 8, uint8_t>(), singleton<fixedHuffmanCoder<16, symbolType>>()
 	{
 
 	}

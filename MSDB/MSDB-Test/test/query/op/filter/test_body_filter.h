@@ -440,24 +440,26 @@ pArray test_body_seq_se_huffman_random_index_filter(_pFuncGetSourceArray_,
 	value_type v = 0;
 	//////////////////////////////
 
-	//////////////////////////////
-	// 02. Save Source Array
-	if (saveArray)
 	{
+		//////////////////////////////
+		// 02. Build MMT
+		//test_body_mmt_build<value_type>(getSourceArrayIfEmpty, mmtLevel, false);
+		//test_body_mmt_load<value_type>(getSourceArrayDesc, validation, false);
 		std::vector<pArray> sourceArr;
 		getSourceArrayIfEmpty(sourceArr);
-		sourceArr[0]->setId(sourceArr[0]->getId() + se_array_id);
+		sourceArr[0]->setId(sourceArr[0]->getId() + se_huffman_array_id);
 
 		exe_qry_ind_mmt_build<value_type>(sourceArr, mmtLevel, false);					// Do not print in saveArray
-		exe_qry_ind_se_huffman_encode<value_type>(sourceArr, wtLevel, mmtLevel, false);	// Do not print in saveArray
+		//////////////////////////////
+		
+		//////////////////////////////
+		// 03. Save Source Array
+		if (saveArray)
+		{
+			exe_qry_ind_se_huffman_encode<value_type>(sourceArr, wtLevel, mmtLevel, false);	// Do not print in saveArray
+		}
+		//////////////////////////////
 	}
-	//////////////////////////////
-
-	//////////////////////////////
-	// 03. Build MMT
-	//test_body_mmt_build<value_type>(getSourceArrayIfEmpty, mmtLevel, false);
-	test_body_mmt_load<value_type>(getSourceArrayDesc, validation, false);
-	//////////////////////////////
 
 	//////////////////////////////
 	// 04. Execute Testcases

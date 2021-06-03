@@ -1,6 +1,7 @@
 #include <pch.h>
 #include <io/bitstream.h>
 #include <compression/huffmanCode.h>
+#include <compression/fixedHuffmanCoder.h>
 
 namespace msdb
 {
@@ -67,5 +68,38 @@ TEST(huffman_coding, huffman_coding)
 
 	}
 }
+
+TEST(huffman_coding, fixed_2byte_huffman_coding)
+{
+	const static int const size = 10;
+
+	srand(0);
+	uint16_t arr[size];
+	for (int i = 0; i < size; ++i)
+	{
+		arr[i] = rand() % (int)pow(2, 9);
+	}
+
+	uint8_t* temp = (uint8_t*)arr;
+
+	bstream bs;
+	{
+		auto coder = fixedHuffmanCoder<9, uint8_t>::instance();
+		coder->encode(bs, arr, sizeof(uint16_t) * size);
+	}
+
+	uint16_t decoded[size];
+	{
+		auto coder = fixedHuffmanCoder<9, uint8_t>::instance();
+		coder->decode(decoded, sizeof(uint16_t) * size, bs);
+	}
+
+	for (int i = 0; i < size; ++i)
+	{
+		assert(arr[i] == decoded[i]);
+	}
+
+
+}	// TEST
 }	// dummy
 }	// msdb

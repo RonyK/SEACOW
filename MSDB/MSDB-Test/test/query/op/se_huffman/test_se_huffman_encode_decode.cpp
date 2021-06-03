@@ -20,24 +20,6 @@ protected:
 	{
 		pQuery qry = std::make_shared<query>();
 		BOOST_LOG_TRIVIAL(debug) << "SetUp";
-
-		auto coder1 = fixedHuffmanCoder<1>::instance();
-		auto coder2 = fixedHuffmanCoder<2>::instance();
-		auto coder3 = fixedHuffmanCoder<3>::instance();
-		auto coder4 = fixedHuffmanCoder<4>::instance();
-		auto coder5 = fixedHuffmanCoder<5>::instance();
-		auto coder6 = fixedHuffmanCoder<6>::instance();
-		auto coder7 = fixedHuffmanCoder<7>::instance();
-		auto coder8 = fixedHuffmanCoder<8>::instance();
-
-		coder1->printEncodeTable();
-		coder2->printEncodeTable();
-		coder3->printEncodeTable();
-		coder4->printEncodeTable();
-		coder5->printEncodeTable();
-		coder6->printEncodeTable();
-		coder7->printEncodeTable();
-		coder8->printEncodeTable();
 	}
 
 	virtual void TearDown()
@@ -76,14 +58,14 @@ TEST(experiment_query_op_se_huffman, star1024x1024_seq_encode_decode)
 													   wtLevel, mmtLevel,
 													   se_huffman_encode_decode::validation, se_huffman_encode_decode::printFlag);
 
-	auto coder1 = fixedHuffmanCoder<1>::instance();
-	auto coder2 = fixedHuffmanCoder<2>::instance();
-	auto coder3 = fixedHuffmanCoder<3>::instance();
-	auto coder4 = fixedHuffmanCoder<4>::instance();
-	auto coder5 = fixedHuffmanCoder<5>::instance();
-	auto coder6 = fixedHuffmanCoder<6>::instance();
-	auto coder7 = fixedHuffmanCoder<7>::instance();
-	auto coder8 = fixedHuffmanCoder<8>::instance();
+	auto coder1 = fixedHuffmanCoder<1, uint8_t>::instance();
+	auto coder2 = fixedHuffmanCoder<2, uint8_t>::instance();
+	auto coder3 = fixedHuffmanCoder<3, uint8_t>::instance();
+	auto coder4 = fixedHuffmanCoder<4, uint8_t>::instance();
+	auto coder5 = fixedHuffmanCoder<5, uint8_t>::instance();
+	auto coder6 = fixedHuffmanCoder<6, uint8_t>::instance();
+	auto coder7 = fixedHuffmanCoder<7, uint8_t>::instance();
+	auto coder8 = fixedHuffmanCoder<8, uint8_t>::instance();
 
 	BOOST_LOG_TRIVIAL(debug) << "=====";
 	coder1->printEncodeTable();

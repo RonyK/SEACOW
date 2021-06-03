@@ -95,9 +95,9 @@ void storageMgr::loadChunk(arrayId arrId, attributeId attrId, chunkId chkId, pSe
 		this->getIfstream(fs, this->getChunkPath(arrId, attrId, chkId),
 						  strChunkFilExtension);
 		serialObj->deserialize(fs);
-#ifndef NDEBUG
+//#ifndef NDEBUG
 		BOOST_LOG_TRIVIAL(trace) << "Load Chunk[" << chkId << "] : " << serialObj->getSerializedSize() << " Bytes" << std::endl;
-#endif
+//#endif
 
 		fs.close();
 	}

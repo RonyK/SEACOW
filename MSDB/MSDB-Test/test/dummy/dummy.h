@@ -170,7 +170,7 @@ void compArrary(pArray lArr, pArray rArr)
 						while (!liItr->isEnd() && !riItr->isEnd())
 						{
 							// Limit wrong value output
-							if(wrongValue > 100)
+							if(wrongValue > 20)
 							{
 								return;
 							}

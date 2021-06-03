@@ -67,8 +67,8 @@ public:
 
 		Ty_ signMask = 0x1 << rbFromDelta - 1;
 		auto bItemItr = myBlock->getItemRangeIterator(getBandRange(bandId, bandDims));
-		assert(rbFromDelta <= 8);
-		auto coder = this->fixedHuffmanCoders[rbFromDelta];
+		//assert(rbFromDelta <= 16);
+		auto coder = this->fixedHuffmanCoders[sizeof(Ty_)][std::min({ (bit_cnt_type)rbFromDelta, (bit_cnt_type)(sizeof(Ty_) * CHAR_BIT) })];
 		size_t beforeBitPos = bs.getOutBitPos();
 
 		while (!bItemItr->isEnd())
@@ -81,7 +81,7 @@ public:
 				value |= signMask;
 			}
 
-			coder->encode(bs, &value, sizeof(Ty_));
+			coder->encode(bs, &value, 1);
 			//bs << value;
  			++(*bItemItr);
 		}
@@ -121,8 +121,13 @@ public:
 					//BOOST_LOG_TRIVIAL(debug) << "Gap: " << (int64_t)rbFromMMT - (int64_t)rbFromDelta << ", After Block: " << bs.getOutLastBlock();
 					//BOOST_LOG_TRIVIAL(debug) << "delta: " << static_cast<int64_t>(rbFromDelta) << " / mmt: " << static_cast<int64_t>(rbFromMMT) << " / gap: " << (int64_t)rbFromMMT - (int64_t)rbFromDelta;
 
-					assert(rbFromDelta <= 8);
-					auto coder = this->fixedHuffmanCoders[rbFromDelta];
+					//assert(rbFromDelta <= 8);
+					//iFixedHuffmanCoder coder[8] = { nullptr };
+					//for (size_t bi = 0; bi < (size_t)(rbFromDelta + CHAR_BIT - 1) / (size_t)CHAR_BIT; ++bi)
+					//{
+					//	coder[bi] = this->fixedHuffmanCoders[std::min((bit_cnt_type)rbFromDelta - bi * CHAR_BIT, (bit_cnt_type)CHAR_BIT)];
+					//}
+					auto coder = this->fixedHuffmanCoders[sizeof(Ty_)][std::min({ (bit_cnt_type)rbFromDelta, (bit_cnt_type)(sizeof(Ty_) * CHAR_BIT) })];
 
 					if (rbFromDelta != 0)
 					{
@@ -138,7 +143,7 @@ public:
 								value = abs_(value);
 								value |= signMask;
 							}
-							coder->encode(bs, &value, sizeof(Ty_));
+							coder->encode(bs, &value, 1);
 							//bs << value;
 							++(*bItemItr);
 						}
@@ -196,8 +201,8 @@ public:
 		Ty_ signBit = (Ty_)(0x1 << (sizeof(Ty_) * CHAR_BIT - 1));
 
 		auto bItemItr = myBlock->getItemRangeIterator(getBandRange(bandId, bandDims));
-		assert(rbFromDelta <= 8);
-		auto coder = this->fixedHuffmanCoders[rbFromDelta];
+		//assert(rbFromDelta <= 16);
+		auto coder = this->fixedHuffmanCoders[sizeof(Ty_)][std::min({ (bit_cnt_type)rbFromDelta, (bit_cnt_type)(sizeof(Ty_) * CHAR_BIT) })];
 
 		//////////////////////////////
 		// 01
@@ -205,14 +210,14 @@ public:
 		auto itemCapa = bandDims.area();
 		char* spData = (char*)this->getBuffer()->getData() + spOffset;
 
-		size_t tempBufferSize = std::min({ (size_type)(rbFromDelta * itemCapa / CHAR_BIT * 2), (size_type)(bs.capacity() - bs.getInBlockPos()) });
+		size_t tempBufferSize = std::min({ (size_type)(rbFromDelta * itemCapa * sizeof(Ty_) / CHAR_BIT * 2), (size_type)(bs.capacity() - bs.getInBlockPos()) });
 		bstream bsHuffman;
 		bsHuffman.resize(tempBufferSize);
 		memcpy(bsHuffman.data(), bs.data() + bs.getInBlockPos() * bs.getBlockBytes(), tempBufferSize);
 		bsHuffman.jumpBits(bs.getInBitPosInBlock());
 
 		Ty_* huffmanDecoded = new Ty_[itemCapa];
-		auto readBits = coder->decode(static_cast<void*>(huffmanDecoded), sizeof(Ty_) * itemCapa, bsHuffman);
+		auto readBits = coder->decode(static_cast<void*>(huffmanDecoded), itemCapa, bsHuffman);
 		bs.jumpBits(readBits);
 		//BOOST_LOG_TRIVIAL(debug) << "Bits: " << readBits;
 
@@ -303,18 +308,18 @@ public:
 					}
 					else
 					{
-						assert(rbFromDelta <= 8);
-						auto coder = this->fixedHuffmanCoders[rbFromDelta];
+						//assert(rbFromDelta <= 16);
+						auto coder = this->fixedHuffmanCoders[sizeof(Ty_)][std::min({ (bit_cnt_type)rbFromDelta, (bit_cnt_type)(sizeof(Ty_) * CHAR_BIT) })];
 
 						// Read more buffer
-						size_t tempBufferSize = std::min({ (size_type)(rbFromDelta * itemCapa / (double)CHAR_BIT * 1.5), (size_type)(bs.capacity() - bs.getInBlockPos()) });
+						size_t tempBufferSize = std::min({ (size_type)(rbFromDelta * itemCapa * sizeof(Ty_) / (double)CHAR_BIT * 2), (size_type)(bs.capacity() - bs.getInBlockPos()) });
 						bstream bsHuffman;
 						bsHuffman.resize(tempBufferSize);
 						memcpy(bsHuffman.data(), bs.data() + bs.getInBlockPos() * bs.getBlockBytes(), tempBufferSize);
 						bsHuffman.jumpBits(bs.getInBitPosInBlock());
 
 						Ty_* huffmanDecoded = new Ty_[itemCapa];
-						auto readBits = coder->decode(static_cast<void*>(huffmanDecoded), sizeof(Ty_) * itemCapa, bsHuffman);
+						auto readBits = coder->decode(static_cast<void*>(huffmanDecoded), itemCapa, bsHuffman);
 						//BOOST_LOG_TRIVIAL(debug) << "Bits: " << readBits;
 						bs.jumpBits(readBits);
 
@@ -393,7 +398,7 @@ public:
 	//}
 
 private:
-	static std::vector<iFixedHuffmanCoder*> fixedHuffmanCoders;
+	static std::vector<std::vector<iFixedHuffmanCoder*>> fixedHuffmanCoders;
 };
 }		// msdb
 #endif	// _MSDB_SEHUFFMANCHUNK_H_

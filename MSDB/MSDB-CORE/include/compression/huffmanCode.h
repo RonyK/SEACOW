@@ -278,6 +278,7 @@ protected:
 		}
 	}
 
+public:
 	void encodeSymbol(bstream& out, const symbolType symbol)
 	{
 		// TODO:: output encode table or tree
@@ -290,6 +291,7 @@ protected:
 		//BOOST_LOG_TRIVIAL(debug) << "S: " << static_cast<uint64_t>(symbol) << "/ L: " << static_cast<uint64_t>(node->codeLen_);
 	}
 
+protected:
 	void initDecodeTable(decodeTable* table, size_t level)
 	{
 		if (level == 0)
@@ -363,6 +365,7 @@ protected:
 		}
 	}
 
+public:
 	std::pair<symbolType, size_t> decodeSymbol(codeType code)
 	{
 		decodeTable* curTable = &this->decodeLookupTable_;
@@ -389,6 +392,7 @@ protected:
 		return { 0, 0 };
 	}
 
+protected:
 	void insertSymbolInDecodeLookupTable(huffmanNode* node)
 	{
 		decodeTable* cur = &this->decodeLookupTable_;

@@ -16,6 +16,7 @@
 #include <op/between/between_action.h>
 
 #include <query/op/huffman/qry_huffman_encode_decode.h>
+#include <query/op/se_huffman/qry_se_huffman_encode_decode.h>
 #include <query/op/adapt_huffman/qry_adapt_huffman_encode_decode.h>
 #include <query/op/lzw_huffman/qry_lzw_huffman_encode_decode.h>
 
@@ -415,6 +416,61 @@ pArray test_body_seq_random_se_between(_pFuncGetSourceArray_,
 
 	return nullptr;
 }
+
+template <typename value_type>
+pArray test_body_seq_random_se_huffman_between(_pFuncGetSourceArray_,
+											   _pFuncGetSourceArrayDesc_,
+											   eleDefault wtLevel, eleDefault mmtLevel,
+											   size_t numTests, std::vector<float> selectivities,
+											   const position_t dimX, const position_t dimY,
+											   bool saveArray = false, bool validation = false, bool printFlag = false)
+{
+	//////////////////////////////
+	// 01. Set Seed For Random Value 
+	srand(rangeSeed);
+	auto tempQ = std::make_shared<query>();	// Not used, just for log
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Build MMT
+	try
+	{
+		attributeId attrId = 0;
+		std::vector<pArray> sourceArr;
+		getSourceArrayDesc(sourceArr);
+
+		arrayMgr::instance()->getAttributeIndex(sourceArr[0]->getId(), attrId);
+	}
+	catch (msdb_exception e)
+	{
+		test_body_mmt_build<value_type>(getSourceArrayIfEmpty, mmtLevel, false);
+	}
+	//////////////////////////////
+
+	//////////////////////////////
+	// 03. Execute Testcases
+	size_t j = 0;
+	for (auto selectivity : selectivities)
+	{
+		for (size_t i = 0; i < numTests; ++i)
+		{
+			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
+			BOOST_LOG_TRIVIAL(info) << "##################################################";
+			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
+			BOOST_LOG_TRIVIAL(info) << "# Range : " << qRange.toString() << "(" << selectivity << ")";
+
+			test_body_seq_se_huffman_between<value_type>(getSourceArrayIfEmpty, getSourceArrayDesc,
+														 wtLevel, mmtLevel,
+														 qRange.getSp(), qRange.getEp(),
+														 saveArray, validation, printFlag, j * numTests + i);
+			BOOST_LOG_TRIVIAL(info) << "##################################################";
+		}
+		++j;
+	}
+	//////////////////////////////
+
+	return nullptr;
+}
 // ##################################################
 
 // ##################################################
@@ -448,6 +504,49 @@ pArray test_body_seq_se_between(_pFuncGetSourceArray_,
 														 wtLevel, mmtLevel,
 														 saveArray, printFlag,
 														 experiments::between_random::expId, expTrial);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 03. Validation
+	if (validation)
+	{
+		auto rawArr = exe_qry_ind_raw_between<value_type>(sourceArr, sp, ep);
+		compArrary<value_type>(outArr, rawArr);
+	}
+	//////////////////////////////
+
+	return outArr;
+}
+
+template <typename value_type>
+pArray test_body_seq_se_huffman_between(_pFuncGetSourceArray_,
+										_pFuncGetSourceArrayDesc_,
+										eleDefault wtLevel, eleDefault mmtLevel,
+										coor sp, coor ep,
+										bool saveArray = false, bool validation = false, bool printFlag = false,
+										size_t expTrial = 0)
+{
+	//////////////////////////////
+	// 01. Get Source Array
+	std::vector<pArray> sourceArr;
+	if (saveArray || validation)
+	{
+		getSourceArrayIfEmpty(sourceArr);
+	}
+	else
+	{
+		getSourceArrayDesc(sourceArr);
+	}
+	sourceArr[0]->setId(sourceArr[0]->getId() + se_huffman_array_id);
+	//////////////////////////////
+
+	//////////////////////////////
+	// 02. Between
+	auto outArr = exe_qbundle_seq_se_huffman_between<value_type>(sourceArr,
+																 sp, ep,
+																 wtLevel, mmtLevel,
+																 saveArray, printFlag,
+																 experiments::between_random::expId, expTrial);
 	//////////////////////////////
 
 	//////////////////////////////
@@ -994,6 +1093,32 @@ pArray exe_qbundle_seq_se_between(_vectorSourceArray_,
 }
 
 template <typename value_type>
+pArray exe_qbundle_seq_se_huffman_between(_vectorSourceArray_,
+										  coor sp, coor ep,
+										  eleDefault wtLevel,
+										  eleDefault mmtLevel,
+										  bool saveArray = false, bool printFlag = false,
+										  size_t expId = 0, size_t expTrial = 0)
+{
+	//////////////////////////////
+	// 01. Save Source Array
+	if (saveArray)
+	{
+		exe_qry_ind_mmt_build<value_type>(sourceArr, mmtLevel, printFlag);
+		exe_qry_ind_se_huffman_encode<value_type>(sourceArr, wtLevel, mmtLevel, printFlag);
+	}
+
+	//////////////////////////////
+	// 02. Between
+	return exe_qry_seq_se_huffman_between<value_type>(sourceArr,
+													  sp, ep,
+													  wtLevel, mmtLevel,
+													  printFlag,
+													  expId, expTrial);
+	//////////////////////////////
+}
+
+template <typename value_type>
 pArray exe_qbundle_seq_spiht_between(_vectorSourceArray_,
 									 coor sp, coor ep,
 									 eleDefault wtLevel,
@@ -1196,6 +1321,62 @@ pArray exe_qry_seq_se_between(_vectorSourceArray_,
 	{
 		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
 		BOOST_LOG_TRIVIAL(info) << "Se Decomp Arr" << std::endl;
+		outArr->print();
+		//outArr->getChunkBitmap()->print();
+	}
+
+	//outArr = deltaDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	//if (printFlag)
+	//{
+	//	BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
+	//	BOOST_LOG_TRIVIAL(info) << "Delta Decode Arr" << std::endl;
+	//	outArr->print();
+	//	//outArr->getChunkBitmap()->print();
+	//}
+
+	outArr = wtDecodePlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	if (printFlag)
+	{
+		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "Wt Decode Arr" << std::endl;
+		outArr->print();
+		//outArr->getChunkBitmap()->print();
+	}
+
+	outArr = betweenPlan->getAction()->execute(std::vector<pArray>({ outArr }), qry);
+	if (printFlag)
+	{
+		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "Between Arr" << std::endl;
+		outArr->print();
+		//outArr->getChunkBitmap()->print();
+	}
+
+	tearDownQuery(qry, expId, expTrial, sourceArr[0]->getId());
+
+	return outArr;
+}
+
+template <typename value_type>
+pArray exe_qry_seq_se_huffman_between(_vectorSourceArray_,
+									  coor sp, coor ep,
+									  eleDefault wtLevel,
+									  eleDefault mmtLevel,
+									  bool printFlag = false,
+									  size_t expId = 0, size_t expTrial = 0)
+{
+	pQuery qry = std::make_shared<query>();
+
+	auto seDecompPlan = getSeHuffmanDecodePlan(sourceArr[0]->getDesc(), wtLevel, qry);
+	//auto deltaDecodePlan = getMMTDeltaDecodePlan(seDecompPlan, qry);
+	auto wtDecodePlan = getWaveletDecodePlan(seDecompPlan, wtLevel, qry);
+	auto betweenPlan = getBetweenPlan(wtDecodePlan, sp, ep, qry);
+
+	auto outArr = seDecompPlan->getAction()->execute(sourceArr, qry);
+	if (printFlag)
+	{
+		BOOST_LOG_TRIVIAL(info) << "##############################" << std::endl;
+		BOOST_LOG_TRIVIAL(info) << "Se Huffman Decomp Arr" << std::endl;
 		outArr->print();
 		//outArr->getChunkBitmap()->print();
 	}
