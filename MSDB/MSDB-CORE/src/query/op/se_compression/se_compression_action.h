@@ -34,6 +34,7 @@ private:
 	void compressAttribute(std::shared_ptr<wavelet_encode_array>inArr, pAttributeDesc attrDesc)
 	{
 		size_t mSizeTotal = 0;
+		size_t synopsisSizeTotal = 0;
 		auto arrId = inArr->getId();
 		auto cit = inArr->getChunkIterator(iterateMode::EXIST);
 		bool hasNegative = false;
@@ -60,9 +61,11 @@ private:
 			storageMgr::instance()->saveChunk(arrId, attr->id_, (outChunk)->getId(),
 											  std::static_pointer_cast<serializable>(outChunk));
 			mSizeTotal += outChunk->getSerializedSize();
+			synopsisSizeTotal += std::static_pointer_cast<seChunk>(outChunk)->getSynopsisSize();
 			++(*cit);
 		}
 
+		BOOST_LOG_TRIVIAL(info) << "Total Synopsis Size: " << synopsisSizeTotal << " Bytes";
 		BOOST_LOG_TRIVIAL(info) << "Total Save Chunk: " << mSizeTotal << " Bytes";
 	}
 

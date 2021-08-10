@@ -5,7 +5,7 @@
 namespace msdb
 {
 seChunk::seChunk(pChunkDesc desc)
-	: memBlockChunk(desc), level_(0), rBitFromMMT(0), min_(0)
+	: memBlockChunk(desc), level_(0), rBitFromMMT(0), min_(0), synopsisSize_(0)
 {
 }
 
@@ -150,6 +150,10 @@ int64_t seChunk::deserializeGap(bstream& bs)
 		return (gap - 1) * -1;
 	}
 	return gap - 1;
+}
+size_t seChunk::getSynopsisSize()
+{
+	return this->synopsisSize_;
 }
 void seChunk::setTileOffset(std::vector<uint64_t>& offset)
 {

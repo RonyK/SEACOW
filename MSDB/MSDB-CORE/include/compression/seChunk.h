@@ -34,6 +34,8 @@ public:
 	void serializeGap(bstream& bs, int64_t gap);
 	int64_t deserializeGap(bstream& bs);
 
+	size_t getSynopsisSize();
+
 	template<typename Ty_>
 	void serialize(bstream& bs)
 	{
@@ -67,8 +69,16 @@ public:
 
 			for (size_t band = 0; band <= numBandsInLevel; ++band, ++seqId)
 			{
-				this->serializeBand<Ty_>(bs, myBlock, seqId, band, bandDims);
-		}
+				if (band == 0)
+				{
+					size_t startPos = bs.getOutBitPos();
+					this->serializeBand<Ty_>(bs, myBlock, seqId, band, bandDims);
+					this->synopsisSize_ = bs.getOutBitPos() - startPos;
+				} else
+				{
+					this->serializeBand<Ty_>(bs, myBlock, seqId, band, bandDims);
+				}
+			}
 
 #ifndef NDEBUG
 			//auto synopsisSize = bs.capacity() - before;
@@ -486,6 +496,7 @@ public:
 
 protected:
 	size_t level_;
+	size_t synopsisSize_;
 	//chunkId sourceChunkId_;
 
 public:
