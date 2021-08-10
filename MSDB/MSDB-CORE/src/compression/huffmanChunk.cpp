@@ -40,7 +40,7 @@ void huffmanChunk::serialize(std::ostream& os)
 		break;
 	case eleType::INT16:
 	case eleType::UINT16:
-		this->serializeTy<uint64_t, uint16_t>(bs);
+		this->serializeTy<uint32_t, uint16_t>(bs);
 		break;
 	case eleType::INT32:
 	case eleType::UINT32:
@@ -73,7 +73,7 @@ void huffmanChunk::deserialize(std::istream& is)
 	case eleType::CHAR:
 	case eleType::INT8:
 	case eleType::UINT8:
-		this->deserializeTy<uint16_t, uint8_t>(bs);
+		this->deserializeTy<uint32_t, uint8_t>(bs);
 		break;
 	case eleType::INT16:
 	case eleType::UINT16:

@@ -29,14 +29,14 @@ private:
 	template<typename Cty_, typename Ty_>
 	void serializeTy(bstream& out)
 	{
-		huffmanCoder<uint16_t, uint8_t> huffmanEncoder;
+		huffmanCoderLonger<uint32_t, uint8_t> huffmanEncoder;
 		huffmanEncoder.encode(out, (uint8_t*)this->getBuffer()->getReadData(), this->getBuffer()->size());
 	}
 
 	template<typename Cty_, typename Ty_>
 	void deserializeTy(bstream& in)
 	{
-		huffmanCoder<uint16_t, uint8_t> huffmanDecoder;
+		huffmanCoderLonger<uint32_t, uint8_t> huffmanDecoder;
 		huffmanDecoder.decode((uint8_t*)this->getBuffer()->getData(), this->getBuffer()->size(), in);
 	}
 };
