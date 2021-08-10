@@ -141,9 +141,9 @@ std::vector<dim_type> originalDims = { dimY, dimX };
 //std::vector<dim_type> chunkNums = { 1, 1 };
 //std::vector<dim_type> chunkNums = { 4, 8 };
 //std::vector<dim_type> chunkNums = { 8, 16};
-//std::vector<dim_type> chunkNums = { 8, 16};
 //std::vector<dim_type> chunkNums = { 16, 32 };
-std::vector<dim_type> chunkNums = { 64, 128 };
+std::vector<dim_type> chunkNums = { 32, 64};
+//std::vector<dim_type> chunkNums = { 64, 128 };
 //std::vector<dim_type> chunkNums = { 128, 256 };
 //std::vector<dim_type> chunkNums = { 256, 512};
 std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
@@ -177,8 +177,17 @@ namespace data2D_lunar102400x40960
 {
 std::vector<dim_type> dims = { dimY, dimX };
 std::vector<dim_type> originalDims = { dimY, dimX };
-std::vector<dim_type> chunkNums = { 64, 192 };
+
+//
+//std::vector<dim_type> chunkNums = { 4, 12};
+//std::vector<dim_type> chunkNums = { 8, 24 };
 //std::vector<dim_type> chunkNums = { 16, 48 };
+//std::vector<dim_type> chunkNums = { 32, 96 };
+std::vector<dim_type> chunkNums = { 64, 192 };	// Default
+//std::vector<dim_type> chunkNums = { 128, 384 };
+//std::vector<dim_type> chunkNums = { 256, 768 };
+//std::vector<dim_type> chunkNums = { 512, 1536 };
+//
 //std::vector<dim_type> chunkNums = { 16, 16 };
 std::vector<dim_type> chunkDims = { dims[0] / chunkNums[0], dims[1] / chunkNums[1] };
 //std::vector<dim_type> blockNums = { 8, 8 };

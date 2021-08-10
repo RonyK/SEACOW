@@ -132,8 +132,8 @@ pArray test_body_seq_zip_save_load(_pFuncGetSourceArray_,
 {
 	//////////////////////////////
 	// 01. Get Source Array
-	//auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, false);
-	//sourceArr[0]->setId(sourceArr[0]->getId() + zip_array_id);
+	auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, false);
+	sourceArr[0]->setId(sourceArr[0]->getId() + zip_array_id);
 
 	auto sourceArrDesc = getArrayFromFunction<value_type>(getSourceArrayDesc, false);
 	sourceArrDesc[0]->setId(sourceArrDesc[0]->getId() + zip_array_id);
@@ -141,7 +141,7 @@ pArray test_body_seq_zip_save_load(_pFuncGetSourceArray_,
 
 	//////////////////////////////
 	// 02. Save Array
-	//exe_qry_ind_zip_save<value_type>(sourceArr, printFlag);
+	exe_qry_ind_zip_save<value_type>(sourceArr, printFlag);
 	//////////////////////////////
 
 	//////////////////////////////

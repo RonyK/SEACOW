@@ -20,6 +20,8 @@ namespace msdb
 {
 namespace caDummy
 {
+static int randomValueLimit = 128;
+
 // ##################################################
 template <typename value_type>
 pArray exe_qry_seq_load_between_filter(_vectorSourceArray_,
@@ -1170,7 +1172,7 @@ pArray test_body_seq_load_random_between_filter(_pFuncGetSourceArray_,
 		for (size_t i = 0; i < numTests; ++i)
 		{
 			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
-			v = (value_type)rand();
+			v = (value_type)rand() % randomValueLimit;
 
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -1210,7 +1212,7 @@ pArray test_body_seq_zip_random_between_filter(_pFuncGetSourceArray_,
 		for (size_t i = 0; i < numTests; ++i)
 		{
 			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
-			v = (value_type)rand();
+			v = (value_type)rand() % randomValueLimit;
 
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -1250,7 +1252,7 @@ pArray test_body_seq_lzw_random_between_filter(_pFuncGetSourceArray_,
 		for (size_t i = 0; i < numTests; ++i)
 		{
 			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
-			v = (value_type)rand();
+			v = (value_type)rand() % randomValueLimit;
 
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -1290,7 +1292,7 @@ pArray test_body_seq_huffman_random_between_filter(_pFuncGetSourceArray_,
 		for (size_t i = 0; i < numTests; ++i)
 		{
 			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
-			v = (value_type)rand();
+			v = (value_type)rand() % randomValueLimit;
 
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -1330,7 +1332,7 @@ pArray test_body_seq_adapt_huffman_random_between_filter(_pFuncGetSourceArray_,
 		for (size_t i = 0; i < numTests; ++i)
 		{
 			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
-			v = (value_type)rand();
+			v = (value_type)rand() % randomValueLimit;
 
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -1370,7 +1372,7 @@ pArray test_body_seq_lzw_huffman_random_between_filter(_pFuncGetSourceArray_,
 		for (size_t i = 0; i < numTests; ++i)
 		{
 			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
-			v = (value_type)rand();
+			v = (value_type)rand() % randomValueLimit;
 
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -1411,7 +1413,7 @@ pArray test_body_seq_spiht_random_between_filter(_pFuncGetSourceArray_,
 		for (size_t i = 0; i < numTests; ++i)
 		{
 			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
-			v = (value_type)rand();
+			v = (value_type)rand() % randomValueLimit;
 
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -1453,7 +1455,7 @@ pArray test_body_seq_compass_naive_random_between_filter(_pFuncGetSourceArray_,
 		for (size_t i = 0; i < numTests; ++i)
 		{
 			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
-			v = (value_type)rand();
+			v = (value_type)rand() % randomValueLimit;
 
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -1520,7 +1522,7 @@ pArray test_body_seq_compass_index_random_between_filter(_pFuncGetSourceArray_,
 		for (size_t i = 0; i < numTests; ++i)
 		{
 			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
-			v = (value_type)rand();
+			v = (value_type)rand() % randomValueLimit;
 
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -1581,7 +1583,7 @@ pArray test_body_seq_se_naive_random_between_filter(_pFuncGetSourceArray_,
 		for (size_t i = 0; i < numTests; ++i)
 		{
 			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
-			v = (value_type)rand();
+			v = (value_type)rand() % randomValueLimit;
 
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -1642,7 +1644,7 @@ pArray test_body_seq_se_index_random_between_filter(_pFuncGetSourceArray_,
 		for (size_t i = 0; i < numTests; ++i)
 		{
 			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
-			v = (value_type)rand();
+			v = (value_type)rand() % randomValueLimit;
 
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -1713,7 +1715,7 @@ pArray test_body_seq_se_huffman_index_random_between_filter(_pFuncGetSourceArray
 		for (size_t i = 0; i < numTests; ++i)
 		{
 			coorRange qRange = getRandomRange(dimX, dimY, selectivity);
-			v = (value_type)rand();
+			v = (value_type)rand() % randomValueLimit;
 
 			BOOST_LOG_TRIVIAL(info) << "##################################################";
 			BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
