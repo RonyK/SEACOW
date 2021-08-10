@@ -28,6 +28,10 @@ pChunk memArray::makeChunk(const chunkDesc& desc)
 }
 void memArray::freeChunk(const chunkId cId)
 {
+	if(this->chunks_[cId] != nullptr)
+	{
+		this->chunks_[cId]->flush();
+	}
 	this->chunks_[cId] = nullptr;
 	this->chunkBitmap_->setNull(cId);
 }

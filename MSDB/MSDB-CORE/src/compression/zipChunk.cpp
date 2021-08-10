@@ -20,7 +20,7 @@ pBlock zipChunk::makeBlock(const blockId bId)
 	{
 		// Make new one
 		auto desc = this->getBlockDesc(bId);
-		auto blockObj = std::make_shared<memBlock>(desc);
+		auto blockObj = std::make_shared<zipBlock>(desc);
 		this->insertBlock(blockObj);
 		return blockObj;
 	}
@@ -68,7 +68,6 @@ void zipChunk::serialize(std::ostream& os)
 	this->serializedSize_ = getSize(oss);
 	this->getOutHeader()->serialize(os);
 	os << oss.str();
-	//os.write(oss.str(), this->serializedSize_);
 }
 
 void zipChunk::deserialize(std::istream& is)
@@ -76,12 +75,8 @@ void zipChunk::deserialize(std::istream& is)
 	this->getHeader()->deserialize(is);
 	this->updateFromHeader();
 
-	// TODO :: un-compression with zib
 	std::stringstream iss;
 	iss << is.rdbuf();
-	
-	//bs.resize(this->serializedSize_);
-	//is.read(bs.data(), this->serializedSize_);
 
 	switch (this->desc_->attrDesc_->type_)
 	{

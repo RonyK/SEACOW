@@ -5,7 +5,7 @@
 namespace msdb
 {
 seChunk::seChunk(pChunkDesc desc)
-	: memBlockChunk(desc), level_(0), rBitFromMMT(0)
+	: memBlockChunk(desc), level_(0), rBitFromMMT(0), min_(0), synopsisSize_(0)
 {
 }
 
@@ -51,16 +51,16 @@ void seChunk::serialize(std::ostream& os)
 		this->serialize<int64_t>(bs);
 		break;
 	case eleType::UINT8:
-		this->serialize<uint8_t>(bs);
+		this->serialize<int8_t>(bs);
 		break;
 	case eleType::UINT16:
-		this->serialize<uint16_t>(bs);
+		this->serialize<int16_t>(bs);
 		break;
 	case eleType::UINT32:
-		this->serialize<uint32_t>(bs);
+		this->serialize<int32_t>(bs);
 		break;
 	case eleType::UINT64:
-		this->serialize<uint64_t>(bs);
+		this->serialize<int64_t>(bs);
 		break;
 	default:
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
@@ -98,16 +98,16 @@ void seChunk::deserialize(std::istream& is)
 		this->deserialize<int64_t>(bs);
 		break;
 	case eleType::UINT8:
-		this->deserialize<uint8_t>(bs);
+		this->deserialize<int8_t>(bs);
 		break;
 	case eleType::UINT16:
-		this->deserialize<uint16_t>(bs);
+		this->deserialize<int16_t>(bs);
 		break;
 	case eleType::UINT32:
-		this->deserialize<uint32_t>(bs);
+		this->deserialize<int32_t>(bs);
 		break;
 	case eleType::UINT64:
-		this->deserialize<uint64_t>(bs);
+		this->deserialize<int64_t>(bs);
 		break;
 	default:
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
@@ -124,6 +124,7 @@ void seChunk::serializeGap(bstream& bs, int64_t gap)
 	}
 	if(gap)
 	{
+		assert(abs_(gap) <= 128);
 		bs << setw(abs_(gap));
 		bs << (uint64_t)0;
 	}
@@ -135,11 +136,11 @@ int64_t seChunk::deserializeGap(bstream& bs)
 	char negiveGap;
 	bs >> negiveGap;
 
-	size_t gap = 0;
+	int64_t gap = 0;
 	char gapBit = 0;
 	do
 	{
-		assert(gap <= 128);
+		assert(gap <= 64);
 		bs >> gapBit;
 		++gap;
 	} while (gapBit != 1);
@@ -149,5 +150,13 @@ int64_t seChunk::deserializeGap(bstream& bs)
 		return (gap - 1) * -1;
 	}
 	return gap - 1;
+}
+size_t seChunk::getSynopsisSize()
+{
+	return this->synopsisSize_;
+}
+void seChunk::setTileOffset(std::vector<uint64_t>& offset)
+{
+	this->tileOffset_ = offset;
 }
 }	// msdb

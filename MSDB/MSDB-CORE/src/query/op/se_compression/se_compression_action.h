@@ -34,6 +34,7 @@ private:
 	void compressAttribute(std::shared_ptr<wavelet_encode_array>inArr, pAttributeDesc attrDesc)
 	{
 		size_t mSizeTotal = 0;
+		size_t synopsisSizeTotal = 0;
 		auto arrId = inArr->getId();
 		auto cit = inArr->getChunkIterator(iterateMode::EXIST);
 		bool hasNegative = false;
@@ -60,9 +61,11 @@ private:
 			storageMgr::instance()->saveChunk(arrId, attr->id_, (outChunk)->getId(),
 											  std::static_pointer_cast<serializable>(outChunk));
 			mSizeTotal += outChunk->getSerializedSize();
+			synopsisSizeTotal += std::static_pointer_cast<seChunk>(outChunk)->getSynopsisSize();
 			++(*cit);
 		}
 
+		BOOST_LOG_TRIVIAL(info) << "Total Synopsis Size: " << synopsisSizeTotal << " Bytes";
 		BOOST_LOG_TRIVIAL(info) << "Total Save Chunk: " << mSizeTotal << " Bytes";
 	}
 
@@ -85,13 +88,13 @@ private:
 		dimension bandDims = inBlockDims / std::pow(2, inChunk->getLevel() + 1);
 
 		// For Level 0
-		this->findRequiredBitsForRootLevel(outChunk, outBlock, 
+		this->findRequiredBitsForRootLevel<Ty_>(outChunk, outBlock, 
 										   mmtIndex, 
 										   bandDims, 
 										   numBandsInLevel, hasNegative);
 
 		// For child level
-		this->findRequiredBitsForChildLevel(outChunk, outBlock, 
+		this->findRequiredBitsForChildLevel<Ty_>(outChunk, outBlock, 
 											mmtIndex,
 											bandDims, inChunk->getLevel(),
 											numBandsInLevel, hasNegative);
@@ -123,14 +126,14 @@ private:
 		}
 
 #ifndef NDEBUG
-		//BOOST_LOG_TRIVIAL(trace) << "Max value: " << static_cast<int>(maxValue) << ", maxValueBits: " << static_cast<int>(maxValueBits);
+		BOOST_LOG_TRIVIAL(trace) << "Max value: " << static_cast<int>(maxValue) << ", maxValueBits: " << static_cast<int>(maxValueBits);
 #endif
 		return maxValueBits;
 	}
 
 	template <class Ty_>
 	void findRequiredBitsForRootLevel(pSeChunk outChunk, pBlock outBlock,
-									  std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex, 
+									  std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex,
 									  const dimension& bandDims, const size_t numBandsInLevel, 
 									  const bool hasNegative)
 	{
@@ -138,6 +141,10 @@ private:
 		auto blockLevel = mmtIndex->getBlockLevel();
 		auto mNode = mmtIndex->getNode(chunkCoor, blockLevel);
 		bit_cnt_type fromMMT = getRBitFromMMT(mNode, hasNegative);
+
+		// TODO::Synopsis Delta Encoding
+		//outChunk->setMin(mNode->getMin<Ty_>());
+		outChunk->setMin(0);
 
 		for (size_t band = 0; band <= numBandsInLevel; ++band)
 		{
@@ -157,7 +164,7 @@ private:
 
 	template <class Ty_>
 	void findRequiredBitsForChildLevel(pSeChunk outChunk, pBlock outBlock,
-									   std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex, 
+									   std::shared_ptr<MinMaxTreeImpl<position_t, Ty_>> mmtIndex,
 									   const dimension& bandDims, 
 									   const size_t maxLevel,
 									   const size_t numBandsInLevel, 
@@ -174,7 +181,7 @@ private:
 			{
 				coor innerCoor(innerItr.coor() + outChunk->getChunkCoor() * innerSpace);
 				auto mNode = mmtIndex->getNode(innerCoor, blockLevel - level);
-				bit_cnt_type rbFromMMT = getRBitFromMMT(mNode, hasNegative);
+				bit_cnt_type rbFromMMT = std::max(static_cast<int64_t>(getRBitFromMMT(mNode, hasNegative) - (int64_t)level), static_cast<int64_t>(static_cast<char>(hasNegative)));
 				for (size_t band = 1; band <= numBandsInLevel; ++band)
 				{
 					dimension targetSp = getBandRange(band, bandDims * pow(2, level)).getSp() + innerItr.coor() * bandDims;

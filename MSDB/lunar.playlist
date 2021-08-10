@@ -1,0 +1,213 @@
+<Playlist Version="2.0">
+  <Rule Name="Includes" Match="Any">
+    <Rule Match="All">
+      <Property Name="Solution" />
+      <Rule Match="Any">
+        <Rule Match="All">
+          <Property Name="Project" Value="MSDB-Test" />
+          <Rule Match="Any">
+            <Rule Match="All">
+              <Property Name="Namespace" Value="" />
+              <Rule Match="Any">
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_compass_encode_decode" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_compass_encode_decode.lunar102400x40960_ind_compass_encode_decode" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_compass_encode_decode.lunar102400x40960_ind_compass_encode_decode" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="experiment_query_op_index_filter" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="experiment_query_op_index_filter.lunar102400x40960_seq_random_load_naive_filter" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="experiment_query_op_index_filter.lunar102400x40960_seq_random_load_naive_filter" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="experiment_query_op_index_filter.lunar102400x40960_seq_random_spiht_naive_filter" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="experiment_query_op_index_filter.lunar102400x40960_seq_random_spiht_naive_filter" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="experiment_query_op_index_filter.lunar102400x40960_seq_random_se_index_filter" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="experiment_query_op_index_filter.lunar102400x40960_seq_random_se_index_filter" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="experiment_query_op_index_filter.lunar102400x40960_seq_random_compass_naive_filter" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="experiment_query_op_index_filter.lunar102400x40960_seq_random_compass_naive_filter" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="experiment_query_op_index_filter.lunar102400x40960_seq_random_zip_naive_filter" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="experiment_query_op_index_filter.lunar102400x40960_seq_random_zip_naive_filter" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="experiment_query_op_index_filter.lunar102400x40960_seq_random_compass_index_filter" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="experiment_query_op_index_filter.lunar102400x40960_seq_random_compass_index_filter" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="experiment_query_op_index_filter.lunar102400x40960_seq_random_se_naive_filter" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="experiment_query_op_index_filter.lunar102400x40960_seq_random_se_naive_filter" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_zip" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_zip.lunar102400x40960_ind_zip_save" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_zip.lunar102400x40960_ind_zip_save" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_spiht_encode_decode" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_spiht_encode_decode.lunar102400x40960_seq_spiht_encode_decode" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_spiht_encode_decode.lunar102400x40960_seq_spiht_encode_decode" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_index_filter" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_index_filter.lunar102400x40960_seq_load_index_filter" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_index_filter.lunar102400x40960_seq_load_index_filter" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_index_filter.lunar102400x40960_seq_spiht_index_filter" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_index_filter.lunar102400x40960_seq_spiht_index_filter" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_index_filter.lunar102400x40960_seq_se_index_filter" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_index_filter.lunar102400x40960_seq_se_index_filter" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_se_compression" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_se_compression.lunar102400x40960_seq_se_compr_decomp" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_se_compression.lunar102400x40960_seq_se_compr_decomp" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_mmt_build" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_mmt_build.lunar102400x40960_mmt_build" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_mmt_build.lunar102400x40960_mmt_build" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_save_load" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_save_load.lunar102400x40960_save_load" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_save_load.lunar102400x40960_save_load" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="experiment_query_op_between" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="experiment_query_op_between.lunar102400x40960_seq_random_load_between" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="experiment_query_op_between.lunar102400x40960_seq_random_load_between" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="experiment_query_op_between.lunar102400x40960_seq_random_spiht_between" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="experiment_query_op_between.lunar102400x40960_seq_random_spiht_between" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="experiment_query_op_between.lunar102400x40960_seq_random_se_between" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="experiment_query_op_between.lunar102400x40960_seq_random_se_between" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="experiment_query_op_between.lunar102400x40960_seq_random_compass_between" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="experiment_query_op_between.lunar102400x40960_seq_random_compass_between" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="experiment_query_op_between.lunar102400x40960_seq_random_zip_between" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="experiment_query_op_between.lunar102400x40960_seq_random_zip_between" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Rule Match="All">
+                  <Property Name="Class" Value="query_op_between" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_between.lunar102400x40960_seq_se_between" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_between.lunar102400x40960_seq_se_between" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_between.lunar102400x40960_seq_spiht_between" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_between.lunar102400x40960_seq_spiht_between" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="query_op_between.lunar102400x40960_seq_load_between" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="query_op_between.lunar102400x40960_seq_load_between" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+              </Rule>
+            </Rule>
+          </Rule>
+        </Rule>
+      </Rule>
+    </Rule>
+  </Rule>
+</Playlist>

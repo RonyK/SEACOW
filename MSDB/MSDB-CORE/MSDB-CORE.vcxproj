@@ -192,6 +192,15 @@
     <ClInclude Include="include\array\dimension.h" />
     <ClInclude Include="include\array\dimensionDesc.h" />
     <ClInclude Include="include\array\dimensionId.h" />
+    <ClInclude Include="include\compression\adaptHuffmanBlock.h" />
+    <ClInclude Include="include\compression\adaptHuffmanChunk.h" />
+    <ClInclude Include="include\compression\adaptiveHuffmanCode.h" />
+    <ClInclude Include="include\compression\fixedHuffmanCoder.h" />
+    <ClInclude Include="include\compression\huffmanBlock.h" />
+    <ClInclude Include="include\compression\huffmanChunk.h" />
+    <ClInclude Include="include\compression\huffmanCode.h" />
+    <ClInclude Include="include\compression\lzwBlock.h" />
+    <ClInclude Include="include\compression\lzwChunk.h" />
     <ClInclude Include="include\array\memArray.h" />
     <ClInclude Include="include\array\memBlock.h" />
     <ClInclude Include="include\array\memBlockArray.h" />
@@ -202,7 +211,12 @@
     <ClInclude Include="include\compression\compassBlock.h" />
     <ClInclude Include="include\compression\compassChunk.h" />
     <ClInclude Include="include\compression\compression.h" />
+    <ClInclude Include="include\compression\lzwEncoder.h" />
+    <ClInclude Include="include\compression\lzwHuffmanBlock.h" />
+    <ClInclude Include="include\compression\lzwHuffmanChunk.h" />
     <ClInclude Include="include\compression\seChunk.h" />
+    <ClInclude Include="include\compression\seHuffmanBlock.h" />
+    <ClInclude Include="include\compression\seHuffmanChunk.h" />
     <ClInclude Include="include\compression\spihtBlock.h" />
     <ClInclude Include="include\compression\spihtChunk.h" />
     <ClInclude Include="include\compression\waveletUtil.h" />
@@ -210,6 +224,7 @@
     <ClInclude Include="include\compression\zipBlock.h" />
     <ClInclude Include="include\compression\zipChunk.h" />
     <ClInclude Include="include\index\bitmap.h" />
+    <ClInclude Include="include\index\compass.h" />
     <ClInclude Include="include\index\mmt.h" />
     <ClInclude Include="include\index\attributeIndex.h" />
     <ClInclude Include="include\index\dimensionIndex.h" />
@@ -233,6 +248,7 @@
     <ClInclude Include="include\system\errorCodes.h" />
     <ClInclude Include="include\system\exceptions.h" />
     <ClInclude Include="include\system\storageMgr.h" />
+    <ClInclude Include="include\util\experimentRecorder.h" />
     <ClInclude Include="include\util\ioutil.h" />
     <ClInclude Include="include\util\threadUtil.h" />
     <ClInclude Include="include\util\coordinate.h" />
@@ -241,6 +257,7 @@
     <ClInclude Include="include\util\logger.h" />
     <ClInclude Include="include\util\math.h" />
     <ClInclude Include="include\util\singleton.h" />
+    <ClInclude Include="include\util\valueDistributionRecorder.h" />
     <ClInclude Include="include\util\waveletIterator.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
@@ -252,16 +269,34 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="include\xml\tinyxml2.h" />
+    <ClInclude Include="src\query\op\adapt_huffman_decode\adapt_huffman_decode_action.h" />
+    <ClInclude Include="src\query\op\adapt_huffman_decode\adapt_huffman_decode_plan.h" />
+    <ClInclude Include="src\query\op\adapt_huffman_encode\adapt_huffman_encode_action.h" />
+    <ClInclude Include="src\query\op\adapt_huffman_encode\adapt_huffman_encode_plan.h" />
     <ClInclude Include="src\query\op\between\between_action.h" />
     <ClInclude Include="src\query\op\between\between_plan.h" />
     <ClInclude Include="src\query\op\compass_decode\compass_decode_action.h" />
     <ClInclude Include="src\query\op\compass_decode\compass_decode_plan.h" />
     <ClInclude Include="src\query\op\compass_encode\compass_encode_action.h" />
     <ClInclude Include="src\query\op\compass_encode\compass_encode_plan.h" />
+    <ClInclude Include="src\query\op\compass_index_build\compass_index_build_action.h" />
+    <ClInclude Include="src\query\op\compass_index_build\compass_index_build_plan.h" />
+    <ClInclude Include="src\query\op\huffman_decode\huffman_decode_action.h" />
+    <ClInclude Include="src\query\op\huffman_decode\huffman_decode_plan.h" />
+    <ClInclude Include="src\query\op\huffman_encode\huffman_encode_action.h" />
+    <ClInclude Include="src\query\op\huffman_encode\huffman_encode_plan.h" />
     <ClInclude Include="src\query\op\index_filter\index_filter_action.h" />
     <ClInclude Include="src\query\op\index_filter\index_filter_plan.h" />
     <ClInclude Include="src\query\op\load\load_action.h" />
     <ClInclude Include="src\query\op\load\load_plan.h" />
+    <ClInclude Include="src\query\op\lzw_decode\lzw_decode_action.h" />
+    <ClInclude Include="src\query\op\lzw_decode\lzw_decode_plan.h" />
+    <ClInclude Include="src\query\op\lzw_encode\lzw_encode_action.h" />
+    <ClInclude Include="src\query\op\lzw_encode\lzw_encode_plan.h" />
+    <ClInclude Include="src\query\op\lzw_huffman_decode\lzw_huffman_decode_action.h" />
+    <ClInclude Include="src\query\op\lzw_huffman_decode\lzw_huffman_decode_plan.h" />
+    <ClInclude Include="src\query\op\lzw_huffman_encode\lzw_huffman_encode_action.h" />
+    <ClInclude Include="src\query\op\lzw_huffman_encode\lzw_huffman_encode_plan.h" />
     <ClInclude Include="src\query\op\mmt_build\mmt_build_action.h" />
     <ClInclude Include="src\query\op\mmt_build\mmt_build_plan.h" />
     <ClInclude Include="src\query\op\mmt_delta_decode\mmt_delta_decode_action.h" />
@@ -278,6 +313,10 @@
     <ClInclude Include="src\query\op\se_decompression\se_decompression_plan.h" />
     <ClInclude Include="src\query\op\naive_filter\naive_filter_action.h" />
     <ClInclude Include="src\query\op\naive_filter\naive_filter_plan.h" />
+    <ClInclude Include="src\query\op\se_huffman_decode\se_huffman_decode_action.h" />
+    <ClInclude Include="src\query\op\se_huffman_decode\se_huffman_decode_plan.h" />
+    <ClInclude Include="src\query\op\se_huffman_encode\se_huffman_encode_plan.h" />
+    <ClInclude Include="src\query\op\se_huffman_encode\se_huffman_encode_action.h" />
     <ClInclude Include="src\query\op\spiht_decode\spiht_decode_action.h" />
     <ClInclude Include="src\query\op\spiht_decode\spiht_decode_plan.h" />
     <ClInclude Include="src\query\op\spiht_encode\spiht_encode_action.h" />
@@ -299,6 +338,19 @@
     <ClInclude Include="src\query\op\zip_save\zip_save_plan.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\compression\adaptHuffmanBlock.cpp" />
+    <ClCompile Include="src\compression\adaptHuffmanChunk.cpp" />
+    <ClCompile Include="src\compression\adaptiveHuffmanCode.cpp" />
+    <ClCompile Include="src\compression\huffmanBlock.cpp" />
+    <ClCompile Include="src\compression\huffmanChunk.cpp" />
+    <ClCompile Include="src\compression\huffmanCode.cpp" />
+    <ClCompile Include="src\compression\lzwBlock.cpp" />
+    <ClCompile Include="src\compression\lzwChunk.cpp" />
+    <ClCompile Include="src\compression\lzwHuffmanBlock.cpp" />
+    <ClCompile Include="src\compression\lzwHuffmanChunk.cpp" />
+    <ClCompile Include="src\compression\seHuffmanBlock.cpp" />
+    <ClCompile Include="src\compression\seHuffmanChunk.cpp" />
+    <ClCompile Include="src\index\compass.cpp" />
     <ClCompile Include="src\array\memBlockArray.cpp" />
     <ClCompile Include="src\compression\compassBlock.cpp" />
     <ClCompile Include="src\compression\compassChunk.cpp" />
@@ -332,16 +384,34 @@
     <ClCompile Include="src\parse\expression.cpp" />
     <ClCompile Include="src\parse\predicate.cpp" />
     <ClCompile Include="src\parse\term.cpp" />
+    <ClCompile Include="src\query\op\adapt_huffman_decode\adapt_huffman_decode_action.cpp" />
+    <ClCompile Include="src\query\op\adapt_huffman_decode\adapt_huffman_decode_plan.cpp" />
+    <ClCompile Include="src\query\op\adapt_huffman_encode\adapt_huffman_encode_action.cpp" />
+    <ClCompile Include="src\query\op\adapt_huffman_encode\adapt_huffman_encode_plan.cpp" />
     <ClCompile Include="src\query\op\between\between_action.cpp" />
     <ClCompile Include="src\query\op\between\between_plan.cpp" />
     <ClCompile Include="src\query\op\compass_decode\compass_decode_action.cpp" />
     <ClCompile Include="src\query\op\compass_decode\compass_decode_plan.cpp" />
     <ClCompile Include="src\query\op\compass_encode\compass_encode_action.cpp" />
     <ClCompile Include="src\query\op\compass_encode\compass_encode_plan.cpp" />
+    <ClCompile Include="src\query\op\compass_index_build\compass_index_build_action.cpp" />
+    <ClCompile Include="src\query\op\compass_index_build\compass_index_build_plan.cpp" />
+    <ClCompile Include="src\query\op\huffman_decode\huffman_decode_action.cpp" />
+    <ClCompile Include="src\query\op\huffman_decode\huffman_decode_plan.cpp" />
+    <ClCompile Include="src\query\op\huffman_encode\huffman_encode_action.cpp" />
+    <ClCompile Include="src\query\op\huffman_encode\huffman_encode_plan.cpp" />
     <ClCompile Include="src\query\op\index_filter\index_filter_action.cpp" />
     <ClCompile Include="src\query\op\index_filter\index_filter_plan.cpp" />
     <ClCompile Include="src\query\op\load\load_action.cpp" />
     <ClCompile Include="src\query\op\load\load_plan.cpp" />
+    <ClCompile Include="src\query\op\lzw_decode\lzw_decode_action.cpp" />
+    <ClCompile Include="src\query\op\lzw_decode\lzw_decode_plan.cpp" />
+    <ClCompile Include="src\query\op\lzw_encode\lzw_encode_action.cpp" />
+    <ClCompile Include="src\query\op\lzw_encode\lzw_encode_plan.cpp" />
+    <ClCompile Include="src\query\op\lzw_huffman_decode\lzw_huffman_decode_action.cpp" />
+    <ClCompile Include="src\query\op\lzw_huffman_decode\lzw_huffman_decode_plan.cpp" />
+    <ClCompile Include="src\query\op\lzw_huffman_encode\lzw_huffman_encode_action.cpp" />
+    <ClCompile Include="src\query\op\lzw_huffman_encode\lzw_huffman_encode_plan.cpp" />
     <ClCompile Include="src\query\op\mmt_build\mmt_build_action.cpp" />
     <ClCompile Include="src\query\op\mmt_build\mmt_build_plan.cpp" />
     <ClCompile Include="src\query\op\mmt_delta_decode\mmt_delta_decode_action.cpp" />
@@ -358,6 +428,10 @@
     <ClCompile Include="src\query\op\se_decompression\se_decompression_plan.cpp" />
     <ClCompile Include="src\query\op\naive_filter\naive_filter_action.cpp" />
     <ClCompile Include="src\query\op\naive_filter\naive_filter_plan.cpp" />
+    <ClCompile Include="src\query\op\se_huffman_decode\se_huffman_decode_action.cpp" />
+    <ClCompile Include="src\query\op\se_huffman_decode\se_huffman_decode_plan.cpp" />
+    <ClCompile Include="src\query\op\se_huffman_encode\se_huffman_encode_plan.cpp" />
+    <ClCompile Include="src\query\op\se_huffman_encode\se_huffman_encode_action.cpp" />
     <ClCompile Include="src\query\op\spiht_decode\spiht_decode_action.cpp" />
     <ClCompile Include="src\query\op\spiht_decode\spiht_decode_plan.cpp" />
     <ClCompile Include="src\query\op\spiht_encode\spiht_encode_action.cpp" />
@@ -371,6 +445,7 @@
     <ClCompile Include="src\query\op\zip_save\zip_save_action.cpp" />
     <ClCompile Include="src\query\op\zip_save\zip_save_plan.cpp" />
     <ClCompile Include="src\query\query.cpp" />
+    <ClCompile Include="src\util\experimentRecorder.cpp" />
     <ClCompile Include="src\util\ioutil.cpp" />
     <ClCompile Include="src\util\threadUtil.cpp" />
     <ClCompile Include="src\util\logger.cpp" />
@@ -411,6 +486,7 @@
     <ClCompile Include="src\compression\daubechies.cpp" />
     <ClCompile Include="src\compression\haar.cpp" />
     <ClCompile Include="src\compression\wavelet.cpp" />
+    <ClCompile Include="src\util\valueDistributionRecorder.cpp" />
     <ClCompile Include="src\xml\tinyxml2.cpp" />
     <ClCompile Include="src\stdafx.cpp" />
   </ItemGroup>

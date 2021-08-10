@@ -75,42 +75,42 @@ protected:
 						// Check block bitmap exist
 						if (boUpBitmap->hasChild(cid))
 						{
-							//auto boUpBlockBitmap = boUpBitmap->getChild(cid);
-							auto blockBitmap = chunkBitmap->makeChild(cid, blockNums, true);
+							//auto blockBitmap = chunkBitmap->makeChild(cid, blockNums, true);
 
-							//auto blockBitmap = chunkBitmap->makeChild(cid, blockNums, false);
-							//for(blockId bid = 0; bid < blockNums; ++bid)
-							//{
-							//	if (boUpBlockBitmap->isExist(bid))
-							//	{
-							//		auto blockCoor = bit.seqToCoor(bid);
-							//		auto blockSp = blockCoor * blockDims;
-							//		auto blockEp = blockSp + blockDims;
-							//		auto blockRange = coorRange(blockSp, blockEp);
-							//		
-							//		if(blockRange.isIntersect(qRangeInChunk))
-							//		{
-							//			blockBitmap->setExist(bid);
-							//		}
-							//	}
-							//}
+							auto boUpBlockBitmap = boUpBitmap->getChild(cid);
+							auto blockBitmap = chunkBitmap->makeChild(cid, blockNums, false);
+							for(blockId bid = 0; bid < blockNums; ++bid)
+							{
+								if (boUpBlockBitmap->isExist(bid))
+								{
+									auto blockCoor = bit.seqToCoor(bid);
+									auto blockSp = blockCoor * blockDims;
+									auto blockEp = blockSp + blockDims;
+									auto blockRange = coorRange(blockSp, blockEp);
+									
+									if(blockRange.isIntersect(qRangeInChunk))
+									{
+										blockBitmap->setExist(bid);
+									}
+								}
+							}
 						} else
 						{
-							auto blockBitmap = chunkBitmap->makeChild(cid, blockNums, true);
+							//auto blockBitmap = chunkBitmap->makeChild(cid, blockNums, true);
 
-							//auto blockBitmap = chunkBitmap->makeChild(cid, blockNums, false);
-							//for (blockId bid = 0; bid < blockNums; ++bid)
-							//{
-							//	auto blockCoor = bit.seqToCoor(bid);
-							//	auto blockSp = blockCoor * blockDims;
-							//	auto blockEp = blockSp + blockDims;
-							//	auto blockRange = coorRange(blockSp, blockEp);
+							auto blockBitmap = chunkBitmap->makeChild(cid, blockNums, false);
+							for (blockId bid = 0; bid < blockNums; ++bid)
+							{
+								auto blockCoor = bit.seqToCoor(bid);
+								auto blockSp = blockCoor * blockDims;
+								auto blockEp = blockSp + blockDims;
+								auto blockRange = coorRange(blockSp, blockEp);
 
-							//	if (blockRange.isIntersect(qRangeInChunk))
-							//	{
-							//		blockBitmap->setExist(bid);
-							//	}
-							//}
+								if (blockRange.isIntersect(qRangeInChunk))
+								{
+									blockBitmap->setExist(bid);
+								}
+							}
 						}
 					}
 				}else

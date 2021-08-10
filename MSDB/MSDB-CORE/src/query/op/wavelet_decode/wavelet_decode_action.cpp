@@ -20,9 +20,9 @@ pArray wavelet_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 	assert(inputArrays.size() == 1);
 	//========================================//
 	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
+	//----------------------------------------//
 
-	auto planBitmap = this->getPlanChunkBitmap();
-
+	auto planBitmap = this->getPlanInChunkBitmap();		
 	pArray inArr = inputArrays[0];
 
 	//////////////////////////////
@@ -34,7 +34,6 @@ pArray wavelet_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 
 	auto weArray = std::static_pointer_cast<wavelet_encode_array>(inArr);
 	auto originalChunkDims = weArray->getOrigianlChunkDims();
-
 
 	//////////////////////////////
 	// Build wavelet_decode_array
@@ -66,16 +65,16 @@ pArray wavelet_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 			attributeDecode<int64_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::UINT8:
-			attributeDecode<uint8_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
+			attributeDecode<int8_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::UINT16:
-			attributeDecode<uint16_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
+			attributeDecode<int16_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::UINT32:
-			attributeDecode<uint32_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
+			attributeDecode<int32_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::UINT64:
-			attributeDecode<uint64_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
+			attributeDecode<int64_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		//case eleType::DOUBLE:
 		//	attributeDecode<double>(inChunk, arrRange,w, d, q);
@@ -84,6 +83,7 @@ pArray wavelet_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 		}
 	}
+	//----------------------------------------//
 	qry->getTimer()->pause(0);
 	//========================================//
 

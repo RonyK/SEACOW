@@ -127,5 +127,13 @@ TEST_F(query_op_mmt_save, mercurydem20480x10240_mmt_save)
     test_body_mmt_save<value_type>(&getSourceArrayIfEmpty, mmtLevel);        // 20100
 }   // TEST
 }   // data2D_mars4096x2048
+
+namespace data2D_lunar102400x40960
+{
+TEST_F(query_op_mmt_save, lunar102400x40960_mmt_save)
+{
+    test_body_mmt_save<value_type>(&getSourceArrayIfEmpty, mmtLevel);        // 10240
+}   // TEST
+}   // data2D_lunar102400x40960
 }	// caDummy
 }	// msdb

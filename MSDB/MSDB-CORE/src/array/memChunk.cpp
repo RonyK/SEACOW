@@ -38,6 +38,7 @@ pBlock memChunk::makeBlock(const blockId bId)
 void memChunk::insertBlock(pBlock inBlock)
 {
 	this->block_ = inBlock;
+	this->getBlockBitmap()->setExist(inBlock->getId());
 	this->referenceBufferToBlock(inBlock->getId());
 }
 

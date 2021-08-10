@@ -39,7 +39,6 @@ storageMgr::storageMgr()
 
 storageMgr::~storageMgr()
 {
-	std::cout << "~storageMgr()" << std::endl;
 }
 
 config* storageMgr::loadConfigFile(ConfigType type)
@@ -96,8 +95,10 @@ void storageMgr::loadChunk(arrayId arrId, attributeId attrId, chunkId chkId, pSe
 		this->getIfstream(fs, this->getChunkPath(arrId, attrId, chkId),
 						  strChunkFilExtension);
 		serialObj->deserialize(fs);
+#ifndef NDEBUG
 		BOOST_LOG_TRIVIAL(trace) << "Load Chunk[" << chkId << "] : " << serialObj->getSerializedSize() << " Bytes" << std::endl;
-		
+#endif
+
 		fs.close();
 	}
 	_MSDB_CATCH(msdb_exception msex)
@@ -107,18 +108,18 @@ void storageMgr::loadChunk(arrayId arrId, attributeId attrId, chunkId chkId, pSe
 			if(msex._error_code == MSDB_ER_CANNOT_OPEN_FILE)
 			{
 				// No chunk file, pass chunk
-				BOOST_LOG_TRIVIAL(error) << "Load Chunk[" << chkId << "] : EMPTY";
+				BOOST_LOG_TRIVIAL(error) << "CATCH:: Load Chunk[" << chkId << "] : EMPTY";
 			}
 		}else
 		{
-			BOOST_LOG_TRIVIAL(error) << "Load Chunk[" << chkId << "] : MSDB EXCEPTION";
+			BOOST_LOG_TRIVIAL(error) << "CATCH:: Load Chunk[" << chkId << "] : MSDB EXCEPTION";
 		}
 
 		return;
 	}
 	_MSDB_CATCH_ALL
 	{
-		BOOST_LOG_TRIVIAL(error) << "Load Chunk[" << chkId << "] : EXCEPTION";
+		BOOST_LOG_TRIVIAL(error) << "CATCH:: Load Chunk[" << chkId << "] : EXCEPTION";
 	}
 	_MSDB_CATCH_END
 }
@@ -134,7 +135,9 @@ void storageMgr::saveChunk(arrayId arrId, attributeId attrId, chunkId chkId, pSe
 		this->getOfstream(fs, this->getChunkPath(arrId, attrId, chkId),
 						  strChunkFilExtension);
 		serialObj->serialize(fs);
+#ifndef NDEBUG
 		BOOST_LOG_TRIVIAL(trace) << "Save Chunk[" << chkId << "] : " << serialObj->getSerializedSize() << " Bytes";
+#endif
 		fs.close();
 	}
 	_MSDB_CATCH_ALL

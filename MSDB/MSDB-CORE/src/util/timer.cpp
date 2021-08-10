@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include <util/timer.h>
 #include <util/logger.h>
+#include <util/experimentRecorder.h>
 
 namespace msdb
 {
@@ -213,6 +214,34 @@ void timer::printTime(bool printDetail)
 			it->first << "]";
 	}
 	//////////////////////////////
+}
+
+void timer::recordTime(size_t expId, size_t trialId, size_t dataId, size_t methodId)
+{
+	auto expRecorder = experimentRecorder::instance();
+
+	std::map<std::string, float> mainThreadJob;
+	std::map<std::string, checkPoint> mainThreadJobInfo;
+
+	for (int i = 0; i < this->records_.size(); i++)
+	{
+		if (this->records_[i].threadId == 0)
+		{
+			if (mainThreadJob.find(jobName_[this->records_[i].jobId]) != mainThreadJob.end())
+			{
+				mainThreadJob.find(jobName_[this->records_[i].jobId])->second += this->records_[i].time_.count();
+			} else
+			{
+				mainThreadJob.insert(std::make_pair(jobName_[this->records_[i].jobId], this->records_[i].time_.count()));
+				mainThreadJobInfo.insert(std::make_pair(jobName_[this->records_[i].jobId], this->records_[i]));
+			}
+		}
+	}
+	
+	for(auto j : mainThreadJobInfo)
+	{
+		expRecorder->insert(expId, trialId, dataId, j.second.jobId, jobName_[j.second.jobId], mainThreadJob[j.first], methodId);
+	}
 }
 
 size_t timer::getNextJobId()

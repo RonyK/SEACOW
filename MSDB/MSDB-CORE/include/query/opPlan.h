@@ -17,7 +17,7 @@ public:
 	virtual const char* name() = 0;
 	void setParamSet(pParamSet paramSet);
 	virtual pArrayDesc inferSchema();
-	virtual pBitmapTree inferBitmap();
+	virtual pBitmapTree inferInBitmap();
 	virtual pAction getAction();
 	parameters getParam();
 
@@ -33,6 +33,7 @@ protected:
 
 private:
 	pParamSet inParamSet_;
+	pBitmapTree inArrBitmap_;
 	pBitmapTree outArrBitmap_;
 	pPlan parentPlan_;
 };

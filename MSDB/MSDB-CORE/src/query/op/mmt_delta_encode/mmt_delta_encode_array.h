@@ -2,6 +2,7 @@
 #ifndef _MSDB_OPMMT_DELTA_ENCODE_ARRAY_H_
 #define _MSDB_OPMMT_DELTA_ENCODE_ARRAY_H_
 
+// TODO:: Deprecated
 
 #include <array/memBlockArray.h>
 #include <index/mmt.h>

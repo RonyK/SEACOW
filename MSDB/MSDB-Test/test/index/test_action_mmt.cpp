@@ -113,7 +113,7 @@ void mmt_build_test(pArray afterArray)
 					nit.moveTo(blockCoor);
 					auto node = levelNodes.data()[nit.seqPos()];
 
-					std::cout << "[" << x << ", " << y << "] " << static_cast<int>(node->getMin<value_type>()) << " ~ " << static_cast<int>(node->getMax<value_type>()) << std::endl;
+					//std::cout << "[" << x << ", " << y << "] " << static_cast<int>(node->getMin<value_type>()) << " ~ " << static_cast<int>(node->getMax<value_type>()) << std::endl;
 
 					EXPECT_EQ(exMMT_min[l][y][x], node->getMin<value_type>());
 					EXPECT_EQ(exMMT_max[l][y][x], node->getMax<value_type>());

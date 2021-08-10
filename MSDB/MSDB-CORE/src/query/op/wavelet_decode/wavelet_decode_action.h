@@ -7,6 +7,7 @@
 #include <compression/wavelet.h>
 #include <query/opAction.h>
 #include <util/math.h>
+#include <util/threadUtil.h>
 
 namespace msdb
 {
@@ -23,125 +24,161 @@ public:
 private:
 	template <class Ty_>
 	void attributeDecode(pArray outArr, pArray inArr, pAttributeDesc attrDesc,
-						 pWavelet w, size_t maxLevel, pQuery q)
+						 pWavelet w, size_t maxLevel, pQuery qry)
 	{
-		auto icItr = inArr->getChunkIterator();
-		auto chunkDims = outArr->getDesc()->getDimDescs()->getChunkDims();
-		auto blockSpace = outArr->getDesc()->getDimDescs()->getBlockSpace();
-		size_t numBlocks = blockSpace.area();
-
+		//========================================//
+		qry->getTimer()->nextWork(0, workType::COMPUTING);
+		//----------------------------------------//
+		auto outChunkBitmap = this->inferBottomUpBitmap(outArr->getDesc(), inArr->getChunkBitmap());
+		outArr->replaceChunkBitmap(outChunkBitmap);
 		auto ocItr = outArr->getChunkIterator(iterateMode::ALL);
 
+		//----------------------------------------//
+		qry->getTimer()->nextWork(0, workType::PARALLEL);
+		//----------------------------------------//
+		size_t currentThreadId = 0;
+		this->threadCreate(_MSDB_ACTION_THREAD_NUM_);
+
+		while (!ocItr->isEnd())
+		{
+			if(ocItr->isExist())
+			{
+				pChunk outChunk = outArr->makeChunk(attrDesc->id_, ocItr->seqPos());
+				outChunk->bufferAlloc();
+
+				io_service_->post(boost::bind(&wavelet_decode_action::parallelChunkDecode<Ty_>, this,
+								  outArr, outChunk, inArr->getChunkIterator(),
+								  ocItr->coor(),
+								  w, maxLevel, qry, currentThreadId));
+			}
+
+			++(*ocItr);
+		}
+
+		this->threadStop();
+		this->threadJoin();
+
+		//----------------------------------------//
+		qry->getTimer()->nextWork(0, workType::COMPUTING);
+		//========================================//
+
+		// Free empty chunks
+		ocItr->moveToStart();
 		while(!ocItr->isEnd())
 		{
-			bool isOutChunkEmpty = true;
-			std::vector<pChunk> chunks;
-			pBitmap blockBitmap = std::make_shared<bitmap>(blockSpace.area(), false);
-
-			auto outChunkCoor = ocItr->coor();
-			coorItr bSpaceItr(blockSpace);
-
-			// Bring all chunks belong to an outChunk
-			while (!bSpaceItr.isEnd())
+			if(ocItr->isExist() && (**ocItr)->getBlockBitmap()->isEmpty())
 			{
-				auto blockCoor = bSpaceItr.coor();
-				auto inChunkCoor = outChunkCoor * blockSpace + blockCoor;
-
-				icItr->moveTo(inChunkCoor);
-				//BOOST_LOG_TRIVIAL(debug) << inChunkCoor.toString();
-				//if(icItr->isExist() && (**icItr) == nullptr)
-				//{
-				//	BOOST_LOG_TRIVIAL(debug) << "exist but null";
-				//}
-
-				if(icItr->isExist() && (**icItr) != nullptr)
-				{
-					//BOOST_LOG_TRIVIAL(debug) << "exist";
-					assert((*icItr)->getDesc()->chunkCoor_ == inChunkCoor);
-					blockBitmap->setExist(bSpaceItr.seqPos());
-					chunks.push_back(**icItr);
-					isOutChunkEmpty = false;
-				}else
-				{
-					//BOOST_LOG_TRIVIAL(debug) << "null";
-					chunks.push_back(nullptr);
-				}
-				++bSpaceItr;
+				outArr->freeChunk(ocItr->seqPos());
 			}
-
-			if(!isOutChunkEmpty)
-			{
-				//BOOST_LOG_TRIVIAL(debug) << "[" << ocItr->seqPos() << "]: chunk exist";
-				// --------------------
-				// TODO::PARALLEL
-				auto outChunk = this->chunkDecode<Ty_>(chunks, outChunkCoor, chunkDims, 
-													   blockSpace, blockBitmap, w, maxLevel, q);
-				// --------------------
-
-				auto cid = outArr->getChunkIdFromChunkCoor(outChunkCoor);
-				outChunk->setId(cid);
-				outArr->insertChunk(attrDesc->id_, outChunk);
-			}else
-			{
-				//BOOST_LOG_TRIVIAL(debug) << "[" << ocItr->seqPos() << "]: chunk empty";
-			}
-			
 			++(*ocItr);
 		}
 	}
 
-	template <class Ty_>
-	pChunk chunkDecode(std::vector<pChunk>& inChunkList, 
-					   const coor& outChunkCoor, const dimension& chunkDims, 
-					   const dimension& blockSpace,
-					   pBitmap blockBitmap,
-					   pWavelet w, size_t maxLevel, pQuery q)
+	template <typename Ty_>
+	void parallelChunkDecode(pArray outArr, pChunk outChunk, pChunkIterator icItr,
+							 const coor outChunkCoor,
+							 pWavelet w, const size_t maxLevel, pQuery qry, const size_t parentThreadId)
 	{
-		// Find an exist chunk and set inChunkDesc
-		pChunkDesc inChunkDesc;
-		for (blockId bid = 0; bid < inChunkList.size(); ++bid)
+		auto threadId = getThreadId();
+
+		//========================================//
+		qry->getTimer()->nextJob(threadId, this->name(), workType::COMPUTING);
+		//----------------------------------------//
+		
+		auto chunkDims = outArr->getDesc()->getDimDescs()->getChunkDims();
+		auto blockSpace = outArr->getDesc()->getDimDescs()->getBlockSpace();
+
+		bool isOutChunkEmpty = true;
+		std::vector<pChunk> chunks;
+		//pBitmap blockBitmap = std::make_shared<bitmap>(blockSpace.area(), false);
+		auto blockBitmap = outChunk->getBlockBitmap();
+		auto blockItr = outChunk->getBlockIterator();
+		//coorItr bSpaceItr(blockSpace);
+
+		// Bring all chunks belong to an outChunk
+		while (!blockItr->isEnd())
 		{
-			if (blockBitmap->isExist(bid))
+			auto blockCoor = blockItr->coor();
+			auto inChunkCoor = outChunkCoor * blockSpace + blockCoor;
+
+			icItr->moveTo(inChunkCoor);
+			//BOOST_LOG_TRIVIAL(debug) << inChunkCoor.toString();
+			//if(icItr->isExist() && (**icItr) == nullptr)
+			//{
+			//	BOOST_LOG_TRIVIAL(debug) << "exist but null";
+			//}
+
+			if (icItr->isExist() && (**icItr) != nullptr)
 			{
-				inChunkDesc = inChunkList[bid]->getDesc();
-				break;
+				//BOOST_LOG_TRIVIAL(debug) << "exist";
+#ifndef NDEBUG
+				assert((*icItr)->getDesc()->chunkCoor_ == inChunkCoor);
+#endif
+
+				outChunk->makeBlock(blockItr->seqPos());
+				//blockBitmap->setExist(bSpaceItr.seqPos());
+				chunks.push_back(**icItr);
+				isOutChunkEmpty = false;
+			} else
+			{
+				//BOOST_LOG_TRIVIAL(debug) << "null";
+				chunks.push_back(nullptr);
+				blockBitmap->setNull(blockItr->seqPos());
 			}
+			//++bSpaceItr;
+			++(*blockItr);
 		}
 
-		pChunkDesc outChunkDesc = std::make_shared<chunkDesc>(*inChunkDesc);
-		size_t numBlocks = blockSpace.area();
+		if (!isOutChunkEmpty)
+		{
+#ifndef NDEBUG
+			BOOST_LOG_TRIVIAL(trace) << "[" << outChunk->getId() << "]: chunk exist";
+#endif
+			//isChunkExist->at(outChunk->getId()) = true;
 
-		outChunkDesc->dims_ = chunkDims;
-		outChunkDesc->chunkCoor_ = outChunkCoor;
-		outChunkDesc->sp_ = inChunkDesc->sp_;
-		outChunkDesc->ep_ = inChunkDesc->sp_ + chunkDims;
-		outChunkDesc->mSize_ *= numBlocks;
+			this->chunkDecode<Ty_>(chunks, outChunk, outChunkCoor, chunkDims,
+								   blockSpace, w, maxLevel, qry);
+		} else
+		{
+#ifndef NDEBUG
+			BOOST_LOG_TRIVIAL(trace) << "[" << outChunk->getId() << "]: chunk empty";
+#endif
+			//isChunkExist->at(outChunk->getId()) = false;
+			//outArr->freeChunk(outChunk->getId());		// Occur errors: multi-thread race condition
+														// Bitmap: true / chunk: null
+		}
 
-		pChunk outChunk = std::make_shared<memBlockChunk>(outChunkDesc);
-		outChunk->bufferAlloc();
-		outChunk->makeAllBlocks();
-		outChunk->replaceBlockBitmap(blockBitmap);
+		//----------------------------------------//
+		qry->getTimer()->pause(threadId);
+		//========================================//
+	}
+
+	template <class Ty_>
+	void chunkDecode(std::vector<pChunk>& inChunkList, pChunk outChunk,
+					 const coor& outChunkCoor, const dimension& chunkDims,
+					 const dimension& blockSpace,
+					 pWavelet w, const size_t maxLevel, pQuery q)
+	{
 		auto obItr = outChunk->getBlockIterator();
 
 		for (blockId bid = 0; bid < inChunkList.size(); ++bid)
 		{
-			if(blockBitmap->isExist(bid))
+			if (obItr->isExist())
 			{
-				auto inChunk = inChunkList[bid];
+				auto inChunk = inChunkList[obItr->seqPos()];
 				coor chunkCoor = inChunk->getChunkCoor();
 				coor blockCoor = chunkCoor % blockSpace;
 				obItr->moveTo(blockCoor);
 
 				this->blockDecode<Ty_>((**obItr), inChunk->getBlock(0), w, maxLevel, q);
 			}
+			++(*obItr);
 		}
-
-		return outChunk;
 	}
 
 	template <class Ty_>
 	void blockDecode(pBlock outBlock, pBlock inBlock,
-					 pWavelet w, size_t maxLevel, pQuery q)
+					 pWavelet w, const size_t maxLevel, pQuery q)
 	{
 		// Copy data from inBlock
 		outBlock->copy(inBlock);
@@ -154,7 +191,7 @@ private:
 	}
 
 	template <class Ty_>
-	void levelDecode(pBlock outBlock, pWavelet w, size_t level, pQuery q)
+	void levelDecode(pBlock outBlock, pWavelet w, const size_t level, pQuery q)
 	{
 		dimensionId dSize = outBlock->getDSize();
 		for (dimensionId d = dSize - 1; d != (dimensionId)-1; --d)
@@ -166,7 +203,7 @@ private:
 
 	template <class Ty_>
 	void dimensionDecode(pBlock outBlock,
-						 coorRange& encodeRange, dimensionId& basisDim,
+						 const coorRange& encodeRange, const dimensionId& basisDim,
 						 pWavelet w, pQuery q)
 	{
 		size_t length = encodeRange.getEp()[basisDim];
@@ -180,8 +217,10 @@ private:
 		approximateRange.getEp()[basisDim] /= 2;
 		detailRange.getSp()[basisDim] = approximateRange.getEp()[basisDim];
 
+#ifndef NDEBUG
 		assert(approximateRange.getEp()[basisDim] == length / 2);
 		assert(detailRange.getSp()[basisDim] == approximateRange.getEp()[basisDim]);
+#endif
 
 		auto iit = outBlock->getItemRangeIterator(encodeRange);
 		auto ait = outBlock->getItemRangeIterator(approximateRange);
@@ -207,7 +246,7 @@ private:
 
 				row[i] = y0 - std::floor(y1 / 2.0);
 				row[i + 1] = y1 + row[i];
-				
+
 				++(*ait);
 				++(*dit);
 			}
@@ -228,6 +267,44 @@ private:
 		}
 
 		delete[] row;
+	}
+
+	pBitmapTree inferBottomUpBitmap(pArrayDesc aDesc, cpBitmap fromBottom)
+	{
+		dimension chunkSpace = aDesc->getDimDescs()->getChunkSpace();
+		dimension blockSpace = aDesc->getDimDescs()->getBlockSpace();
+		dimension seChunkSpace = chunkSpace * blockSpace;
+
+		auto inChunkItr = coorItr(seChunkSpace);
+		auto outChunkItr = coorItr(chunkSpace);
+		auto outBlockItr = coorItr(blockSpace);
+
+		pBitmapTree outBitmap = std::make_shared<bitmapTree>(chunkSpace.area(), false);
+
+		while (!inChunkItr.isEnd())
+		{
+			if (fromBottom->isExist(inChunkItr.seqPos()))
+			{
+				dimension blockCoor = inChunkItr.coor() % blockSpace;
+				dimension chunkCoor = (inChunkItr.coor() - blockCoor) / blockSpace;	// Divide operator for dimension is rounded up by default
+				outChunkItr.moveTo(chunkCoor);
+				outBlockItr.moveTo(blockCoor);
+
+				outBitmap->setExist(outChunkItr.seqPos());
+
+				if (!outBitmap->hasChild(outChunkItr.seqPos()))
+				{
+					outBitmap->makeChild(outChunkItr.seqPos(), blockSpace.area(), false);
+				}
+
+				auto blockBitmap = outBitmap->getChild(outChunkItr.seqPos());
+				blockBitmap->setExist(outBlockItr.seqPos());
+			}
+
+			++inChunkItr;
+		}
+
+		return outBitmap;
 	}
 
 public:

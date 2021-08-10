@@ -30,10 +30,12 @@ public:
 	chunkId getId() const;
 	void setId(chunkId id);	// chunk id can be chnaged in query processing
 	const pChunkDesc getDesc() const;
+	void setChunkDesc(const pChunkDesc inDesc);
 	size_type getDSize();
 	size_type numCells();
 	coor getChunkCoor();
 	coorRange getChunkRange();
+	void flush();
 
 protected:
 	pChunkDesc desc_;		// chunk desc
@@ -112,24 +114,12 @@ protected:
 	template <class Ty_>
 	void printImp()
 	{
-		//auto it = this->getItemIterator();
-		//std::cout << "==============================" << std::endl;
-		//for (size_t i = 0; i < it->getCapacity() && !it->isEnd(); ++i, ++(*it))
-		//{
-		//	std::cout << (**it).get<Ty_>() << ", ";
-		//}
-		//std::cout << std::endl << "==============================" << std::endl;
+
 	}
 	template<>
 	void printImp<char>()
 	{
-		//auto it = this->getItemIterator();
-		//std::cout << "==============================" << std::endl;
-		//for (size_t i = 0; i < it->getCapacity() && !it->isEnd(); ++i, ++(*it))
-		//{
-		//	std::cout << static_cast<int>((**it).get<char>()) << ", ";
-		//}
-		//std::cout << std::endl << "==============================" << std::endl;
+
 	}
 
 //////////////////////////////
@@ -156,7 +146,7 @@ protected:
 
 			is.read((char*)(&this->version_), sizeof(this->version_));
 			is.read((char*)(&this->bodySize_), sizeof(this->bodySize_));
-
+			//BOOST_LOG_TRIVIAL(info) << "BODY: " << this->bodySize_;
 			//std::cout << this->version_ << ", " << this->bodySize_ << std::endl;
 		}
 	};

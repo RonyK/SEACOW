@@ -4,7 +4,7 @@
 namespace msdb
 {
 MinMaxTree::MinMaxTree(const eleType eType, size_const maxLevel)
-	: attributeIndex(attrIndexType::MMT), serializable(std::make_shared<mmtHeader>()),
+	: attributeIndex(), serializable(std::make_shared<mmtHeader>()),
 	eType_(eType), lowerLevel_(maxLevel)
 {
 
@@ -47,6 +47,7 @@ pMMT MinMaxTree::createMMT(const eleType eType,
 	case eleType::UINT64:
 		return std::make_shared<MinMaxTreeImpl<position_t, uint64_t>>(eType, dim, chunkDim, blockDim, maxLevel);
 	}
+	//return std::make_shared<MinMaxTreeImpl<position_t, uint32_t>>(eType, dim, chunkDim, blockDim, maxLevel);
 
 	_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_UNKNOWN_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 }

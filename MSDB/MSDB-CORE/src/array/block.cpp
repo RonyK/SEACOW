@@ -10,7 +10,8 @@ block::block(pBlockDesc desc)
 }
 block::~block()
 {
-
+	this->cached_ = nullptr;
+	this->itemBitmap_ = nullptr;
 }
 blockId block::getId()
 {
@@ -31,6 +32,10 @@ coorRange block::getBlockRange()
 coorRange block::getBlockItemRange()
 {
 	return coorRange(this->desc_->getIsp(), this->desc_->getIep());
+}
+void block::setBlockDesc(const pBlockDesc inDesc)
+{
+	*this->desc_ = *inDesc;
 }
 void block::unlinkFromChunkBuffer()
 {

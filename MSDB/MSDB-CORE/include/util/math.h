@@ -100,7 +100,7 @@ bit_cnt_type getPrefixPosForPrevLimit(Ty_ prevLimit, bit_cnt_type order)
 		(absPrevLimit & mask) && --order;
 		mask >>= 1;
 	}
-	return prefixPos;
+	return (bit_cnt_type)prefixPos;
 }
 
 // Return Max Limit value where num of bits is provided.
@@ -184,7 +184,13 @@ template <typename Ty_>
 Ty_ getPositiveMinBoundary(Ty_ prevLimit, bit_cnt_type order, sig_bit_type sigBitPos)
 {
 	bit_cnt_type prefixPos = getPrefixPosForPrevLimit(prevLimit, order);
+#ifndef NDEBUG
+	if(prefixPos < sigBitPos)
+	{
+		BOOST_LOG_TRIVIAL(error) << "getPositiveMinBoundary assert(prefixPos >= sigBitPos): " << static_cast<int>(prefixPos) << ", " << static_cast<int>(sigBitPos) << "/prevLimit: " << static_cast<int64_t>(prevLimit) << ", order: " << static_cast<int>(order);
+	}
 	assert(prefixPos >= sigBitPos);
+#endif
 
 	size_t prefixSize = _TySize_ - prefixPos + 1;
 	Ty_ prefixMask = (Ty_)(~((Ty_)-1 << prefixSize) << (_TySize_ - prefixSize));

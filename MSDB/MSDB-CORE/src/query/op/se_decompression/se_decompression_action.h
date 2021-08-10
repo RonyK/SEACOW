@@ -46,6 +46,7 @@ private:
 		}
 		auto mmtIndex = std::static_pointer_cast<MinMaxTreeImpl<position_t, Ty_>>(arrIndex);
 		auto cit = outArr->getChunkIterator(iterateMode::ALL);
+		std::vector<uint64_t> offsets = this->getSeqOffInBand<Ty_>(outArr);
 
 		//----------------------------------------//
 		qry->getTimer()->nextWork(0, workType::PARALLEL);
@@ -62,6 +63,7 @@ private:
 				chunkId cid = cit->seqPos();
 				coor chunkCoor = cit->coor();
 				auto inChunk = this->makeInChunk(outArr, attrDesc, cid, chunkCoor);
+				inChunk->setTileOffset(offsets);
 				auto outChunk = outArr->makeChunk(*inChunk->getDesc());
 
 				io_service_->post(boost::bind(&se_decompression_action::decompressChunk<Ty_>, this,
@@ -77,6 +79,28 @@ private:
 		//----------------------------------------//
 		qry->getTimer()->nextWork(0, workType::COMPUTING);
 		//========================================//
+
+		this->getArrayStatus(outArr);
+	}
+
+	template <typename Ty_>
+	std::vector<uint64_t> getSeqOffInBand(std::shared_ptr<wavelet_encode_array> outArr)
+	{
+		dimension blockDims = outArr->getDesc()->getDimDescs()->getChunkDims();
+		size_t blockCapa = blockDims.area();
+		dimension bandDims = blockDims / std::pow(2, outArr->getMaxLevel() + 1);
+		size_t bandCapa = bandDims.area();
+
+		std::vector<uint64_t> offsets;
+		auto iit = itemRangeItr(nullptr, eleType::CHAR, blockDims, bandDims);		// type not necessary
+
+		while (iit.isEnd() != true)
+		{
+			offsets.push_back(iit.seqPos() * sizeof(Ty_));
+			++iit;
+		}
+
+		return offsets;
 	}
 
 	template <typename Ty_>
@@ -85,49 +109,40 @@ private:
 	{
 		auto threadId = getThreadId();
 
-		try
+		//========================================//
+		qry->getTimer()->nextJob(threadId, this->name(), workType::COMPUTING);
+		//----------------------------------------//
+		auto maxLevel = outArr->getMaxLevel();
+		arrayId arrId = outArr->getId();
+
+		bool hasNegative = false;
+		if ((Ty_)-1 < 0)
 		{
-			//========================================//
-			qry->getTimer()->nextJob(threadId, this->name(), workType::COMPUTING);
-			//----------------------------------------//
-			auto maxLevel = outArr->getMaxLevel();
-			arrayId arrId = outArr->getId();
-
-			bool hasNegative = false;
-			if ((Ty_)-1 < 0)
-			{
-				hasNegative = true;
-			}
-
-			// TODO::Create se_compression_array, seChunk
-			// Make seChunk in se_compression_array
-			this->requiredBitsFindingForChunk(inChunk, mmtIndex, maxLevel, hasNegative);
-
-			//----------------------------------------//
-			qry->getTimer()->nextWork(threadId, workType::IO);
-			//----------------------------------------//
-
-			pSerializable serialChunk
-				= std::static_pointer_cast<serializable>(inChunk);
-			storageMgr::instance()->loadChunk(arrId, attrId, inChunk->getId(),
-											  serialChunk);
-
-			//----------------------------------------//
-			qry->getTimer()->nextWork(threadId, workType::COMPUTING);
-			//----------------------------------------//
-
-			outChunk->setLevel(inChunk->getLevel());
-			outChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
-			outChunk->makeBlocks();
-			outChunk->bufferCopy(inChunk);
-		} catch (std::exception& e)
-		{
-			BOOST_LOG_TRIVIAL(error) << "Exception occured in a thread(" << threadId << " while it executes decompressChunk()";
-			BOOST_LOG_TRIVIAL(error) << e.what();
-		} catch (...)
-		{
-			BOOST_LOG_TRIVIAL(error) << "Unknown exception occured in a thread(" << threadId << " while it executes decompressChunk()";
+			hasNegative = true;
 		}
+
+		// TODO::Create se_compression_array, seChunk
+		// Make seChunk in se_compression_array
+		this->requiredBitsFindingForChunk<Ty_>(inChunk, mmtIndex, maxLevel, hasNegative);
+
+		//----------------------------------------//
+		qry->getTimer()->nextWork(threadId, workType::IO);
+		//----------------------------------------//
+
+		pSerializable serialChunk
+			= std::static_pointer_cast<serializable>(inChunk);
+		storageMgr::instance()->loadChunk(arrId, attrId, inChunk->getId(),
+											serialChunk);
+
+		//----------------------------------------//
+		qry->getTimer()->nextWork(threadId, workType::COMPUTING);
+		//----------------------------------------//
+
+		outChunk->setLevel(inChunk->getLevel());
+		outChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
+		outChunk->makeBlocks();
+		outChunk->bufferCopy(inChunk);
+		outChunk->setSerializedSize(inChunk->getSerializedSize());
 
 		//----------------------------------------//
 		qry->getTimer()->pause(threadId);
@@ -144,13 +159,13 @@ private:
 		size_t numBandsInLevel = std::pow(2, dSize) - 1;
 
 		// For Level 0
-		this->findRequiredBitsForRootLevel(inChunk,
+		this->findRequiredBitsForRootLevel<Ty_>(inChunk,
 										   mmtIndex,
 										   numBandsInLevel, 
 										   hasNegative);
 
 		// For child level
-		this->findRequiredBitsForChildLevel(inChunk,
+		this->findRequiredBitsForChildLevel<Ty_>(inChunk,
 											mmtIndex,
 											maxLevel,
 											numBandsInLevel,
@@ -167,6 +182,10 @@ private:
 		auto blockLevel = mmtIndex->getBlockLevel();
 		auto mNode = mmtIndex->getNode(chunkCoor, blockLevel);
 		bit_cnt_type fromMMT = getRBitFromMMT(mNode, hasNegative);
+
+		// TODO::Synopsis Delta Decoding
+		//inChunk->setMin(mNode->getMin<Ty_>());
+		inChunk->setMin(0);
 
 		for (size_t band = 0; band <= numBandsInLevel; ++band)
 		{
@@ -191,7 +210,7 @@ private:
 			{
 				coor innerCoor(innerItr.coor() + inChunk->getChunkCoor() * innerSpace);
 				auto mNode = mmtIndex->getNode(innerCoor, mmtIndex->getBlockLevel() - level);
-				bit_cnt_type rbFromMMT = getRBitFromMMT(mNode, hasNegative);
+				bit_cnt_type rbFromMMT = std::max(static_cast<int64_t>(getRBitFromMMT(mNode, hasNegative) - (int64_t)level), static_cast<int64_t>(static_cast<char>(hasNegative)));
 				for (size_t band = 1; band <= numBandsInLevel; ++band)
 				{
 					inChunk->rBitFromMMT.push_back(rbFromMMT);

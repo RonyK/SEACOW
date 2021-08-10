@@ -21,6 +21,13 @@
 #include <op/compass_encode/compass_encode_action.h>
 #include <op/compass_decode/compass_decode_plan.h>
 #include <op/compass_decode/compass_decode_action.h>
+#include <op/compass_index_build/compass_index_build_plan.h>
+#include <op/compass_index_build/compass_index_build_action.h>
+
+#include <op/lzw_encode/lzw_encode_plan.h>
+#include <op/lzw_encode/lzw_encode_action.h>
+#include <op/lzw_decode/lzw_decode_plan.h>
+#include <op/lzw_decode/lzw_decode_action.h>
 
 namespace msdb
 {
@@ -111,6 +118,17 @@ pArray exe_act_ind_compass_decode(std::vector<pArray> sourceArr, eleDefault numB
 
 	return afterArray;
 }
+pArray exe_act_ind_compass_index_build(std::vector<pArray> sourceArr, eleDefault numBins)
+{
+	std::shared_ptr<compass_index_build_plan> myPlan;
+	std::shared_ptr<compass_index_build_action> myAction;
+	pQuery myQuery;
+	getCompassIndexBuild(sourceArr[0]->getDesc(), numBins, myPlan, myAction, myQuery);
+
+	auto afterArray = myAction->execute(sourceArr, myQuery);
+
+	return afterArray;
+}
 pArray exe_act_ind_zip_save(std::vector<pArray> sourceArr)
 {
 	std::shared_ptr<zip_save_plan> myPlan;
@@ -128,6 +146,28 @@ pArray exe_act_ind_zip_load(std::vector<pArray> sourceArr)
 	std::shared_ptr<zip_load_action> myAction;
 	pQuery myQuery;
 	getOpZipLoad(sourceArr[0]->getDesc(), myPlan, myAction, myQuery);
+
+	auto afterArray = myAction->execute(sourceArr, myQuery);
+
+	return afterArray;
+}
+pArray exe_act_ind_lzw_encode(std::vector<pArray> sourceArr)
+{
+	std::shared_ptr<lzw_encode_plan> myPlan;
+	std::shared_ptr<lzw_encode_action> myAction;
+	pQuery myQuery;
+	getOpLzwEncode(sourceArr[0]->getDesc(), myPlan, myAction, myQuery);
+
+	auto afterArray = myAction->execute(sourceArr, myQuery);
+
+	return afterArray;
+}
+pArray exe_act_ind_lzw_decode(std::vector<pArray> sourceArr)
+{
+	std::shared_ptr<lzw_decode_plan> myPlan;
+	std::shared_ptr<lzw_decode_action> myAction;
+	pQuery myQuery;
+	getOpLzwDecode(sourceArr[0]->getDesc(), myPlan, myAction, myQuery);
 
 	auto afterArray = myAction->execute(sourceArr, myQuery);
 

@@ -114,6 +114,10 @@ const pChunkDesc chunk::getDesc() const
 {
 	return this->desc_;
 }
+void chunk::setChunkDesc(const pChunkDesc inDesc)
+{
+	*this->desc_ = *inDesc;
+}
 chunk::size_type chunk::getDSize()
 {
 	return this->desc_->getDimSize();
@@ -133,15 +137,20 @@ void chunk::print()
 
 	while (!bit->isEnd())
 	{
-		BOOST_LOG_TRIVIAL(debug) << "------------------------------\n";
 		if (bit->isExist())
 		{
+			BOOST_LOG_TRIVIAL(debug) << "------------------------------\n";
+			BOOST_LOG_TRIVIAL(debug) << "Chunk [" << this->getChunkCoor().toString() << " (" << static_cast<int64_t>(this->getId()) << ")]";
 			(**bit)->print();
+			BOOST_LOG_TRIVIAL(debug) << "------------------------------\n";
 		} else
 		{
-			BOOST_LOG_TRIVIAL(debug) << "Block (" << bit->seqPos() << ") is not exist;";
+			BOOST_LOG_TRIVIAL(trace) << "------------------------------\n";
+			BOOST_LOG_TRIVIAL(trace) << "Chunk [" << this->getChunkCoor().toString() << " (" << static_cast<int64_t>(this->getId()) << ")]";
+			BOOST_LOG_TRIVIAL(trace) << "Block (" << bit->seqPos() << ") is not exist;";
+			BOOST_LOG_TRIVIAL(trace) << "------------------------------\n";
 		}
-		BOOST_LOG_TRIVIAL(debug) << "------------------------------\n";
+		
 
 		++(*bit);
 	}
@@ -157,10 +166,20 @@ coorRange chunk::getChunkRange()
 	return coorRange(this->desc_->sp_, this->desc_->ep_);
 }
 
+void chunk::flush()
+{
+	this->freeBuffer();
+}
+
 void chunk::freeBuffer()
 {
 	if (this->isMaterialized())
 	{
+		if(this->cached_ != nullptr)
+		{
+			this->cached_->free();
+		}
+
 		this->cached_ = nullptr;
 	}
 }

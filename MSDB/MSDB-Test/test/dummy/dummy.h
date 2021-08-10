@@ -6,6 +6,7 @@
 #include <array/memBlockArray.h>
 #include <array/memChunk.h>
 #include <array/blockChunk.h>
+#include <util/threadUtil.h>
 #include <vector>
 
 namespace msdb
@@ -13,6 +14,31 @@ namespace msdb
 namespace caDummy
 {
 using dim_type = position_t;
+
+template <typename Ty_>
+void getChunk(Ty_* data, pChunk sourceChunk, const dimension originalDims, const dimension blockDims, const coor sP, const coor eP, const size_t offsetX, const size_t offsetY)
+{
+	// Insert data into chunk
+	auto bItr = sourceChunk->getBlockIterator();
+	while (!bItr->isEnd())
+	{
+		auto blockCoor = bItr->coor();
+		auto it = (**bItr)->getItemIterator();
+		for (int iy = 0; iy < blockDims[0]; ++iy)
+		{
+			for (int ix = 0; ix < blockDims[1]; ++ix)
+			{
+				int globalX = sP[1] + blockCoor[1] * blockDims[1] + ix + offsetX;
+				int globalY = sP[0] + blockCoor[0] * blockDims[0] + iy + offsetY;
+
+				size_t seqPos = globalY * originalDims[1] + globalX;
+				(**it).set<Ty_>(static_cast<Ty_>(data[seqPos]));
+				++(*it);
+			}
+		}
+		++(*bItr);
+	}
+}
 
 template <typename Aty_>
 std::shared_ptr<Aty_> get2DCharArray(arrayId aid, std::string arrayName,
@@ -49,6 +75,9 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 
 	std::shared_ptr<Aty_> sourceArr = get2DCharArray<Aty_>(aid, arrayName, dims, chunkDims, blockDims, eType);
 
+	threadUtil myThread;
+	myThread.createThread(_MSDB_ACTION_THREAD_NUM_);
+
 	// Build Chunk
 	Ty_* data = (Ty_*)dummy;
 	for (int y = 0; y < chunkNums[0]; y++)
@@ -68,41 +97,14 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 			sourceChunk->bufferAlloc();
 			//sourceChunk->replaceBlockBitmap(std::make_shared<bitmap>(blockDims.area()));
 			sourceChunk->makeAllBlocks();
-
-			// Insert data into chunk
-			auto bItr = sourceChunk->getBlockIterator();
-			while (!bItr->isEnd())
-			{
-				auto blockCoor = bItr->coor();
-				auto it = (**bItr)->getItemIterator();
-				for (int iy = 0; iy < blockDims[0]; ++iy)
-				{
-					for (int ix = 0; ix < blockDims[1]; ++ix)
-					{
-						int globalX = sP[1] + blockCoor[1] * blockDims[1] + ix + offsetX;
-						int globalY = sP[0] + blockCoor[0] * blockDims[0] + iy + offsetY;
-
-						size_t seqPos = globalY * originalDims[1] + globalX;
-
-						(**it).setChar(static_cast<Ty_>(
-							data[seqPos]));
-
-#ifndef NDEBUG
-						/*if(data[seqPos] / 2 < 0)
-						{
-							BOOST_LOG_TRIVIAL(warning) << "at: " << seqPos << "(" << x << "," << y << ")|(" << ix << "," << iy << ")=>" << static_cast<int64_t>(data[seqPos]) << ", " << static_cast<int64_t>(data[seqPos]);
-						}
-
-						assert(data[(y * chunkDims[0] + blockCoor[0] * blockDims[0] + iy) * dims[1] + (x * chunkDims[1] + blockCoor[1] * blockDims[1] + ix)] / 2 >= 0);*/
-#endif
-						++(*it);
-					}
-				}
-				++(*bItr);
-			}
 			sourceArr->insertChunk(0, sourceChunk);
+
+			myThread.get_io_service()->post(boost::bind(&getChunk<Ty_>, data, sourceChunk, originalDims, blockDims, sP, eP, offsetX, offsetY));
 		}
 	}
+
+	myThread.threadStop();
+	myThread.threadJoin();
 
 	// Build source array
 	return sourceArr;
@@ -111,12 +113,18 @@ std::shared_ptr<Aty_> get2DCharArray(void* dummy, arrayId aid, std::string array
 template <typename Ty_>
 void compArrary(pArray lArr, pArray rArr)
 {
+	BOOST_LOG_TRIVIAL(debug) << "##############################";
+	BOOST_LOG_TRIVIAL(debug) << "Comp Array Test";
+	BOOST_LOG_TRIVIAL(debug) << "##############################";
+
 	bool isFirstWrongChunk = true;
 	size_t wrongValue = 0;
 	auto lAttrDesc = lArr->getDesc()->attrDescs_;
 	auto rAttrDesc = rArr->getDesc()->attrDescs_;
 
 	EXPECT_EQ(lAttrDesc->size(), rAttrDesc->size());
+
+	size_t numChunks = 0, numBlocks = 0, numCells = 0;
 
 	for (int attrId = 0; attrId < lAttrDesc->size(); ++attrId)
 	{
@@ -129,9 +137,9 @@ void compArrary(pArray lArr, pArray rArr)
 		while (!lcItr->isEnd() && !rcItr->isEnd())
 		{
 			EXPECT_EQ(lcItr->isExist(), rcItr->isExist());
-			
 			if(lcItr->isExist())
 			{
+				++numChunks;
 				EXPECT_TRUE(lcItr->coor() == rcItr->coor());
 #ifndef NDEBUG
 				//if(!(*(**lcItr) == *(**rcItr)))
@@ -148,32 +156,36 @@ void compArrary(pArray lArr, pArray rArr)
 				auto lbItr = (*lcItr)->getBlockIterator();
 				auto rbItr = (*rcItr)->getBlockIterator();
 
+				EXPECT_EQ(lbItr->isEnd(), rbItr->isEnd());
 				while (!lbItr->isEnd() && !rbItr->isEnd())
 				{
 					EXPECT_EQ(lbItr->isExist(), rbItr->isExist());
 					if(lbItr->isExist())
 					{
+						++numBlocks;
 						auto liItr = (*lbItr)->getItemIterator();
 						auto riItr = (*rbItr)->getItemIterator();
 
+						EXPECT_EQ(liItr->isEnd(), riItr->isEnd());
 						while (!liItr->isEnd() && !riItr->isEnd())
 						{
 							// Limit wrong value output
-							if(wrongValue > 100)
+							if(wrongValue > 20)
 							{
 								return;
 							}
-							EXPECT_EQ(liItr->isExist(), riItr->isExist());
 
+							EXPECT_EQ(liItr->isExist(), riItr->isExist());
 							if(liItr->isExist())
 							{
+								++numCells;
 								Ty_ li = (**liItr).get<Ty_>();
 								Ty_ ri = (**riItr).get<Ty_>();
 
 								if (li != ri)
 								{
 									BOOST_LOG_TRIVIAL(debug) << "Diff : " << static_cast<int64_t>(li) << ", " << static_cast<int64_t>(ri);
-									BOOST_LOG_TRIVIAL(debug) << "Chunk: " << lcItr->coor().toString() << " / Block: " << lbItr->coor().toString() << " / Item: " << liItr->coor().toString();
+									BOOST_LOG_TRIVIAL(debug) << "Chunk: " << lcItr->coor().toString() << "(" << lcItr->seqPos() << ") / Block: " << lbItr->coor().toString() << "(" << lbItr->seqPos() << ") / Item: " << liItr->coor().toString();
 									++wrongValue;
 
 									if(isFirstWrongChunk)
@@ -192,22 +204,28 @@ void compArrary(pArray lArr, pArray rArr)
 
 							++(*liItr);
 							++(*riItr);
-						}
 
-						EXPECT_EQ(liItr->isEnd(), riItr->isEnd());
+							EXPECT_EQ(liItr->isEnd(), riItr->isEnd());
+						}
 					}
 
 					++(*lbItr);
 					++(*rbItr);
+
+					EXPECT_EQ(lbItr->isEnd(), rbItr->isEnd());
 				}
 			}
 
 			++(*lcItr);
 			++(*rcItr);
-		}
 
-		EXPECT_EQ(lcItr->isEnd(), rcItr->isEnd());
+			EXPECT_EQ(lcItr->isEnd(), rcItr->isEnd());
+		}
 	}
+
+	BOOST_LOG_TRIVIAL(debug) << "Comp chunks: " << numChunks;
+	BOOST_LOG_TRIVIAL(debug) << "Comp blocks: " << numBlocks;
+	BOOST_LOG_TRIVIAL(debug) << "Comp cells: " << numCells;
 }
 
 template <typename Ty_>

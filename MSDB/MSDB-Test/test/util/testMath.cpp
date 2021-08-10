@@ -175,4 +175,9 @@ TEST(util_math, get_min_ty_value)
 	EXPECT_EQ(getMinValue<int16_t>(), -32768);
 	EXPECT_EQ(getMinValue<uint16_t>(), 0);
 }
+
+TEST(util_math, getPrefixPosForPrevLimit)
+{
+	EXPECT_EQ(getPrefixPosForPrevLimit(64, 2), 7);
+}
 }

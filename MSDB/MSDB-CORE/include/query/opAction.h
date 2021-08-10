@@ -22,8 +22,12 @@ public:
 	const pArrayDesc getArrayDesc();
 	void setParams(const parameters& params);
 	void setArrayDesc(pArrayDesc aDesc);
-	void setPlanBitmap(pBitmap planBitmap);
-	cpBitmap getPlanChunkBitmap() const;
+	void setPlanInBitmap(pBitmap planBitmap);
+	void setPlanOutBitmap(pBitmap planBitmap);
+	cpBitmap getPlanInChunkBitmap() const;
+	cpBitmap getPlanOutChunkBitmap() const;
+	void getArrayStatus(pArray arr);
+
 	virtual cpBitmap getPlanBlockBitmap(chunkId cid) const;
 	virtual const char* name() = 0;
 
@@ -31,7 +35,8 @@ public:
 
 protected:
 	pArrayDesc aDesc_;
-	pBitmap planBitmap_;	// chunk bitmap or chunk-block bitmap tree
+	pBitmap planInBitmap_;	// chunk bitmap or chunk-block bitmap tree
+	pBitmap planOutBitmap_;	// chunk bitmap or chunk-block bitmap tree
 	//std::vector<action> sources_;
 	parameters params_;
 
@@ -40,6 +45,8 @@ protected:
 	void threadJoin();
 
 protected:
+	bool threadExist_;
+	size_t threadNums_;
 	std::shared_ptr<boost::asio::io_service> io_service_;
 	std::shared_ptr<boost::asio::io_service::work> work_;
 	boost::thread_group threadpool_;

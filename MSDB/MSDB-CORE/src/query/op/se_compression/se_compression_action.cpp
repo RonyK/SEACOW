@@ -44,16 +44,16 @@ pArray se_compression_action::execute(std::vector<pArray>& inputArrays, pQuery q
 			compressAttribute<int64_t>(sourceArr, attr);
 			break;
 		case eleType::UINT8:
-			compressAttribute<uint8_t>(sourceArr, attr);
+			compressAttribute<int8_t>(sourceArr, attr);
 			break;
 		case eleType::UINT16:
-			compressAttribute<uint16_t>(sourceArr, attr);
+			compressAttribute<int16_t>(sourceArr, attr);
 			break;
 		case eleType::UINT32:
-			compressAttribute<uint32_t>(sourceArr, attr);
+			compressAttribute<int32_t>(sourceArr, attr);
 			break;
 		case eleType::UINT64:
-			compressAttribute<uint64_t>(sourceArr, attr);
+			compressAttribute<int64_t>(sourceArr, attr);
 			break;
 		default:
 			_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));

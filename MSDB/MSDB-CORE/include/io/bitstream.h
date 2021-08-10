@@ -161,7 +161,7 @@ namespace msdb
 		{
 			if (this->bitPos)
 			{
-				return (this->_container->size() - 1) * _BlockBits + this->bitPos;
+				return (this->_container->size() - 1) * _BlockBits * CHAR_BIT + this->bitPos;
 			}
 			return this->_container->size() * _BlockBits;
 		}
@@ -175,6 +175,26 @@ namespace msdb
 		_NODISCARD const _Block* data() const noexcept
 		{
 			return this->_container->data();
+		}
+
+		_NODISCARD size_type getOutBitPos() const noexcept
+		{
+			return (this->_container->size() - 1) * _BlockBytes * CHAR_BIT + this->bitPos;
+		}
+
+		_NODISCARD size_type getOutBitPosInBlock() const noexcept
+		{
+			return this->bitPos;
+		}
+
+		_NODISCARD size_type getOutBlockPos() const noexcept
+		{
+			return (this->_container->size() - 1);
+		}
+
+		_NODISCARD uint64_t getOutLastBlock() const
+		{
+			return static_cast<uint64_t>(this->endBlock->to_ulong() & 0xFF);
 		}
 
 		virtual void flush()
@@ -205,10 +225,10 @@ namespace msdb
 		{
 			assert(0 < length && length <= CHAR_BIT);
 
-			if (this->bitPos == 0)
-			{
-				this->addNewBlock();
-			}
+			//if (this->bitPos == 0)
+			//{
+			//	this->addNewBlock();
+			//}
 
 			if (this->bitPos % CHAR_BIT != 0 || length % CHAR_BIT != 0)
 			{
@@ -219,13 +239,14 @@ namespace msdb
 			}
 		}
 
-	private:
+	protected:
 		void addNewBlock()
 		{
 			this->_container->push_back(0x0);
 			this->endBlock = reinterpret_cast<block_bitset_type*>(&this->_container->back());
 		}
 
+	private:
 		// out: number of filled bits
 		unsigned char fillBits(const unsigned char c, const pos_type length)
 		{
@@ -241,7 +262,12 @@ namespace msdb
 			}
 			this->bitPos %= _BlockBits;
 
-			return length - last;
+			if (this->bitPos == 0)
+			{
+				this->addNewBlock();
+			}
+
+			return (unsigned char)(length - last);
 		}
 
 		// out: number of filled bits
@@ -250,6 +276,11 @@ namespace msdb
 			(*this->endBlock) |= (static_cast<size_type>(c) << (_BlockBits - this->bitPos - CHAR_BIT));
 			//this->bitPos = this->bitPos + CHAR_BIT;
 			this->bitPos = (this->bitPos + CHAR_BIT) % _BlockBits;
+
+			if (this->bitPos == 0)
+			{
+				this->addNewBlock();
+			}
 
 			return CHAR_BIT;
 		}
@@ -349,6 +380,31 @@ namespace msdb
 			return false;
 		}
 
+		_NODISCARD size_type getInBitPos() const noexcept
+		{
+			return this->blockPos * _BlockBytes * CHAR_BIT + this->bitPos;
+		}
+
+		_NODISCARD size_type getInBitPosInBlock() const noexcept
+		{
+			return this->bitPos;
+		}
+
+		_NODISCARD size_type getInBlockPos() const noexcept
+		{
+			return this->blockPos;
+		}
+
+		_NODISCARD uint64_t getInFrontBlock() const
+		{
+			return static_cast<uint64_t>(this->frontBlock->to_ulong() & 0xFF);
+		}
+
+		_NODISCARD size_type getBlockBytes() const noexcept
+		{
+			return _BlockBytes;
+		}
+
 		// Return total number of byte capacity
 		_NODISCARD size_type capacity() const noexcept
 		{
@@ -428,11 +484,32 @@ namespace msdb
 		void moveToNextInputBlock()
 		{
 			this->blockPos++;
+			this->bitPos = 0;
 
 			if (this->eof())
 			{
 				this->blockPos = this->_container->size();
 				return;
+			}
+
+			this->frontBlock = reinterpret_cast<block_bitset_type*>(&this->_container->at(this->blockPos));
+		}
+
+	public:
+		void jumpBits(size_type numBits)
+		{
+			pos_type possible = std::min(static_cast<pos_type>(_BlockBits - this->bitPos), static_cast<pos_type>(numBits));
+			if (this->bitPos + possible >= _BlockBits)
+			{
+				this->blockPos++;
+			}
+			this->bitPos = (this->bitPos + possible) % _BlockBits;
+
+			numBits -= possible;
+			if (numBits)
+			{
+				this->blockPos = std::min(this->blockPos + numBits / _BlockBits, this->_container->size());
+				this->bitPos = numBits % _BlockBits;
 			}
 
 			this->frontBlock = reinterpret_cast<block_bitset_type*>(&this->_container->at(this->blockPos));
@@ -467,6 +544,7 @@ namespace msdb
 		vector_iobitstream()
 			: _myIs(_STD addressof(this->_concreateContainer)), _myOs(_STD addressof(this->_concreateContainer))
 		{
+			_myOs::addNewBlock();
 		}
 
 	public:
@@ -494,13 +572,13 @@ namespace msdb
 
 		void print()
 		{
-			std::cout << std::hex;
+			std::stringstream ss;
+			ss << std::hex;
 			for(size_t i = 0; i < this->_concreateContainer.size(); ++i)
 			{
-				std::cout << static_cast<uint8_t>(_concreateContainer[i]);
+				ss << static_cast<uint8_t>(_concreateContainer[i]);
 			}
-			std::cout << std::endl;
-			std::cout << std::dec;
+			BOOST_LOG_TRIVIAL(debug) << ss.str();
 		}
 
 	protected:
@@ -598,7 +676,7 @@ namespace msdb
 	template <class _Block, class _Traits>
 	vector_obitstream<_Block, _Traits>& operator<<(vector_obitstream<_Block, _Traits>& _Ostr, const uint64_t _val)
 	{
-		_Ostr.fillLongLong(_val, sizeof(int) * CHAR_BIT);
+		_Ostr.fillLongLong(_val, sizeof(uint64_t) * CHAR_BIT);
 		return _Ostr;
 	}
 

@@ -5,7 +5,7 @@
 namespace msdb
 {
 opPlan::opPlan()
-	: parentPlan_(nullptr), outArrBitmap_(nullptr), inParamSet_(nullptr)
+	: parentPlan_(nullptr), inArrBitmap_(nullptr), outArrBitmap_(nullptr), inParamSet_(nullptr)
 {
 }
 void opPlan::setParamSet(pParamSet paramSet)
@@ -26,30 +26,15 @@ pArrayDesc opPlan::inferSchema()
 {
 	return this->inParamSet_->inferSchema();
 }
-pBitmapTree opPlan::inferBitmap()
+pBitmapTree opPlan::inferInBitmap()
 {
-	if (this->outArrBitmap_)
-		return this->outArrBitmap_;
+	if (this->inArrBitmap_)
+		return this->inArrBitmap_;
 
 	this->outArrBitmap_ = this->inferBottomUpBitmap();
-//#ifndef NDEBUG
-//	BOOST_LOG_TRIVIAL(debug) << this->name() << " BottomUp";
-//	this->outArrBitmap_->print();
-//#endif
-	this->outArrBitmap_ = this->inferTopDownBitmap();
-//#ifndef NDEBUG
-//	BOOST_LOG_TRIVIAL(debug) << this->name() << " TopDown";
-//	this->outArrBitmap_->print();
-//	for (int i = 0; i < this->outArrBitmap_->getCapacity(); ++i)
-//	{
-//		if(this->outArrBitmap_->hasChild(i))
-//		{
-//			BOOST_LOG_TRIVIAL(debug) << "Block Bitmap of Chunk [" << i << "]";
-//			this->outArrBitmap_->getChild(i)->print();
-//		}
-//	}
-//#endif
-	return outArrBitmap_;
+	this->inArrBitmap_ = this->inferTopDownBitmap();
+
+	return inArrBitmap_;
 }
 pBitmapTree opPlan::inferBottomUpBitmap()
 {
@@ -59,14 +44,11 @@ pBitmapTree opPlan::inferTopDownBitmap()
 {
 	if(this->parentPlan_)
 	{
-		return this->inParamSet_->inferTopDownBitmap(
-			this->parentPlan_->inferBitmap());
-	}else
-	{
-		assert(this->outArrBitmap_ != nullptr);
-		return this->inParamSet_->inferTopDownBitmap(
-			this->outArrBitmap_);
+		this->outArrBitmap_ = this->parentPlan_->inferInBitmap();
 	}
+
+	assert(this->outArrBitmap_ != nullptr);
+	return this->inParamSet_->inferTopDownBitmap(this->outArrBitmap_);
 }
 pAction opPlan::getAction()
 {
@@ -74,7 +56,9 @@ pAction opPlan::getAction()
 	auto arrDesc = this->inferSchema();
 	myAction->setParams(this->getParam());
 	myAction->setArrayDesc(arrDesc);
-	myAction->setPlanBitmap(this->inferBitmap());
+	this->inferInBitmap();
+	myAction->setPlanInBitmap(this->inArrBitmap_);
+	myAction->setPlanOutBitmap(this->outArrBitmap_);
 
 	BOOST_LOG_TRIVIAL(debug) << "getAction: " << this->name() << " / " << arrDesc->name_ << "(" << arrDesc->id_ << ")";
 	return myAction;

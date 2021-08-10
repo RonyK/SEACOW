@@ -26,7 +26,7 @@ blockIterator::size_type blockIterator::getSeqEnd()
 
 bool blockIterator::isExist()
 {
-	if ((this->blocks_->size() > this->seqPos_) && (this->blocks_->at(this->seqPos_) != nullptr))
+	if ((this->blocks_->size() > this->seqPos_) && (this->blocks_->at(this->seqPos_) != nullptr) && (this->blockBitmap_->isExist(this->seqPos_)))
 		return true;
 
 	return false;

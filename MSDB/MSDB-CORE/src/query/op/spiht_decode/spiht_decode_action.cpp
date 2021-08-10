@@ -31,7 +31,7 @@ pArray spiht_decode_action::execute(std::vector<pArray>& inputArrays, pQuery qry
 	eleDefault maxLevel;
 	ele->getData(&maxLevel);
 
-	auto planBitmap = this->getPlanChunkBitmap();
+	auto planBitmap = this->getPlanInChunkBitmap();
 	auto arrDesc = this->getArrayDesc();
 	dimension originalChunkDims = arrDesc->getDimDescs()->getChunkDims();
 	for (dimensionId d = 0; d < arrDesc->getDSize(); ++d)
@@ -91,6 +91,8 @@ void spiht_decode_action::decodeAttribute(std::shared_ptr<wavelet_encode_array> 
 	//----------------------------------------//
 	qry->getTimer()->nextWork(0, workType::COMPUTING);
 	//========================================//
+
+	this->getArrayStatus(outArr);
 }
 
 void spiht_decode_action::decompressChunk(pWtChunk outChunk, pSpihtChunk inChunk, pQuery qry, 
@@ -98,33 +100,24 @@ void spiht_decode_action::decompressChunk(pWtChunk outChunk, pSpihtChunk inChunk
 {
 	auto threadId = getThreadId();
 
-	try
-	{
-		//========================================//
-		qry->getTimer()->nextJob(threadId, this->name(), workType::IO);
-		//----------------------------------------//
+	//========================================//
+	qry->getTimer()->nextJob(threadId, this->name(), workType::IO);
+	//----------------------------------------//
 		
-		pSerializable serialChunk
-			= std::static_pointer_cast<serializable>(inChunk);
+	pSerializable serialChunk
+		= std::static_pointer_cast<serializable>(inChunk);
 
-		storageMgr::instance()->loadChunk(arrId, attrId, inChunk->getId(), serialChunk);
+	storageMgr::instance()->loadChunk(arrId, attrId, inChunk->getId(), serialChunk);
 
-		//----------------------------------------//
-		qry->getTimer()->nextWork(threadId, workType::COMPUTING);
-		//----------------------------------------//
+	//----------------------------------------//
+	qry->getTimer()->nextWork(threadId, workType::COMPUTING);
+	//----------------------------------------//
 
-		outChunk->setLevel(inChunk->getLevel());
-		outChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
-		outChunk->makeBlocks();
-		outChunk->bufferCopy(inChunk);	// If ref bitmap from inChunk, it might be deleted in 'inChunk' when it destroied.
-	}catch(std::exception &e)
-	{
-		BOOST_LOG_TRIVIAL(error) << "Exception occured in a thread(" << threadId << " while it executes decompressChunk()";
-		BOOST_LOG_TRIVIAL(error) << e.what();
-	}catch(...)
-	{
-		BOOST_LOG_TRIVIAL(error) << "Unknown exception occured in a thread(" << threadId << " while it executes decompressChunk()";
-	}
+	outChunk->setLevel(inChunk->getLevel());
+	outChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
+	outChunk->makeBlocks();
+	outChunk->bufferCopy(inChunk);	// If ref bitmap from inChunk, it might be deleted in 'inChunk' when it destroied.
+	outChunk->setSerializedSize(inChunk->getSerializedSize());
 
 	//----------------------------------------//
 	qry->getTimer()->pause(threadId);

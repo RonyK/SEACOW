@@ -28,10 +28,11 @@ public:
 	blockId getId();
 	pBlockDesc getDesc();
 	dimensionId getDSize();
-	void setIsp(coor isp);
-	void setIep(coor iep);
+	//inline void setIsp(coor isp);
+	//inline void setIep(coor iep);
 	coorRange getBlockRange();
 	coorRange getBlockItemRange();
+	void setBlockDesc(const pBlockDesc inDesc);
 
 	virtual void serialize(bstream& os) = 0;
 	virtual void deserialize(bstream& is) = 0;
@@ -86,7 +87,7 @@ protected:
 	{
 		auto iit = this->getItemIterator();
 		std::stringstream ss;
-		ss << "Block [" << static_cast<int64_t>(this->getId()) << "]";
+		ss << "Block [" << this->desc_->blockCoor_.toString() << " (" << static_cast<int64_t>(this->getId()) << ")]";
 		int64_t row = -1;
 		while(!iit->isEnd())
 		{
@@ -113,7 +114,7 @@ protected:
 	{
 		auto iit = this->getItemIterator();
 		std::stringstream ss;
-		ss << "Block [" << static_cast<int64_t>(this->getId()) << "]";
+		ss << "Block [" << this->desc_->blockCoor_.toString() << " (" << static_cast<int64_t>(this->getId()) << ")]";
 		int64_t row = -1;
 		while (!iit->isEnd())
 		{
@@ -127,6 +128,34 @@ protected:
 			if (iit->isExist())
 			{
 				ss << static_cast<int>((**iit).get<char>()) << ", ";
+			} else
+			{
+				ss << "*, ";
+			}
+			++(*iit);
+		}
+		BOOST_LOG_TRIVIAL(debug) << ss.str() << "";
+	}
+
+	template<>
+	void printImp<unsigned char>()
+	{
+		auto iit = this->getItemIterator();
+		std::stringstream ss;
+		ss << "Block [" << this->desc_->blockCoor_.toString() << " (" << static_cast<int64_t>(this->getId()) << ")]";
+		int64_t row = -1;
+		while (!iit->isEnd())
+		{
+			int64_t curRow = iit->coor()[0];
+			if (row != curRow)
+			{
+				ss << "\n";
+				ss << curRow << " : ";
+				row = curRow;
+			}
+			if (iit->isExist())
+			{
+				ss << static_cast<unsigned int>((**iit).get<unsigned char>()) << ", ";
 			} else
 			{
 				ss << "*, ";

@@ -41,6 +41,11 @@ pArray wavelet_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 	// which can be used for current array.
 	maxLevel = outArr->getMaxLevel();
 
+	// Unsigned valus should be treated as signed values.
+	// Wavelet transform with unsigned values would increase bits of result array.
+	// Not decrease to 0.
+	// For example, -1 would treated as 254.
+	// Then the values synopsis would increaseed.
 	for(auto attrDesc : *inArr->getDesc()->getAttrDescs())
 	{
 		switch (attrDesc->type_)
@@ -61,16 +66,16 @@ pArray wavelet_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 			attributeEncode<int64_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::UINT8:
-			attributeEncode<uint8_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
+			attributeEncode<int8_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::UINT16:
-			attributeEncode<uint16_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
+			attributeEncode<int16_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::UINT32:
-			attributeEncode<uint32_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
+			attributeEncode<int32_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		case eleType::UINT64:
-			attributeEncode<uint64_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
+			attributeEncode<int64_t>(outArr, inArr, attrDesc, w, maxLevel, qry);
 			break;
 		//case eleType::DOUBLE:
 		//	attributeEncode<double>(inChunk, arrRange,w, d, q);

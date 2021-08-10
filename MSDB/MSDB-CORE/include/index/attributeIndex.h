@@ -8,21 +8,18 @@ namespace msdb
 {
 enum class attrIndexType
 {
-	MMT
+	MMT,
+	COMPASS,
+	NONE
 };
 
 class attributeIndex
 {
 public:
 	attributeIndex();
-	attributeIndex(attrIndexType type);
 
 public:
-	attrIndexType getType();
-	void setType(attrIndexType type);
-
-private:
-	attrIndexType aiType_;
+	virtual attrIndexType getType() = 0;
 };
 using pAttrIndex = std::shared_ptr<attributeIndex>;
 }			// msdb

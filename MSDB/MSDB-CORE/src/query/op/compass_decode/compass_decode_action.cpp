@@ -31,7 +31,7 @@ pArray compass_decode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 	arrayId arrId = sourceArr->getId();
 
 	auto outArr = std::make_shared<memBlockArray>(this->getArrayDesc());
-	outArr->copyChunkBitmap(this->getPlanChunkBitmap());
+	outArr->copyChunkBitmap(this->getPlanInChunkBitmap());
 
 	// Get Parameter - NumBin
 	eleDefault numBins;
@@ -81,6 +81,8 @@ void compass_decode_action::decodeAttribute(pArray outArr, pAttributeDesc attrDe
 	//----------------------------------------//
 	qry->getTimer()->nextWork(0, workType::COMPUTING);
 	//========================================//
+
+	this->getArrayStatus(outArr);
 }
 
 void compass_decode_action::decodeChunk(pChunk outChunk, pCompassChunk inChunk, pQuery qry, pArray outArr, const attributeId attrId, const size_t parentThreadId)
@@ -97,12 +99,13 @@ void compass_decode_action::decodeChunk(pChunk outChunk, pCompassChunk inChunk, 
 									  serialChunk);
 
 	//----------------------------------------//
-	qry->getTimer()->nextWork(0, workType::COMPUTING);
+	qry->getTimer()->nextWork(threadId, workType::COMPUTING);
 	//----------------------------------------//
 
 	outChunk->copyBlockBitmap(inChunk->getBlockBitmap());
 	outChunk->makeBlocks();
 	outChunk->bufferCopy(inChunk);
+	outChunk->setSerializedSize(inChunk->getSerializedSize());
 
 	//----------------------------------------//
 	qry->getTimer()->pause(threadId);

@@ -56,11 +56,13 @@ pArray zip_save_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 
 	return sourceArr;
 }
+
 pZipChunk zip_save_action::makeOutChunk(pChunk inChunk)
 {
 	auto outChunkDesc = std::make_shared<chunkDesc>(*inChunk->getDesc());
 	pZipChunk outChunk = std::make_shared<zipChunk>(outChunkDesc);
-	outChunk->makeAllBlocks();
+	outChunk->copyBlockBitmap(inChunk->getBlockBitmap());
+	outChunk->makeBlocks();
 	outChunk->bufferRef(inChunk);
 
 	return outChunk;

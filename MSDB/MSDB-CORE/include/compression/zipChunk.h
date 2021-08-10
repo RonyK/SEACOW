@@ -28,35 +28,83 @@ public:
 	template<typename Ty_>
 	void serializeTy(std::stringstream& compressed)
 	{
-		auto blockItr = this->getBlockIterator();
-		while (!blockItr->isEnd())
-		{
-			if (blockItr->isExist())
-			{
-				pZipBlock zBlock = std::static_pointer_cast<zipBlock>(**blockItr);
-				zBlock->serializeTy<Ty_>(compressed);
-			}
+		//////////////////////////////
+		// Block IO
+		//auto blockItr = this->getBlockIterator();
+		//while (!blockItr->isEnd())
+		//{
+		//	if (blockItr->isExist())
+		//	{
+		//		pZipBlock zBlock = std::static_pointer_cast<zipBlock>(**blockItr);
+		//		zBlock->serializeTy<Ty_>(compressed);
+		//	}
 
-			++(*blockItr);
-		}
+		//	++(*blockItr);
+		//}
+		//////////////////////////////
+
+		//////////////////////////////
+		// Chunk IO
+		boost::iostreams::filtering_streambuf<boost::iostreams::input> out;
+
+		std::stringstream chunkCompressed;
+		std::stringstream origin;
+		origin.write((const char*)this->getBuffer()->getReadData(), this->getBuffer()->size());
+		out.push(boost::iostreams::zlib_compressor());
+		out.push(origin);
+		boost::iostreams::copy(out, chunkCompressed);
+
+		size_t mChunkSize = getSize(chunkCompressed);
+		compressed << static_cast<size_t>(mChunkSize);
+
+		compressed << chunkCompressed.rdbuf();
+		chunkCompressed.clear();
+		//////////////////////////////
 	}
 
 	template<class Ty_>
 	void deserializeTy(std::stringstream& compressed)
 	{
-		this->bufferAlloc();
+		//this->bufferAlloc();
 
-		auto blockItr = this->getBlockIterator();
-		while (!blockItr->isEnd())
-		{
-			if (blockItr->isExist())
-			{
-				pZipBlock zBlock = std::static_pointer_cast<zipBlock>(**blockItr);
-				zBlock->deserializeTy<Ty_>(compressed);
-			}
+		//////////////////////////////
+		// Block IO
+		//auto blockItr = this->getBlockIterator();
+		//while (!blockItr->isEnd())
+		//{
+		//	if (blockItr->isExist())
+		//	{
+		//		pZipBlock zBlock = std::static_pointer_cast<zipBlock>(**blockItr);
+		//		zBlock->deserializeTy<Ty_>(compressed);
+		//	}
 
-			++(*blockItr);
-		}
+		//	++(*blockItr);
+		//}
+		//////////////////////////////
+
+		//////////////////////////////
+		// Chunk IO
+		size_t mChunkSize;
+		compressed >> mChunkSize;
+
+		assert(mChunkSize <= this->getBuffer()->size());
+
+		char* tempBuffer = new char[mChunkSize];
+		compressed.read(tempBuffer, mChunkSize);
+
+		std::stringstream chunkCompressed;
+		chunkCompressed.write(tempBuffer, mChunkSize);
+
+		std::stringstream decompressed;
+		boost::iostreams::filtering_streambuf<boost::iostreams::input> out;
+		out.push(boost::iostreams::zlib_decompressor());
+		out.push(chunkCompressed);
+		boost::iostreams::copy(out, decompressed);
+
+		delete[] tempBuffer;
+
+		memcpy(this->getBuffer()->getData(), decompressed.str().c_str(), this->getBuffer()->size());
+		//////////////////////////////
 	}
 };
 }		// msdb

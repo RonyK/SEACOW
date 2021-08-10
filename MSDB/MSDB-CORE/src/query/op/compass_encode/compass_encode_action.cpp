@@ -22,6 +22,7 @@ pArray compass_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 
 	//========================================//
 	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
+	//----------------------------------------//
 
 	size_t mSizeTotal = 0;
 	pArray sourceArr = inputArrays[0];
@@ -60,6 +61,8 @@ pArray compass_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 	}
 
 	BOOST_LOG_TRIVIAL(debug) << "Total Save Chunk: " << mSizeTotal << " Bytes";
+
+	//----------------------------------------//
 	qry->getTimer()->pause(0);
 	//========================================//
 

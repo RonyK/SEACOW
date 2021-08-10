@@ -22,18 +22,20 @@ pArray zip_load_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 
 	//========================================//
 	qry->getTimer()->nextJob(0, this->name(), workType::COMPUTING);
+	//----------------------------------------//
 
 	pArray sourceArr = inputArrays[0];
 	arrayId arrId = sourceArr->getId();
 
 	auto outArr = std::make_shared<memBlockArray>(this->getArrayDesc());
-	outArr->copyChunkBitmap(this->getPlanChunkBitmap());
+	outArr->copyChunkBitmap(this->getPlanInChunkBitmap());
 
 	for (auto attr : *sourceArr->getDesc()->attrDescs_)
 	{
 		this->loadAttribute(outArr, attr, qry);
 	}
 
+	//----------------------------------------//
 	qry->getTimer()->pause(0);
 	//========================================//
 
@@ -41,6 +43,14 @@ pArray zip_load_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 }
 void zip_load_action::loadAttribute(pArray outArr, pAttributeDesc attrDesc, pQuery qry)
 {
+	size_t currentThreadId = 0;
+
+	//========================================//
+	qry->getTimer()->nextWork(0, workType::PARALLEL);
+	//----------------------------------------//
+
+	this->threadCreate(_MSDB_ACTION_THREAD_NUM_);
+
 	auto cit = outArr->getChunkIterator(iterateMode::EXIST);
 	while (!cit->isEnd())
 	{
@@ -50,30 +60,48 @@ void zip_load_action::loadAttribute(pArray outArr, pAttributeDesc attrDesc, pQue
 			auto inChunk = this->makeInChunk(outArr, attrDesc, cid);
 			auto outChunk = outArr->makeChunk(*inChunk->getDesc());
 
-			this->loadChunk(outArr, outChunk, inChunk, attrDesc->id_, qry, 0);
+			io_service_->post(boost::bind(&zip_load_action::loadChunk, this,
+							  outArr, outChunk, inChunk, attrDesc->id_, qry, currentThreadId));
 		}
 
 		++(*cit);
 	}
+
+	this->threadStop();
+	this->threadJoin();
+
+	//----------------------------------------//
+	qry->getTimer()->nextWork(0, workType::COMPUTING);
+	//========================================//
+
+	this->getArrayStatus(outArr);
 }
 
 void zip_load_action::loadChunk(pArray outArr, pChunk outChunk, pZipChunk inChunk, attributeId attrId, pQuery qry, const size_t parentThreadId)
 {
+	auto threadId = getThreadId();
+
 	//========================================//
-	qry->getTimer()->nextWork(0, workType::IO);
+	qry->getTimer()->nextJob(threadId, this->name(), workType::IO);
 	//----------------------------------------//
+
 	pSerializable serialChunk
 		= std::static_pointer_cast<serializable>(inChunk);
 	storageMgr::instance()->loadChunk(outArr->getId(), attrId, (inChunk)->getId(),
 									  serialChunk);
 
-	//========================================//
-	qry->getTimer()->nextWork(0, workType::COMPUTING);
+	//----------------------------------------//
+	qry->getTimer()->nextWork(threadId, workType::COMPUTING);
 	//----------------------------------------//
 
 	outChunk->replaceBlockBitmap(inChunk->getBlockBitmap());
 	outChunk->makeBlocks();
 	outChunk->bufferCopy(inChunk);
+	outChunk->setSerializedSize(inChunk->getSerializedSize());
+
+	//----------------------------------------//
+	qry->getTimer()->pause(threadId);
+	//========================================//
 }
 
 pZipChunk zip_load_action::makeInChunk(pArray inArr, pAttributeDesc attrDesc, chunkId cid)

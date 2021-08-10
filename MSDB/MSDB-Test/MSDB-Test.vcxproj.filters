@@ -50,6 +50,20 @@
     <ClCompile Include="test\query\op\zip_save_load\test_zip_save_load.cpp" />
     <ClCompile Include="test\query\op\between\test_body_between.cpp" />
     <ClCompile Include="test\query\op\filter\test_body_filter.cpp" />
+    <ClCompile Include="test\query\op\compass_index_build\test_compass_index_build.cpp" />
+    <ClCompile Include="test\exp\experimentsInfo.cpp" />
+    <ClCompile Include="test\query\op\lzw\test_lzw_encode_decode.cpp" />
+    <ClCompile Include="test\compression\test_adaptive_huffman_coding.cpp" />
+    <ClCompile Include="test\query\op\huffman\test_huffman_encode_decode.cpp" />
+    <ClCompile Include="test\query\op\huffman\act_huffman_encode_decode.cpp" />
+    <ClCompile Include="test\compression\test_huffman_coding.cpp" />
+    <ClCompile Include="test\query\op\lzw_huffman\act_lzw_huffman_encode_decode.cpp" />
+    <ClCompile Include="test\query\op\lzw_huffman\test_lzw_huffman_encode_decode.cpp" />
+    <ClCompile Include="test\query\op\adapt_huffman\act_adapt_huffman_encode_decode.cpp" />
+    <ClCompile Include="test\query\op\adapt_huffman\test_adapt_huffman_encode_decode.cpp" />
+    <ClCompile Include="test\query\op\se_huffman\test_se_huffman_encode_decode.cpp" />
+    <ClCompile Include="test\query\op\se_huffman\act_se_huffman_encode_decode.cpp" />
+    <ClCompile Include="test\query\op\between_filter\test_between_filter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">
@@ -70,6 +84,18 @@
     <ClInclude Include="test\compression\test_qry_zip.h" />
     <ClInclude Include="test\query\op\between\test_body_between.h" />
     <ClInclude Include="test\query\op\filter\test_body_filter.h" />
+    <ClInclude Include="test\exp\experimentsInfo.h" />
+    <ClInclude Include="test\compression\test_qry_lzw.h" />
+    <ClInclude Include="test\query\op\huffman\qry_huffman_encode_decode.h" />
+    <ClInclude Include="test\query\op\huffman\act_huffman_encode_decode.h" />
+    <ClInclude Include="test\query\op\lzw_huffman\act_lzw_huffman_encode_decode.h" />
+    <ClInclude Include="test\query\op\lzw_huffman\qry_lzw_huffman_encode_decode.h" />
+    <ClInclude Include="test\query\op\adapt_huffman\qry_adapt_huffman_encode_decode.h" />
+    <ClInclude Include="test\query\op\adapt_huffman\act_adapt_huffman_encode_decode.h" />
+    <ClInclude Include="test\query\op\se_huffman\qry_se_huffman_encode_decode.h" />
+    <ClInclude Include="test\query\op\se_huffman\act_se_huffman_encode_decode.h" />
+    <ClInclude Include="test\query\op\between_filter\qry_between_filter.h" />
+    <ClInclude Include="test\dummy\equalTest.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="test">
