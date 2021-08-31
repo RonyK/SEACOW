@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 void tearDownQuery(pQuery qry, size_t expId = 0, size_t expTrial = 0, size_t dataId = 0, size_t methodId = 0);
@@ -154,5 +156,6 @@ getPlan_setPlanRange(pPlan sourcePlan, coor sp, coor ep, pQuery myQuery = nullpt
 	return getOpPlan<plan_, pset_>(params, myQuery);
 }
 }		// caDummy
+}		// core
 }		// msdb
 #endif	// _MSDB_OPDUMMY_H_

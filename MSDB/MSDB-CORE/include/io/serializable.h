@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 using header_version_t = size_t;
 using header_size_t = size_t;
 using body_size_t = size_t;
@@ -59,6 +61,6 @@ private:
 protected:
 	size_type serializedSize_;
 };	// serializable
-}
-
+}		// core
+}		// msdb
 #endif	// _MSDB_SERIALIZABLE_H_

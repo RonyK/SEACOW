@@ -6,8 +6,11 @@
 
 namespace msdb
 {
+namespace core
+{
 typedef uint32_t arrayId;
 
 const arrayId INVALID_ARRAY_ID = static_cast<arrayId>(~0);
-}
-#endif		// _MSDB_ARRAY_ID_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_ARRAY_ID_H_

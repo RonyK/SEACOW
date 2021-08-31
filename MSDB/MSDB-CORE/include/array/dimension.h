@@ -7,6 +7,9 @@
 
 namespace msdb
 {
+namespace core
+{
 using dimension = coordinate<position_t>;
-}	// msdb
+}		// core
+}		// msdb
 #endif		// _MSDB_DIMENSION_H_

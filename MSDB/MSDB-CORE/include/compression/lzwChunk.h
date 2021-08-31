@@ -11,6 +11,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class lzwChunk;
 using pLzwChunk = std::shared_ptr<lzwChunk>;
 
@@ -186,5 +188,6 @@ private:
 	/// Dictionary Maximum Size (when reached, the dictionary will be reset)
 	static const lzwCodeType dms{ std::numeric_limits<lzwCodeType>::max() };
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_LZWCHUNK_H_

@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 #define ROUNDING(x, dig)	( floor((x) * pow(double(10), dig) + 0.5f) / pow(double(10), dig) )
 
 TEST(query_op_wavelet_encode, waveletHaar_1D)
@@ -235,6 +237,7 @@ TEST(query_op_wavelet_encode, testTemp_wavelet_encode)
 
 	compArrary<value_type>(sourceArr[0], wdArr);
 }
-}	// data2D_tempTest
-}	// caDummy
-}	// msdb
+}		// data2D_tempTest
+}		// caDummy
+}		// core
+}		// msdb

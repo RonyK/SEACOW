@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 coorRange getBandRange(const size_t bandId, const coor& bandDims)
 {
 	size_t dSize = bandDims.size();
@@ -60,4 +62,5 @@ coorRange getBandRange(const size_t bandId, const coor& bandDims)
 //
 //	return std::shared_ptr<std::vector<blockInfo>>();
 //}
+}		// core
 }		// msdb

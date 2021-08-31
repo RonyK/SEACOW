@@ -1,6 +1,6 @@
 #include "pch.h"
 
-void msdb::caDummy::tearDownQuery(pQuery qry, size_t expId, size_t expTrial, size_t dataId, size_t methodId)
+void msdb::core::caDummy::tearDownQuery(pQuery qry, size_t expId, size_t expTrial, size_t dataId, size_t methodId)
 {
 	auto myTimer = qry->getTimer();
 	myTimer->printTime();

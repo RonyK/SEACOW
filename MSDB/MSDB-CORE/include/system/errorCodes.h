@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 	enum
 	{
 #define X(_name, _code, _msg)	_name = _code,
@@ -16,6 +18,6 @@ namespace msdb
 
 	const char* getErrorCategoryMsg(int32_t code);
 	const char* getErrorMsg(int32_t code);
-}
-
+}		// core
+}		// msdb
 #endif

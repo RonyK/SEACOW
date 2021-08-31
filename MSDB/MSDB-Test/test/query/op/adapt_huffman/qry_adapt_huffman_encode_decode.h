@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 template <typename value_type>
@@ -175,5 +177,6 @@ pArray test_body_seq_adapt_huffman_encode_decode(_pFuncGetSourceArray_,
 	return outArr;
 }
 }		// caDummy
+}		// core
 }		// msdb
 #endif	// _MSDB_TEST_QRY_ADAPT_HUFFMAN_H_

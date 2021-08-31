@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 TEST(arrayBase, memBlockArrayCreate)
 {
 	//////////////////////////////
@@ -19,4 +21,5 @@ TEST(arrayBase, memBlockArrayCreate)
 
 	pArray sourceArr = std::make_shared<memBlockArray>(arrDesc);
 }
-}
+}		// core
+}		// msdb

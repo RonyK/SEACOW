@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class wavelet_decode_plan : public opPlan
 {
 public:
@@ -37,6 +39,6 @@ public:
 	virtual pBitmapTree inferBottomUpBitmap() override;
 	virtual pBitmapTree inferTopDownBitmap(pBitmapTree fromParent) override;
 };
-}
-
+}		// core
+}		// msdb
 #endif		// _MSDB_OP_WAVELET_DECODE_PLAN_H_

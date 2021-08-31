@@ -11,6 +11,8 @@
 
 namespace msdb
 {
+namespace core
+{
 
 class mmtNode;
 using pMmtNode = std::shared_ptr<mmtNode>;
@@ -419,6 +421,6 @@ bit_cnt_type updateChildNodeOrder(pMmtNode curNode)
 	//BOOST_LOG_TRIVIAL(debug) << static_cast<int>(abs_(curNode->bMax_) - bMax - 1) << "/" << static_cast<int>(abs_(curNode->bMin_) - bMin - 1);
 	return std::min({ abs_(curNode->bMax_) - bMax - 1, abs_(curNode->bMin_) - bMin - 1 });	// return jumped bits
 }
-
+}		// core
 }		// msdb
 #endif	// _MSDB_MMTNODE_H_

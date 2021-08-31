@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 lzw_huffman_decode_action::lzw_huffman_decode_action()
 {
 }
@@ -120,4 +122,5 @@ pLzwHuffmanChunk lzw_huffman_decode_action::makeInChunk(pArray inArr, pAttribute
 
 	return inChunk;
 }
-}	// msdb
+}		// core
+}		// msdb

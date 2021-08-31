@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 mmt_load_plan::mmt_load_plan()
 {
 }
@@ -21,4 +23,5 @@ mmt_load_array_pset::mmt_load_array_pset(parameters& pSet)
 {
 	assert(this->params_.size() == 1);
 }
-}
+}		// core
+}		// msdb

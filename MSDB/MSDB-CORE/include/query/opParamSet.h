@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class opParamSet;
 using pParamSet = std::shared_ptr<opParamSet>;
 
@@ -52,5 +54,6 @@ public:
 public:
 	pBitmapTree getSourcePlanBottomUpBitmap();
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_OPPARAMSET_H_

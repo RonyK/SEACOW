@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 namespace between
@@ -767,5 +769,6 @@ TEST(experiment_query_op_between, lunar102400x40960_seq_random_lzw_huffman_betwe
 }	// TEST()
 }	// data2D_lunar102400x40960
 // ##################################################
-}	// caDummy
-}	// msdb
+}		// caDummy
+}		// core
+}		// msdb

@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 template <typename value_type>
@@ -81,5 +83,6 @@ pArray exe_qry_ind_mmt_build(_vectorSourceArray_, eleDefault mmtLevel, bool prin
 	return outArr;
 }
 }
-}
+}		// core
+}		// msdb
 #endif	// _MSDB_TEST_QRY_MMT_H_

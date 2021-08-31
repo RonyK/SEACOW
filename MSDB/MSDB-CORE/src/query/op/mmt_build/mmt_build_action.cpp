@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 mmt_build_action::mmt_build_action()
 {
 }
@@ -51,5 +53,5 @@ pArray mmt_build_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 
 	return arr;
 }
-}	// msdb
-
+}		// core
+}		// msdb

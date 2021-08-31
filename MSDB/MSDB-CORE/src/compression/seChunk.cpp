@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 seChunk::seChunk(pChunkDesc desc)
 	: memBlockChunk(desc), level_(0), rBitFromMMT(0), min_(0), synopsisSize_(0)
 {
@@ -159,4 +161,5 @@ void seChunk::setTileOffset(std::vector<uint64_t>& offset)
 {
 	this->tileOffset_ = offset;
 }
+}	// core
 }	// msdb

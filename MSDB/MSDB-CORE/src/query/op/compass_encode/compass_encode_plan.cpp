@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 compass_encode_plan::compass_encode_plan()
 {
 }
@@ -25,4 +27,5 @@ compass_encode_array_pset::compass_encode_array_pset(parameters& pSet)
 	assert(this->params_[0]->type() == opParamType::ARRAY);			// Source array
 	assert(this->params_[1]->type() == opParamType::CONST_TYPE);	// Target Bin Numbers
 }
-}	// msdb
+}		// core
+}		// msdb

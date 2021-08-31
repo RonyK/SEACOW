@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 se_huffman_encode_action::se_huffman_encode_action()
 {
 }
@@ -76,4 +78,5 @@ pSeHuffmanChunk se_huffman_encode_action::makeOutChunk(pWtChunk inChunk)
 	
 	return outChunk;
 }
-}	// msdb
+}		// core
+}		// msdb

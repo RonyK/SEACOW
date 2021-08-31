@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 inline char unsignedCharToSigned(char value)
@@ -449,5 +451,6 @@ void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr)
 	}
 }
 }
-}	// caDummy
-}	// msdb
+}		// caDummy
+}		// core
+}		// msdb

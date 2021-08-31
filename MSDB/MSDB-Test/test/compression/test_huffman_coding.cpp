@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 
@@ -100,6 +102,7 @@ TEST(huffman_coding, fixed_2byte_huffman_coding)
 	}
 
 
-}	// TEST
-}	// dummy
-}	// msdb
+}		// TEST
+}		// dummy
+}		// core
+}		// msdb

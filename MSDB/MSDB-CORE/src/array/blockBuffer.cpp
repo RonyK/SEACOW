@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 blockBuffer::blockBuffer(void* data, bufferSize size)
 	: chunkBuffer()
 {
@@ -27,4 +29,5 @@ memBlockBuffer::memBlockBuffer(void* data, bufferSize size)
 memBlockBuffer::~memBlockBuffer()
 {
 }
-}
+}		// core
+}		// msdb

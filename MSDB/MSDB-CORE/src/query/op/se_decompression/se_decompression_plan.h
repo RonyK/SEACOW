@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class se_decompression_plan : public opPlan
 {
 public:
@@ -28,5 +30,6 @@ public:
 	virtual pArrayDesc inferSchema() override;
 	virtual pBitmapTree inferBottomUpBitmap() override;
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_SE_DECOMPRESSION_PLAN_H_

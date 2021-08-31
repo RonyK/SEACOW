@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class save_plan : public opPlan
 {
 public:
@@ -30,5 +32,6 @@ class save_plan_pset : public opPlanParamSet
 public:
 	save_plan_pset(parameters& pSet);
 };
-}	// msdb
+}		// core
+}		// msdb
 #endif	// _MSDB_OP_SAVE_PLAN_H_

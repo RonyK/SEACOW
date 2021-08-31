@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class adapt_huffman_encode_action : public opAction
 {
 public:
@@ -21,5 +23,6 @@ public:
 private:
 	pAdaptHuffmanChunk makeOutChunk(pChunk inChunk);
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_OP_ADAPT_HUFFMAN_ENCODE_ACTION_H_

@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 using bufferSize = unsigned long long;
 extern const bufferSize INVALID_BUFFER_SIZE;
 
@@ -46,5 +48,6 @@ protected:
 	bufferSize bodySize_;
 	bool isAllocated_;
 };
-}
+}		// core
+}		// msdb
 #endif	// _MSDB_BUFFER_H_

@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 lzw_encode_action::lzw_encode_action()
 {
 }
@@ -66,4 +68,5 @@ pLzwChunk lzw_encode_action::makeOutChunk(pChunk inChunk)
 
 	return outChunk;
 }
-}	// msdb
+}		// core
+}		// msdb

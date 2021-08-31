@@ -2,6 +2,8 @@
 #include <pch.h>
 namespace msdb
 {
+namespace core
+{
 #define ROUNDING(x, dig)	( floor((x) * pow(double(10), dig) + 0.5f) / pow(double(10), dig) )
 
 namespace caDummy
@@ -26,4 +28,5 @@ pArray exe_act_ind_zip_load(std::vector<pArray> sourceArr);
 pArray exe_act_ind_lzw_encode(std::vector<pArray> sourceArr);
 pArray exe_act_ind_lzw_decode(std::vector<pArray> sourceArr);
 }	// caDummy
-}	// msdb
+}		// core
+}		// msdb

@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 adapt_huffman_decode_plan::adapt_huffman_decode_plan()
 {
 }
@@ -20,4 +22,5 @@ adapt_huffman_decode_array_pset::adapt_huffman_decode_array_pset(parameters& pSe
 {
 
 }
-}	// msdb
+}		// core
+}		// msdb

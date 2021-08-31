@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class zip_save_action : public opAction
 {
 public:
@@ -22,5 +24,6 @@ public:
 private:
 	pZipChunk makeOutChunk(pChunk inChunk);
 };
-}	// msdb
+}		// core
+}		// msdb
 #endif	// _MSDB_OP_ZIP_ENCODE_ACTION_H_

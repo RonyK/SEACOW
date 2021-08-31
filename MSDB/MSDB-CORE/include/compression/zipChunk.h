@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class zipChunk;
 using pZipChunk = std::shared_ptr<zipChunk>;
 
@@ -107,5 +109,6 @@ public:
 		//////////////////////////////
 	}
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_ZIPCHUNK_H_

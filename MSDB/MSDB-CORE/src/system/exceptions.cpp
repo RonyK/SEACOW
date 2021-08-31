@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
     msdb_exception::msdb_exception(const char* file, const char* function, int32_t line,
                                    const char* errors_namespace,
                                    int32_t error_category, int32_t error_code,
@@ -40,4 +42,5 @@ namespace msdb
         , _error_msg(error_msg)
         , std::exception(what)
     { }
-}
+}		// core
+}		// msdb

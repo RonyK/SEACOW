@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 wavelet_decode_action::wavelet_decode_action()
 {
 	this->waveletName_ = "HaarSimple";
@@ -94,4 +96,5 @@ const char* wavelet_decode_action::name()
 {
 	return "wavelet_decode";
 }
-}	// msdb
+}		// core
+}		// msdb

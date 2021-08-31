@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 predicate::predicate(pTerm lhs, pTerm rhs)
 	: lTerm(lhs), rTerm(rhs)
 {
@@ -280,4 +282,5 @@ orPredicate::ebFunc orPredicate::findEvaluateBinFunc(eleType type)
 
 	return func_ptr[static_cast<int>(type)];
 }
-}	// msdb
+}		// core
+}		// msdb

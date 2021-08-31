@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class adapt_huffman_decode_plan : public opPlan
 {
 public:
@@ -23,5 +25,6 @@ class adapt_huffman_decode_array_pset : public opArrayParamSet
 public:
 	adapt_huffman_decode_array_pset(parameters& pSet);
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_ADAPT_HUFFMAN_DECODE_PLAN_H_

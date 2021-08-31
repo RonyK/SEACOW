@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 compass_decode_plan::compass_decode_plan()
 {
 }
@@ -24,4 +26,5 @@ compass_decode_array_pset::compass_decode_array_pset(parameters& pSet)
 	assert(this->params_.size() == 2);
 	assert(this->params_[1]->type() == opParamType::CONST_TYPE);		// Target numBins
 }
-}	// msdb
+}		// core
+}		// msdb

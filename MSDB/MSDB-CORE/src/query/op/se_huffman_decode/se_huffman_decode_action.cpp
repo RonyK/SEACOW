@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 se_huffman_decode_action::se_huffman_decode_action()
 {
 }
@@ -117,4 +119,5 @@ pSeHuffmanChunk se_huffman_decode_action::makeInChunk(std::shared_ptr<wavelet_en
 
 	return inChunk;
 }
-}	// msdb
+}		// core
+}		// msdb

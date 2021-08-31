@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 inline size_t getSize(std::stringstream& ss)
 {
 	ss.seekg(0, std::ios::end);
@@ -14,5 +16,6 @@ inline size_t getSize(std::stringstream& ss)
 
 	return ssSize;
 }
+}		// core
 }		// msdb
 #endif	// _MSDB_IOUTIL_H_

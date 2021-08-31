@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 opParamSet::opParamSet()
 {
 	//this->initParams();
@@ -68,4 +70,5 @@ pBitmapTree opPlanParamSet::getSourcePlanBottomUpBitmap()
 		this->params_[0]->getParam());
 	return sourcePlan->inferBottomUpBitmap();
 }
-}	// msdb
+}		// core
+}		// msdb

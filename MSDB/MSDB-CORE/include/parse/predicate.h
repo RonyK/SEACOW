@@ -10,6 +10,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class predicate;
 using pPredicate = std::shared_ptr<predicate>;
 
@@ -153,5 +155,6 @@ private:
 	bool (orPredicate::* evaluateNodeFunc)(pMmtNode);
 	bool (orPredicate::* evaluateBinFunc)(pCompassBlockIndex);
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_PREDICATE_H_

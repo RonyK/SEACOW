@@ -11,6 +11,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 void get_op_adapt_huffman_encode(pArrayDesc sourceArrDesc, std::shared_ptr<adapt_huffman_encode_plan>& plan, std::shared_ptr<adapt_huffman_encode_action>& action, pQuery& qry);
@@ -22,5 +24,6 @@ pArray exe_act_ind_adapt_huffman_decode(std::vector<pArray> sourceArr);
 std::shared_ptr<adapt_huffman_encode_plan> getAdaptHuffmanEncodePlan(pArrayDesc sourceArrDesc, pQuery qry);
 std::shared_ptr<adapt_huffman_decode_plan> getAdaptHuffmanDecodePlan(pArrayDesc sourceArrDesc, pQuery qry);
 }		// caDummy
+}		// core
 }		// msdb
 #endif	// _MSDB_TEST_OP_ACT_ADAPT_HUFFMAN_ENCODE_DECODE_H_

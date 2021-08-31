@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 const char* strBasePath =	"../storage/";
 const char* strConfigPath = "../storage/config/";
 const char* strArrayPath =	"../storage/array/";
@@ -17,7 +19,7 @@ const char* strIndexFilExtension = ".msdbindex";
 const char* strArrayConfigFile = "arrays.xml";
 const char* strChunkFilExtension = ".chunk";
 
-//void msdb::storageMgr::getConfigFile(std::string path)
+//void msdb::core::storageMgr::getConfigFile(std::string path)
 //{
 //	std::fstream fs;
 //	fs.open(path, std::fstream::in | std::fstream::out | std::fstream::app | std::fstream::binary);
@@ -219,4 +221,5 @@ bool storageMgr::isExists(filePath& fp)
 {
 	return std::filesystem::exists(fp);
 }
-}
+}		// core
+}		// msdb

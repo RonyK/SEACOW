@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class blockBuffer;
 using pBlockBuffer = std::shared_ptr<blockBuffer>;
 
@@ -27,5 +29,6 @@ public:
 	memBlockBuffer(void* data, bufferSize size);
 	virtual ~memBlockBuffer();
 };
-}	// msdb
-#endif		// _MSDB_BLOCKBUFFER_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_BLOCKBUFFER_H_

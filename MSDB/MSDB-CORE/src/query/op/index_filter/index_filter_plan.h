@@ -11,6 +11,8 @@
 
 namespace msdb
 {
+namespace core
+{
 //////////////////////////////
 // index_filter_plan
 class index_filter_plan : public opPlan
@@ -274,5 +276,6 @@ public:
 public:
 	virtual pBitmapTree inferBottomUpBitmap() override;
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_INDEX_FILTER_PLAN_H_

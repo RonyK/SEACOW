@@ -62,6 +62,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 //////////////////////////////
@@ -116,5 +118,6 @@ getOpPlan(parameters& params, pQuery myQuery)
 	return myPlan;
 }
 }		// caDummy
+}		// core
 }		// msdb
 #endif	// _MSDB_OPPLANDUMMY_H_

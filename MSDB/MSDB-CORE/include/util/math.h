@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 #define SIGN(val)	((val >= 0) ? 1 : -1)
 
 #define _TySize_	(sizeof(Ty_) * CHAR_BIT)
@@ -281,6 +283,6 @@ inline Ty_ getMinValue()
 
 	return 0;
 }
-}	// msdb
-
-#endif		// _MSDB_MATH_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_MATH_H_

@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 	wavelet::wavelet()
 		: h_0(NULL), g_0(NULL), h_1(NULL), g_1(NULL), c_(0), offset_(0), t_(waveletType::None)
 	{
@@ -154,4 +156,5 @@ namespace msdb
 
 	//	return 0;
 	//}
-}
+}		// core
+}		// msdb

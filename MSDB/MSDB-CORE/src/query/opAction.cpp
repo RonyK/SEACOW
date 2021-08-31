@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 opAction::opAction()
 	: threadExist_(false), threadNums_(0)
 {
@@ -12,7 +14,7 @@ opAction::~opAction()
 {
 }
 
-const pArrayDesc msdb::opAction::getArrayDesc()
+const pArrayDesc msdb::core::opAction::getArrayDesc()
 {
 	return this->aDesc_;
 }
@@ -110,4 +112,5 @@ void opAction::threadJoin()
 {
 	this->threadpool_.join_all();
 }
-}
+}		// core
+}		// msdb

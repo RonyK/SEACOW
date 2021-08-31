@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 compass_decode_action::compass_decode_action()
 {
 }
@@ -130,4 +132,5 @@ pCompassChunk compass_decode_action::makeInChunk(pArray inArr, pAttributeDesc at
 
 	return inChunk;
 }
-}	// msdb
+}		// core
+}		// msdb

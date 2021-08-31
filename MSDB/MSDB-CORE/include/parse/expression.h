@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class expression;
 using pExpression = std::shared_ptr<expression>;
 
@@ -79,5 +81,6 @@ private:
 //private:
 //	double value_;
 //};
+}		// core
 }		// msdb
 #endif	// _MSDB_EXPRESSION_H_

@@ -18,6 +18,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 static int randomValueLimit = 128;
@@ -1734,5 +1736,6 @@ pArray test_body_seq_se_huffman_index_random_between_filter(_pFuncGetSourceArray
 	return nullptr;
 }		// TEST()
 }		// caDummy
+}		// core
 }		// msdb
 #endif	// _MSDB_TEST_QRY_BETWEEN_INDEX_H_

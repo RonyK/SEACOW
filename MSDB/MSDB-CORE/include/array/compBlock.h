@@ -6,10 +6,12 @@
 
 namespace msdb
 {
-	class compBlock
-	{
+namespace core
+{
+class compBlock
+{
 
-	};
 };
-
-#endif
+}		// core
+}		// msdb
+#endif	

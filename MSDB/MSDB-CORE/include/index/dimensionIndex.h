@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class dimensionIndex;
 using pDimensionIndex = std::shared_ptr<dimensionIndex>;
 
@@ -13,6 +15,6 @@ class dimensionIndex
 {
 
 };
-}
-
-#endif		// _MSDB_DIMENSION_INDEX_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_DIMENSION_INDEX_H_

@@ -7,7 +7,10 @@
 
 namespace msdb
 {
+namespace core
+{
 using chunkContainer = std::map<chunkId, pChunk>;
 using chunkPair = std::pair<chunkId, pChunk>;
-}
-#endif		// _MSDB_CHUNKCONTAINER_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_CHUNKCONTAINER_H_

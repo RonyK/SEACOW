@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 chunkBuffer::chunkBuffer()
 	: buffer(), data_(nullptr), refBuffer_(nullptr)
 {
@@ -25,7 +27,7 @@ void const* chunkBuffer::getReadData() const
 	return this->data_;
 }
 
-bufferSize msdb::chunkBuffer::size() const
+bufferSize msdb::core::chunkBuffer::size() const
 {
 	return this->bodySize_;
 }
@@ -117,4 +119,5 @@ pChunkBuffer chunkBuffer::getRefBuffer()
 //{
 //	_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_CHUNK_CANNOT_UNCOMPRESS));
 //}
-}
+}		// core
+}		// msdb

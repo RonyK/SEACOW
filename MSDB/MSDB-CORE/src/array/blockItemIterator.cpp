@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 blockItemIterator::blockItemIterator(void* data, 
 									 const eleType eType,
 									 const dimension& dims,
@@ -41,4 +43,5 @@ blockItemRangeIterator::blockItemRangeIterator(void* data,
 	coorItr(dims)
 {
 }
-}
+}		// core
+}		// msdb

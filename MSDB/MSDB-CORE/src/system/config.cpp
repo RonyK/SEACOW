@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 config::config(tinyxml2::XMLNode* root)
 {
 	this->_root = root;
@@ -32,4 +34,5 @@ void config::xmlChildExplore(tinyxml2::XMLNode* root, void* list, void(*f)(tinyx
 		(*f)(child, list);
 	}
 }
-}
+}		// core
+}		// msdb

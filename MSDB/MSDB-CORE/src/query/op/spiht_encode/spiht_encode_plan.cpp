@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 // plan
 spiht_encode_plan::spiht_encode_plan()
 {
@@ -25,4 +27,5 @@ spiht_encode_array_pset::spiht_encode_array_pset(parameters& pSet)
 {
 	assert(this->params_.size() == 1);
 }
-}
+}		// core
+}		// msdb

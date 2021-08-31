@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 namespace save_load
@@ -68,6 +70,7 @@ TEST(experiment_query_op_save_load, lunar102400x40960_seq)
 {
 	test_body_seq_save_load<value_type>(&getSourceArrayIfEmpty, save_load::validation, save_load::printFlag);
 }
-}   // data2D_lunar102400x40960
-}	// caDummy
-}	// msdb
+}		// data2D_lunar102400x40960
+}		// caDummy
+}		// core
+}		// msdb

@@ -11,6 +11,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 using dim_type = position_t;
@@ -456,6 +458,7 @@ std::vector<pArray> getSourceArray()
 void getSourceArrayIfEmpty(std::vector<pArray>& sourceArr);
 }	// data2D_sc8x8
 }	// caDummy
+}	// core
 }	// msdb
 
 #endif	//_MSDB_DUMMY_H_

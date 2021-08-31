@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 arrayMgr::arrayMgr()
 {
 }
@@ -91,5 +93,5 @@ void arrayMgr::flushDimensionIndex(arrayId arrId, dimensionId dimId)
 //{
 //	return true;
 //}
-}
-
+}		// core
+}		// msdb

@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 between_action::between_action()
 {
 }
@@ -161,4 +163,5 @@ void between_action::fullyInsideBlock(pBlock outBlock, pBlock inBlock)
 	outDesc->setIep(inDesc->getIep());
 	outBlock->copyBitmap(inBlock->getBitmap());
 }
-}
+}		// core
+}		// msdb

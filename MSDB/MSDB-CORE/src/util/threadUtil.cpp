@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 threadUtil::threadUtil()
 	: threadExist_(false), threadNums_(0)
 {
@@ -29,4 +31,5 @@ void threadUtil::createThread(size_t threadNums)
 	this->threadExist_ = true;
 	this->threadNums_ = threadNums;
 }
-}	// msdb
+}		// core
+}		// msdb

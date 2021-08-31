@@ -10,6 +10,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class opParam;
 class predicate;
 
@@ -249,5 +251,6 @@ public:
 public:
 	virtual opParamType type();
 };
-}
-#endif		// _MSDB_OPPARAM_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_OPPARAM_H_

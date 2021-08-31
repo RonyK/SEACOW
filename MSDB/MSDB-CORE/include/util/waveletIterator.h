@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 	template <typename Dty_, typename Ty_>
 	class waveletIterator : public coorIterator<Dty_, Ty_>
 	{
@@ -607,6 +609,6 @@ namespace msdb
 			return false;
 		}
 	};
-}
-
+}		// core
+}		// msdb
 #endif

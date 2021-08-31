@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class blockChunkBuffer;
 using pBlockChunkBuffer = std::shared_ptr<blockChunkBuffer>;
 
@@ -33,5 +35,6 @@ public:
 protected:
 	void* data_;
 };
-}
+}		// core
+}		// msdb
 #endif	// _MSDB_BLOCKCHUNKBUFFER_H_

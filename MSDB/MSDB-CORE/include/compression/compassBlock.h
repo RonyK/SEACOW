@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class compassBlock;
 using pCompassBlock = std::shared_ptr<compassBlock>;
 
@@ -224,5 +226,6 @@ public:
 private:
 	size_t numBins_;
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_COMPASSBLOCK_H_

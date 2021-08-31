@@ -87,7 +87,6 @@
     <ClCompile Include="test\dummy\opArrayDummy.cpp" />
     <ClCompile Include="test\dummy\opDummy.cpp" />
     <ClCompile Include="test\dummy\opPlanDummy.cpp" />
-    <ClCompile Include="test\exp\experimentsInfo.cpp" />
     <ClCompile Include="test\index\testMMT.cpp" />
     <ClCompile Include="test\index\test_action_mmt.cpp" />
     <ClCompile Include="test\io\test_action_io.cpp" />

@@ -10,6 +10,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 void get_op_lzw_huffman_encode(pArrayDesc sourceArrDesc, std::shared_ptr<lzw_huffman_encode_plan>& plan, std::shared_ptr<lzw_huffman_encode_action>& action, pQuery& qry);
@@ -21,5 +23,6 @@ pArray exe_act_ind_lzw_huffman_decode(std::vector<pArray> sourceArr);
 std::shared_ptr<lzw_huffman_encode_plan> getLzwHuffmanEncodePlan(pArrayDesc sourceArrDesc, pQuery qry);
 std::shared_ptr<lzw_huffman_decode_plan> getLzwHuffmanDecodePlan(pArrayDesc sourceArrDesc, pQuery qry);
 }		// caDummy
+}		// core
 }		// msdb
 #endif	// _MSDB_TEST_ACT_LZW_HUFFMAN_H_

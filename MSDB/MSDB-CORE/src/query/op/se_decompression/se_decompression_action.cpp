@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 se_decompression_action::se_decompression_action()
 {
 }
@@ -116,4 +118,5 @@ pSeChunk se_decompression_action::makeInChunk(std::shared_ptr<wavelet_encode_arr
 
 	return inChunk;
 }
-}	// msdb
+}		// core
+}		// msdb

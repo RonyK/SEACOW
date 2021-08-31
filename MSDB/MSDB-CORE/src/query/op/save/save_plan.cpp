@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 save_plan::save_plan()
 {
 }
@@ -32,4 +34,5 @@ save_plan_pset::save_plan_pset(parameters& pSet)
 {
 	assert(this->params_.size() == 1);
 }
-}	// msdb
+}		// core
+}		// msdb

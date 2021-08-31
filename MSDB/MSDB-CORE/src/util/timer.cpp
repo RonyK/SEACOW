@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 extern std::vector<const char*> strTimerWorkType = {
 	"IDLE", "IO", "COMPUTING", "PARALLEL", "LOGGING", "ARRAY_CONSTRUCTING", "OTHERS", "TIMER_STOP"
 };
@@ -267,4 +269,5 @@ size_t timer::getMyJobId(size_t threadId)
 std::mutex timer::mutexJobId_;
 std::mutex timer::mutexJobUpdate_;
 
-}
+}		// core
+}		// msdb

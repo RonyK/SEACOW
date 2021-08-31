@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 spiht_decode_action::spiht_decode_action()
 {
 }
@@ -142,4 +144,5 @@ pSpihtChunk spiht_decode_action::makeInChunk(std::shared_ptr<wavelet_encode_arra
 
 	return inChunk;
 }
-}
+}		// core
+}		// msdb

@@ -6,7 +6,9 @@
 
 namespace msdb
 {
-msdb::wavelet_encode_action::wavelet_encode_action()
+namespace core
+{
+msdb::core::wavelet_encode_action::wavelet_encode_action()
 {
 	this->waveletName_ = "HaarSimple";
 }
@@ -90,9 +92,9 @@ pArray wavelet_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 	return outArr;
 }
 
-const char* msdb::wavelet_encode_action::name()
+const char* msdb::core::wavelet_encode_action::name()
 {
 	return "wavelet_encode";
 }
-}
-
+}		// core
+}		// msdb

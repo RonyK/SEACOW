@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 dimensionDesc::dimensionDesc(dimensionId id, std::string name,
 							 dimension_type start, dimension_type end, 
 							 position_t chunkSize, position_t blockSize)
@@ -18,7 +20,7 @@ dimensionDesc::dimensionDesc(const dimensionDesc& mit)
 {
 }
 
-position_t msdb::dimensionDesc::getLength()
+position_t msdb::core::dimensionDesc::getLength()
 {
 	return this->end_ - this->start_;
 }
@@ -78,4 +80,5 @@ dimension dimensionDescs::getBlockSpace()
 {
 	return dimension(this->getChunkDims()) / this->getBlockDims();
 }
-}	// msdb
+}		// core
+}		// msdb

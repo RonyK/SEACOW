@@ -2,6 +2,8 @@
 
 namespace msdb
 {
+namespace core
+{
     namespace daubechies
     {
         static const double h_4[4] =
@@ -292,4 +294,5 @@ namespace msdb
             -0.02667005790055555358661744877
         };
     }
-}
+}		// core
+}		// msdb

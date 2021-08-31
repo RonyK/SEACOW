@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class wtChunk;
 using pWtChunk = std::shared_ptr<wtChunk>;
 
@@ -33,5 +35,6 @@ protected:
 	//chunkId bandId_;
 	//chunkId sourceChunkId_;
 };
-}	// msdb
-#endif		// _MSDB_WT_CHUNK_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_WT_CHUNK_H_

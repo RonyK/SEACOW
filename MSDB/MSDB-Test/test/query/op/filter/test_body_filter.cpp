@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 pArray exe_act_ind_naive_filter(_vectorSourceArray_, pPredicate myPredicate, pQuery qry)
@@ -32,5 +34,6 @@ pTerm getEqualTerm(int64_t value, attributeId attrId)
 
 	return std::make_shared<term>(lExp, rExp, termType::EQUAL);
 }
-}	// caDummy
-}	// msdb
+}		// caDummy
+}		// core
+}		// msdb

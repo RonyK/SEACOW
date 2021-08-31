@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 wtChunk::wtChunk(pChunkDesc desc)
 	: memChunk(desc), level_(0)
 {
@@ -46,4 +48,5 @@ dimension wtChunk::getTileSpace(dimension sourceChunkDim)
 
 	return tileSpace;
 }
-}	// msdb
+}		// core
+}		// msdb

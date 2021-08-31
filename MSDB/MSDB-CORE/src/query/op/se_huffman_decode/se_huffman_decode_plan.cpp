@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 se_huffman_decode_plan::se_huffman_decode_plan()
 {
 }
@@ -43,4 +45,5 @@ pBitmapTree se_huffman_decode_array_pset::inferBottomUpBitmap()
 
 	return std::make_shared<bitmapTree>(seChunkSpace.area(), true);
 }
-}	// msdb
+}		// core
+}		// msdb

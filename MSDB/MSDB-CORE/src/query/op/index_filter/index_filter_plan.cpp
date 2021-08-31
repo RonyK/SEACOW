@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 //////////////////////////////
 // index_filter_plan
 index_filter_plan::index_filter_plan()
@@ -138,4 +140,5 @@ pBitmapTree index_filter_plan_pset::inferBottomUpBitmap()
 	}
 	return nullptr;
 }
-}	// msdb
+}		// core
+}		// msdb

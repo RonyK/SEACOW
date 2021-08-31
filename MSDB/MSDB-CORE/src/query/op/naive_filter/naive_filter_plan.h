@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class naive_filter_plan : public opPlan
 {
 public:
@@ -29,6 +31,6 @@ class naive_filter_plan_pset : public opPlanParamSet
 public:
 	naive_filter_plan_pset(parameters& pSet);
 };
-}
-
+}		// core
+}		// msdb
 #endif // _MSDB_OP_NAIVE_FILTER_PLAN_H_

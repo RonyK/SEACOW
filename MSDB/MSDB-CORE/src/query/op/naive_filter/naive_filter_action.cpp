@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 naive_filter_action::naive_filter_action()
 {
 }
@@ -71,4 +73,5 @@ pArray naive_filter_action::execute(std::vector<pArray>& inputArrays, pQuery qry
 
 	return outArr;
 }
-}
+}		// core
+}		// msdb

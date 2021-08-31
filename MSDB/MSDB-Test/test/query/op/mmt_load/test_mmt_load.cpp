@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 namespace mmt_save_load
@@ -295,7 +297,8 @@ TEST(experiment_query_op_mmt_save_load, lunar102400x40960_seq)
 	test_body_seq_mmt_save_load<value_type>(&getSourceArrayIfEmpty, mmtLevel,
 											mmt_save_load::validation,
 											mmt_save_load::printFlag);
-}   // TEST
-}   // data2D_lunar102400x40960
-}	// caDummy
-}	// msdb
+}	// TEST
+}	// data2D_lunar102400x40960
+}		// caDummy
+}		// core
+}		// msdb

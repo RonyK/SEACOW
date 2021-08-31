@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 mmt_delta_encode_array::mmt_delta_encode_array(pArrayDesc desc)
 	: base_type(desc), attrMMT()
 {
@@ -20,4 +22,5 @@ void mmt_delta_encode_array::setMMT(attributeId attrId, pMMT myMMT)
 {
 	this->attrMMT[attrId] = myMMT;
 }
-}	// msdb
+}		// core
+}		// msdb

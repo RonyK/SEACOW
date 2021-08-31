@@ -11,6 +11,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class MinMaxTree;
 using mmt = MinMaxTree;
 using pMMT = std::shared_ptr<mmt>;
@@ -1263,6 +1265,6 @@ private:
 	*
 	*/
 };
-}
-
-#endif		// _MSDB_MMT_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_MMT_H_

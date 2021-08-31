@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class opPlan : public std::enable_shared_from_this<opPlan>
 {
 public:
@@ -37,5 +39,6 @@ private:
 	pBitmapTree outArrBitmap_;
 	pPlan parentPlan_;
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_OPPLAN_H_

@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 namespace zip_save_load
@@ -148,6 +150,7 @@ TEST(experiment_query_op_zip_save_load, lunar102400x40960_seq)
 											&getSourceArrayDesc,
 											zip_save_load::validation, zip_save_load::printFlag);
 }
-}	// data2D_lunar102400x40960
-}	// caDummy
-}	// msdb
+}		// data2D_lunar102400x40960
+}		// caDummy
+}		// core
+}		// msdb

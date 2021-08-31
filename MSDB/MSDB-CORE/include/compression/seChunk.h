@@ -11,6 +11,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class seChunk;
 using pSeChunk = std::shared_ptr<seChunk>;
 
@@ -527,5 +529,6 @@ bit_cnt_type getRBitFromMMT(mmtNode node, bool hasNegative = true)
 
 	return std::max((bit_cnt_type)abs_(node->bMax_), (bit_cnt_type)abs_(node->bMin_)) + static_cast<char>(hasNegative);
 }
-}	// msdb
-#endif		// _MSDB_SE_CHUNK_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_SE_CHUNK_H_

@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 se_compression_action::se_compression_action()
 {
 }
@@ -75,4 +77,5 @@ pSeChunk se_compression_action::makeOutChunk(pWtChunk inChunk)
 
 	return outChunk;
 }
-}	// msdb
+}		// core
+}		// msdb

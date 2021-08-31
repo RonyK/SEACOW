@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class attributeDesc;
 using pAttributeDesc = std::shared_ptr<attributeDesc>;
 
@@ -32,6 +34,6 @@ public:
 	eleType type_;
 	size_t typeSize_;
 };
-}
-
+}		// core
+}		// msdb
 #endif

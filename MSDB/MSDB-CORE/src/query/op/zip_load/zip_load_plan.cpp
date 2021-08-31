@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 zip_load_plan::zip_load_plan()
 {
 }
@@ -23,4 +25,5 @@ zip_load_array_pset::zip_load_array_pset(parameters& pSet)
 {
 	assert(this->params_.size() == 1);
 }
-}	// msdb
+}		// core
+}		// msdb

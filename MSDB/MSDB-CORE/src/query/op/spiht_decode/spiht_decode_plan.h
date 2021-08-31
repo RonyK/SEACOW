@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class spiht_decode_plan : public opPlan
 {
 public:
@@ -27,6 +29,6 @@ public:
 	virtual pArrayDesc inferSchema() override;
 	virtual pBitmapTree inferBottomUpBitmap() override;
 };
-}
-
+}		// core
+}		// msdb
 #endif // _MSDB_OP_SPIHT_DECODE_PLAN_H_

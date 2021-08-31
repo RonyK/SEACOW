@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 memChunkBuffer::memChunkBuffer()
 {
 
@@ -17,4 +19,5 @@ bool memChunkBuffer::isCompressed() const
 {
 	return false;
 }
-}
+}		// core
+}		// msdb

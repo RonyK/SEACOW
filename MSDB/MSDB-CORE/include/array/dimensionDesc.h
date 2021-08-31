@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class dimensionDesc;
 using pDimensionDesc = std::shared_ptr<dimensionDesc>;
 
@@ -53,5 +55,6 @@ public:
 	position_t chunkSize_;
 	position_t blockSize_;
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_DIMENSIONDESC_H_

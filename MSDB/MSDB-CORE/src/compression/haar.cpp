@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 	namespace haar
 	{
 		static const double h2[2] =
@@ -60,4 +62,5 @@ namespace msdb
 			*offset = 1;
 		}
 	}
-}
+}		// core
+}		// msdb

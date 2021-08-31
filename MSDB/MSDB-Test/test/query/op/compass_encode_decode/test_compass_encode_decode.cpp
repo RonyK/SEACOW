@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 namespace compass_encode_decode
@@ -114,6 +116,7 @@ TEST(experiment_query_op_compass_encode_decode, lunar102400x40960_seq)
 													&getSourceArrayDesc,
 													numBins, compass_encode_decode::validation, compass_encode_decode::printFlag);
 }
-}	// data2D_lunar102400x40960
-}	// caDummy
-}	// msdb
+}		// data2D_lunar102400x40960
+}		// caDummy
+}		// core
+}		// msdb

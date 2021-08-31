@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class blockIterator;
 using pBlockIterator = std::shared_ptr<blockIterator>;
 
@@ -97,6 +99,6 @@ public:
 protected:
 	pBlock block_;
 };
-}
-
+}		// core
+}		// msdb
 #endif	// _MSDB_BLOCKITERATOR_H_

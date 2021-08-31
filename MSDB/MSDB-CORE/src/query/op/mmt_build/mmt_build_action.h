@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class mmt_build_action : public opAction
 {
 public:
@@ -17,6 +19,6 @@ public:
 	virtual const char* name() override;
 	virtual pArray execute(std::vector<pArray>& inputArrays, pQuery q) override;
 };
-}	// msdb
-
-#endif		// _MSDB_MMT_BUILD_ACTION_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_MMT_BUILD_ACTION_H_

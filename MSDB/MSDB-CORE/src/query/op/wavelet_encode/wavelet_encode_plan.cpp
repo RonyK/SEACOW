@@ -5,11 +5,13 @@
 
 namespace msdb
 {
+namespace core
+{
 wavelet_encode_plan::wavelet_encode_plan()
 {
 }
 
-const char* msdb::wavelet_encode_plan::name()
+const char* msdb::core::wavelet_encode_plan::name()
 {
 	return "wavelet_encode";
 }
@@ -74,4 +76,5 @@ pBitmapTree wavelet_encode_plan_pset::inferBottomUpBitmap()
 	//TODO::Implement inferBottomUpBitmap
 	return nullptr;
 }
-}
+}		// core
+}		// msdb

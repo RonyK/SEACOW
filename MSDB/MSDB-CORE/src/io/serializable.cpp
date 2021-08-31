@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 serializable::serializable(pHeader myHeader)
 	: myHeader_(myHeader), serializedSize_(myHeader->bodySize_)
 {
@@ -35,4 +37,5 @@ serialHeader::serialHeader()
 	: headerSize_(0), bodySize_(0), version_(0)
 {
 }
-}	// msdb
+}		// core
+}		// msdb

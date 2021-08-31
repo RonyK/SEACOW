@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 //coorRange getRandomRange(const position_t dimX, const position_t dimY, const float selectivity)
@@ -89,5 +91,6 @@ pArray exe_act_ind_raw_between(std::vector<pArray> sourceArr, coor sp, coor ep)
 	return outArr;
 }
 
-}	// caDummy
-}	// msdb
+}		// caDummy
+}		// core
+}		// msdb

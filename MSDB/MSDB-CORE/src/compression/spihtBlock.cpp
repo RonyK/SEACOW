@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 spihtBlock::spihtBlock(pBlockDesc desc)
 	: memBlock(desc)
 {
@@ -48,4 +50,5 @@ void spihtBlock::setLevel(size_t maxLevel)
 {
 	this->maxLevel_ = maxLevel;
 }
-}	// msdb
+}		// core
+}		// msdb

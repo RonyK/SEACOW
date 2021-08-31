@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 valueDistributionRecorder::valueDistributionRecorder()
 {
 	this->table_ = std::vector<std::vector<size_t>>(CHAR_BIT + 1);
@@ -39,4 +41,5 @@ void valueDistributionRecorder::printTable()
 		BOOST_LOG_TRIVIAL(info) << "==============================";
 	}
 }
-}	// msdb
+}		// core
+}		// msdb

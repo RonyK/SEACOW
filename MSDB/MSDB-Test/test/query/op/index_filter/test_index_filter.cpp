@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 namespace index_filter
@@ -715,4 +717,5 @@ TEST(experiment_query_op_index_filter, lunar102400x40960_seq_random_lzw_huffman_
 }	// data2D_lunar102400x40960
 // ##################################################
 }	// caDummy
+}	// core
 }	// msdb

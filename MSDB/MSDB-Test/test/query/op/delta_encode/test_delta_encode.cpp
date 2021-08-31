@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 template <typename value_type>
@@ -31,6 +33,7 @@ TEST(query_op_test_mmt_delta_encode, mmt_delta_encode_sc4x4)
 	mmt_delta_encode_test(std::static_pointer_cast<mmt_delta_encode_array>(output));
 }   // TEST()
 
-}	// data2D_sc4x4
-}	// caDummy
-}	// msdb
+}		// data2D_sc4x4
+}		// caDummy
+}		// core
+}		// msdb

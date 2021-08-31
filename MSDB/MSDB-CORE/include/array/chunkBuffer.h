@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class chunkBuffer;
 using pChunkBuffer = std::shared_ptr<chunkBuffer>;
 
@@ -37,6 +39,6 @@ protected:
 	void* data_;
 	pChunkBuffer refBuffer_;		// Hold a refBuffer to protect it from a garbage collecting.
 };
-}
-
-#endif		// _MSDB_CHUNKBUFFER_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_CHUNKBUFFER_H_

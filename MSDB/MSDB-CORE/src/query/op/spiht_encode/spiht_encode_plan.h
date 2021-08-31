@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class spiht_encode_plan : public opPlan
 {
 public:
@@ -23,6 +25,6 @@ class spiht_encode_array_pset : public opArrayParamSet
 public:
 	spiht_encode_array_pset(parameters& pSet);
 };
-}
-
+}		// core
+}		// msdb
 #endif // _MSDB_OP_SPIHT_ENCODE_PLAN_H_

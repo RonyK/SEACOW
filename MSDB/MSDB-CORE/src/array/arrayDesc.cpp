@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 arrayDesc::arrayDesc()
 {
 	// TODO::
@@ -50,5 +52,5 @@ size_t arrayDesc::getDSize()
 {
 	return this->dimDescs_->size();
 }
-}	// msdb
-
+}		// core
+}		// msdb

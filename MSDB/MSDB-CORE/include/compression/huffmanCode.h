@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 template <typename codeType, typename symbolType>
 class huffmanCoder
 {
@@ -906,5 +908,6 @@ protected:
 public:
 	huffmanNode* root_;
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_HUFFMAN_CODE_H_

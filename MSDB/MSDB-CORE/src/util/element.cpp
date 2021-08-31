@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 eleSize getEleSize(eleType type)
 {
 	switch(type)
@@ -180,4 +182,5 @@ bool stableElement::isFloat()
 
 	return false;
 }
-}
+}		// core
+}		// msdb

@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class arrayDesc;
 
 using pArrayDesc = std::shared_ptr<arrayDesc>;
@@ -35,6 +37,6 @@ public:
 	pDimensionDescs dimDescs_;
 	pAttributeDescs attrDescs_;
 };
-}
-
-#endif
+}		// core
+}		// msdb
+#endif	// _MSDB_ARRAYDESC_H_

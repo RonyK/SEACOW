@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 load_action::load_action()
 {
 }
@@ -108,5 +110,5 @@ void load_action::loadChunk(pArray outArr, pChunk outChunk, attributeId attrId, 
 	qry->getTimer()->pause(threadId);
 	//========================================//
 }
-
-}	// msdb
+}		// core
+}		// msdb

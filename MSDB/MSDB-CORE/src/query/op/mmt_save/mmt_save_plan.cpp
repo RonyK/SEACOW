@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 mmt_save_plan::mmt_save_plan()
 {
 }
@@ -21,4 +23,5 @@ mmt_save_array_pset::mmt_save_array_pset(parameters& pSet)
 {
 	assert(this->params_.size() == 1);
 }
-}	// msdb
+}		// core
+}		// msdb

@@ -10,6 +10,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class arrayMgr : public singleton<arrayMgr>
 {
 private:
@@ -79,6 +81,6 @@ public:
 protected:
 	friend singleton<arrayMgr>;
 };
-}
-
-#endif		// _MSDB_ARRAYMGR_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_ARRAYMGR_H_

@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 #define _MAX_EQUALTEST_ERROR_REPRESENT_		10
@@ -79,5 +81,6 @@ bool equalTest(pArray arr, int64_t value)
 	return true;
 }
 }		// caDummy
+}		// core
 }		// msdb
 #endif	// _MSDB_TEST_EQUALTEST_H_

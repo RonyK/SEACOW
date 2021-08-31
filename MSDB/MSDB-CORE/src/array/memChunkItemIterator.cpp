@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 memChunkItemIterator::memChunkItemIterator(void* data, eleType eType, const size_type dSize,
 										   position_t* dims, dim_pointer csP)
 	:chunkItemIterator(data, eType, dSize, dims, csP), coorItr(dSize, dims)
@@ -30,4 +32,5 @@ memChunkItemRangeIterator::memChunkItemRangeIterator(void* data, eleType eType,
 	coorItr(dims.size(), dims.data())
 {
 }
-}
+}		// core
+}		// msdb

@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 memBlock::memBlock(pBlockDesc desc)
 	: block(desc)
 {
@@ -123,4 +125,5 @@ void memBlock::refChunkBufferWithoutOwnership(void* data, bufferSize size)
 {
 	this->cached_ = std::make_shared<memBlockBuffer>(data, size);	// TODO::make mem block buffer
 }
-}	// msdb
+}		// core
+}		// msdb

@@ -10,6 +10,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 template <typename value_type>
@@ -258,5 +260,6 @@ pArray test_body_seq_compass_encode_decode(_pFuncGetSourceArray_,
 	return outArr;
 }
 }		// caDummy	
+}		// core
 }		// msdb
 #endif // !_MSDB_TEST_QRY_COMPASS_

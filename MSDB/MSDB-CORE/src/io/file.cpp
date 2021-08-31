@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 file::file(char const* path, int flags)
 {
 	_MSDB_TRY_IO_BEGIN
@@ -96,4 +98,5 @@ bool fileManager::init()
 {
 	return false;
 }
-}
+}		// core
+}		// msdb

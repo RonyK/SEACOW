@@ -11,6 +11,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class wavelet_decode_action : public opAction
 {
 public:
@@ -310,6 +312,6 @@ private:
 public:
 	std::string waveletName_;	// This for the testing various wavelet functions.
 };
-}
-
+}		// core
+}		// msdb
 #endif		// _MSDB_OP_WAVELET_DECODE_ACTION_H_

@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 namespace data2D_sc4x4
@@ -32,7 +34,8 @@ TEST(query_op_mmt_delta_decode, mmt_delta_decode_sc4x4)
     arr_delta_decode->print();
 
 	mmt_delta_decode_test(std::static_pointer_cast<mmt_delta_decode_array>(arr_delta_decode));
-}   // TEST()
-}	// data2D_sc4x4
-}	// caDummy
-}	// msdb
+}       // TEST()
+}	    // data2D_sc4x4
+}	    // caDummy
+}		// core
+}		// msdb

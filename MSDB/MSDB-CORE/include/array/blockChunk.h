@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class blockIterator;
 
 class memBlockChunk : public chunk
@@ -119,5 +121,6 @@ protected:
 	pBlockIterator bItr_;
 	pBlockItemRangeIterator curBlockItemItr_;
 };
-}
-#endif		// _MSDB_BLOCKEDCHUNK_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_BLOCKEDCHUNK_H_

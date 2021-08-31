@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 namespace lzw_huffman_encode_decode
@@ -87,7 +89,8 @@ TEST(experiment_query_op_lzw_huffman, lunar102400x40960_seq_encode_decode)
 	test_qry_seq_lzw_huffman_encode_decode<value_type>(&getSourceArrayIfEmpty,
 													   &getSourceArrayDesc,
 													   lzw_huffman_encode_decode::validation, lzw_huffman_encode_decode::printFlag);
-}	// TEST
-}	//data2D_lunar102400x40960
-}	// caDummy
-}	// msdbz
+}		// TEST
+}		//data2D_lunar102400x40960
+}		// caDummy
+}		// core
+}		// msdb

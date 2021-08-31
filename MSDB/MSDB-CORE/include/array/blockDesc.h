@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class blockDesc;
 
 using pBlockDesc = std::shared_ptr<blockDesc>;
@@ -55,5 +57,6 @@ private:
 	coor isp_;					// item start point
 	coor iep_;					// item end point
 };
-}
-#endif		// _MSDB_BLOCK_DESC_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_BLOCK_DESC_H_

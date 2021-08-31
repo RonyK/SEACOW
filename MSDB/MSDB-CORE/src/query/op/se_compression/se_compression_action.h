@@ -17,6 +17,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class se_compression_action : public opAction
 {
 public:
@@ -245,5 +247,6 @@ private:
 	//	//assert(rbFromDelta <= rbFromMMT);
 	//}
 };
+}	// core
 }	// msdb
 #endif		// _MSDB_OP_SE_COMPRESSION_ACTION_H_

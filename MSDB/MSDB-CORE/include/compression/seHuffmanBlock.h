@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class seHuffmanBlock;
 using pSeHuffmanBlock = std::shared_ptr<seHuffmanBlock>;
 
@@ -17,5 +19,6 @@ public:
 	virtual ~seHuffmanBlock();
 
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_SEHUFFMANBLOCK_H_

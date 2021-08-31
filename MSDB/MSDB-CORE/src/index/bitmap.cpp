@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 bitmap::bitmap(const size_t capacity, const bool value)
 	: data_(capacity, value)
 {
@@ -119,4 +121,5 @@ bool bitmapTree::isTree()
 {
 	return true;
 }
-}	// msdb
+}		// core
+}		// msdb

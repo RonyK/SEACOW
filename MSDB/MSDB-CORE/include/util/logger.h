@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 //////////////////////////////
 // Trivial logging with filters
 //////////////////////////////
@@ -19,6 +21,7 @@ namespace msdb
 //
 
 bool initBoostLogger();
-}
+}		// core
+}		// msdb
 #endif	// _MSDB_LOGGER_H_
  

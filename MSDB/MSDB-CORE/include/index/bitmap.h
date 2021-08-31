@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class bitmap;
 using pBitmap = std::shared_ptr<bitmap>;
 using cpBitmap = std::shared_ptr<const bitmap>;
@@ -90,5 +92,6 @@ public:
 protected:
 	std::vector<pBitmap> childs_;
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_BITMAP_H_

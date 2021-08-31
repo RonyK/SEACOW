@@ -11,6 +11,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class seHuffmanChunk;
 using pSeHuffmanChunk = std::shared_ptr<seHuffmanChunk>;
 
@@ -400,5 +402,6 @@ public:
 private:
 	static std::vector<std::vector<iFixedHuffmanCoder*>> fixedHuffmanCoders;
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_SEHUFFMANCHUNK_H_

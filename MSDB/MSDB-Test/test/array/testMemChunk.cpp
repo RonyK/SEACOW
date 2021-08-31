@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 namespace data2D_sc8x8
@@ -43,4 +45,5 @@ TEST(memChunkItemIterator, initRawChunk_sc8x8)
 		EXPECT_EQ(csP[d], sP[d]);
 	}
 }
-}
+}		// core
+}		// msdb

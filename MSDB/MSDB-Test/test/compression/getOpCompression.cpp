@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 void getOpZipSave(pArrayDesc sourceArrDesc, std::shared_ptr<zip_save_plan>& plan, std::shared_ptr<zip_save_action>& action, pQuery& qry)
@@ -38,5 +40,6 @@ void getOpLzwDecode(pArrayDesc sourceArrDesc, std::shared_ptr<lzw_decode_plan>& 
 	action = std::get<1>(planAction);
 	qry = std::get<2>(planAction);
 }
-}	// caDummy
-}	// msdb
+}		// caDummy
+}		// core
+}		// msdb

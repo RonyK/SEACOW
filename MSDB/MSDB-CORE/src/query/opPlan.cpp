@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 opPlan::opPlan()
 	: parentPlan_(nullptr), inArrBitmap_(nullptr), outArrBitmap_(nullptr), inParamSet_(nullptr)
 {
@@ -13,9 +15,9 @@ void opPlan::setParamSet(pParamSet paramSet)
 	this->inParamSet_ = paramSet;
 
 	auto params = this->getParam();
-	for(auto param : params)
+	for (auto param : params)
 	{
-		if(param->type() == opParamType::PLAN)
+		if (param->type() == opParamType::PLAN)
 		{
 			auto childPlan = std::static_pointer_cast<opParamPlan::paramType>(param->getParam());
 			childPlan->setParentPlan(shared_from_this());
@@ -42,7 +44,7 @@ pBitmapTree opPlan::inferBottomUpBitmap()
 }
 pBitmapTree opPlan::inferTopDownBitmap()
 {
-	if(this->parentPlan_)
+	if (this->parentPlan_)
 	{
 		this->outArrBitmap_ = this->parentPlan_->inferInBitmap();
 	}
@@ -71,4 +73,5 @@ void opPlan::setParentPlan(pPlan parentPlan)
 {
 	this->parentPlan_ = parentPlan;
 }
-}
+}		// core
+}		// msdb

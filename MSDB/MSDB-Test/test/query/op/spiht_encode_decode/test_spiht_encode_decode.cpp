@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 namespace spiht_encode_decode
@@ -57,8 +59,8 @@ pArray test_qry_seq_spiht_encode_decode(_pFuncGetSourceArray_,
 {
 	//////////////////////
 	// 01. Get Array
-	//auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, false);
-	//sourceArr[0]->setId(sourceArr[0]->getId() + spiht_array_id);
+	auto sourceArr = getArrayFromFunction<value_type>(getSourceArrayIfEmpty, false);
+	sourceArr[0]->setId(sourceArr[0]->getId() + spiht_array_id);
 
 	auto sourceArrDesc = getArrayFromFunction<value_type>(getSourceArrayDesc, false);
 	sourceArrDesc[0]->setId(sourceArrDesc[0]->getId() + spiht_array_id);
@@ -66,7 +68,7 @@ pArray test_qry_seq_spiht_encode_decode(_pFuncGetSourceArray_,
 
 	//////////////////////
 	// 02. Encode
-	//exe_qry_ind_spiht_encode<value_type>(sourceArr, wtLevel, printFlag);
+	exe_qry_ind_spiht_encode<value_type>(sourceArr, wtLevel, printFlag);
 	//////////////////////
 
 	//////////////////////
@@ -76,11 +78,11 @@ pArray test_qry_seq_spiht_encode_decode(_pFuncGetSourceArray_,
 
 	//////////////////////
 	// 04. Validation
-	//if(validation)
-	//{
-	//	compArrary<value_type>(sourceArr[0], outArr);
-	//	BOOST_LOG_TRIVIAL(debug) << "validation finished";
-	//}
+	if(validation)
+	{
+		compArrary<value_type>(sourceArr[0], outArr);
+		BOOST_LOG_TRIVIAL(debug) << "validation finished";
+	}
 	//////////////////////
 
 	return outArr;
@@ -197,4 +199,5 @@ TEST(experiment_query_op_spiht_encode_decode, lunar102400x40960_seq)
 }
 }	// data2D_lunar102400x40960
 }	// caDummy
+}	// core
 }	// msdb

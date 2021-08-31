@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class mmt_delta_decode_plan : public opPlan
 {
 public:
@@ -30,6 +32,6 @@ class mmt_delta_decode_plan_pset : public opPlanParamSet
 public:
 	mmt_delta_decode_plan_pset(parameters& pSet);
 };
-}
-
+}		// core
+}		// msdb
 #endif		// _MSDB_OP_MMT_DELTA_DECODE_PLAN_H_

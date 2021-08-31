@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class wavelet_encode_array : public memArray
 {
 public:
@@ -69,6 +71,6 @@ protected:
 	size_t maxLevel_;
 	dimension originalChunkDims_;
 };
-}
-
+}		// core
+}		// msdb
 #endif		// _MSDB_OP_WAVELET_ENCODE_ARRAY_H_

@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class chunkItemIterator;
 class chunkItemRangeIterator;
 using pChunkItemIterator = std::shared_ptr<chunkItemIterator>;
@@ -138,6 +140,6 @@ public:
 						   const coorRange& range,
 						   const dimension csP);
 };
-}
-
-#endif		// _MSDB_CHUNKITEMITERATOR_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_CHUNKITEMITERATOR_H_

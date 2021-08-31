@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 wavelet_decode_array::wavelet_decode_array(pArrayDesc desc, const size_t maxLevel)
 	: base_type(desc), maxLevel_(maxLevel)
 {
@@ -15,4 +17,5 @@ size_t wavelet_decode_array::getMaxLevel()
 {
 	return this->maxLevel_;
 }
-}	// msdb
+}		// core
+}		// msdb

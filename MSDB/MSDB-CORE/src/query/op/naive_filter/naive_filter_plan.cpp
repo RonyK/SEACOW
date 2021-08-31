@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 // plan
 naive_filter_plan::naive_filter_plan()
 {
@@ -34,4 +36,5 @@ naive_filter_plan_pset::naive_filter_plan_pset(parameters& pSet)
 	assert(this->params_.size() == 2);
 	assert(this->params_[1]->type() == opParamType::PREDICATE);
 }
-}
+}		// core
+}		// msdb

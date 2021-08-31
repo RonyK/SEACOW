@@ -13,6 +13,8 @@
 
 namespace msdb
 {
+namespace core
+{
 using storage_version_type = unsigned int;
 const storage_version_type MSDB_STORAGE_FORMAT_VERSION = 1;
 
@@ -78,5 +80,6 @@ protected:
 protected:
 	friend singleton<storageMgr>;
 };
-}
+}		// core
+}		// msdb
 #endif	//_MSDB_STORAGEMGR_H_

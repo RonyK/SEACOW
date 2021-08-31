@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 memBlockItemIterator::memBlockItemIterator(void* data,
                                            const eleType eType, 
                                            const dimension& dims,
@@ -46,4 +48,5 @@ memBlockItemRangeIterator::memBlockItemRangeIterator(void* data,
         this->itemBitmap_ = std::make_shared<bitmap>(dims.area(), true);
     }
 }
-}	// msdb
+}		// core
+}		// msdb

@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 zip_save_action::zip_save_action()
 {
 }
@@ -67,4 +69,5 @@ pZipChunk zip_save_action::makeOutChunk(pChunk inChunk)
 
 	return outChunk;
 }
-}	// msdb
+}		// core
+}		// msdb

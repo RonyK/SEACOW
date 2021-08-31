@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 TEST(adaptiveHuffmanCoding, encoding_decoding)
@@ -85,4 +87,5 @@ TEST(adaptiveHuffmanCoding, encoding_decoding_designate)
 	}
 }
 }	// caDummy
-}	// msdb
+}		// core
+}		// msdb

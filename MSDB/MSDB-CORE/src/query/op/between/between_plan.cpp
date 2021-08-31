@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 	// plan
 between_plan::between_plan()
 {
@@ -143,4 +145,5 @@ pBitmapTree between_plan_pset::inferBottomUpBitmap()
 	}
 	return nullptr;
 }
-}
+}		// core
+}		// msdb

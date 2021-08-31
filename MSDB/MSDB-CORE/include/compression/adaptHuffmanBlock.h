@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class adaptHuffmanBlock;
 using pAdaptHuffmanBlock = std::shared_ptr<adaptHuffmanBlock>;
 
@@ -45,5 +47,6 @@ public:
 		}
 	}
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_ADAPTHUFFMANBLOCK_H_

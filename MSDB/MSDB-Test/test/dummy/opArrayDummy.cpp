@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 void getWaveletEncode(pArrayDesc sourceArrDesc, eleDefault level,
@@ -225,5 +227,6 @@ void getSPIHTDecode(pArrayDesc sourceArrDesc,
 	action = std::get<1>(planAction);
 	qry = std::get<2>(planAction);
 }
-}	// caDummy
-}	// msdb
+}		// caDummy
+}		// core
+}		// msdb

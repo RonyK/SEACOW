@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class zip_save_plan : public opPlan
 {
 public:
@@ -23,5 +25,6 @@ class zip_save_array_pset : public opArrayParamSet
 public:
 	zip_save_array_pset(parameters& pSet);
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_OP_ZIP_ENCODE_PLAN_H_

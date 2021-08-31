@@ -31,6 +31,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 pArray exe_act_ind_wavelet_encode(std::vector<pArray> sourceArr, eleDefault level)
@@ -173,5 +175,6 @@ pArray exe_act_ind_lzw_decode(std::vector<pArray> sourceArr)
 
 	return afterArray;
 }
-}	// caDummy
-}	// msdbk
+}		// caDummy
+}		// core
+}		// msdb

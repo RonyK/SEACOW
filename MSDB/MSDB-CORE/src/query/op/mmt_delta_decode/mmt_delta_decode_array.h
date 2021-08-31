@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class mmt_delta_decode_array : public memBlockArray
 {
 public:
@@ -16,6 +18,6 @@ public:
 	mmt_delta_decode_array(pArrayDesc desc);
 	~mmt_delta_decode_array();
 };
-}
-
+}		// core
+}		// msdb
 #endif		// _MSDB_OP_MMT_DELTA_DECODE_ARRAY_H_

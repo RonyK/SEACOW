@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class timer;
 using pTimer = std::shared_ptr<timer>;
 
@@ -67,6 +69,6 @@ private:
 	std::map<size_t, std::chrono::system_clock::time_point> curJobTimes_;
 	std::map<size_t, std::string> jobName_;
 };
-}
-
+}		// core
+}		// msdb
 #endif // _MSDB_TIMER_H_

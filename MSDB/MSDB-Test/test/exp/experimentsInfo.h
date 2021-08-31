@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 typedef struct expInfo
@@ -62,5 +64,6 @@ static const size_t expId = 300;
 }		// between_filter_random
 }		// experiments
 }		// caDummy
+}		// core
 }		// msdb
 #endif	// _MSDB_EXP_EXPERIMENTSINFO_H_

@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 save_action::save_action()
 {
 }
@@ -55,4 +57,5 @@ pArray save_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 
 	return sourceArr;
 }
-}	// msdb
+}		// core
+}		// msdb

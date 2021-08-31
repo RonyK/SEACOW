@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class wavelet;
 using pWavelet = std::shared_ptr<wavelet>;
 
@@ -70,6 +72,6 @@ size_t getDataLength(const size_t dSize, const _Dty* sP, const _Dty* eP)
 	}
 	return length;
 }
-}
-
+}		// core
+}		// msdb
 #endif

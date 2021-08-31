@@ -12,6 +12,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class spiht_decode_action : public opAction
 {
 public:
@@ -29,5 +31,6 @@ public:
 	void decompressChunk(pWtChunk outChunk, pSpihtChunk inChunk, pQuery qry, 
 						 const arrayId outArr, const attributeId attrId, const size_t parentThreadId);
 };
-}
+}		// core
+}		// msdb
 #endif // _MSDB_OP_SPIHT_DECODE_ACTION_H

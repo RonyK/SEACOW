@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 mmt_delta_decode_plan::mmt_delta_decode_plan()
 {
 }
@@ -33,4 +35,5 @@ mmt_delta_decode_plan_pset::mmt_delta_decode_plan_pset(parameters& pSet)
 {
 	assert(this->params_.size() == 1);
 }
-}
+}		// core
+}		// msdb

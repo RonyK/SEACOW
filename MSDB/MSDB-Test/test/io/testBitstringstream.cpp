@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 	TEST(bitStringStream, bstream_bistset)
 	{
 		bstream bs;
@@ -179,4 +181,5 @@ namespace msdb
 			EXPECT_EQ(result[i], expected[i]);
 		}
 	}
-}
+}		// core
+}		// msdb

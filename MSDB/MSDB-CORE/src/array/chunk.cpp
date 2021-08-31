@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 chunk::chunk(pChunkDesc desc)
 	: cached_(nullptr), desc_(desc), 
 	blockCapacity_(desc->getBlockSpace().area()),
@@ -280,4 +282,5 @@ pBitmap chunk::getBlockBitmap()
 //{
 //	return this->blockBitmap_;
 //}
-}
+}		// core
+}		// msdb

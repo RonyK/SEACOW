@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class memArray : public arrayBase
 {
 public:
@@ -21,5 +23,6 @@ public:
 	virtual pChunk makeChunk(const chunkDesc& desc) override;
 	virtual void freeChunk(const chunkId cId) override;
 };
-}	// msdb
+}		// core
+}		// msdb
 #endif	// _MSDB_MEMARRAY_H_

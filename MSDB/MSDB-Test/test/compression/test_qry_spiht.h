@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 template <typename value_type>
@@ -88,5 +90,6 @@ pArray exe_qry_seq_spiht_decode(_vectorSourceArray_,
 	return outArr;
 }
 }		// caDummy
+}		// core
 }		// msdb
 #endif	//_MSDB_TESTSPIHT_H_

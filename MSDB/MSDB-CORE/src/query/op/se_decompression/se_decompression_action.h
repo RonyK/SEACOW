@@ -16,6 +16,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class se_decompression_action : public opAction
 {
 public:
@@ -226,5 +228,6 @@ private:
 		}
 	}
 };
-}	// msdb
+}		// core
+}		// msdb
 #endif		// _MSDB_OP_SE_DECOMPRESSION_ACTION_H_

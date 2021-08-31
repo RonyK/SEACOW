@@ -162,6 +162,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\api\api.h" />
+    <ClInclude Include="include\api\schema.h" />
     <ClInclude Include="include\array\array.h" />
     <ClInclude Include="include\array\arrayDesc.h" />
     <ClInclude Include="include\array\arrayId.h" />
@@ -184,7 +186,6 @@
     <ClInclude Include="include\array\chunkId.h" />
     <ClInclude Include="include\array\chunkItemIterator.h" />
     <ClInclude Include="include\array\chunkIterator.h" />
-    <ClInclude Include="include\array\chunkMgr.h" />
     <ClInclude Include="include\array\compBlock.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
@@ -446,7 +447,6 @@
     <ClCompile Include="src\query\op\zip_save\zip_save_plan.cpp" />
     <ClCompile Include="src\query\query.cpp" />
     <ClCompile Include="src\util\experimentRecorder.cpp" />
-    <ClCompile Include="src\util\ioutil.cpp" />
     <ClCompile Include="src\util\threadUtil.cpp" />
     <ClCompile Include="src\util\logger.cpp" />
     <ClCompile Include="src\util\timer.cpp" />
@@ -482,7 +482,6 @@
     <ClCompile Include="src\system\errorCodes.cpp" />
     <ClCompile Include="src\system\exceptions.cpp" />
     <ClCompile Include="src\system\storageMgr.cpp" />
-    <ClCompile Include="src\util\singleton.cpp" />
     <ClCompile Include="src\compression\daubechies.cpp" />
     <ClCompile Include="src\compression\haar.cpp" />
     <ClCompile Include="src\compression\wavelet.cpp" />

@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 expression::expression()
 {
 }
@@ -66,4 +68,5 @@ boost::any expressionConst::getValue(pItemItr iit)
 //{
 //	return this->value_;
 //}
-}	// msdb
+}		// core
+}		// msdb

@@ -10,6 +10,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class term;
 using pTerm = std::shared_ptr<term>;
 
@@ -260,5 +262,6 @@ private:
 		return func_ptr[static_cast<int>(type)];
 	}
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_TERM_H_

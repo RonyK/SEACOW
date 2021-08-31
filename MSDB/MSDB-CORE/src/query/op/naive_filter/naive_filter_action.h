@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class naive_filter_action : public opAction
 {
 public:
@@ -129,6 +131,6 @@ private:
 		return isEmpty;
 	}
 };
-}
-
+}		// core
+}		// msdb
 #endif // _MSDB_OP_NAIVE_FILTER_ACTION_H_

@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 experimentRecorder::experimentRecorder()
 {
 
@@ -209,4 +211,5 @@ void experimentRecorder::printLine(size_t tag, std::map<size_t, record>& line)
 		BOOST_LOG_TRIVIAL(info) << ss.str();		// print
 	}
 }
-}	// msdb
+}		// core
+}		// msdb

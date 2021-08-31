@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class compass_index_build_plan : public opPlan
 {
 public:
@@ -26,6 +28,6 @@ public:
 public:
 	virtual pArrayDesc inferSchema() override;
 };
-}
-
+}		// core
+}		// msdb
 #endif		// _MSDB_COMPASS_INDEX_BUILD_PLAN_H_

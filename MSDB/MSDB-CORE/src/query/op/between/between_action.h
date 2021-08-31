@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 	class between_action : public opAction
 	{
 	public:
@@ -23,6 +25,6 @@ namespace msdb
 		void betweenBlock(pBlock outBlock, pBlock inBlock, coorRange& betweenRangeInChunk);
 		void fullyInsideBlock(pBlock outBlock, pBlock inBlock);
 	};
-}
-
+}		// core
+}		// msdb
 #endif // _MSDB_OP_BETWEEN_ACTION_H_

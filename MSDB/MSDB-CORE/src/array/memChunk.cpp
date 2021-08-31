@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 memChunk::memChunk(pChunkDesc desc)
 	: chunk(desc), block_(nullptr)
 {
@@ -191,4 +193,5 @@ pBlockIterator memChunk::getBlockIterator(const iterateMode itMode)
 		this->block_, itMode);
 	//return nullptr;
 }
-}	// msdb
+}		// core
+}		// msdb

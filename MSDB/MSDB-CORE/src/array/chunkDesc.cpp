@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 extern const chunkSize INVALID_CHUNK_SIZE = static_cast<chunkSize>(~0);
 
 chunkDesc::chunkDesc()
@@ -92,5 +94,5 @@ void chunkDesc::initChunkCoor()
 		this->chunkCoor_[d] = this->sp_[d] / (this->ep_[d] - this->sp_[d]);
 	}
 }
-
-}
+}		// core
+}		// msdb

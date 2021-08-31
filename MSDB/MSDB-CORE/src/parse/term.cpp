@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 term::term(pExpression lhs, pExpression rhs, termType tType)
 	: lhs_(lhs), rhs_(rhs), tType_(tType), 
 	evaluateFunc(nullptr), evaluateNodeFunc(nullptr), evaluateBinFunc(nullptr)
@@ -89,4 +91,5 @@ void term::setEvaluateFunc(eleType eType)
 //	// TODO::Evaluate
 //	return false;
 //}
-}	// msdb
+}		// core
+}		// msdb

@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class wavelet_decode_array : public memBlockArray
 {
 public:
@@ -26,6 +28,6 @@ protected:
 	//pArray weArray;		// wavelet encoded array (source array)
 						// hold source array to decode only some part of source array
 };
-}
-
+}		// core
+}		// msdb
 #endif		// _MSDB_OP_WAVELET_DECODE_ARRAY_H_

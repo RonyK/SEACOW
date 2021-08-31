@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 chunkItemIterator::chunkItemIterator(void* data, const eleType eType,
 									 const size_type dSize,
 									 dim_const_pointer dims, dim_const_pointer csP)
@@ -41,5 +43,5 @@ chunkItemRangeIterator::chunkItemRangeIterator(void* data, const eleType eType,
 {
 	assert(dims.size() == csP.size());
 }
-
-}	// msdb
+}		// core
+}		// msdb

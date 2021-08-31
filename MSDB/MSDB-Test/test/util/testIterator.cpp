@@ -3,10 +3,12 @@
 
 namespace msdb
 {
+namespace core
+{
 	TEST(coordinate, coordinateBasic)
 	{
 		// Initalized into 0
-		msdb::coordinate<int> coorDefault(3);
+		msdb::core::coordinate<int> coorDefault(3);
 		EXPECT_EQ(coorDefault.size(), 3);
 
 		EXPECT_EQ(coorDefault[0], 0);
@@ -14,7 +16,7 @@ namespace msdb
 		EXPECT_EQ(coorDefault[2], 0);
 
 		int c[3] = { 1, 2, 3 };
-		msdb::coordinate<int> coorInit(3, c);
+		msdb::core::coordinate<int> coorInit(3, c);
 		EXPECT_EQ(coorInit[0], 1);
 		EXPECT_EQ(coorInit[1], 2);
 		EXPECT_EQ(coorInit[2], 3);
@@ -33,7 +35,7 @@ namespace msdb
 	{
 		//double data[] = { 1,2,3,4,5,6,7,8 };
 		//int b[] = { 8 };
-		//msdb::coorIterator<int, double> it(data, sizeof(b) / sizeof(int), b);
+		//msdb::core::coorIterator<int, double> it(data, sizeof(b) / sizeof(int), b);
 
 		//EXPECT_EQ(it[0], 1);
 		//EXPECT_EQ(it[1], 2);
@@ -57,7 +59,7 @@ namespace msdb
 	{
 		//double data[] = { 1,2,3,4, 11,12,13,14, 21,22,23,24, 31,32,33,34, 41,42,43,44, 51,52,53,54 };
 		//int b[] = { 2,3,4 };
-		//msdb::coorIterator<int, double> it(data, sizeof(b) / sizeof(int), b);
+		//msdb::core::coorIterator<int, double> it(data, sizeof(b) / sizeof(int), b);
 
 		//EXPECT_EQ(it[0], 1);
 		//EXPECT_EQ(it[1], 2);
@@ -97,7 +99,7 @@ namespace msdb
 	{
 		//double data[] = { 1,2,3,4, 11,12,13,14, 21,22,23,24, 31,32,33,34, 41,42,43,44, 51,52,53,54 };
 		//int b[] = { 2,3,4 };
-		//msdb::coorIterator<int, double> it(data, sizeof(b) / sizeof(int), b);
+		//msdb::core::coorIterator<int, double> it(data, sizeof(b) / sizeof(int), b);
 		//it.setBasisDim(1);
 
 		//EXPECT_EQ(it[0], 1);
@@ -140,13 +142,13 @@ namespace msdb
 		//int b[] = { 8 };
 		//int s[] = { 2 };
 		//int e[] = { 5 };
-		//msdb::coorRangeIterator<int, double> it(data, sizeof(b) / sizeof(int), b, s, e);
+		//msdb::core::coorRangeIterator<int, double> it(data, sizeof(b) / sizeof(int), b, s, e);
 
 		//EXPECT_EQ(it[0], 3);
 		//EXPECT_EQ(it[1], 4);
 		//EXPECT_EQ(it[2], 5);
 
-		//msdb::coordinate<int> cc = it.coor();
+		//msdb::core::coordinate<int> cc = it.coor();
 
 		//EXPECT_EQ(it.coor()[0], 2);
 		//EXPECT_EQ(*it++, 3);
@@ -194,7 +196,7 @@ namespace msdb
 	{
 		double data[] = { 1,2,3,4, 11,12,13,14, 21,22,23,24, 31,32,33,34, 41,42,43,44, 51,52,53,54 };
 		int b[] = { 2,3,4 };
-		msdb::itemIterator<int> it((void*)data, eleType::DOUBLE, sizeof(b) / sizeof(int), b);
+		msdb::core::itemIterator<int> it((void*)data, eleType::DOUBLE, sizeof(b) / sizeof(int), b);
 
 		//EXPECT_EQ(it[0], 1);
 		//EXPECT_EQ(it[1], 2);
@@ -235,7 +237,7 @@ namespace msdb
 		double data[] = { 1,2,3,4, 11,12,13,14, 21,22,23,24, 31,32,33,34, 41,42,43,44, 51,52,53,54 };
 		int b[] = { 2,3,4 };
 		double output;
-		msdb::itemIterator<int> it((void*)data, eleType::DOUBLE, sizeof(b) / sizeof(int), b);
+		msdb::core::itemIterator<int> it((void*)data, eleType::DOUBLE, sizeof(b) / sizeof(int), b);
 		it.setBasisDim(1);
 
 		//EXPECT_EQ(it[0], 1);
@@ -297,5 +299,5 @@ namespace msdb
 		EXPECT_EQ((*it).getDouble(), data[4]);
 		++it;
 	}
-
-}
+}		// core
+}		// msdb

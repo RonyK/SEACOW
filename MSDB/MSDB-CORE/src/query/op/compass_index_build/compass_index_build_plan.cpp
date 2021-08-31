@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 compass_index_build_plan::compass_index_build_plan()
 {
 }
@@ -33,4 +35,5 @@ pArrayDesc compass_index_build_array_pset::inferSchema()
 
 	return aInferDesc;
 }
-}	// msdb
+}		// core
+}		// msdb

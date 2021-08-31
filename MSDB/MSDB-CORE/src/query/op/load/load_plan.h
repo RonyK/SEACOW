@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class load_plan : public opPlan
 {
 public:
@@ -30,5 +32,6 @@ public:
 //public:
 //	load_plan_pset(parameters& pSet);
 //};
-}	// msdb
+}		// core
+}		// msdb
 #endif		// _MSDB_OP_LOAD_PLAN_H_

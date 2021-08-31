@@ -16,6 +16,8 @@
 #include <op/spiht_encode/spiht_encode_action.h>
 
 namespace msdb
+{ 
+namespace core
 {
 namespace caDummy
 {
@@ -190,6 +192,7 @@ void mmt_delta_decode_test(std::shared_ptr<mmt_delta_decode_array> arr)
 		}
 	}
 }
-}	// data2D_sc4x4
-}	// caDummy
-}	// msdb
+}		// data2D_sc4x4
+}		// caDummy
+}		// core
+}		// msdb

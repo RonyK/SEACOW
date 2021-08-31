@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 template <typename value_type>
@@ -133,7 +135,8 @@ namespace data2D_lunar102400x40960
 TEST_F(query_op_mmt_save, lunar102400x40960_mmt_save)
 {
     test_body_mmt_save<value_type>(&getSourceArrayIfEmpty, mmtLevel);        // 10240
-}   // TEST
-}   // data2D_lunar102400x40960
-}	// caDummy
-}	// msdb
+}       // TEST
+}       // data2D_lunar102400x40960
+}	    // caDummy
+}		// core
+}		// msdb

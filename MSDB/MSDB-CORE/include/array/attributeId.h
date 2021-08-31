@@ -6,8 +6,11 @@
 
 namespace msdb
 {
+namespace core
+{
 typedef uint32_t attributeId;
 
 const attributeId INVALID_ATTRIBUTE_ID = static_cast<attributeId>(~0);
-}
-#endif		// _MSDB_ATTRIBUTE_ID_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_ATTRIBUTE_ID_H_

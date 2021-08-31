@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class zipBlock;
 using pZipBlock = std::shared_ptr<zipBlock>;
 
@@ -61,6 +63,6 @@ public:
 		memcpy(this->getBuffer()->getData(), decompressed.str().c_str(), this->getBuffer()->size());
 	}
 };
-}
-
+}		// core
+}		// msdb
 #endif	// _MSDB_ZIPBLOCK_H_

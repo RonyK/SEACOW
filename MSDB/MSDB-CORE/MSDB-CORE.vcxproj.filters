@@ -54,7 +54,6 @@
     <ClCompile Include="src\system\errorCodes.cpp" />
     <ClCompile Include="src\system\exceptions.cpp" />
     <ClCompile Include="src\system\storageMgr.cpp" />
-    <ClCompile Include="src\util\singleton.cpp" />
     <ClCompile Include="src\compression\daubechies.cpp" />
     <ClCompile Include="src\compression\haar.cpp" />
     <ClCompile Include="src\compression\wavelet.cpp" />
@@ -109,7 +108,6 @@
     <ClCompile Include="src\query\op\zip_load\zip_load_action.cpp" />
     <ClCompile Include="src\compression\zipBlock.cpp" />
     <ClCompile Include="src\compression\zipChunk.cpp" />
-    <ClCompile Include="src\util\ioutil.cpp" />
     <ClCompile Include="src\query\op\compass_index_build\compass_index_build_plan.cpp" />
     <ClCompile Include="src\query\op\compass_index_build\compass_index_build_action.cpp" />
     <ClCompile Include="src\index\compass.cpp" />
@@ -170,7 +168,6 @@
     <ClInclude Include="include\array\chunkId.h" />
     <ClInclude Include="include\array\chunkItemIterator.h" />
     <ClInclude Include="include\array\chunkIterator.h" />
-    <ClInclude Include="include\array\chunkMgr.h" />
     <ClInclude Include="include\array\configArrays.h" />
     <ClInclude Include="include\array\dimension.h" />
     <ClInclude Include="include\array\dimensionDesc.h" />
@@ -311,6 +308,8 @@
     <ClInclude Include="src\query\op\se_huffman_encode\se_huffman_encode_plan.h" />
     <ClInclude Include="include\util\valueDistributionRecorder.h" />
     <ClInclude Include="include\compression\fixedHuffmanCoder.h" />
+    <ClInclude Include="include\api\api.h" />
+    <ClInclude Include="include\api\schema.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\util\singleton.cpp">

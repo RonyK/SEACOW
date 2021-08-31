@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class mmt_save_plan : public opPlan
 {
 public:
@@ -23,6 +25,6 @@ class mmt_save_array_pset : public opArrayParamSet
 public:
 	mmt_save_array_pset(parameters& pSet);
 };
-}	// msdb
-
+}		// core
+}		// msdb
 #endif		// _MSDB_OP_MMT_SAVE_PLAN_H_

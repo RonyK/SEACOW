@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class mmt_build_plan : public opPlan
 {
 public:
@@ -26,6 +28,6 @@ public:
 public:
 	virtual pArrayDesc inferSchema() override;
 };
-}
-
-#endif		// _MSDB_MMT_BUILD_PLAN_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_MMT_BUILD_PLAN_H_

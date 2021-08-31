@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 opParamArray::opParamArray(pArrayDesc desc)
 	: desc_(desc)
 {
@@ -178,4 +180,5 @@ opParamType opParamPlanPlaceholder::type()
 {
 	return opParamType::PLAN;
 }
-}
+}		// core
+}		// msdb

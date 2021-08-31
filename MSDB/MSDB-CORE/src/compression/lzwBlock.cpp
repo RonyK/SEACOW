@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 lzwBlock::lzwBlock(pBlockDesc desc)
 	: memBlock(desc)
 {
@@ -11,4 +13,5 @@ lzwBlock::lzwBlock(pBlockDesc desc)
 lzwBlock::~lzwBlock()
 {
 }
-}
+}		// core
+}		// msdb

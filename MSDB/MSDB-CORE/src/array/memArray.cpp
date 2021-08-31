@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 memArray::memArray(pArrayDesc desc)
 	: base_type(desc)
 {
@@ -35,4 +37,5 @@ void memArray::freeChunk(const chunkId cId)
 	this->chunks_[cId] = nullptr;
 	this->chunkBitmap_->setNull(cId);
 }
-}	// msdb
+}		// core
+}		// msdb

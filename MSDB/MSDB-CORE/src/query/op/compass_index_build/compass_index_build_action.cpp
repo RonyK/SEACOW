@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 compass_index_build_action::compass_index_build_action()
 {
 }
@@ -52,4 +54,5 @@ pArray compass_index_build_action::execute(std::vector<pArray>& inputArrays, pQu
 
 	return arr;
 }
-}	// msdb
+}		// core
+}		// msdb

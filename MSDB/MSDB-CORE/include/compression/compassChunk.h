@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class compassChunk;
 using pCompassChunk = std::shared_ptr<compassChunk>;
 
@@ -71,5 +73,6 @@ public:
 private:
 	size_t numBins_;
 };
-}	// msdb
+}		// core
+}		// msdb
 #endif	// _MSDB_COMPASSCHUNK_H_

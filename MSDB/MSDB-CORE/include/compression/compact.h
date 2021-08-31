@@ -11,6 +11,8 @@
 
 namespace msdb
 {
+namespace core
+{
 	template <typename Dty_, typename Ty_>
 	class caCompact
 	{
@@ -202,6 +204,6 @@ namespace msdb
 		size_type maxLevel_;
 		size_type dSize_;
 	};
-}
-
+}		// core
+}		// msdb
 #endif	// _MSDB_COMPACT_H_

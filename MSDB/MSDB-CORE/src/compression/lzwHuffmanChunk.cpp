@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 lzwHuffmanChunk::lzwHuffmanChunk(pChunkDesc desc)
 	: memBlockChunk(desc)
 {
@@ -111,4 +113,5 @@ void lzwHuffmanChunk::deserialize(std::istream& is)
 		_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_SYSTEM_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 	}
 }
-}	// msdb
+}		// core
+}		// msdb

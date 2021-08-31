@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 pArray exe_act_ind_save(std::vector<pArray> sourceArr, pQuery qry)
@@ -62,4 +64,5 @@ void load_test(pArray arr)
 }
 }	// data2D_sc4x4
 }	// caDummy
+}	// core
 }	// msdb

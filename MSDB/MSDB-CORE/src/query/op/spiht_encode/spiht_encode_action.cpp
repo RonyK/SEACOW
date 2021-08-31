@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 spiht_encode_action::spiht_encode_action()
 {
 }
@@ -68,4 +70,5 @@ pArray spiht_encode_action::execute(std::vector<pArray>& inputArrays, pQuery qry
 
 	return sourceArr;
 }
-}
+}		// core
+}		// msdb

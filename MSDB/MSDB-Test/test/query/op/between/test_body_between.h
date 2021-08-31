@@ -24,6 +24,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 coorRange getRandomRange(const position_t dimX, const position_t dimY, const float selectivity);
@@ -1698,5 +1700,6 @@ pArray exe_qry_seq_lzw_huffman_between(_vectorSourceArray_,
 	return outArr;
 }
 }		// caDummy
+}		// core
 }		// msdb
 #endif	// _MSDB_TESTBETWEEN_H_

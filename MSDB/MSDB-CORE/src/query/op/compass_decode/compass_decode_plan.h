@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class compass_decode_plan : public opPlan
 {
 public:
@@ -23,6 +25,6 @@ class compass_decode_array_pset : public opArrayParamSet
 public:
 	compass_decode_array_pset(parameters& pSet);
 };
-}
-
+}		// core
+}		// msdb
 #endif // _MSDB_OP_COMPASS_DECODE_PLAN_H_

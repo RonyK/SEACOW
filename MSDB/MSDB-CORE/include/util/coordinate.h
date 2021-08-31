@@ -11,6 +11,8 @@
 
 namespace msdb
 {
+namespace core
+{
 typedef int64_t		position_t;
 
 enum class iterateMode
@@ -1476,6 +1478,6 @@ using pItemItr = std::shared_ptr<itemItr>;
 
 using itemRangeItr = itemRangeIterator<position_t>;
 using pItemRangeItr = std::shared_ptr<itemRangeItr>;
-}
-
+}	// core
+}	// msdb
 #endif

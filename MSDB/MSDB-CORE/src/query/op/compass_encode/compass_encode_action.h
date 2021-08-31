@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class compass_encode_action : public opAction
 {
 public:
@@ -18,5 +20,6 @@ public:
 public:
 	pArray execute(std::vector<pArray>& inputArrays, pQuery qry);
 };
-}	// msdb
+}		// core
+}		// msdb
 #endif	// _MSDB_OP_COMPASS_ENCODE_ACTION_H_

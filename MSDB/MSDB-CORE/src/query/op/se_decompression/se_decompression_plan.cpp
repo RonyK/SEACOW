@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 se_decompression_plan::se_decompression_plan()
 {
 }
@@ -51,4 +53,5 @@ pBitmapTree se_decompression_array_pset::inferBottomUpBitmap()
 
 	return std::make_shared<bitmapTree>(seChunkSpace.area(), true);
 }
-}	// msdb
+}		// core
+}		// msdb

@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 pCompassIndex compassIndex::createIndex(const eleType eType, const size_type numBins)
 {
 	switch (eType)
@@ -35,4 +37,5 @@ compassBlockIndex::compassBlockIndex(size_t numBins, size_t binValueRange, bool 
 {
 	this->blockBins_.resize(this->numBins_, compassBin());
 }
-}	// msdb
+}		// core
+}		// msdb

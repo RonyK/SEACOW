@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 enum class CompressionMethod
 {
 	NONE = 0,
@@ -13,6 +15,6 @@ enum class CompressionMethod
 	SPIHT,
 	CA
 };
-}
-
-#endif		// _MSDB_COMPRESSION_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_COMPRESSION_H_

@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class huffmanChunk;
 using pHuffmanChunk = std::shared_ptr<huffmanChunk>;
 
@@ -40,5 +42,6 @@ private:
 		huffmanDecoder.decode((uint8_t*)this->getBuffer()->getData(), this->getBuffer()->size(), in);
 	}
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_HUFFMANCHUNK_H_

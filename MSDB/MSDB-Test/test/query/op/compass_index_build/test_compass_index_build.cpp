@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 namespace data2D_star1024x1024
@@ -65,6 +67,7 @@ TEST(query_op_compass_index_build, lunar102400x40960_ind_compass_index_build)
 												 &getSourceArrayDesc,
 												 numBins);
 }
-}	// data2D_lunar102400x40960
-}	// caDummy
-}	// msdb
+}		// data2D_lunar102400x40960
+}		// caDummy
+}		// core
+}		// msdb

@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 lzw_encode_plan::lzw_encode_plan()
 {
 }
@@ -23,4 +25,5 @@ lzw_encode_array_pset::lzw_encode_array_pset(parameters& pSet)
 {
 
 }
-}	// msdb
+}		// core
+}		// msdb

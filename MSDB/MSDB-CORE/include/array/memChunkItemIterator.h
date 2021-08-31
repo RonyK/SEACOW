@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class memChunkItemIterator : public chunkItemIterator
 {
 public:
@@ -44,5 +46,6 @@ public:
 							  const coorRange& range,
 							  const dimension csP);
 };
-}
+}		// core
+}		// msdb
 #endif	// _MSDB_MEMCHUNKITEMITERATOR_H_

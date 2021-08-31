@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 TEST(util_math, msb_char_test)
 {
 	// 0111 1000
@@ -180,4 +182,5 @@ TEST(util_math, getPrefixPosForPrevLimit)
 {
 	EXPECT_EQ(getPrefixPosForPrevLimit(64, 2), 7);
 }
-}
+}		// core
+}		// msdb

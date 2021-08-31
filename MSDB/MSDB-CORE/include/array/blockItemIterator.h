@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class blockItemIterator;
 class blockItemRangeIterator;
 using pBlockItemIterator = std::shared_ptr<blockItemIterator>;
@@ -116,5 +118,6 @@ public:
 					  const dimension& bSp,
 					  pBitmap itemBitmap);
 };
-}	// msdb
+}		// core
+}		// msdb
 #endif	// _MSDB_BLOCKITEM_ITERATOR_H_

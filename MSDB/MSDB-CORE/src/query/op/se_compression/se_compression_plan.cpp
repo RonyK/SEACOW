@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 se_compression_plan::se_compression_plan()
 {
 }
@@ -27,4 +29,5 @@ se_compression_array_pset::se_compression_array_pset(parameters& pSet)
 {
 	assert(this->params_.size() == 1);
 }
-}	// msdb
+}		// core
+}		// msdb

@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 mmt_delta_decode_action::mmt_delta_decode_action()
 {
 }
@@ -79,4 +81,5 @@ pArray mmt_delta_decode_action::execute(std::vector<pArray>& inputArrays, pQuery
 
 	return std::static_pointer_cast<arrayBase>(outArr);
 }
-}	// msdb
+}		// core
+}		// msdb

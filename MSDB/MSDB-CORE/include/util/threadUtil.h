@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 inline unsigned long getThreadId()
 {
 	return atol(boost::lexical_cast<std::string>(boost::this_thread::get_id()).c_str());
@@ -42,7 +44,8 @@ private:
 	std::shared_ptr<boost::asio::io_service::work> work_;
 	boost::thread_group threadpool_;
 };
-}
+}		// core
+}		// msdb
 #endif // _MSDB_THREADUTIL_
 
 

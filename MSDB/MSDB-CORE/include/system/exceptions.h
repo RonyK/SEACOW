@@ -9,6 +9,8 @@ constexpr char const* const __NAMESPACE = "msdb";
 
 namespace msdb
 {
+namespace core
+{
 // EXCEPTION MACROS
 #define _MSDB_TRY_BEGIN     try {;
 
@@ -28,13 +30,13 @@ catch (...) {;
 
 // MSDB FORMAT EXCEPTION
 #define _MSDB_EXCEPTIONS(_error_category, _error_code)                \
-    msdb::msdb_exception(__FILE__, __FUNCTION__, __LINE__,      \
+    msdb::core::msdb_exception(__FILE__, __FUNCTION__, __LINE__,      \
                          __NAMESPACE,                           \
                          _error_category, _error_code,          \
                          #_error_category, #_error_code)
 
 #define _MSDB_EXCEPTIONS_MSG(_error_category, _error_code, _msg)      \
-    msdb::msdb_exception(__FILE__, __FUNCTION__, __LINE__,      \
+    msdb::core::msdb_exception(__FILE__, __FUNCTION__, __LINE__,      \
                          __NAMESPACE,                           \
                          _error_category, _error_code,          \
                          #_error_category, #_error_code,        \
@@ -76,6 +78,6 @@ catch (...) {;
         std::string _error_category_msg;
         std::string _error_msg;
     };
-}
-
+}		// core
+}       // msdb
 #endif

@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 ConfigType configDiemnsion::getType()
 {
 	return ConfigType::DIMENSION;
@@ -102,4 +104,5 @@ void getDimensionDescList(tinyxml2::XMLNode* root, void* list)
 		_MSDB_CATCH_END
 }
 }
-}
+}		// core
+}		// msdb

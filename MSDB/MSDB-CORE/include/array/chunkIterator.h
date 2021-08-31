@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class chunkIterator;
 using pChunkIterator = std::shared_ptr<chunkIterator>;
 
@@ -75,5 +77,6 @@ protected:
 	pBitmap chunkBitmap_;
 	iterateMode itMode_;
 };
-}	// msdb
-#endif		// _MSDB_CHUNKITERATOR_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_CHUNKITERATOR_H_

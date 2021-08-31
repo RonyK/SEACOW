@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class iFixedHuffmanCoder
 {
 public:
@@ -574,5 +576,6 @@ public:
 
 	}
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_FIXED_HUFFMAN_CODER_H_

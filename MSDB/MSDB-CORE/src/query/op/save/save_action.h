@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class save_action : public opAction
 {
 public:
@@ -19,5 +21,6 @@ public:
 	virtual const char* name() override;
 	virtual pArray execute(std::vector<pArray>& inputArrays, pQuery q) override;
 };
-}	// msdb
-#endif		// _MSDB_OP_SAVE_ACTION_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_OP_SAVE_ACTION_H_

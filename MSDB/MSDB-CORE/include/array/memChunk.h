@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class memChunk : public chunk
 {
 public:
@@ -83,5 +85,6 @@ public:
 		//}
 	}
 };
-}
+}		// core
+}		// msdb
 #endif	// _MSDB_MEMCHUNK_H_

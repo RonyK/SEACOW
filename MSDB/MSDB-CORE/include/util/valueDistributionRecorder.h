@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class valueDistributionRecorder : public singleton<valueDistributionRecorder>
 {
 private:
@@ -23,5 +25,6 @@ private:
 protected:
 	friend singleton<valueDistributionRecorder>;
 };
-}
+}		// core
+}		// msdb
 #endif	// _MSDB_VALUE_DISTRIBUTION_RECODER_H_

@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class spihtChunk;
 using pSpihtChunk = std::shared_ptr<spihtChunk>;
 
@@ -90,5 +92,6 @@ public:
 protected:
 	size_t maxLevel_;
 };
-}
+}		// core
+}		// msdb
 #endif	// _MSDB_SPIHTCHUNK_H_

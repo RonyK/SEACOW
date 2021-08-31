@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 memBlockChunk::memBlockChunk(pChunkDesc desc)
 	: chunk(desc)
 {
@@ -344,4 +346,5 @@ element blockChunkItemRangeIterator::operator*()
 {
 	return (**this->curBlockItemItr_);
 }
-}	// msdb
+}		// core
+}		// msdb

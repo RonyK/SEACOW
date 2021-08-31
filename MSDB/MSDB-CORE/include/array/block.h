@@ -11,6 +11,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class chunk;
 class block;
 using pBlock = std::shared_ptr<block>;
@@ -165,6 +167,6 @@ protected:
 		BOOST_LOG_TRIVIAL(debug) << ss.str() << "";
 	}
 };
-}	// msdb
-
+}		// core
+}		// msdb
 #endif

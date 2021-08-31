@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 mmt_delta_decode_array::mmt_delta_decode_array(pArrayDesc desc)
 	: base_type(desc)
 {
@@ -12,4 +14,5 @@ mmt_delta_decode_array::mmt_delta_decode_array(pArrayDesc desc)
 mmt_delta_decode_array::~mmt_delta_decode_array()
 {
 }
-}	// msdb
+}		// core
+}		// msdb

@@ -11,6 +11,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 void get_op_se_huffman_encode(pArrayDesc sourceArrDesc, std::shared_ptr<se_huffman_encode_plan>& plan, std::shared_ptr<se_huffman_encode_action>& action, pQuery& qry);
@@ -22,5 +24,6 @@ pArray exe_act_ind_se_huffman_decode(std::vector<pArray> sourceArr, eleDefault w
 std::shared_ptr<se_huffman_encode_plan> getSeHuffmanEncodePlan(pArrayDesc sourceArrDesc, eleDefault wtLevel, pQuery qry);
 std::shared_ptr<se_huffman_decode_plan> getSeHuffmanDecodePlan(pArrayDesc sourceArrDesc, eleDefault wtLevel, pQuery qry);
 }		// caDummy
+}		// core
 }		// msdb
 #endif	// _MSDB_TEST_OP_ACT_SE_HUFFMAN_ENCODE_DECODE_H_

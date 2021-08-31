@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 lzw_huffman_encode_plan::lzw_huffman_encode_plan()
 {
 }
@@ -20,4 +22,5 @@ lzw_huffman_encode_array_pset::lzw_huffman_encode_array_pset(parameters& pSet)
 {
 
 }
+}		// core
 }		// msdb

@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 namespace data2D_star1024x1024
@@ -231,8 +233,6 @@ void getDummyFromBinaryFile(char* output, const char* filePath, size_t length, s
 	in.read(output, std::min({ length, fileLength }));
 	in.close();
 }
-}	// atDummy
+}	// caDummy
+}	// core
 }	// msdb
-
-
-

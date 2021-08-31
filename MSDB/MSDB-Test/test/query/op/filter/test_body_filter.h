@@ -32,6 +32,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 // ##################################################
@@ -59,6 +61,11 @@ pArray test_body_seq_load_random_naive_filter(_pFuncGetSourceArray_,
 	// 02. Execute Testcases
 	for (size_t i = 0; i < numTests; ++i)
 	{
+#ifdef _WIN32
+		system("EmptyStandbyList.exe");
+		BOOST_LOG_TRIVIAL(info) << "Flush memory";
+#endif
+
 		v = (value_type)rand();
 		BOOST_LOG_TRIVIAL(info) << "##################################################";
 		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -88,6 +95,11 @@ pArray test_body_seq_zip_random_naive_filter(_pFuncGetSourceArray_,
 	// 02. Execute Testcases
 	for (size_t i = 0; i < numTests; ++i)
 	{
+#ifdef _WIN32
+		system("EmptyStandbyList.exe");
+		BOOST_LOG_TRIVIAL(info) << "Flush memory";
+#endif
+
 		v = (value_type)rand();
 		BOOST_LOG_TRIVIAL(info) << "##################################################";
 		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -117,6 +129,11 @@ pArray test_body_seq_lzw_random_naive_filter(_pFuncGetSourceArray_,
 	// 02. Execute Testcases
 	for (size_t i = 0; i < numTests; ++i)
 	{
+#ifdef _WIN32
+		system("EmptyStandbyList.exe");
+		BOOST_LOG_TRIVIAL(info) << "Flush memory";
+#endif
+
 		v = (value_type)rand();
 		BOOST_LOG_TRIVIAL(info) << "##################################################";
 		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -146,6 +163,11 @@ pArray test_body_seq_huffman_random_naive_filter(_pFuncGetSourceArray_,
 	// 02. Execute Testcases
 	for (size_t i = 0; i < numTests; ++i)
 	{
+#ifdef _WIN32
+		system("EmptyStandbyList.exe");
+		BOOST_LOG_TRIVIAL(info) << "Flush memory";
+#endif
+
 		v = (value_type)rand();
 		BOOST_LOG_TRIVIAL(info) << "##################################################";
 		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -175,6 +197,11 @@ pArray test_body_seq_adapt_huffman_random_naive_filter(_pFuncGetSourceArray_,
 	// 02. Execute Testcases
 	for (size_t i = 0; i < numTests; ++i)
 	{
+#ifdef _WIN32
+		system("EmptyStandbyList.exe");
+		BOOST_LOG_TRIVIAL(info) << "Flush memory";
+#endif
+
 		v = (value_type)rand();
 		BOOST_LOG_TRIVIAL(info) << "##################################################";
 		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -204,6 +231,11 @@ pArray test_body_seq_lzw_huffman_random_naive_filter(_pFuncGetSourceArray_,
 	// 02. Execute Testcases
 	for (size_t i = 0; i < numTests; ++i)
 	{
+#ifdef _WIN32
+		system("EmptyStandbyList.exe");
+		BOOST_LOG_TRIVIAL(info) << "Flush memory";
+#endif
+
 		v = (value_type)rand();
 		BOOST_LOG_TRIVIAL(info) << "##################################################";
 		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -234,6 +266,11 @@ pArray test_body_seq_spiht_random_naive_filter(_pFuncGetSourceArray_,
 	// 02. Execute Testcases
 	for (size_t i = 0; i < numTests; ++i)
 	{
+#ifdef _WIN32
+		system("EmptyStandbyList.exe");
+		BOOST_LOG_TRIVIAL(info) << "Flush memory";
+#endif
+
 		v = (value_type)rand();
 		BOOST_LOG_TRIVIAL(info) << "##################################################";
 		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -264,6 +301,11 @@ pArray test_body_seq_compass_random_naive_filter(_pFuncGetSourceArray_,
 	// 02. Execute Testcases
 	for (size_t i = 0; i < numTests; ++i)
 	{
+#ifdef _WIN32
+		system("EmptyStandbyList.exe");
+		BOOST_LOG_TRIVIAL(info) << "Flush memory";
+#endif
+
 		v = (value_type)rand();
 		BOOST_LOG_TRIVIAL(info) << "##################################################";
 		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -316,6 +358,11 @@ pArray test_body_seq_compass_random_index_filter(_pFuncGetSourceArray_,
 	// 04. Execute Testcases
 	for (size_t i = 0; i < numTests; ++i)
 	{
+#ifdef _WIN32
+		system("EmptyStandbyList.exe");
+		BOOST_LOG_TRIVIAL(info) << "Flush memory";
+#endif
+
 		v = (value_type)rand();
 		BOOST_LOG_TRIVIAL(info) << "##################################################";
 		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -346,6 +393,7 @@ pArray test_body_seq_se_random_naive_filter(_pFuncGetSourceArray_,
 	// 02. Save Source Array
 	if (saveArray)
 	{
+
 		std::vector<pArray> sourceArr;
 		getSourceArrayIfEmpty(sourceArr);
 		sourceArr[0]->setId(sourceArr[0]->getId() + se_array_id);
@@ -365,6 +413,11 @@ pArray test_body_seq_se_random_naive_filter(_pFuncGetSourceArray_,
 	// 04. Execute Testcases
 	for (size_t i = 0; i < numTests; ++i)
 	{
+#ifdef _WIN32
+		system("EmptyStandbyList.exe");
+		BOOST_LOG_TRIVIAL(info) << "Flush memory";
+#endif
+
 		v = (value_type)rand();
 		BOOST_LOG_TRIVIAL(info) << "##################################################";
 		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -414,6 +467,11 @@ pArray test_body_seq_se_random_index_filter(_pFuncGetSourceArray_,
 	// 04. Execute Testcases
 	for (size_t i = 0; i < numTests; ++i)
 	{
+#ifdef _WIN32
+		system("EmptyStandbyList.exe");
+		BOOST_LOG_TRIVIAL(info) << "Flush memory";
+#endif
+
 		v = (value_type)rand();
 		BOOST_LOG_TRIVIAL(info) << "##################################################";
 		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -465,6 +523,11 @@ pArray test_body_seq_se_huffman_random_index_filter(_pFuncGetSourceArray_,
 	// 04. Execute Testcases
 	for (size_t i = 0; i < numTests; ++i)
 	{
+#ifdef _WIN32
+		system("EmptyStandbyList.exe");
+		BOOST_LOG_TRIVIAL(info) << "Flush memory";
+#endif
+
 		v = (value_type)rand();
 		BOOST_LOG_TRIVIAL(info) << "##################################################";
 		BOOST_LOG_TRIVIAL(info) << "# TEST CASE: " << i;
@@ -1985,5 +2048,6 @@ pArray exe_qry_seq_lzw_huffman_naive_filter(_vectorSourceArray_,
 	return outArr;
 }
 }		// caDummy
+}		// core
 }		// msdb
 #endif	//_MSDB_TESTFILTER_H_

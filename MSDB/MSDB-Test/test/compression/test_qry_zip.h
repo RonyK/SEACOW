@@ -10,6 +10,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 template <typename value_type>
@@ -160,5 +162,6 @@ pArray test_body_seq_zip_save_load(_pFuncGetSourceArray_,
 	return outArr;
 }
 }		// caDummy
+}		// core
 }		// msdb
 #endif	// _MSDB_TEST_QRY_ZIP_

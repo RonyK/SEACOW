@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 namespace se_huffman_encode_decode
@@ -179,6 +181,7 @@ TEST(experiment_query_op_se_huffman, lunar102400x40960_seq_encode_decode)
 													   wtLevel, mmtLevel,
 													   se_huffman_encode_decode::validation, se_huffman_encode_decode::printFlag);
 }
-}	// data2D_lunar102400x40960
-}	// caDummy
-}	// msdb
+}		// data2D_lunar102400x40960
+}		// caDummy
+}		// core
+}		// msdb

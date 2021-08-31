@@ -15,6 +15,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class mmt_delta_decode_action : public opAction
 {
 public:
@@ -152,6 +154,6 @@ public:
 		//========================================//
 	}
 };
-}	// msdb
-
+}		// core
+}		// msdb
 #endif		// _MSDB_OP_MMT_DELTA_DECODE_ACTION_H_

@@ -10,6 +10,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class adaptHuffmanChunk;
 using pAdaptHuffmanChunk = std::shared_ptr<adaptHuffmanChunk>;
 
@@ -85,5 +87,6 @@ private:
 		}
 	}
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_ADAPTHUFFMANCHUNK_H_

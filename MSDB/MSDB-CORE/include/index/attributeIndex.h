@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 enum class attrIndexType
 {
 	MMT,
@@ -22,5 +24,6 @@ public:
 	virtual attrIndexType getType() = 0;
 };
 using pAttrIndex = std::shared_ptr<attributeIndex>;
-}			// msdb
-#endif		// _MSDB_ATTRIBUTE_INDEX_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_ATTRIBUTE_INDEX_H_

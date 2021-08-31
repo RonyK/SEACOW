@@ -11,6 +11,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 template <typename value_type>
@@ -233,6 +235,7 @@ pArray test_body_seq_se_huffman_encode_decode(_pFuncGetSourceArray_,
 	//return outArr;
 	return nullptr;
 }
-}	// caDummy
+}		// caDummy
+}		// core
 }		// msdb
 #endif	// _MSDB_TEST_QRY_SE_HUFFMAN_H_

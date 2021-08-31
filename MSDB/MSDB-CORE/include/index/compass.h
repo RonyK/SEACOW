@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class compassIndex;
 using pCompassIndex = std::shared_ptr<compassIndex>;
 
@@ -211,5 +213,6 @@ public:
 private:
 	std::vector<std::vector<std::shared_ptr<compassBlockIndex>>> arrayBins_;
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_COMPASS_H_

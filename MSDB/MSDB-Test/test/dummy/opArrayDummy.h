@@ -51,6 +51,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 void getWaveletEncode(pArrayDesc sourceArrDesc, eleDefault level,
@@ -164,5 +166,6 @@ getOperator(parameters& params, pQuery myQuery = nullptr)
 	return std::make_tuple(myPlan, myAction, myQuery);
 }
 }		// caDummy
+}		// core
 }		// msdb
 #endif	// _MSDB_OPARRAYDUMMY_H_

@@ -10,6 +10,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class lzwHuffmanChunk;
 using pLzwHuffmanChunk = std::shared_ptr<lzwHuffmanChunk>;
 
@@ -66,5 +68,6 @@ public:
 private:
 	static const lzwCodeType dms{ std::numeric_limits<lzwCodeType>::max() };
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_LZWHUFFMANCHUNK_H_

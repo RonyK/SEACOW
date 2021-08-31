@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 int abs_(int num) noexcept
 {
 	return std::abs((int)num);
@@ -53,4 +55,5 @@ unsigned long long calcMinLimit(bit_cnt_type bits)
 		return (unsigned long long)1 << (bits - 1);
 	return 0;
 }
-}
+}		// core
+}		// msdb

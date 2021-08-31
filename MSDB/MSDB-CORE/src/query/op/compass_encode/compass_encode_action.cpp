@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 compass_encode_action::compass_encode_action()
 {
 }
@@ -68,4 +70,5 @@ pArray compass_encode_action::execute(std::vector<pArray>& inputArrays, pQuery q
 
 	return sourceArr;
 }
-}	// msdb
+}		// core
+}		// msdb

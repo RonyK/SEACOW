@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 seHuffmanChunk::seHuffmanChunk(pChunkDesc desc)
 	: seChunk(desc)
 {
@@ -172,4 +174,5 @@ std::vector<std::vector<iFixedHuffmanCoder*>> seHuffmanChunk::fixedHuffmanCoders
 		fixedHuffmanCoder<16, uint16_t>::instance()
 	}
 };
-}	// msdb
+}		// core
+}		// msdb

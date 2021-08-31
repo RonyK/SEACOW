@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class lzwBlock;
 using pLzwBlock = std::shared_ptr<lzwBlock>;
 
@@ -30,6 +32,6 @@ public:
 		
 	}
 };
-}
-
+}		// core
+}		// msdb
 #endif	// _MSDB_LZWBLOCK_H_

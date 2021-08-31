@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 template <typename codeType, typename symbolType>
 class aHuffmanCoder
 {
@@ -398,5 +400,6 @@ public:
 private:
 
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_ADAPTIVE_HUFFMAN_CODING_H_

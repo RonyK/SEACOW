@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 wavelet_encode_array::wavelet_encode_array(pArrayDesc desc)
 	: base_type(desc), originalChunkDims_(desc->getDSize())
 {
@@ -70,4 +72,5 @@ bool wavelet_encode_array::isMaxLevelAvailable(const size_t maxLevel)
 
 	return level;
 }
-}
+}		// core
+}		// msdb

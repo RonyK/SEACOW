@@ -13,6 +13,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class se_huffman_encode_action : public opAction
 {
 public:
@@ -173,5 +175,6 @@ private:
 		}
 	}
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_OP_SE_HUFFMAN_ENCODE_ACTION_H_

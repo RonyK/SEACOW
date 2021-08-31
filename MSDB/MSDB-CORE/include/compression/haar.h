@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 	namespace haar
 	{
 		void getWavelet(const double** h_0, const double** g_0,
@@ -19,5 +21,6 @@ namespace msdb
 						const double** h_1, const double** g_1,
 						size_t* c, size_t* offset);
 	}
-}
+}		// core
+}		// msdb
 #endif

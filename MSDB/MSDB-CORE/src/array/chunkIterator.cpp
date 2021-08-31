@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 chunkIterator::chunkIterator(const dimension dims,
 							 chunkContainer* chunks, pBitmap chunkBitmap, 
 							 iterateMode itMode)
@@ -48,4 +50,5 @@ iterateMode chunkIterator::getIterateMode()
 {
 	return this->itMode_;
 }
-}	// msdb
+}		// core
+}		// msdb

@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 mmt_build_plan::mmt_build_plan()
 {
 }
@@ -32,4 +34,5 @@ pArrayDesc mmt_build_array_pset::inferSchema()
 	
 	return aInferDesc;
 }
-}	// msdb
+}		// core
+}		// msdb

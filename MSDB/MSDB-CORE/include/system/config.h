@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 #define _MSDB_XML_ELE_ID				"id"
 #define _MSDB_XML_ELE_NAME				"name"
 #define _MSDB_XML_ELE_SIZE				"size"
@@ -50,5 +52,6 @@ public:
 public:
 	virtual void action(tinyxml2::XMLNode* root, void* output) const = 0;
 };
-}
+}		// core
+}		// msdb
 #endif	// _MSDB_CONFIG_H_

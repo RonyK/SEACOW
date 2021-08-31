@@ -2,6 +2,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 //////////////////////////////
@@ -111,5 +113,6 @@ std::shared_ptr<between_plan> getBetweenPlan(pPlan sourcPlan, coor sp, coor ep, 
 {
 	return getPlan_setPlanRange<between_plan, between_plan_pset>(sourcPlan, sp, ep, qry);
 }
-}	// caDummy
-}	// msdb
+}		// caDummy
+}		// core
+}		// msdb

@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 void get_op_se_huffman_encode(pArrayDesc sourceArrDesc, std::shared_ptr<se_huffman_encode_plan>& plan, std::shared_ptr<se_huffman_encode_action>& action, pQuery& qry)
@@ -55,6 +57,6 @@ std::shared_ptr<se_huffman_decode_plan> getSeHuffmanDecodePlan(pArrayDesc source
 {
 	return getLevelArrayParamPlan<se_huffman_decode_plan, se_huffman_decode_array_pset>(sourceArrDesc, wtLevel, qry);
 }
-}   // caDummy
-}   // msdb
-
+}		// caDummy
+}		// core
+}		// msdb

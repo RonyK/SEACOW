@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 blockChunkBuffer::blockChunkBuffer()
 	: buffer(), data_(nullptr)
 {
@@ -84,4 +86,5 @@ void blockChunkBuffer::free()
 		//this->blocks_.clear();
 	}
 }
-}	// msdb
+}		// core
+}		// msdb

@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 blockIterator::blockIterator(const dimension dims,
 							 blockContainer* blocks, pBitmap blockBitmap, 
 							 const iterateMode itMode)
@@ -90,4 +92,5 @@ void singleBlockIterator::prev()
 		this->end_ = false;
 	}
 }
-}
+}		// core
+}		// msdb

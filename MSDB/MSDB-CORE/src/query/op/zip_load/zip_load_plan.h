@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class zip_load_plan : public opPlan
 {
 public:
@@ -23,6 +25,6 @@ class zip_load_array_pset : public opArrayParamSet
 public:
 	zip_load_array_pset(parameters& pSet);
 };
-}
-
+}		// core
+}		// msdb
 #endif // _MSDB_OP_ZIP_DECODE_PLAN_H_

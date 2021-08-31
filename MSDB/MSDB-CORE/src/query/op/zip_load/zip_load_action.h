@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class zip_load_action : public opAction
 {
 public:
@@ -21,5 +23,6 @@ public:
 	void loadChunk(pArray outArr, pChunk outChunk, pZipChunk inChunk, attributeId attrId, pQuery qry, const size_t parentThreadId);
 	pZipChunk makeInChunk(pArray inArr, pAttributeDesc attrDesc, chunkId cid);
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_OP_ZIP_ACTION_H_

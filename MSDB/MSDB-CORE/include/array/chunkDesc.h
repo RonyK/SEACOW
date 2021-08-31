@@ -12,6 +12,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class chunkDesc;
 class blockChunkDesc;
 using pChunkDesc = std::shared_ptr<chunkDesc>;
@@ -75,5 +77,6 @@ public:
 	coor ep_;					// end point
 	coor chunkCoor_;			// chunk coordinate
 };
-}
-#endif		// _MSDB_CHUNKDESC_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_CHUNKDESC_H_

@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 namespace data2D_sc4x4
@@ -33,4 +35,5 @@ TEST(query_op_naive_filter, naive_filter_star1024x1024)
 }		// TEST()
 }		// data2D_star1024x1024
 }		// caDummy
+}		// core
 }		// msdb

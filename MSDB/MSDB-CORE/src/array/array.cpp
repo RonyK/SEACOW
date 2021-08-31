@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 arrayBase::arrayBase(pArrayDesc desc)
 	: chunkBitmap_()
 {
@@ -168,4 +170,5 @@ void arrayBase::print()
 		++(*cit);
 	}
 }
-}
+}		// core
+}		// msdb

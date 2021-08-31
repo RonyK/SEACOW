@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 namespace between_filter
@@ -15,6 +17,11 @@ bool saveArray = false;
 bool printFlag = false;
 bool validation = true;
 }
+TEST(io_test, clear_cache)
+{
+	system("EmptyStandbyList.exe");
+}	// TEST()
+
 // ##################################################
 // # star1024x1024
 namespace data2D_star1024x1024
@@ -802,4 +809,5 @@ TEST(experiment_query_op_between_filter, lunar102400x40960_seq_lzw_huffman_naive
 }	// data2D_lunar102400x40960
 // ##################################################
 }	// caDummy
+}	// core
 }	// msdb

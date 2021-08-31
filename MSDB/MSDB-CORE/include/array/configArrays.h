@@ -29,6 +29,8 @@
 
 namespace msdb
 {
+namespace core
+{
 #define _MSDB_XML_ARRAYDESC			"array_desc"
 #define _MSDB_XML_ARRAYS			"arrays"
 
@@ -93,5 +95,6 @@ public:
 	void getArrayDescList(arrayDescs* list);
 	void setArrayDescList(arrayDescs* list);
 };
-}
-#endif		// _MSDB_CONFIGARRAYS_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_CONFIGARRAYS_H_

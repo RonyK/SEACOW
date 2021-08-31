@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class between_plan : public opPlan
 {
 public:
@@ -146,6 +148,6 @@ public:
 public:
 	virtual pBitmapTree inferBottomUpBitmap() override;
 };
-}
-
+}		// core
+}		// msdb
 #endif // _MSDB_OP_BETWEEN_PLAN_H_

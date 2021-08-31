@@ -10,6 +10,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class memBlock : public block
 {
 public:
@@ -61,6 +63,6 @@ public:
 		}
 	}
 };
-}	// msdb
-
-#endif
+}		// core
+}		// msdb
+#endif	// _MSDB_MEMBLOCK_H_

@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 compassChunk::compassChunk(pChunkDesc desc)
 	: memBlockChunk(desc)
 {
@@ -110,4 +112,5 @@ void compassChunk::setNumBins(size_t numBins)
 {
 	this->numBins_ = numBins;
 }
-}	// msdb
+}		// core
+}		// msdb

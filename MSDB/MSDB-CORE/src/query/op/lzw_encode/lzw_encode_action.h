@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class lzw_encode_action : public opAction
 {
 public:
@@ -22,5 +24,6 @@ public:
 private:
 	pLzwChunk makeOutChunk(pChunk inChunk);
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_OP_LZW_ENCODE_ACTION_H_

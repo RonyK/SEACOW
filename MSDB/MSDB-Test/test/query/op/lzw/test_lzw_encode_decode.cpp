@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 namespace lzw_encode_decode
@@ -10,7 +12,7 @@ namespace lzw_encode_decode
 bool encodeArray = false;
 bool printFlag = false;
 bool validation = true;
-}
+}		// lzw_encode_decode
 
 namespace data2D_star1024x1024
 {
@@ -148,6 +150,7 @@ TEST(experiment_query_op_lzw_encode_decode, lunar102400x40960_seq)
 												&getSourceArrayDesc,
 												lzw_encode_decode::validation, lzw_encode_decode::printFlag);
 }
-}	// data2D_lunar102400x40960
-}	// caDummy
-}	// msdb
+}		// data2D_lunar102400x40960
+}		// caDummy
+}		// core
+}		// msdb

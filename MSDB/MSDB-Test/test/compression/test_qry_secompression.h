@@ -11,6 +11,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 template <typename value_type>
@@ -283,5 +285,6 @@ pArray test_body_seq_se_comp_decomp(_pFuncGetSourceArray_,
 	return outArr;
 }
 }		// caDummy
+}		// core
 }		// msdb
 #endif	// _MSDB_TESTSECOMPRESSION_H_

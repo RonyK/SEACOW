@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class huffman_decode_action : public opAction
 {
 public:
@@ -23,5 +25,6 @@ private:
 	void loadChunk(pArray outArr, pChunk outChunk, pHuffmanChunk inChunk, attributeId attrId, pQuery qry, const size_t paraentThreadId);
 	pHuffmanChunk makeInChunk(pArray inArr, pAttributeDesc attrDesc, chunkId cid);
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_OP_HUFFMAN_DECODE_ACTION_H_

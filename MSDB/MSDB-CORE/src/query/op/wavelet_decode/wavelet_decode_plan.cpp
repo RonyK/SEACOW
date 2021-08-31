@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 wavelet_decode_plan::wavelet_decode_plan()
 {
 }
@@ -134,4 +136,5 @@ pBitmapTree wavelet_decode_plan_pset::inferTopDownBitmap(pBitmapTree fromParent)
 
 	return outBitmap;
 }
-}	// msdb
+}		// core
+}		// msdb

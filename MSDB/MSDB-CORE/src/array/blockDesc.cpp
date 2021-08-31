@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 const blockSize INVALID_BLOCK_SIZE = static_cast<blockSize>(~0);
 const blockId INVALID_BLOCK_ID = static_cast<blockId>(~0);
 
@@ -65,4 +67,5 @@ void blockDesc::initBlockCoor()
 		this->blockCoor_[d] = this->sp_[d] / (this->ep_[d] - this->sp_[d]);
 	}
 }
-}	// msdb
+}		// core
+}		// msdb

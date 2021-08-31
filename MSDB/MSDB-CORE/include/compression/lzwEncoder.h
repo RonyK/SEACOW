@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 template <typename lzwCodeType>
 class lzwCoder
 {
@@ -171,5 +173,6 @@ public:
 private:
 
 };
+}		// core
 }		// msdb
 #endif	// _MSDB_LZWENCODER_H_

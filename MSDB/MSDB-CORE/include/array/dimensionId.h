@@ -6,8 +6,11 @@
 
 namespace msdb
 {
+namespace core
+{
 typedef uint32_t dimensionId;
 
 const dimensionId INVALID_DIMENSION_ID = static_cast<dimensionId>(~0);
-}
-#endif		// _MSDB_DIMENSION_ID_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_DIMENSION_ID_H_

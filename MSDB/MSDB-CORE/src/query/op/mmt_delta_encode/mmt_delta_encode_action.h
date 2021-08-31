@@ -13,6 +13,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class mmt_delta_encode_action : public opAction
 {
 public:
@@ -141,6 +143,6 @@ void mmt_delta_encode_action::chunkEncode(pChunk outChunk, pChunk inChunk,
 //		++(*obItr);
 //	}
 }
-}	// msdb
-
+}		// core
+}		// msdb
 #endif		// _MSDB_OP_MMT_DELTA_ENCODE_ACTION_H_

@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 MinMaxTree::MinMaxTree(const eleType eType, size_const maxLevel)
 	: attributeIndex(), serializable(std::make_shared<mmtHeader>()),
 	eType_(eType), lowerLevel_(maxLevel)
@@ -51,4 +53,5 @@ pMMT MinMaxTree::createMMT(const eleType eType,
 
 	_MSDB_THROW(_MSDB_EXCEPTIONS(MSDB_EC_UNKNOWN_ERROR, MSDB_ER_NOT_IMPLEMENTED));
 }
-}	// msdb
+}		// core
+}		// msdb

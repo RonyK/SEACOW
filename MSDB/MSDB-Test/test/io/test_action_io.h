@@ -7,6 +7,8 @@
 #include <op/load/load_action.h>
 
 namespace msdb
+{ 
+namespace core
 {
 namespace caDummy
 {
@@ -132,4 +134,5 @@ namespace data2D_sc4x4
 void load_test(pArray arr);
 }	// data2D_sc4x4
 }	// caDummy
+}	// core
 }	// msdb

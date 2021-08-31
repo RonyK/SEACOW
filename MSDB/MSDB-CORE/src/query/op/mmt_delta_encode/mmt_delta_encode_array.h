@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class mmt_delta_encode_array : public memBlockArray
 {
 public:
@@ -24,6 +26,6 @@ public:
 protected:
 	std::map<attributeId, pMMT> attrMMT;
 };
-}
-
+}		// core
+}		// msdb
 #endif	// _MSDB_OPMMT_DELTA_ENCODE_ARRAY_H_

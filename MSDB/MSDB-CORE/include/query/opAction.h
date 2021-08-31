@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class opAction;
 using pAction = std::shared_ptr<opAction>;
 
@@ -51,6 +53,6 @@ protected:
 	std::shared_ptr<boost::asio::io_service::work> work_;
 	boost::thread_group threadpool_;
 };
-}
-
-#endif		// _MSDB_OPACTION_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_OPACTION_H_

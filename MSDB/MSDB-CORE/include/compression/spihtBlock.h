@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class spihtBlock;
 using pSpihtBlock = std::shared_ptr<spihtBlock>;
 
@@ -801,5 +803,6 @@ private:
 
 	size_t maxLevel_;
 };
-}
+}		// core
+}		// msdb
 #endif	// _MSDB_SPIHTBLOCK_H_

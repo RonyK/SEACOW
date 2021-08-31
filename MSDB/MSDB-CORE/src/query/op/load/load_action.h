@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class load_action : public opAction
 {
 public:
@@ -21,5 +23,6 @@ public:
 	void loadAttribute(pArray outArr, pAttributeDesc attrDesc, pQuery qry);
 	void loadChunk(pArray outArr, pChunk outChunk, attributeId attrId, pQuery qry, const size_t parentThreadId);
 };
-}	// msdb
-#endif		// _MSDB_OP_LOAD_ACTION_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_OP_LOAD_ACTION_H_

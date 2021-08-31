@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 mmt_load_action::mmt_load_action()
 {
 }
@@ -52,4 +54,5 @@ pArray mmt_load_action::execute(std::vector<pArray>& inputArrays, pQuery qry)
 
 	return arr;
 }
-}	// msdb
+}		// core
+}		// msdb

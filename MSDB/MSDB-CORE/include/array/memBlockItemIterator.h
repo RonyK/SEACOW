@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class memBlockItemIterator : public blockItemIterator
 {
 public:
@@ -47,6 +49,7 @@ public:
 							  const dimension& bSp,
 							  pBitmap itemBitmap);
 };
-}
+}		// core
+}		// msdb
 #endif	// _MSDB_MEMBLOCKITEMITERATOR_H_
 

@@ -11,6 +11,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class chunk;
 using pChunk = std::shared_ptr<chunk>;
 
@@ -155,5 +157,6 @@ public:
 	virtual void updateToHeader() override;
 	virtual void updateFromHeader() override;
 };
-};
+}		// core
+}		// msdb
 #endif	// _MSDB_CHUNK_H_

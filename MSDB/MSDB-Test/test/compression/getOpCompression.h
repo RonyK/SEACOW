@@ -19,6 +19,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 void getOpZipSave(pArrayDesc sourceArrDesc,
@@ -41,5 +43,6 @@ void getOpLzwDecode(pArrayDesc sourceArrDesc,
 					std::shared_ptr<lzw_decode_action>& action,
 					pQuery& qry);
 }		// caDummy
+}		// core
 }		// msdb
 #endif	// _MSDB_GET_COMPRESSION_OP_H_

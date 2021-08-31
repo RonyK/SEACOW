@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class memChunkBuffer : public chunkBuffer
 {
 public:
@@ -18,6 +20,6 @@ public:
 public:
 	virtual bool isCompressed() const;
 };
-}
-
-#endif		// _MSDB_RAWCHUNK_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_RAWCHUNK_H_

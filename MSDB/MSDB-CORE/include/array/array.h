@@ -9,6 +9,8 @@
 
 namespace msdb
 {
+namespace core
+{
 template <typename Dty_>
 size_t calcNumItems(const Dty_* dims, const size_t dSize)
 {
@@ -129,5 +131,6 @@ protected:
 	chunkContainer chunks_;		// TODO::Seperate chunk container by attributeId
 	pBitmap chunkBitmap_;		// Be initialized to false by default
 };
+}	// core
 }	// msdb
 #endif		// _MSDB_ARRAY_H_

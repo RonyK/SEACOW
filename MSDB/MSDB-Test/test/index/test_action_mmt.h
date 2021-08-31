@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 pArray exe_act_ind_mmt_build(std::vector<pArray> sourceArr, eleDefault level);
@@ -19,6 +21,7 @@ void mmt_build_test(pArray afterArray);
 void mmt_delta_encode_test(std::shared_ptr<mmt_delta_encode_array> arr);
 void mmt_delta_decode_test(std::shared_ptr<mmt_delta_decode_array> arr);
 std::shared_ptr<mmt_delta_encode_array> get_mmt_delta_encode_array();
-}	// data2D_sc4x4
-}	// caDummy
-}	// msdb
+}		// data2D_sc4x4
+}		// caDummy
+}		// core
+}		// msdb

@@ -3,4 +3,7 @@
 
 namespace msdb
 {
-}	// msdb
+namespace core
+{
+}		// core
+}		// msdb

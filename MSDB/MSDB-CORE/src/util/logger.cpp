@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 bool initBoostLogger()
 {
 	logging::add_file_log(
@@ -21,4 +23,5 @@ bool initBoostLogger()
 
 	return true;
 }
-}
+}		// core
+}		// msdb

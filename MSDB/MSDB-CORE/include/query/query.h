@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class query;
 using pQuery = std::shared_ptr<query>;
 
@@ -21,6 +23,6 @@ public:
 protected:
 	pTimer timer_;
 };
-}
-
+}		// core
+}		// msdb
 #endif

@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 template <typename Ty_>
 pMmtNode getMmtNode(Ty_ realMin, Ty_ realMax, bit_cnt_type bMinDelta, bit_cnt_type bMaxDelta, bit_cnt_type order, bit_cnt_type childOrder, bool finished = false)
 {
@@ -79,4 +81,5 @@ TEST(mmt_serialize, testJumpBits)
 
 
 }
-}
+}		// core
+}		// msdb

@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 zip_load_action::zip_load_action()
 {
 }
@@ -121,4 +123,5 @@ pZipChunk zip_load_action::makeInChunk(pArray inArr, pAttributeDesc attrDesc, ch
 
 	return inChunk;
 }
-}	// msdb
+}		// core
+}		// msdb

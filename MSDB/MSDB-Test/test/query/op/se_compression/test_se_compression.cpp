@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 namespace se_comp_decomp
@@ -186,7 +188,8 @@ TEST(experiment_query_op_se_compr_decomp, lunar102400x40960_seq)
 											 &getSourceArrayDesc,
 											 wtLevel, mmtLevel,
 											 se_comp_decomp::validation, se_comp_decomp::printFlag);						// 20102
-}	// TEST()
-}	// data2D_lunar102400x40960
-}	// caDummy
-}	// msdb
+}		// TEST()
+}		// data2D_lunar102400x40960
+}		// caDummy
+}		// core
+}		// msdb

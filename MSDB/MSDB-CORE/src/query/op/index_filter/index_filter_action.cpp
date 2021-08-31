@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 index_filter_action::index_filter_action()
 {
 }
@@ -71,4 +73,5 @@ pArray index_filter_action::execute(std::vector<pArray>& inputArrays, pQuery qry
 
 	return outArr;
 }
-}	// msdb
+}		// core
+}		// msdb

@@ -3,7 +3,10 @@
 
 namespace msdb
 {
+namespace core
+{
 attributeIndex::attributeIndex()
 {
 }
-}	// msdb
+}		// core
+}		// msdb

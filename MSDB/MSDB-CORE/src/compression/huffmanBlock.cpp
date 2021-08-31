@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 huffmanBlock::huffmanBlock(pBlockDesc desc)
 	: memBlock(desc)
 {
@@ -12,4 +14,5 @@ huffmanBlock::~huffmanBlock()
 {
 
 }
-}	// msdb
+}		// core
+}		// msdb

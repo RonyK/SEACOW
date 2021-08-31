@@ -6,6 +6,8 @@
 
 namespace msdb
 {
+namespace core
+{
 #define _ELE_DEFAULT_TYPE		eleType::INT64
 using eleDefault = int64_t;
 using eleSize = size_t;
@@ -171,6 +173,6 @@ private:
 };
 
 eleSize getEleSize(eleType type);
-}
-
-#endif		// _MSDB_ELEMENT_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_ELEMENT_H_

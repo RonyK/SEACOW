@@ -8,6 +8,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class se_compression_plan : public opPlan
 {
 public:
@@ -24,5 +26,6 @@ class se_compression_array_pset : public opArrayParamSet
 public:
 	se_compression_array_pset(parameters& pSet);
 };
-}	// msdb
+}		// core
+}		// msdb
 #endif	// _MSDB_OP_SE_COMPRESSION_PLAN_H_

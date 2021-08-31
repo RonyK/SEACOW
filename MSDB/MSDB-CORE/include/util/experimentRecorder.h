@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class experimentRecorder;
 using pRecorder = std::shared_ptr<experimentRecorder>;
 
@@ -38,7 +40,6 @@ private:
 	std::set<size_t> experimentIds_;
 	std::set<size_t> dataIds_;
 };
-
-}
-
+}		// core
+}		// msdb
 #endif	// _MSDB_EXPERIMENT_RECORDER

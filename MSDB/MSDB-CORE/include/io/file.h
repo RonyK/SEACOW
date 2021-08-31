@@ -7,6 +7,8 @@
 
 namespace msdb
 {
+namespace core
+{
 class file;
 class fileManager;
 
@@ -55,6 +57,6 @@ protected:
 private:
 	
 };
-}
-
-#endif		// _MSDB_FILE_H_
+}		// core
+}		// msdb
+#endif	// _MSDB_FILE_H_

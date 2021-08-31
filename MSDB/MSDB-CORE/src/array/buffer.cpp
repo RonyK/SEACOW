@@ -5,6 +5,8 @@
 
 namespace msdb
 {
+namespace core
+{
 const bufferSize INVALID_BUFFER_SIZE = static_cast<bufferSize>(~0);
 
 buffer::buffer()
@@ -22,4 +24,5 @@ void buffer::free()
 	_MSDB_THROW(_MSDB_EXCEPTIONS_MSG(
 		MSDB_EC_LOGIC_ERROR, MSDB_ER_NOT_IMPLEMENTED, "buffer::free()"));
 }
-}
+}		// core
+}		// msdb

@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 namespace caDummy
 {
 namespace adapt_huffman_encode_decode
@@ -125,4 +127,5 @@ TEST(experiment_query_op_adapt_huffman, lunar102400x40960_seq_encode_decode)
 }
 }	// data2D_lunar102400x40960
 }	// caDummy
+}	// core
 }	// msdb

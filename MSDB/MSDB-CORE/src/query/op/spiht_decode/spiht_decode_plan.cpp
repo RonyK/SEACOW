@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 // plan
 spiht_decode_plan::spiht_decode_plan()
 {
@@ -43,4 +45,5 @@ pBitmapTree spiht_decode_array_pset::inferBottomUpBitmap()
 
 	return std::make_shared<bitmapTree>(seChunkSpace.area(), true);
 }
-}
+}		// core
+}		// msdb

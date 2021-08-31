@@ -4,6 +4,8 @@
 
 namespace msdb
 {
+namespace core
+{
 zip_save_plan::zip_save_plan()
 {
 }
@@ -24,4 +26,5 @@ zip_save_array_pset::zip_save_array_pset(parameters& pSet)
 	assert(this->params_.size() == 1);
 	assert(this->params_[0]->type() == opParamType::ARRAY);			// Source array
 }
-}	// msdb
+}		// core
+}		// msdb

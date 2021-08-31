@@ -3,6 +3,8 @@
 
 namespace msdb
 {
+namespace core
+{
 compassBlock::compassBlock(pBlockDesc desc)
 	: memBlock(desc), numBins_(0)
 {
@@ -76,4 +78,5 @@ void compassBlock::setNumBins(size_t numBins)
 	assert(numBins % 2 == 0);
 	this->numBins_ = numBins;
 }
-}	// msdb
+}		// core
+}		// msdb
