@@ -2,7 +2,7 @@
 #ifndef _MSDB_WT_CHUNK_H_
 #define _MSDB_WT_CHUNK_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/memChunk.h>
 
 namespace msdb

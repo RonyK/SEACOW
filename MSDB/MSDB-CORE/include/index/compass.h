@@ -2,7 +2,7 @@
 #ifndef _MSDB_COMPASS_H_
 #define _MSDB_COMPASS_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <index/attributeIndex.h>
 #include <util/element.h>
 #include <array/chunkIterator.h>

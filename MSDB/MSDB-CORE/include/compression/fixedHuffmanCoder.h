@@ -2,7 +2,7 @@
 #ifndef _MSDB_FIXED_HUFFMAN_CODER_H_
 #define _MSDB_FIXED_HUFFMAN_CODER_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <boost/math/distributions/normal.hpp>
 #include <compression/huffmanCode.h>
 #include <util/singleton.h>

@@ -10,13 +10,6 @@
     <ClCompile Include="test\util\testIterator.cpp">
       <Filter>test\util</Filter>
     </ClCompile>
-    <ClCompile Include="test\util\testWaveletIterator.cpp" />
-    <ClCompile Include="test\wavelet\testCompact.cpp">
-      <Filter>test</Filter>
-    </ClCompile>
-    <ClCompile Include="test\wavelet\testWavelet.cpp">
-      <Filter>test\wavelet</Filter>
-    </ClCompile>
     <ClCompile Include="test\pch.cpp" />
     <ClCompile Include="test\xml\xmltest.cpp" />
     <ClCompile Include="test\array\testMemChunk.cpp" />

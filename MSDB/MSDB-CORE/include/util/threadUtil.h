@@ -4,7 +4,7 @@
 
 #define _MSDB_ACTION_THREAD_NUM_	8
 
-#include <stdafx.h>
+#include <pch.h>
 
 namespace msdb
 {

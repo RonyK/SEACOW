@@ -2,7 +2,7 @@
 #ifndef _MSDB_INDEX_FILTER_PLAN_H_
 #define _MSDB_INDEX_FILTER_PLNA_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <query/opPlan.h>
 #include <query/opParamSet.h>
 #include <array/arrayMgr.h>

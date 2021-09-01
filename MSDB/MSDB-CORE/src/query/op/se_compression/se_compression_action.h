@@ -2,7 +2,7 @@
 #ifndef _MSDB_OP_SE_COMPRESSION_ACTION_H_
 #define _MSDB_OP_SE_COMPRESSION_ACTION_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/arrayMgr.h>
 #include <array/block.h>
 #include <array/memBlock.h>

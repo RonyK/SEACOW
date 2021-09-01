@@ -2,7 +2,7 @@
 #ifndef _MSDB_SERIALIZABLE_H_
 #define _MSDB_SERIALIZABLE_H_
 
-#include <stdafx.h>
+#include <pch.h>
 
 namespace msdb
 {

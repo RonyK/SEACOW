@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <op/compass_index_build/compass_index_build_plan.h>
 #include <op/compass_index_build/compass_index_build_action.h>
 #include "compass_index_build_plan.h"

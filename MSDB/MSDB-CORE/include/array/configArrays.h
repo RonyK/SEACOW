@@ -2,7 +2,7 @@
 #ifndef _MSDB_CONFIGARRAYS_H_
 #define _MSDB_CONFIGARRAYS_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/arrayDesc.h>
 #include <array/attributeDesc.h>
 #include <array/dimensionDesc.h>

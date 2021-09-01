@@ -2,7 +2,7 @@
 #ifndef _MSDB_OPACTION_H_
 #define _MSDB_OPACTION_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/array.h>
 #include <query/opParam.h>
 #include <query/query.h>

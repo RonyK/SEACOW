@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <op/spiht_decode/spiht_decode_action.h>
 #include <op/wavelet_encode/wavelet_encode_array.h>
 #include <system/storageMgr.h>

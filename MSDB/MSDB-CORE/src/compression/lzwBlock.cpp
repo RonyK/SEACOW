@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <compression/lzwBlock.h>
 #include <util/ioutil.h>
 

@@ -2,7 +2,7 @@
 #ifndef _MSDB_COORDINATE_H_
 #define _MSDB_COORDINATE_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <util/element.h>
 #include <util/math.h>
 #include <system/exceptions.h>

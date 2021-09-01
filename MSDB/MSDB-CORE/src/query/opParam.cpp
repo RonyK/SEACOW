@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <query/opParam.h>
 #include <system/exceptions.h>
 

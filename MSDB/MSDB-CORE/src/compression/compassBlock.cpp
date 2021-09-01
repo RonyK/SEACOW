@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <compression/compassBlock.h>
 
 namespace msdb

@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <op/se_compression/se_compression_action.h>
 #include <array/memArray.h>
 #include <system/storageMgr.h>

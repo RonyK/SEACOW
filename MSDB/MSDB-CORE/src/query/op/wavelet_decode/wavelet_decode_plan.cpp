@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <op/wavelet_decode/wavelet_decode_plan.h>
 #include <op/wavelet_decode/wavelet_decode_action.h>
 

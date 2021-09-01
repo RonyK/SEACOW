@@ -2,7 +2,7 @@
 #ifndef _MSDB_LZWENCODER_H_
 #define _MSDB_LZWENCODER_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <io/bitstream.h>
 
 namespace msdb

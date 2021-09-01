@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <op/mmt_load/mmt_load_action.h>
 #include <array/arrayMgr.h>
 #include <index/mmt.h>

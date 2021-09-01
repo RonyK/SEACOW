@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <util/coordinate.h>
 #include <compression/wavelet.h>
 #include <compression/haar.h>

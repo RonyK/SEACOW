@@ -2,7 +2,7 @@
 #ifndef _MSDB_MEMBLOCKARRAY_H_
 #define _MSDB_MEMBLOCKARRAY_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/array.h>
 
 namespace msdb

@@ -2,7 +2,7 @@
 #ifndef _MSDB_ADAPTHUFFMANBLOCK_H_
 #define _MSDB_ADAPTHUFFMANBLOCK_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/memBlock.h>
 #include <compression/adaptiveHuffmanCode.h>
 

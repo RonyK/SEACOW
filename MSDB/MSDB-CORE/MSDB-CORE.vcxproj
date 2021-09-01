@@ -110,10 +110,11 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>%BOOST_ROOT%</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>Create</PrecompiledHeader>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Async</ExceptionHandling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -153,6 +154,7 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -244,7 +246,7 @@
     <ClInclude Include="include\array\arrayMgr.h" />
     <ClInclude Include="include\query\opAction.h" />
     <ClInclude Include="include\query\opPlan.h" />
-    <ClInclude Include="include\stdafx.h" />
+    <ClInclude Include="include\pch.h" />
     <ClInclude Include="include\system\config.h" />
     <ClInclude Include="include\system\errorCodes.h" />
     <ClInclude Include="include\system\exceptions.h" />
@@ -487,7 +489,7 @@
     <ClCompile Include="src\compression\wavelet.cpp" />
     <ClCompile Include="src\util\valueDistributionRecorder.cpp" />
     <ClCompile Include="src\xml\tinyxml2.cpp" />
-    <ClCompile Include="src\stdafx.cpp" />
+    <ClCompile Include="src\pch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\system\errorCategories.inc" />

@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <io/serializable.h>
 
 namespace msdb

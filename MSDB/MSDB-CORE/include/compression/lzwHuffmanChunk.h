@@ -2,7 +2,7 @@
 #ifndef _MSDB_LZWHUFFMANCHUNK_H_
 #define _MSDB_LZWHUFFMANCHUNK_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/blockChunk.h>
 #include <io/bitstream.h>
 #include <compression/lzwEncoder.h>

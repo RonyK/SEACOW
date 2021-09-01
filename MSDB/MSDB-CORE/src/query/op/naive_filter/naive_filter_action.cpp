@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <op/naive_filter/naive_filter_action.h>
 #include <array/memBlockArray.h>
 

@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <op/mmt_delta_decode/mmt_delta_decode_action.h>
 
 namespace msdb

@@ -2,7 +2,7 @@
 #ifndef _MSDB_OP_MMT_DELTA_DECODE_ARRAY_H_
 #define _MSDB_OP_MMT_DELTA_DECODE_ARRAY_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/memBlockArray.h>
 
 namespace msdb

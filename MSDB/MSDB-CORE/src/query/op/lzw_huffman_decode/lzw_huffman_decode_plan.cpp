@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <op/lzw_huffman_decode/lzw_huffman_decode_plan.h>
 #include <op/lzw_huffman_decode/lzw_huffman_decode_action.h>
 

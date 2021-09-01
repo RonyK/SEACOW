@@ -2,7 +2,7 @@
 #ifndef _MSDB_BLOCKBUFFER_H_
 #define _MSDB_BLOCKBUFFER_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/chunkBuffer.h>
 
 namespace msdb

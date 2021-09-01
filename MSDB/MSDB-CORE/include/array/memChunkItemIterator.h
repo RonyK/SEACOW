@@ -2,7 +2,7 @@
 #ifndef _MSDB_MEMCHUNKITEMITERATOR_H_
 #define _MSDB_MEMCHUNKITEMITERATOR_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/chunkItemIterator.h>
 #include <util/coordinate.h>
 

@@ -2,7 +2,7 @@
 #ifndef _MSDB_FILE_H_
 #define _MSDB_FILE_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <util/singleton.h>
 
 namespace msdb

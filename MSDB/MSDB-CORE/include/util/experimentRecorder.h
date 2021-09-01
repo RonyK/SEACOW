@@ -2,7 +2,7 @@
 #ifndef _MSDB_EXPERIMENT_RECORDER
 #define _MSDB_EXPERIMENT_RECORDER
 
-#include <stdafx.h>
+#include <pch.h>
 #include <util/singleton.h>
 
 namespace msdb

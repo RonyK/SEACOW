@@ -2,7 +2,7 @@
 #ifndef _MSDB_OPPLAN_H_
 #define _MSDB_OPPLAN_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <query/opParamSet.h>
 #include <query/opAction.h>
 

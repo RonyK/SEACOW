@@ -2,7 +2,7 @@
 #ifndef _MSDB_HUFFMANCHUNK_H_
 #define _MSDB_HUFFMANCHUNK_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/blockChunk.h>
 #include <compression/huffmanBlock.h>
 #include <compression/huffmanCode.h>

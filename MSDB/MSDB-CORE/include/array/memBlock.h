@@ -2,7 +2,7 @@
 #ifndef _MSDB_MEMBLOCK_H_
 #define _MSDB_MEMBLOCK_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/block.h>
 #include <array/chunkIterator.h>
 #include <array/chunkItemIterator.h>

@@ -2,7 +2,7 @@
 #ifndef _MSDB_HUFFMAN_CODE_H_
 #define _MSDB_HUFFMAN_CODE_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <io/bitstream.h>
 #include <stack>
 #include <queue>

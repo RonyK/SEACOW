@@ -2,7 +2,7 @@
 #ifndef _MSDB_OPPARAM_H_
 #define _MSDB_OPPARAM_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/arrayDesc.h>
 #include <util/element.h>
 

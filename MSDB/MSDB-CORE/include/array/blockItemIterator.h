@@ -2,7 +2,7 @@
 #ifndef _MSDB_BLOCKITEM_ITERATOR_H_
 #define _MSDB_BLOCKITEM_ITERATOR_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/dimension.h>
 #include <index/bitmap.h>
 #include <util/coordinate.h>

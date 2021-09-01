@@ -2,7 +2,7 @@
 #ifndef _MSDB_OP_SPIHT_DECODE_ACTION_H
 #define _MSDB_OP_SPIHT_DECODE_ACTION_H
 
-#include <stdafx.h>
+#include <pch.h>
 #include <query/opAction.h>
 #include <util/math.h>
 #include <op/wavelet_encode/wavelet_encode_array.h>

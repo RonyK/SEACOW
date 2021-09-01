@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <compression/adaptHuffmanChunk.h>
 #include <compression/adaptHuffmanBlock.h>
 #include <compression/adaptiveHuffmanCode.h>

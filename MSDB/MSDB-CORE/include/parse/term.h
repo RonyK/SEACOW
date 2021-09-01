@@ -2,7 +2,7 @@
 #ifndef _MSDB_TERM_H_
 #define _MSDB_TERM_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <util/coordinate.h>
 #include <parse/expression.h>
 #include <index/mmtNode.h>

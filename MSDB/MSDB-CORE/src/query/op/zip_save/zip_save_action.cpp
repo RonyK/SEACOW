@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <op/zip_save/zip_save_action.h>
 #include <system/storageMgr.h>
 #include <compression/zipChunk.h>

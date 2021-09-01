@@ -2,7 +2,7 @@
 #ifndef _MSDB_ARRAYDESC_H_
 #define _MSDB_ARRAYDESC_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/arrayId.h>
 #include <array/attributeDesc.h>
 #include <array/dimensionDesc.h>

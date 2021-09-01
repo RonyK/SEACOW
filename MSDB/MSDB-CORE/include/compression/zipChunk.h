@@ -2,7 +2,7 @@
 #ifndef _MSDB_ZIPCHUNK_H_
 #define _MSDB_ZIPCHUNK_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/blockChunk.h>
 #include <compression/zipBlock.h>
 #include <io/bitstream.h>

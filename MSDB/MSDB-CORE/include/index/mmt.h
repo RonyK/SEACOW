@@ -2,7 +2,7 @@
 #ifndef _MSDB_MMT_H_
 #define _MSDB_MMT_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/array.h>
 #include <index/mmtNode.h>
 #include <io/serializable.h>

@@ -2,7 +2,7 @@
 #ifndef _MSDB_CHUNK_H_
 #define _MSDB_CHUNK_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <io/bitstream.h>
 #include <io/serializable.h>
 

@@ -2,7 +2,7 @@
 #ifndef _MSDB_OP_LZW_DECODE_PLAN_H_
 #define _MSDB_OP_LZW_DECODE_PLAN_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <query/opPlan.h>
 #include <query/opParamSet.h>
 

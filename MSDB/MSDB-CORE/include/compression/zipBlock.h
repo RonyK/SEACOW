@@ -2,7 +2,7 @@
 #ifndef _MSDB_ZIPBLOCK_H_
 #define _MSDB_ZIPBLOCK_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/memBlock.h>
 #include <util/ioutil.h>
 

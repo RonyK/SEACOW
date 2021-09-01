@@ -2,7 +2,7 @@
 #ifndef _MSDB_EXCEPTIONS_H_
 #define _MSDB_EXCEPTIONS_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <system/errorCodes.h>
 
 constexpr char const* const __NAMESPACE = "msdb";

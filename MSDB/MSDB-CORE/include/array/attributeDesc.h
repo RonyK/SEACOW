@@ -2,7 +2,7 @@
 #ifndef _MSDB_ATTRIBUTEDESC_H_
 #define _MSDB_ATTRIBUTEDESC_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/attributeId.h>
 #include <util/element.h>
 

@@ -2,7 +2,7 @@
 #ifndef _MSDB_CHUNKITEMITERATOR_H_
 #define _MSDB_CHUNKITEMITERATOR_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <util/coordinate.h>
 #include <array/dimension.h>
 

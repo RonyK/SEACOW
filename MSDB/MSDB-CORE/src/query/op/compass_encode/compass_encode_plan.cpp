@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <op/compass_encode/compass_encode_plan.h>
 #include <op/compass_encode/compass_encode_action.h>
 

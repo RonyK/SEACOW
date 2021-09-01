@@ -2,7 +2,7 @@
 #ifndef _MSDB_STORAGEMGR_H_
 #define _MSDB_STORAGEMGR_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/arrayId.h>
 #include <array/chunkId.h>
 #include <array/attributeId.h>

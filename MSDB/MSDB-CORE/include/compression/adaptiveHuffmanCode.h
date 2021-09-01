@@ -2,7 +2,7 @@
 #ifndef _MSDB_ADAPTIVE_HUFFMAN_CODING_H_
 #define _MSDB_ADAPTIVE_HUFFMAN_CODING_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <io/bitstream.h>
 
 namespace msdb

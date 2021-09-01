@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <op/mmt_delta_encode/mmt_delta_encode_plan.h>
 #include <op/mmt_delta_encode/mmt_delta_encode_action.h>
 

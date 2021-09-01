@@ -94,7 +94,6 @@
     <ClCompile Include="src\query\op\index_filter\index_filter_plan.cpp" />
     <ClCompile Include="src\query\query.cpp" />
     <ClCompile Include="src\util\logger.cpp" />
-    <ClCompile Include="src\stdafx.cpp" />
     <ClCompile Include="src\util\threadUtil.cpp" />
     <ClCompile Include="src\compression\compassBlock.cpp" />
     <ClCompile Include="src\compression\compassChunk.cpp" />
@@ -145,6 +144,7 @@
     <ClCompile Include="src\query\op\adapt_huffman_encode\adapt_huffman_encode_plan.cpp" />
     <ClCompile Include="src\query\op\se_huffman_encode\se_huffman_encode_plan.cpp" />
     <ClCompile Include="src\util\valueDistributionRecorder.cpp" />
+    <ClCompile Include="src\pch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\array\array.h" />
@@ -253,7 +253,6 @@
     <ClInclude Include="src\query\op\index_filter\index_filter_action.h" />
     <ClInclude Include="include\index\mmtNode.h" />
     <ClInclude Include="include\util\logger.h" />
-    <ClInclude Include="include\stdafx.h" />
     <ClInclude Include="include\util\threadUtil.h" />
     <ClInclude Include="include\compression\compassChunk.h" />
     <ClInclude Include="include\compression\compassBlock.h" />
@@ -310,11 +309,9 @@
     <ClInclude Include="include\compression\fixedHuffmanCoder.h" />
     <ClInclude Include="include\api\api.h" />
     <ClInclude Include="include\api\schema.h" />
+    <ClInclude Include="include\pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\util\singleton.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="src\system\errorCodes.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>

@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <system/config.h>
 #include <xml/tinyxml2.h>
 

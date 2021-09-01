@@ -2,7 +2,7 @@
 #ifndef _MSDB_CONFIG_H_
 #define _MSDB_CONFIG_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <xml/tinyxml2.h>
 
 namespace msdb

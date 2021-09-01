@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <compression/seHuffmanChunk.h>
 #include <compression/seHuffmanBlock.h>
 #include <util/ioutil.h>

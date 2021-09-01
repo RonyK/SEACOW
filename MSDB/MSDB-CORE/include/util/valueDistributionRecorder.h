@@ -2,7 +2,7 @@
 #ifndef _MSDB_VALUE_DISTRIBUTION_RECODER_H_
 #define _MSDB_VALUE_DISTRIBUTION_RECODER_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <util/singleton.h>
 
 namespace msdb

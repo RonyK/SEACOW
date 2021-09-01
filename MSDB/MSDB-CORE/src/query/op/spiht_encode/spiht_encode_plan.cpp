@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <op/spiht_encode/spiht_encode_plan.h>
 #include <op/spiht_encode/spiht_encode_action.h>
 

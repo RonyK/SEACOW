@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <op/se_huffman_encode/se_huffman_encode_plan.h>
 #include <op/se_huffman_encode/se_huffman_encode_action.h>
 

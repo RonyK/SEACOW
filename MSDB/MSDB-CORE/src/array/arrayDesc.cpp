@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <array/arrayDesc.h>
 
 namespace msdb

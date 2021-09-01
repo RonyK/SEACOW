@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <op/lzw_decode/lzw_decode_action.h>
 #include <array/memBlockArray.h>
 #include <system/storageMgr.h>

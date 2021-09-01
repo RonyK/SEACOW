@@ -2,7 +2,7 @@
 #ifndef _MSDB_OP_WAVELET_ENCODE_ARRAY_H_
 #define _MSDB_OP_WAVELET_ENCODE_ARRAY_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/memArray.h>
 
 namespace msdb

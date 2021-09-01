@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <op/lzw_encode/lzw_encode_action.h>
 #include <system/storageMgr.h>
 #include <compression/lzwChunk.h>

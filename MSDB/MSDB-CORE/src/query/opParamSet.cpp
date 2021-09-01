@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <query/opParamSet.h>
 #include <query/opPlan.h>
 

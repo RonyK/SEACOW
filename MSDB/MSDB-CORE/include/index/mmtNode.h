@@ -2,7 +2,7 @@
 #ifndef _MSDB_MMTNODE_H_
 #define _MSDB_MMTNODE_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <index/attributeIndex.h>
 #include <util/math.h>
 #include <util/logger.h>

@@ -2,7 +2,7 @@
 #ifndef _MSDB_SPIHTCHUNK_H_
 #define _MSDB_SPIHTCHUNK_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <array/memChunk.h>
 #include <compression/spihtBlock.h>
 #include <io/bitstream.h>

@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <compression/huffmanCode.h>
 
 namespace msdb

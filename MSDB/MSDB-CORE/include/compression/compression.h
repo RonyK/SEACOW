@@ -2,7 +2,7 @@
 #ifndef _MSDB_COMPRESSION_H_
 #define _MSDB_COMPRESSION_H_
 
-#include <stdafx.h>
+#include <pch.h>
 
 namespace msdb
 {

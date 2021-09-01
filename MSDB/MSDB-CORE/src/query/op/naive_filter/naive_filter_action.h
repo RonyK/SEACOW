@@ -2,7 +2,7 @@
 #ifndef _MSDB_OP_NAIVE_FILTER_ACTION_H_
 #define _MSDB_OP_NAIVE_FILTER_ACTION_H_
 
-#include <stdafx.h>
+#include <pch.h>
 #include <query/opAction.h>
 #include <parse/predicate.h>
 

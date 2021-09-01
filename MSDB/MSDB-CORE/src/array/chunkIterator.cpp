@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <array/chunkIterator.h>
 
 namespace msdb

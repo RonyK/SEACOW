@@ -26,6 +26,7 @@ namespace core
 		// Output test				//
 		//////////////////////////////
 		const char* str = bs.data();
+		int s = bs.sizebits();
 		for (int i = 0; i < (bs.sizebits() + 7) / 8; i++)
 		{
 			EXPECT_EQ(static_cast<char>(str[i]), expected[i]);

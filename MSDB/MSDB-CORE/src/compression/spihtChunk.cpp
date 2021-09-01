@@ -1,4 +1,4 @@
-#include <stdafx.h>
+#include <pch.h>
 #include <compression/spihtChunk.h>
 #include <compression/spihtBlock.h>
 #include <array/memChunkBuffer.h>
