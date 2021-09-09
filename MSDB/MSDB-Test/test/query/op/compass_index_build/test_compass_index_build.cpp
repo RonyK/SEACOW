@@ -1,4 +1,4 @@
-#include <pch.h>
+#include <pch_test.h>
 #include <util/timer.h>
 #include <compression/test_action_compression.h>
 #include <compression/test_qry_compass.h>

@@ -2,7 +2,7 @@
 #ifndef _MSDB_OPARRAYDUMMY_H_
 #define _MSDB_OPARRAYDUMMY_H_
 
-#include <pch.h>
+#include <pch_test.h>
 
 #include <op/save/save_action.h>
 #include <op/save/save_plan.h>

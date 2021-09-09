@@ -2,7 +2,7 @@
 #ifndef _MSDB_TEST_OP_ACT_ADAPT_HUFFMAN_ENCODE_DECODE_H_
 #define _MSDB_TEST_OP_ACT_ADAPT_HUFFMAN_ENCODE_DECODE_H_
 
-#include <pch.h>
+#include <pch_test.h>
 #include <op/adapt_huffman_encode/adapt_huffman_encode_plan.h>
 #include <op/adapt_huffman_encode/adapt_huffman_encode_action.h>
 #include <op/adapt_huffman_decode/adapt_huffman_decode_plan.h>

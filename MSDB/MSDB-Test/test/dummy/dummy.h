@@ -2,7 +2,7 @@
 #ifndef _MSDB_DUMMY_H_
 #define _MSDB_DUMMY_H_
 
-#include <pch.h>
+#include <pch_test.h>
 #include <array/memBlockArray.h>
 #include <array/memChunk.h>
 #include <array/blockChunk.h>

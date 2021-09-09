@@ -2,7 +2,7 @@
 #ifndef _MSDB_TEST_QRY_SE_HUFFMAN_H_
 #define _MSDB_TEST_QRY_SE_HUFFMAN_H_
 
-#include <pch.h>
+#include <pch_test.h>
 #include <dummy/opDummy.h>
 #include <util/timer.h>
 #include <index/test_qry_mmt.h>

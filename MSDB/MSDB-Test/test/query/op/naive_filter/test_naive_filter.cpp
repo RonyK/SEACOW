@@ -1,4 +1,4 @@
-#include <pch.h>
+#include <pch_test.h>
 #include <query/op/filter/test_body_filter.h>
 
 namespace msdb

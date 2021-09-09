@@ -2,7 +2,7 @@
 #ifndef _MSDB_TESTFILTER_H_
 #define _MSDB_TESTFILTER_H_
 
-#include <pch.h>
+#include <pch_test.h>
 #include <array/attributeId.h>
 #include <parse/predicate.h>
 #include <index/test_action_mmt.h>

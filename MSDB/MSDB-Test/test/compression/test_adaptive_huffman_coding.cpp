@@ -1,4 +1,4 @@
-#include <pch.h>
+#include <pch_test.h>
 #include <compression/adaptiveHuffmanCode.h>
 #include <io/bitstream.h>
 #include <limits>

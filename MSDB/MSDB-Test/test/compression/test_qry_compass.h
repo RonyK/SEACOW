@@ -1,6 +1,6 @@
 #pragma once
 
-#include <pch.h>
+#include <pch_test.h>
 #include <compression/test_action_compression.h>
 #include <dummy/opDummy.h>
 #include <util/timer.h>

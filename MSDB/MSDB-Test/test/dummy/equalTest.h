@@ -2,7 +2,7 @@
 #ifndef _MSDB_TEST_EQUALTEST_H_
 #define _MSDB_TEST_EQUALTEST_H_
 
-#include <pch.h>
+#include <pch_test.h>
 #include <array/array.h>
 
 namespace msdb

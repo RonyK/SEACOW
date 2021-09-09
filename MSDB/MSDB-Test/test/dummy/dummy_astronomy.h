@@ -2,7 +2,7 @@
 #ifndef _MSDB_DUMMY_ASTRONOMY_H_
 #define _MSDB_DUMMY_ASTRONOMY_H_
 
-#include <pch.h>
+#include <pch_test.h>
 
 namespace msdb
 {

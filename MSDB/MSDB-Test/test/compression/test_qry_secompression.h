@@ -2,7 +2,7 @@
 #ifndef _MSDB_TEST_ACTION_SECOMPRESSION_H_
 #define _MSDB_TEST_ACTION_SECOMPRESSION_H_
 
-#include <pch.h>
+#include <pch_test.h>
 #include <index/test_action_mmt.h>
 #include <util/timer.h>
 #include <dummy/opDummy.h>

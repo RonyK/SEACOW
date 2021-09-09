@@ -1,4 +1,4 @@
-#include <pch.h>
+#include <pch_test.h>
 #include <dummy/opDummy.h>
 #include "act_adapt_huffman_encode_decode.h"
 

@@ -2,7 +2,7 @@
 #ifndef _MSDB_TEST_QRY_MMT_H_
 #define _MSDB_TEST_QRY_MMT_H_
 
-#include <pch.h>
+#include <pch_test.h>
 #include <index/test_action_mmt.h>
 
 namespace msdb

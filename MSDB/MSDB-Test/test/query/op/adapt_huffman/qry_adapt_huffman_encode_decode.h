@@ -2,7 +2,7 @@
 #ifndef _MSDB_TEST_QRY_ADAPT_HUFFMAN_H_
 #define _MSDB_TEST_QRY_ADAPT_HUFFMAN_H_
 
-#include <pch.h>
+#include <pch_test.h>
 #include <dummy/opDummy.h>
 #include <util/timer.h>
 #include "act_adapt_huffman_encode_decode.h"

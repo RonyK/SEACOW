@@ -1,4 +1,4 @@
-#include <pch.h>
+#include <pch_test.h>
 #include <dummy/dummy_astronomy.h>
 #include <fstream>
 #include <string>

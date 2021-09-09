@@ -2,7 +2,7 @@
 #ifndef _MSDB_TESTSPIHT_H_
 #define _MSDB_TESTSPIHT_H_
 
-#include <pch.h>
+#include <pch_test.h>
 #include <compression/test_action_compression.h>
 
 namespace msdb

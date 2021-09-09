@@ -1,4 +1,4 @@
-#include <pch.h>
+#include <pch_test.h>
 #include <index/test_action_mmt.h>
 
 #include <array/arrayMgr.h>

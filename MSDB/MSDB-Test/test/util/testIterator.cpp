@@ -1,4 +1,4 @@
-#include <pch.h>
+#include <pch_test.h>
 #include <util/coordinate.h>
 
 namespace msdb

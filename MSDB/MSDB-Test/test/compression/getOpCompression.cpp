@@ -1,4 +1,4 @@
-#include <pch.h>
+#include <pch_test.h>
 #include <compression/getOpCompression.h>
 
 namespace msdb

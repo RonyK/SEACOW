@@ -1,4 +1,4 @@
-#include <pch.h>
+#include <pch_test.h>
 #include <index/test_action_mmt.h>
 #include <system/storageMgr.h>
 #include <io/test_action_io.h>

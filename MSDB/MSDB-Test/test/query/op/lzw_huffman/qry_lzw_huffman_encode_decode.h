@@ -2,7 +2,7 @@
 #ifndef _MSDB_TEST_QRY_LZW_HUFFMAN_H_
 #define _MSDB_TEST_QRY_LZW_HUFFMAN_H_
 
-#include <pch.h>
+#include <pch_test.h>
 #include "act_lzw_huffman_encode_decode.h"
 
 namespace msdb

@@ -2,7 +2,7 @@
 #ifndef _MSDB_TEST_ACT_LZW_HUFFMAN_H_
 #define _MSDB_TEST_ACT_LZW_HUFFMAN_H_
 
-#include <pch.h>
+#include <pch_test.h>
 #include <op/lzw_huffman_encode/lzw_huffman_encode_plan.h>
 #include <op/lzw_huffman_encode/lzw_huffman_encode_action.h>
 #include <op/lzw_huffman_decode/lzw_huffman_decode_plan.h>

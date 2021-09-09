@@ -10,7 +10,6 @@
     <ClCompile Include="test\util\testIterator.cpp">
       <Filter>test\util</Filter>
     </ClCompile>
-    <ClCompile Include="test\pch.cpp" />
     <ClCompile Include="test\xml\xmltest.cpp" />
     <ClCompile Include="test\array\testMemChunk.cpp" />
     <ClCompile Include="test\query\op\wavelet_encode\test_wavelet_encode_action.cpp" />
@@ -56,12 +55,12 @@
     <ClCompile Include="test\query\op\se_huffman\test_se_huffman_encode_decode.cpp" />
     <ClCompile Include="test\query\op\se_huffman\act_se_huffman_encode_decode.cpp" />
     <ClCompile Include="test\query\op\between_filter\test_between_filter.cpp" />
+    <ClCompile Include="test\pch_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="test\dummy\dummy.h">
       <Filter>test\dummy</Filter>
     </ClInclude>
-    <ClInclude Include="test\pch.h" />
     <ClInclude Include="test\dummy\dummy_astronomy.h" />
     <ClInclude Include="test\dummy\opArrayDummy.h" />
     <ClInclude Include="test\dummy\opPlanDummy.h" />
@@ -88,6 +87,7 @@
     <ClInclude Include="test\query\op\se_huffman\act_se_huffman_encode_decode.h" />
     <ClInclude Include="test\query\op\between_filter\qry_between_filter.h" />
     <ClInclude Include="test\dummy\equalTest.h" />
+    <ClInclude Include="test\pch_test.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="test">

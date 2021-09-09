@@ -1,4 +1,4 @@
-#include <pch.h>
+#include <pch_test.h>
 #include "qry_se_huffman_encode_decode.h"
 #include <compression/fixedHuffmanCoder.h>
 

@@ -2,7 +2,7 @@
 #ifndef _MSDB_OPDUMMY_H_
 #define _MSDB_OPDUMMY_H_
 
-#include <pch.h>
+#include <pch_test.h>
 #include <query/query.h>
 #include <parse/predicate.h>
 #include <query/opPlan.h>

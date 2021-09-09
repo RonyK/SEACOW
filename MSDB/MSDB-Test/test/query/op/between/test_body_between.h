@@ -2,7 +2,7 @@
 #ifndef _MSDB_TESTBETWEEN_H_
 #define _MSDB_TESTBETWEEN_H_
 
-#include <pch.h>
+#include <pch_test.h>
 
 #include <index/test_qry_mmt.h>
 #include <io/test_action_io.h>

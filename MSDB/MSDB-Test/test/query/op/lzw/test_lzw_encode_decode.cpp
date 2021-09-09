@@ -1,4 +1,4 @@
-#include <pch.h>
+#include <pch_test.h>
 #include <compression/test_qry_lzw.h>
 
 namespace msdb

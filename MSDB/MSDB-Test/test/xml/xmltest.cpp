@@ -4,7 +4,7 @@
 	#endif
 #endif
 
-#include <pch.h>
+#include <pch_test.h>
 #include <xml/tinyxml2.h>
 #include <cerrno>
 #include <cstdlib>

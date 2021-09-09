@@ -2,7 +2,7 @@
 #ifndef _MSDB_TEST_QRY_BETWEEN_INDEX_H_
 #define _MSDB_TEST_QRY_BETWEEN_INDEX_H_
 
-#include <pch.h>
+#include <pch_test.h>
 #include <dummy/opDummy.h>
 #include <dummy/equalTest.h>
 #include <exp/experimentsInfo.h>

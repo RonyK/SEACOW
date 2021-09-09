@@ -1,4 +1,4 @@
-#include <pch.h>
+#include <pch_test.h>
 #include "qry_lzw_huffman_encode_decode.h"
 
 namespace msdb

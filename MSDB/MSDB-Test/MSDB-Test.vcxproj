@@ -56,7 +56,7 @@
     <ClInclude Include="test\index\test_action_mmt.h" />
     <ClInclude Include="test\index\test_qry_mmt.h" />
     <ClInclude Include="test\io\test_action_io.h" />
-    <ClInclude Include="test\pch.h" />
+    <ClInclude Include="test\pch_test.h" />
     <ClInclude Include="test\query\op\adapt_huffman\act_adapt_huffman_encode_decode.h" />
     <ClInclude Include="test\query\op\adapt_huffman\qry_adapt_huffman_encode_decode.h" />
     <ClInclude Include="test\query\op\between\test_body_between.h" />
@@ -93,7 +93,7 @@
     <ClCompile Include="test\main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="test\pch.cpp">
+    <ClCompile Include="test\pch_test.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

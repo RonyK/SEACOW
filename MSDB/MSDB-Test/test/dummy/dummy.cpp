@@ -1,4 +1,4 @@
-#include <pch.h>
+#include <pch_test.h>
 #include "dummy.h"
 
 namespace msdb
